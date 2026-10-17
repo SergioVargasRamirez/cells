@@ -1,0 +1,32 @@
+<nav class="sidenav" id="sidenav" aria-label="Seiten">
+  <div class="sidenav-head">
+    <a class="sidenav-brand" href="./">Biologie-Werkzeuge<span>für den Unterricht</span></a>
+    <button class="sidenav-toggle" type="button" aria-expanded="false" aria-controls="sidenav-list">Menü</button>
+  </div>
+  <div class="sidenav-list" id="sidenav-list">
+    <a class="sidenav-coffee" href="https://buymeacoffee.com/sergiovargasramirez" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2v2M14 2v2M6 2v2M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/></svg>Kaffee spendieren</a>
+    <p class="sidenav-group">Über die Seiten</p>
+    <a href="quellen.html">Quellen und Danksagung</a>
+    <a href="quellen.html#mitmachen">Mitmachen</a>
+    <a href="impressum.html">Impressum</a>
+    <a href="datenschutz.html">Datenschutz</a>
+    <p class="sidenav-legal">© 2026 Dr. Sergio Vargas · <a href="impressum.html#lizenz">CC BY-NC-SA 4.0</a></p>
+  </div>
+</nav>
+<script>
+(() => {
+  // Nicht einbetten: In einem fremden Rahmen (iframe) nur einen Hinweis mit Link zeigen.
+  // GitHub Pages kann dafür keine HTTP-Header (X-Frame-Options, frame-ancestors) senden.
+  if (window.self !== window.top){
+    document.documentElement.classList.add("eingebettet");
+    const note = () => {
+      const d = document.createElement("div"); d.className = "eingebettet-hinweis";
+      d.innerHTML = 'Diese Seite darf nicht eingebettet werden.<br><a href="' + location.href + '" target="_top" rel="noopener">Seite direkt öffnen: ' + (location.hostname || 'cells.biodatum.io') + '</a>';
+      document.body.appendChild(d);
+    };
+    if (document.body) note(); else document.addEventListener("DOMContentLoaded", note);
+  }
+  const nav = document.getElementById("sidenav"), btn = nav.querySelector(".sidenav-toggle");
+  btn.addEventListener("click", () => btn.setAttribute("aria-expanded", String(nav.classList.toggle("open"))));
+})();
+</script>

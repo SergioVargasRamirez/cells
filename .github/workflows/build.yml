@@ -1,0 +1,34 @@
+name: Build Seitenmenü und Schrift
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "*.html"
+      - "template/**"
+      - "build.py"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Menü, Schrift und gemeinsame Skripte kopieren
+        run: python3 build.py
+
+      - name: Commit rebuilt pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "Seiten unverändert, nichts zu committen."
+          else
+            git add -A -- '*.html'
+            git commit -m "Automatischer Build: Seitenmenü und Schrift aktualisiert"
+            git push
+          fi

@@ -1,0 +1,35 @@
+/* Seitenmenü: wird von build.py in alle Seiten kopiert (Quelle: template/site/nav.css) */
+:root{--navw:252px}
+.sidenav{font-family:var(--font,var(--sans));color:var(--fg,var(--ink));background:var(--surface);z-index:60}
+.sidenav-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sidenav-brand{display:block;text-decoration:none;color:inherit;font-weight:700;font-size:1.12rem;line-height:1.2;letter-spacing:-.005em;padding:4px 10px}
+.sidenav-brand span{display:block;font-weight:400;font-size:.88rem;color:var(--muted);margin-top:2px}
+.sidenav-brand[aria-current="page"]{color:var(--accent)}
+.sidenav-group{margin:20px 0 6px;padding:0 10px;font-size:.72rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.sidenav-list a{display:block;padding:7px 10px;margin:1px 0;border-radius:8px;color:inherit;text-decoration:none;font-size:.95rem;line-height:1.3;transition:background .15s}
+.sidenav-list a:hover{background:color-mix(in srgb,var(--accent) 13%,transparent)}
+.sidenav-list a[aria-current="page"]{background:var(--accent);color:var(--accent-fg,var(--accent-ink));font-weight:600}
+.sidenav a:focus-visible,.sidenav button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sidenav-list a.sidenav-coffee{display:inline-flex;align-items:center;gap:7px;margin:8px 10px 0;padding:6px 12px;border:1px solid rgba(245,158,11,.5);background:rgba(245,158,11,.12);color:#b45309;font-weight:600;font-size:.9rem}
+.sidenav-list a.sidenav-coffee:hover{background:rgba(245,158,11,.24)}
+.sidenav-coffee svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sidenav-list a.sidenav-coffee{color:#fbbf24}}
+:root[data-theme="dark"] .sidenav-list a.sidenav-coffee{color:#fbbf24}
+.sidenav-toggle{font:inherit;font-weight:700;font-size:.92rem;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 14px;cursor:pointer}
+@media (min-width:1000px){
+  body{padding-left:var(--navw)}
+  .sidenav{position:fixed;top:0;bottom:0;left:0;width:var(--navw);overflow-y:auto;border-right:1px solid var(--line);padding:22px 14px 28px}
+  .sidenav-toggle{display:none}
+}
+@media (max-width:999.98px){
+  .sidenav{border-bottom:1px solid var(--line);padding:10px 16px}
+  .sidenav-list{display:none;padding:2px 0 10px}
+  .sidenav.open .sidenav-list{display:block}
+}
+@media (prefers-reduced-motion:reduce){.sidenav-list a{transition:none}}
+@media print{.sidenav{display:none}body{padding-left:0}}
+.sidenav-legal{margin:14px 10px 0;font-size:.78rem;line-height:1.35;color:var(--muted)}
+.sidenav-legal a{display:inline;padding:0;margin:0;color:inherit;text-decoration:underline;font-size:inherit}
+.sidenav-legal a:hover{background:none}
+html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
+.eingebettet-hinweis{font:600 18px/1.5 system-ui,sans-serif;padding:32px 20px;text-align:center}
