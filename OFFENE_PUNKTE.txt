@@ -131,3 +131,5 @@ Für jede neue Seite
 
 
 - [x] chromatin.html: Verpackungsleiter, Nucleosom 3D (1KX5), Gene umbauen + Zeitraffer; Expertenmodus Histonmodifikationen/TF (offen: gegenlesen, Touch testen, Remodeller-Schieber, Werte des Spielzeugmodells prüfen)
+
+NOTIZ (18.10.2026, Wunsch): chromatin.html, Zeitraffer mit mRNA-/Protein-Kurven ist so nicht gewünscht und muss überarbeitet werden (Darstellung und Inhalt mit dem Nutzer neu klären, bevor es umgebaut wird).
