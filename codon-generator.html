@@ -160,13 +160,12 @@ button:focus-visible,input:focus-visible,summary:focus-visible,canvas:focus-visi
 .codontab th{font-weight:800;color:var(--muted)}
 .codontab td{vertical-align:top;padding:0;width:22%}
 .codontab td:last-child{width:2.2em}
-.codontab .rand{font-size:1rem;width:1.6em;text-align:center}
-.codontab .dritte{display:flex;flex-direction:column;gap:2px;font-weight:700;color:var(--muted);text-align:center;font-size:.8rem}
-.codontab .dritte span{height:25px;line-height:25px}
+.codontab th.seite{width:1.6em;padding:0}
+.codontab th.seite span{display:block;writing-mode:vertical-rl;transform:rotate(180deg);margin:auto;white-space:nowrap}
 .zelle{display:flex;flex-direction:column;gap:2px}
 button.eintrag{display:flex;justify-content:space-between;align-items:center;gap:4px;height:25px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--muted);padding:0 5px;font:inherit;cursor:pointer;text-align:left}
 button.eintrag .cd{font-family:ui-monospace,"SF Mono",Consolas,monospace;font-weight:700;letter-spacing:.04em}
-button.eintrag:not(.da){background:color-mix(in srgb, var(--muted) 14%, var(--surface));border-style:dashed;opacity:.62}
+button.eintrag:not(.da){cursor:default;background:color-mix(in srgb, var(--muted) 14%, var(--surface));border-style:dashed;opacity:.62}
 button.eintrag.da{color:var(--ink);font-weight:700}
 button.eintrag.jetzt{outline:3px solid var(--accent);outline-offset:1px}
 button.eintrag.gleich{box-shadow:0 0 0 2px var(--accent)}
@@ -278,7 +277,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
   <main>
     <section class="schritt" id="s-gen">
       <h2>Codon wählen und zur Tabelle hinzufügen</h2>
-      <p>Drehe die drei Walzen: mit den Pfeilen, dem Mausrad, durch Ziehen, mit den Pfeiltasten oder indem du direkt U, C, A oder G tippst. Die Aminosäure erscheint sofort. Mit „Zur Tabelle hinzufügen“ landet das Codon in der Codon-Tabelle rechts.</p>
+      <p>Drehe die drei Walzen: mit den Pfeilen, dem Mausrad, durch Ziehen, mit den Pfeiltasten oder indem du direkt U, C, A oder G tippst. Die Aminosäure erscheint sofort. Mit „Zur Tabelle hinzufügen“ landet das Codon in der Codon-Tabelle rechts. Sie ist zu Beginn leer: Welche Ordnung darin steckt, findest du beim Füllen heraus.</p>
       <div class="gen">
         <div>
           <div class="karte">
@@ -527,8 +526,6 @@ function anzeige(){
     k.append(g, z);
     const hinw = [];
     if (c === "AUG") hinw.push("AUG ist auch das Startcodon: Damit beginnt die Translation.");
-    const alle = G.CODONS.filter(x => G.TABELLE[x] === a);
-    hinw.push(alle.length === 1 ? "Das ist das einzige Codon für " + A.name + "." : A.name + " hat " + alle.length + " Codons: " + alle.join(", ") + ".");
     const h = document.createElement("p"); h.className = "hinw"; h.textContent = hinw.join(" "); k.appendChild(h);
   }
   const da = S.hinzu.has(c), b = $("hinzu"); b.disabled = da; b.textContent = da ? "Schon in der Tabelle" : "Zur Tabelle hinzufügen";
@@ -539,36 +536,36 @@ function anzeige(){
 function bauTabelle(){
   const t = $("codontab"); t.textContent = "";
   const kopf = document.createElement("thead");
-  kopf.innerHTML = '<tr><th></th><th colspan="4">2. Base</th><th></th></tr><tr><th>1. Base</th>' + [...R].map(b => `<th class="rand" style="color:${PALETTE.get(b)}">${b}</th>`).join("") + "<th>3. Base</th></tr>";
+  kopf.innerHTML = '<tr><th class="seite"></th><th colspan="4">2. Base</th><th class="seite"></th></tr>';
   t.appendChild(kopf);
   const tb = document.createElement("tbody");
-  for (const f of R){
+  [...R].forEach((f, ri) => {   // keine Basen an den Rändern: Die Ordnung der Tabelle ergibt sich erst aus den gefundenen Codons
     const tr = document.createElement("tr");
-    tr.innerHTML = `<th class="rand" style="color:${PALETTE.get(f)}">${f}</th>`;
+    tr.innerHTML = ri === 0 ? '<th class="seite" rowspan="4"><span>1. Base</span></th>' : "";
     for (const s of R){
       const td = document.createElement("td"), z = document.createElement("div"); z.className = "zelle";
       for (const d of R){
         const c = f + s + d, e = document.createElement("button"); e.type = "button"; e.className = "eintrag"; e.dataset.codon = c;
-        e.addEventListener("click", () => setzeCodon(c));
+        e.addEventListener("click", () => { if (S.hinzu.has(c)) setzeCodon(c); });
         z.appendChild(e);
       }
       td.appendChild(z); tr.appendChild(td);
     }
-    const dr = document.createElement("td"); dr.innerHTML = '<div class="dritte">' + [...R].map(b => `<span style="color:${PALETTE.get(b)}">${b}</span>`).join("") + "</div>"; tr.appendChild(dr);
+    if (ri === 0) tr.insertAdjacentHTML("beforeend", '<th class="seite" rowspan="4"><span>3. Base</span></th>');
     tb.appendChild(tr);
-  }
+  });
   t.appendChild(tb);
 }
 function fuelle(){
   document.querySelectorAll("#codontab button.eintrag").forEach(e => {
     const c = e.dataset.codon, a = G.TABELLE[c], da = S.hinzu.has(c);
-    e.className = "eintrag" + (da ? " da" : ""); e.innerHTML = `<span class="cd">${buchst(c)}</span><span class="ab"></span>`;
-    const ab = e.querySelector(".ab");
+    e.className = "eintrag" + (da ? " da" : ""); e.disabled = !da;
+    e.innerHTML = da ? `<span class="cd">${buchst(c)}</span><span class="ab"></span>` : "";
     if (da){
-      ab.textContent = a; const f = klFarbe(a);
+      const ab = e.querySelector(".ab"); ab.textContent = a; const f = klFarbe(a);
       e.style.background = `color-mix(in srgb, ${f} 24%, var(--surface))`; e.style.borderColor = f;
       e.setAttribute("aria-label", "Codon " + c + ": " + (a === "Stopp" ? "Stopp-Signal" : G.AS[a].name));
-    } else { ab.textContent = "·"; e.style.background = ""; e.style.borderColor = ""; e.setAttribute("aria-label", "Codon " + c + ", noch nicht in der Tabelle. Anklicken wählt es aus."); }
+    } else { e.style.background = ""; e.style.borderColor = ""; e.setAttribute("aria-label", "Noch nicht gefunden"); }
   });
   $("zaehler").textContent = "(" + S.hinzu.size + " von 64)";
   $("fertig").textContent = S.hinzu.size === 64 ? "Geschafft: Du hast den ganzen genetischen Code zusammengestellt. 61 Codons stehen für Aminosäuren, drei sind Stopp-Signale. Als Nächstes geht es um die Aminosäuren selbst und darum, wie sie ein Protein bilden." : "";
