@@ -332,7 +332,6 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
               <div>
                 <div id="gewaehlt" class="zeile-mrna mono">Wähle zuerst eine mRNA.</div>
                 <button class="btn" type="button" id="los" disabled>In die Reaktionskammer geben</button>
-                <label class="switch" style="margin-left:10px"><input type="checkbox" id="trip"> Codons markieren</label>
                 <div id="ergebnis" aria-live="polite"></div>
               </div>
             </div>
@@ -562,7 +561,7 @@ function zeigeKammer(){
   const a = S.aktuell, box = $("gewaehlt");
   $("los").disabled = !a || S.laeuft;
   if (!a){ box.textContent = "Wähle zuerst eine mRNA."; return; }
-  const mark = $("trip").checked;
+  const mark = einfach();
   const u = a.einheit; let h;
   if (mark){   // ein voller Umlauf der Codons, ab dem gewählten Start
     const n = u.length / ggt(u.length, 3), m = u.repeat(4 * 3), k = S.rahmen - 1;
@@ -572,7 +571,6 @@ function zeigeKammer(){
   } else h = "5'-(" + buchstaben(u) + ")<sub>n</sub>-3'";
   box.innerHTML = h;
 }
-$("trip").addEventListener("change", zeigeKammer);
 function bewerte(c){   // was die Kammer für ein Codon liefert
   const a = G.TABELLE[c];
   if (a === "Stopp") return {aa: "Stopp"};
@@ -720,10 +718,10 @@ $("pruefen").addEventListener("click", () => {
   else f.innerHTML = "Geschafft: Alle " + GESAMT + " Codons stehen richtig in der Tabelle. Dieser kleine Teil des Codes zeigt schon die Regeln: Mehrere Codons können für dieselbe Aminosäure stehen, und die dritte Base ist oft unwichtig. Weiter geht es mit dem <a href=\"codon-generator.html\">Codon-Generator</a>.";
 });
 $("alleweg").addEventListener("click", () => { TEIL.forEach(t => { S.slots[t.aa] = [null, null, null, null]; }); S.sel = null; S.geprueft = false; renderTabelle(); renderVorrat(); status(); });
-document.addEventListener("einfach-geaendert", () => { $("trip").checked = einfach(); zeigeKammer(); });
+document.addEventListener("einfach-geaendert", () => { zeigeKammer(); });
 if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { bauMrnas(); markiereAuswahl(); ntKnoepfe(); zeigeKammer(); renderLog(); renderVorrat(); renderTabelle(); });
 
-bauMrnas(); ntKnoepfe(); $("trip").checked = einfach(); zeigeKammer(); renderVorrat(); renderTabelle(); renderLog(); status();
+bauMrnas(); ntKnoepfe(); zeigeKammer(); renderVorrat(); renderTabelle(); renderLog(); status();
 })();
 </script>
 </body>
