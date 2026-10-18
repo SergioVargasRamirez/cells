@@ -189,6 +189,8 @@ button:focus-visible,input:focus-visible,summary:focus-visible,canvas:focus-visi
 .strang .kappe{min-width:58px;height:40px;border-radius:20px;background:#6d4c9f;color:#fff;display:grid;place-items:center;font:800 .8rem var(--sans);padding:0 8px}
 .abfall{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
 .abfall span{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px dashed var(--line);border-radius:999px;font:700 .85rem ui-monospace,Consolas,monospace;color:var(--muted)}
+.abfall span.ok{border:2px solid #2e9d62;color:#1f7a4a;background:color-mix(in srgb,#2e9d62 12%,var(--surface))}
+.abfall span.fehl{border:2px solid #d1495b;color:#b0283c;background:color-mix(in srgb,#d1495b 10%,var(--surface))}
 .werkzeuge{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
 .werkzeuge .btn{min-height:44px;padding:8px 14px}
 .protein{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}
@@ -331,6 +333,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <button class="btn" type="button" id="w-spalt">Spaltung: nach der Auswahl abschneiden</button>
         <button class="btn" type="button" id="w-a1">Poly(A)-Polymerase: + A</button>
         <button class="btn" type="button" id="w-a10">+ 10 A</button>
+        <button class="btn" type="button" id="undo">↶ Rückgängig</button>
         <button class="btn" type="button" id="neu">Neu beginnen</button>
       </div>
       <p class="klein" style="margin:0">Tippe auf eine Base, um die Auswahl zu beginnen, und auf eine zweite Base, um den Bereich bis dorthin zu markieren. Ein dritter Tipp beginnt eine neue Auswahl.</p>
@@ -497,9 +500,12 @@ const PRE = "GGCAGUCACAACAUGUCCCCUCGUAAGUCAUCGCUAACGUUUUCUUUCCCCAGUGAUCUGCGUGAGU
 const ZIEL = "MSPLICED";
 const lumi = h => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
 const REGION = (id) => id < 22 ? "exon" : id < 53 ? "intron" : id < 61 ? "exon" : id < 96 ? "intron" : id < 165 ? "exon" : "exon";   // Position 1-22 Exon 1, 23-53 Intron 1, 54-61 Exon 2, 62-96 Intron 2, ab 97 Exon 3 (mit 3'-UTR)
+const WAHRE_INTRONS = ["GUAAGUCAUCGCUAACGUUUUCUUUCCCCAG", "GUGAGUAUUCCUGACUAACAUUUCUUUUCUCCUAG"];
+const HIST = [];   // Schritte zum Rückgängigmachen
+const merke = () => HIST.push(JSON.stringify({seq: S.seq, kappe: S.kappe, tail: S.tail, gespalten: S.gespalten, abfall: S.abfall}));
 const S = {loesung: false, seq: [], kappe: false, tail: 0, gespalten: false, a: null, b: null, abfall: []};
 function neu(){
-  S.seq = PRE.split("").map((c, i) => ({c, id: i})); S.kappe = false; S.tail = 0; S.gespalten = false; S.a = S.b = null; S.abfall = [];
+  S.seq = PRE.split("").map((c, i) => ({c, id: i})); S.kappe = false; S.tail = 0; S.gespalten = false; S.a = S.b = null; S.abfall = []; HIST.length = 0;
   $("ergebnis").textContent = ""; meldung(""); zeichne();
 }
 const meldung = t => { $("meldung").textContent = t; };
@@ -523,7 +529,7 @@ function zeichne(){
   for (let i = 0; i < S.tail; i++){ const t = document.createElement("span"); t.textContent = "A"; t.style.cssText = "width:26px;height:40px;display:grid;place-items:center;border-radius:7px;font:800 1rem ui-monospace,Consolas,monospace;color:#fff;opacity:.75;background:" + PALETTE.get("A"); box.appendChild(t); }
   const ende3 = document.createElement("span"); ende3.className = "ende"; ende3.textContent = "3'"; box.appendChild(ende3);
   const ab = $("abfall"); ab.textContent = "";
-  S.abfall.forEach(t => { const s = document.createElement("span"); s.textContent = (t.art === "intron" ? "↻ " : "✂ ") + (t.text.length > 12 ? t.text.slice(0, 6) + "…" + t.text.slice(-3) : t.text) + " (" + t.text.length + ")"; s.title = t.text; ab.appendChild(s); });
+  S.abfall.forEach(t => { const s = document.createElement("span"); s.className = t.ok ? "ok" : "fehl"; s.textContent = (t.ok ? "✓ " : "✗ ") + (t.art === "intron" ? "↻ " : "✂ ") + (t.text.length > 12 ? t.text.slice(0, 6) + "…" + t.text.slice(-3) : t.text) + " (" + t.text.length + ")"; s.title = (t.ok ? "richtig herausgeschnitten: " : "falsch herausgeschnitten: ") + t.text; ab.appendChild(s); });
   $("w-kappe").disabled = S.kappe;
 }
 function tippe(i){
@@ -532,13 +538,13 @@ function tippe(i){
 }
 
 /* ---------- Werkzeuge ---------- */
-$("w-kappe").addEventListener("click", () => { S.kappe = true; meldung(""); zeichne(); });
+$("w-kappe").addEventListener("click", () => { merke(); S.kappe = true; meldung(""); zeichne(); });
 $("w-splice").addEventListener("click", () => {
   const br = bereich(); if (!br){ meldung("Markiere zuerst einen Bereich."); return; }
   const [s, e] = br, t = S.seq.map(n => n.c).join("");
   const ok = e - s + 1 >= 20 && t[s] === "G" && t[s + 1] === "U" && t[e - 1] === "A" && t[e] === "G";
   if (!ok){ meldung("Das Spleißosom bindet hier nicht."); return; }
-  S.abfall.push({art: "intron", text: t.slice(s, e + 1)}); S.seq.splice(s, e - s + 1); S.a = S.b = null; meldung(""); zeichne();
+  merke(); const stueck = t.slice(s, e + 1); S.abfall.push({art: "intron", text: stueck, ok: WAHRE_INTRONS.includes(stueck)}); S.seq.splice(s, e - s + 1); S.a = S.b = null; meldung(""); zeichne();
 });
 $("w-spalt").addEventListener("click", () => {
   const br = bereich(); if (!br){ meldung("Markiere zuerst eine Base."); return; }
@@ -546,14 +552,15 @@ $("w-spalt").addEventListener("click", () => {
   const i = br[1], t = S.seq.map(n => n.c).join(""), h = t.lastIndexOf("AAUAAA");
   const ok = h >= 0 && i - (h + 5) >= 10 && i - (h + 5) <= 35 && i < t.length - 1;
   if (!ok){ meldung("Die Spaltungsmaschinerie schneidet hier nicht."); return; }
-  S.abfall.push({art: "ende", text: t.slice(i + 1)}); S.seq.splice(i + 1); S.gespalten = true; S.a = S.b = null; meldung(""); zeichne();
+  merke(); S.abfall.push({art: "ende", text: t.slice(i + 1), ok: true}); S.seq.splice(i + 1); S.gespalten = true; S.a = S.b = null; meldung(""); zeichne();
 });
 function polyA(n){
   if (!S.gespalten){ meldung("Die Poly(A)-Polymerase findet keinen freien Ansatzpunkt."); return; }
-  S.tail = Math.min(60, S.tail + n); meldung(""); zeichne();
+  merke(); S.tail = Math.min(60, S.tail + n); meldung(""); zeichne();
 }
 $("w-a1").addEventListener("click", () => polyA(1)); $("w-a10").addEventListener("click", () => polyA(10));
 $("neu").addEventListener("click", neu);
+$("undo").addEventListener("click", () => { if (!HIST.length){ meldung("Es gibt nichts rückgängig zu machen."); return; } const z = JSON.parse(HIST.pop()); S.seq = z.seq; S.kappe = z.kappe; S.tail = z.tail; S.gespalten = z.gespalten; S.abfall = z.abfall; S.a = S.b = null; $("ergebnis").textContent = ""; meldung(""); zeichne(); });
 $("loesung").addEventListener("change", e => { S.loesung = e.target.checked; $("loesleg").hidden = !S.loesung; $("loesleg").innerHTML = '<span><i style="background:#2e9d62;border-radius:3px"></i>Exon (mit UTR)</span><span><i style="background:#c0392b;border-radius:3px"></i>Intron</span><span>gestrichelt: Startcodon AUG und Signal AAUAAA</span>'; zeichne(); });
 
 /* ---------- Kernexport und Translation ---------- */
