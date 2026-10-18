@@ -3,7 +3,7 @@
 // Eine Farbe pro Baustein: Wer eine Base in der Kachel gesehen hat, erkennt sie im 3D-Bild wieder.
 const PALETTE = (() => {
   const hell = {
-    A:"#2f5bea", T:"#e69f00", U:"#f0c14b", G:"#009e73", C:"#e07bb0",
+    A:"#2f5bea", T:"#e69f00", U:"#dcae1c", G:"#009e73", C:"#e07bb0",
     zucker:"#9aa7a0",
     el_C:"#8a929a", el_H:"#e3e8eb", el_N:"#3a5fcd", el_O:"#d6342a", el_P:"#e68a00",   // Elementfarben (CPK-ähnlich)
     p5:"#d81b60",   // 5'-Phosphat (Hervorhebung)

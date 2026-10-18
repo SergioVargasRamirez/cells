@@ -44,7 +44,7 @@ M2 dna-rna.html, Teil 1: Bausteine
 - [ ] Mit Tastatur bedienbar? 3D ja (Pfeile, +/-, 0); die Klickflächen der Zeichnung noch nicht
 - [ ] Auf echtem Touchgerät und mit Screenreader testen (bisher nur Headless-Chromium)
 
-M3 dna-rna.html, Teil 2: Basenpaarung
+M3 basenpaarung.html (eigene Seite seit 18.10.2026): Basenpaarung
 - [x] Ziehen und Ablegen (Zeiger; Tastatur: Nukleotid wählen, dann leeres Feld), Gegenstrang antiparallel, 5'/3'-Beschriftung
 - [x] 5'-Phosphat (magenta) und 3'-OH (cyan) an jedem Nukleotid; Verbindung O3'-P halb cyan, halb magenta
 - [x] Wasserstoffbrücken erscheinen beim Annähern (2 bei A-T/U, 3 bei G-C), nirgends vorgesagt
@@ -52,16 +52,18 @@ M3 dna-rna.html, Teil 2: Basenpaarung
 - [x] Schalter DNA/RNA (T <-> U, 2'-H <-> 2'-OH), Fragen zur Auswertung (Anzahl Brücken, Gegenstrang 5'->3')
 - [ ] Phosphat-/Zucker-Zeichnung der Kacheln ist schematisch: bei der Prüfung auf Fachfehler achten
 - [ ] Schmale Bildschirme: Zeichnung hat Mindestbreite 640 px und scrollt seitlich
-- [ ] Seite öffnet in "Unterschiede finden"; "Erkunden" rechts daneben (Wunsch 18.10.2026) - erledigt
+- [x] dna-rna.html öffnet in "Unterschiede finden", "Erkunden" rechts daneben; 3D-Steuerung über den Bildern
+- [x] Zeichnung: keine Fläche hinter der Base, Linien nach Teilen gefärbt, Phosphat dünner
+- [x] Einstellung "Vereinfachte Ansicht" wird auf beiden Seiten gemerkt (localStorage)
 
-M4 dna-rna.html, Teil 3: 3D des eigenen Moleküls
+M4 basenpaarung.html, Teil 2: 3D des eigenen Moleküls (steht unter der Leiter; Sequenz kommt aus dem gelegten Paar)
 - [ ] Helix aus der selbst gebauten Sequenz
 - [ ] Farben wie in den Kacheln
 - [ ] Schalter "Beschriftungen": große/kleine Furche, Abstände in Å, Winkel
 - [ ] Schnitt durch die Helix (Schieberegler, Blick entlang der Achse)
 - [ ] Umschalten DNA (B-Form) <-> RNA (A-Form)
 
-M5 dna-rna.html, Teil 4: Abschluss
+M5 dna-rna.html, Teil 2: Abschluss
 - [ ] Merkmale sortieren (DNA / RNA / beide)
 - [ ] Kurzes Quiz
 - [ ] Schalter Einfach / Ausführlich (Mittelstufe vs. Oberstufe)

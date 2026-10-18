@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DNA und RNA</title>
-<meta name="description" content="DNA und RNA im Vergleich: dNTP und NTP nebeneinander, Basenpaare selbst legen, die eigene Doppelhelix in 3D.">
+<meta name="description" content="DNA und RNA im Vergleich: dNTP und NTP nebeneinander in Zeichnung und 3D, Unterschiede finden.">
 <style>
 :root{
   --bg:#edf1ef; --surface:#ffffff; --surface2:#e1e9e5; --ink:#10201a; --muted:#53675e; --line:#c8d5cf;
@@ -73,24 +73,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,canvas:focus-visi
 .legende i{width:13px;height:13px;border-radius:50%;display:inline-block;flex:none}
 .schritt h2 .nr{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:700 .8em var(--sans);margin-right:8px;vertical-align:.1em}
 
-/* Schritt 2: Basenpaarung */
-.schritt + .schritt{margin-top:44px;padding-top:26px;border-top:1px solid var(--line)}
-.leiter{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
-.leiter svg{display:block;width:100%;min-width:640px;height:auto;touch-action:none;user-select:none;-webkit-user-select:none;color:var(--ink)}
-.leiter .vorrat{cursor:grab}
-.leiter .vorrat:focus-visible .rahmen,.leiter .vorrat[aria-pressed="true"] .rahmen{stroke:var(--accent);stroke-width:.14;stroke-dasharray:none}
-.leiter .rahmen{fill:transparent;stroke:var(--line);stroke-width:.08;stroke-dasharray:.3 .25}
-.leiter .platz:focus-visible .rahmen,.leiter .platz.nah .rahmen{stroke:var(--accent);stroke-width:.14;stroke-dasharray:none}
-.leiter .platz{cursor:pointer}
-.leiter .gesetzt{cursor:pointer}
-.leiter text{font-family:inherit}
-.fragen{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-top:14px}
-.fragen h3{font-size:1.05rem;margin:0 0 8px}
-.fragen .zeile{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0}
-.fragen input[type=number]{width:4.2em;font:inherit;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
-.fragen input[type=text]{width:12em;font:inherit;font-family:ui-monospace,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
-.fragen .rueck{font-weight:600;min-height:1.5em}
-.fragen .rueck.ok{color:var(--accent)}
+.weiter{margin-top:30px;font-weight:600}
 details{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
 summary{cursor:pointer;font-weight:700}
 details ul{margin:10px 0 0;padding-left:1.2em}
@@ -150,6 +133,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
     <a class="sidenav-coffee" href="https://buymeacoffee.com/sergiovargasramirez" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2v2M14 2v2M6 2v2M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/></svg>Kaffee spendieren</a>
     <p class="sidenav-group">Nukleinsäuren</p>
     <a href="dna-rna.html" aria-current="page">DNA und RNA</a>
+    <a href="basenpaarung.html">Basenpaarung</a>
     <p class="sidenav-group">Über die Seiten</p>
     <a href="quellen.html">Quellen und Danksagung</a>
     <a href="quellen.html#mitmachen">Mitmachen</a>
@@ -179,7 +163,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 <div class="page">
   <header>
     <h1>DNA und RNA</h1>
-    <p class="lede">Zwei Nukleinsäuren, ein ähnlicher Bauplan: Findet heraus, wodurch sich ihre Bausteine unterscheiden, legt Basenpaare selbst und seht euer eigenes Molekül in 3D.</p>
+    <p class="lede">Zwei Nukleinsäuren, ein ähnlicher Bauplan: Findet heraus, wodurch sich ihre Bausteine unterscheiden, und prüft, wie die Bausteine zusammenpassen.</p>
     <label class="switch"><input type="checkbox" id="einfach"> Vereinfachte Ansicht (weniger Fachbegriffe)</label>
   </header>
 
@@ -206,6 +190,17 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <label class="switch"><input type="checkbox" id="spalt"> Spaltstelle bei der Polymerisation</label>
       </div>
 
+      <div class="steuer">
+        <div class="gruppe"><span class="etikett" id="l-farben">3D-Farben</span>
+          <div class="seg" role="radiogroup" aria-labelledby="l-farben" id="sg-farben">
+            <button type="button" role="radio" aria-checked="true" data-wert="nukleotid">Wie in der Zeichnung</button>
+            <button type="button" role="radio" aria-checked="false" data-wert="element">Nach Element</button>
+          </div>
+        </div>
+        <label class="switch"><input type="checkbox" id="h" checked> H-Atome</label>
+        <label class="switch"><input type="checkbox" id="beschr" checked> Beschriftung</label>
+        <button class="btn" type="button" id="aufloesen" hidden>Alle Unterschiede zeigen</button>
+      </div>
       <div class="vergleich">
         <figure class="mol" id="m-dNTP">
           <figcaption><b></b><span></span></figcaption>
@@ -221,54 +216,11 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 
       <div class="status" id="status" aria-live="polite"></div>
 
-      <div class="steuer">
-        <div class="gruppe"><span class="etikett" id="l-farben">3D-Farben</span>
-          <div class="seg" role="radiogroup" aria-labelledby="l-farben" id="sg-farben">
-            <button type="button" role="radio" aria-checked="true" data-wert="nukleotid">Wie in der Zeichnung</button>
-            <button type="button" role="radio" aria-checked="false" data-wert="element">Nach Element</button>
-          </div>
-        </div>
-        <label class="switch"><input type="checkbox" id="h" checked> H-Atome</label>
-        <label class="switch"><input type="checkbox" id="beschr" checked> Beschriftung</label>
-        <button class="btn" type="button" id="aufloesen" hidden>Alle Unterschiede zeigen</button>
-      </div>
       <div class="legende" id="legende"></div>
       <p class="legende">Ziehen oder Pfeiltasten drehen das 3D-Bild, Mausrad oder + / − vergrößern, 0 setzt zurück. Beide Moleküle drehen gemeinsam.</p>
     </section>
 
-    <section class="schritt" id="s-paarung">
-      <h2><span class="nr">2</span>Basenpaarung: Welcher Baustein passt?</h2>
-      <p>Die beiden Stränge einer Doppelhelix werden durch Basenpaare zusammengehalten. Ziehe aus dem Vorrat rechts zu jeder Base des linken Strangs einen passenden Baustein in das leere Feld. Kommen sich zwei Basen nahe, erscheinen gestrichelte Linien zwischen ihnen. Was fällt dir auf?</p>
-      <div class="steuer">
-        <div class="gruppe"><span class="etikett" id="l-art">Nukleinsäure</span>
-          <div class="seg" role="radiogroup" aria-labelledby="l-art" id="sg-art">
-            <button type="button" role="radio" aria-checked="true" data-wert="DNA">DNA</button>
-            <button type="button" role="radio" aria-checked="false" data-wert="RNA">RNA</button>
-          </div>
-        </div>
-        <button class="btn" type="button" id="neu">Neue Sequenz</button>
-        <button class="btn" type="button" id="leeren">Gegenstrang leeren</button>
-      </div>
-      <div class="leiter"><svg id="leiter" role="group" aria-label="Basenpaarung: linker Strang mit leeren Feldern für den Gegenstrang und Vorrat an Nukleotiden"></svg></div>
-      <div class="status" id="status2" aria-live="polite"></div>
-      <div class="fragen" id="fragen">
-        <h3>Auswertung</h3>
-        <div class="zeile">
-          <span>Wie viele Wasserstoffbrücken halten ein <b id="f-at">A–T</b>-Paar zusammen?</span>
-          <input type="number" min="0" max="6" id="n-at" aria-label="Anzahl Wasserstoffbrücken A–T">
-          <span>ein <b>G–C</b>-Paar?</span>
-          <input type="number" min="0" max="6" id="n-gc" aria-label="Anzahl Wasserstoffbrücken G–C">
-          <button class="btn" type="button" id="p-hb">Prüfen</button>
-        </div>
-        <div class="rueck" id="r-hb" aria-live="polite"></div>
-        <div class="zeile" id="z-richtung">
-          <span>Schreibe den Gegenstrang von <b>5'</b> nach <b>3'</b>:</span>
-          <input type="text" id="t-gegen" autocomplete="off" spellcheck="false" aria-label="Gegenstrang von 5' nach 3'">
-          <button class="btn" type="button" id="p-gegen">Prüfen</button>
-        </div>
-        <div class="rueck" id="r-gegen" aria-live="polite"></div>
-      </div>
-    </section>
+    <p class="weiter">Weiter: <a href="basenpaarung.html">Basenpaarung: Welcher Baustein passt?</a></p>
   </main>
 
   <details>
@@ -284,13 +236,20 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 </div>
 
 <script>
+(() => {   // Einstellung "Vereinfachte Ansicht" auf allen Seiten gleich halten
+  const cb = document.getElementById("einfach");
+  try { cb.checked = localStorage.getItem("cells-einfach") === "1"; } catch (e) {}
+  cb.addEventListener("change", () => { try { localStorage.setItem("cells-einfach", cb.checked ? "1" : "0"); } catch (e) {} });
+})();
+</script>
+<script>
 /*__PALETTE__*/
 // Farbtabelle für alle Ansichten (Kacheln, Zeichnungen, 3D, Tabellen, Diagramme).
 // Quelle: template/site/palette.js, wird von build.py in die Seiten kopiert.
 // Eine Farbe pro Baustein: Wer eine Base in der Kachel gesehen hat, erkennt sie im 3D-Bild wieder.
 const PALETTE = (() => {
   const hell = {
-    A:"#2f5bea", T:"#e69f00", U:"#f0c14b", G:"#009e73", C:"#e07bb0",
+    A:"#2f5bea", T:"#e69f00", U:"#dcae1c", G:"#009e73", C:"#e07bb0",
     zucker:"#9aa7a0",
     el_C:"#8a929a", el_H:"#e3e8eb", el_N:"#3a5fcd", el_O:"#d6342a", el_P:"#e68a00",   // Elementfarben (CPK-ähnlich)
     p5:"#d81b60",   // 5'-Phosphat (Hervorhebung)
@@ -325,59 +284,6 @@ const PALETTE = (() => {
 const NUKLEOTIDE = {"dNTP":{"A":{"id":"DTP","atome":[["PG","P",-7.5,2.523,-4.955],["O1G","O",-7.569,3.775,-4.17],["O2G","O",-8.05,2.79,-6.444],["O3G","O",-8.401,1.394,-4.246],["PB","P",-5.489,1.773,-3.513],["O1B","O",-6.349,0.746,-2.884],["O2B","O",-5.598,3.147,-2.684],["O3B","O",-5.972,2.02,-5.029],["PA","P",-3.546,1.04,-1.974],["O1A","O",-3.677,2.313,-1.235],["O2A","O",-4.515,-0.065,-1.315],["O3A","O",-3.961,1.265,-3.512],["O5'","O",-2.022,0.529,-1.898],["C5'","C",-1.715,0.347,-0.516],["C4'","C",-0.271,-0.139,-0.372],["O4'","O",0.658,0.878,-0.809],["C3'","C",0.09,-0.346,1.12],["O3'","O",-0.293,-1.65,1.563],["C2'","C",1.631,-0.198,1.105],["C1'","C",1.922,0.579,-0.193],["N9","N",2.628,1.823,0.122],["C8","C",2.056,3.029,0.395],["N7","N",2.979,3.916,0.628],["C5","C",4.199,3.337,0.524],["C6","C",5.523,3.79,0.656],["N6","N",5.79,5.109,0.976],["N1","N",6.51,2.921,0.471],["C2","C",6.264,1.661,0.164],["N3","N",5.041,1.195,0.025],["C4","C",3.989,1.989,0.192],["HOG2","H",-8.964,3.089,-6.354],["HOG3","H",-8.328,0.596,-4.787],["HOB2","H",-5.024,3.787,-3.127],["HOA2","H",-4.399,-0.878,-1.824],["H5'1","H",-2.391,-0.393,-0.086],["H5'2","H",-1.832,1.295,0.01],["H4'","H",-0.122,-1.062,-0.935],["H3'","H",-0.369,0.424,1.741],["HO3'","H",0.041,-1.747,2.466],["H2'1","H",2.107,-1.178,1.078],["H2'2","H",1.969,0.367,1.973],["H1'","H",2.527,-0.031,-0.863],["H8","H",0.993,3.22,0.416],["HN61","H",6.709,5.41,1.069],["HN62","H",5.061,5.736,1.105],["H2","H",7.097,0.988,0.023]],"bindungen":[[0,1,2],[0,2,1],[0,3,1],[0,7,1],[2,30,1],[3,31,1],[4,5,2],[4,6,1],[4,7,1],[4,11,1],[6,32,1],[8,9,2],[8,10,1],[8,11,1],[8,12,1],[10,33,1],[12,13,1],[13,14,1],[13,34,1],[13,35,1],[14,15,1],[14,16,1],[14,36,1],[15,19,1],[16,17,1],[16,18,1],[16,37,1],[17,38,1],[18,19,1],[18,39,1],[18,40,1],[19,20,1],[19,41,1],[20,21,1],[20,29,1],[21,22,2],[21,42,1],[22,23,1],[23,24,1],[23,29,2],[24,25,1],[24,26,2],[25,43,1],[25,44,1],[26,27,1],[27,28,2],[27,45,1],[28,29,1]]},"T":{"id":"TTP","atome":[["PA","P",-3.546,1.039,-1.973],["O1A","O",-3.677,2.313,-1.234],["O2A","O",-4.515,-0.066,-1.315],["O3A","O",-3.961,1.266,-3.513],["PB","P",-5.49,1.772,-3.513],["O1B","O",-6.349,0.745,-2.883],["O2B","O",-5.599,3.146,-2.683],["O3B","O",-5.973,2.019,-5.028],["PG","P",-7.5,2.521,-4.953],["O1G","O",-7.57,3.773,-4.169],["O2G","O",-8.051,2.79,-6.443],["O3G","O",-8.402,1.392,-4.245],["O5'","O",-2.022,0.529,-1.899],["C5'","C",-1.715,0.347,-0.515],["C4'","C",-0.271,-0.139,-0.372],["O4'","O",0.658,0.877,-0.809],["C3'","C",0.09,-0.346,1.121],["O3'","O",-0.293,-1.65,1.562],["C2'","C",1.631,-0.198,1.105],["C1'","C",1.922,0.58,-0.193],["N1","N",2.628,1.824,0.121],["C2","C",2.052,2.734,0.926],["O2","O",0.948,2.513,1.385],["N3","N",2.678,3.885,1.23],["C4","C",3.904,4.143,0.732],["O4","O",4.472,5.185,1.007],["C5","C",4.521,3.196,-0.12],["C5M","C",5.889,3.463,-0.693],["C6","C",3.87,2.05,-0.409],["HOA2","H",-4.4,-0.878,-1.824],["HOB2","H",-5.025,3.787,-3.126],["HOG2","H",-8.966,3.088,-6.353],["HOG3","H",-8.33,0.595,-4.786],["H5'1","H",-2.391,-0.393,-0.087],["H5'2","H",-1.833,1.294,0.011],["H4'","H",-0.121,-1.061,-0.934],["H3'","H",-0.368,0.424,1.742],["HO3'","H",0.041,-1.748,2.465],["H2'1","H",2.107,-1.177,1.078],["H2'2","H",1.969,0.367,1.972],["H1'","H",2.527,-0.031,-0.863],["HN3","H",2.247,4.529,1.813],["HM51","H",6.246,4.433,-0.347],["HM52","H",6.578,2.685,-0.365],["HM53","H",5.833,3.465,-1.781],["H6","H",4.327,1.315,-1.055]],"bindungen":[[0,1,2],[0,2,1],[0,3,1],[0,12,1],[2,29,1],[3,4,1],[4,5,2],[4,6,1],[4,7,1],[6,30,1],[7,8,1],[8,9,2],[8,10,1],[8,11,1],[10,31,1],[11,32,1],[12,13,1],[13,14,1],[13,33,1],[13,34,1],[14,15,1],[14,16,1],[14,35,1],[15,19,1],[16,17,1],[16,18,1],[16,36,1],[17,37,1],[18,19,1],[18,38,1],[18,39,1],[19,20,1],[19,40,1],[20,21,1],[20,28,1],[21,22,2],[21,23,1],[23,24,1],[23,41,1],[24,25,2],[24,26,1],[26,27,1],[26,28,2],[27,42,1],[27,43,1],[27,44,1],[28,45,1]]},"G":{"id":"DGT","atome":[["PG","P",-4.969,-0.25,-7.806],["O1G","O",-5.677,-1.661,-7.49],["O2G","O",-3.895,-0.442,-8.99],["O3G","O",-5.992,0.733,-8.223],["O3B","O",-4.22,0.282,-6.483],["PB","P",-4.722,0.946,-5.105],["O1B","O",-5.149,2.475,-5.37],["O2B","O",-5.886,0.192,-4.589],["O3A","O",-3.531,0.9,-4.022],["PA","P",-3.474,1.002,-2.417],["O1A","O",-3.703,2.53,-1.967],["O2A","O",-4.534,0.151,-1.832],["O5'","O",-2.036,0.499,-1.898],["C5'","C",-1.709,0.369,-0.513],["C4'","C",-0.269,-0.129,-0.372],["O4'","O",0.664,0.885,-0.803],["C3'","C",0.09,-0.347,1.119],["O3'","O",-0.3,-1.651,1.552],["C2'","C",1.631,-0.205,1.106],["C1'","C",1.928,0.579,-0.191],["N9","N",2.64,1.819,0.129],["C8","C",2.077,3.048,0.316],["N7","N",3.004,3.921,0.585],["C5","C",4.212,3.307,0.587],["C6","C",5.539,3.744,0.81],["O6","O",5.777,4.912,1.067],["N1","N",6.535,2.836,0.73],["C2","C",6.258,1.532,0.442],["N2","N",7.29,0.631,0.368],["N3","N",5.03,1.114,0.233],["C4","C",3.991,1.955,0.3],["HO1G","H",-5.065,-2.355,-7.21],["HO2G","H",-4.277,-0.762,-9.819],["HO1B","H",-4.434,3.03,-5.71],["HO1A","H",-3.043,3.146,-2.315],["H5'","H",-1.807,1.339,-0.024],["H5'A","H",-2.388,-0.343,-0.045],["H4'","H",-0.126,-1.048,-0.94],["H3'","H",-0.366,0.421,1.745],["HO3'","H",-0.096,-1.835,2.48],["H2'","H",1.972,0.353,1.978],["H2'A","H",2.104,-1.187,1.073],["H1'","H",2.528,-0.032,-0.865],["H8","H",1.02,3.263,0.251],["HN2","H",8.202,0.925,0.52],["HN2A","H",7.109,-0.299,0.164],["H16","H",7.453,3.112,0.88]],"bindungen":[[0,1,1],[0,2,1],[1,31,1],[2,32,1],[3,0,2],[4,0,1],[5,4,1],[5,6,1],[5,8,1],[6,33,1],[7,5,2],[9,8,1],[9,10,1],[10,34,1],[11,9,2],[12,9,1],[12,13,1],[13,35,1],[13,36,1],[14,13,1],[14,37,1],[15,14,1],[16,14,1],[16,17,1],[16,38,1],[17,39,1],[18,16,1],[18,19,1],[18,40,1],[18,41,1],[19,15,1],[19,42,1],[20,19,1],[20,30,1],[21,20,1],[21,43,1],[22,21,2],[22,23,1],[23,24,1],[23,30,2],[24,26,1],[25,24,2],[26,27,1],[27,29,2],[27,28,1],[28,44,1],[28,45,1],[30,29,1],[26,46,1]]},"C":{"id":"DCP","atome":[["N1","N",2.629,1.823,0.12],["C2","C",2.055,2.735,0.925],["N3","N",2.675,3.874,1.226],["C4","C",3.879,4.139,0.738],["C5","C",4.506,3.207,-0.112],["C6","C",3.866,2.051,-0.404],["O2","O",0.946,2.515,1.386],["N4","N",4.509,5.32,1.056],["C1'","C",1.922,0.58,-0.192],["C2'","C",1.631,-0.198,1.105],["C3'","C",0.09,-0.346,1.12],["C4'","C",-0.271,-0.14,-0.372],["O4'","O",0.658,0.877,-0.809],["O3'","O",-0.293,-1.65,1.563],["C5'","C",-1.715,0.347,-0.516],["O5'","O",-2.022,0.53,-1.898],["PA","P",-3.546,1.039,-1.974],["O1A","O",-4.436,0.024,-1.368],["O2A","O",-3.688,2.426,-1.17],["O3A","O",-3.961,1.266,-3.513],["PB","P",-5.489,1.772,-3.513],["O1B","O",-6.349,0.746,-2.883],["O2B","O",-5.598,3.147,-2.684],["O3B","O",-5.972,2.02,-5.029],["PG","P",-7.5,2.522,-4.954],["O1G","O",-7.568,3.774,-4.17],["O2G","O",-8.049,2.791,-6.443],["O3G","O",-8.401,1.394,-4.246],["H5","H",5.488,3.408,-0.518],["H6","H",4.328,1.318,-1.05],["HN41","H",4.073,5.961,1.638],["HN42","H",5.392,5.509,0.7],["H1'","H",2.527,-0.032,-0.863],["H2'1","H",2.107,-1.178,1.078],["H2'2","H",1.969,0.367,1.973],["H3'","H",-0.368,0.424,1.742],["H4'","H",-0.121,-1.061,-0.934],["HO3'","H",0.04,-1.747,2.465],["H5'1","H",-2.391,-0.392,-0.087],["H5'2","H",-1.832,1.295,0.01],["HOA2","H",-3.093,3.058,-1.596],["HOB2","H",-5.024,3.787,-3.127],["HOG2","H",-8.964,3.089,-6.354],["HOG3","H",-8.329,0.596,-4.786]],"bindungen":[[0,1,1],[0,5,1],[0,8,1],[1,2,1],[1,6,2],[2,3,2],[3,4,1],[3,7,1],[4,5,2],[4,28,1],[5,29,1],[7,30,1],[7,31,1],[8,9,1],[8,12,1],[8,32,1],[9,10,1],[9,33,1],[9,34,1],[10,11,1],[10,13,1],[10,35,1],[11,12,1],[11,14,1],[11,36,1],[13,37,1],[14,15,1],[14,38,1],[14,39,1],[15,16,1],[16,17,2],[16,18,1],[16,19,1],[18,40,1],[19,20,1],[20,21,2],[20,22,1],[20,23,1],[22,41,1],[23,24,1],[24,25,2],[24,26,1],[24,27,1],[26,42,1],[27,43,1]]}},"NTP":{"A":{"id":"ATP","atome":[["PG","P",-7.343,2.947,-4.957],["O1G","O",-7.375,4.173,-4.13],["O2G","O",-7.857,3.289,-6.444],["O3G","O",-8.301,1.832,-4.302],["PB","P",-5.388,2.065,-3.513],["O1B","O",-5.45,3.305,-2.709],["O2B","O",-6.379,0.966,-2.882],["O3B","O",-5.836,2.385,-5.026],["PA","P",-3.501,1.201,-1.973],["O1A","O",-4.441,0.202,-1.416],["O2A","O",-3.601,2.564,-1.123],["O3A","O",-3.882,1.497,-3.508],["O5'","O",-2.0,0.626,-1.892],["C5'","C",-1.724,0.385,-0.512],["C4'","C",-0.303,-0.166,-0.365],["O4'","O",0.661,0.795,-0.847],["C3'","C",0.049,-0.363,1.125],["O3'","O",-0.135,-1.728,1.508],["C2'","C",1.542,0.03,1.215],["O2'","O",2.326,-1.08,1.658],["C1'","C",1.912,0.422,-0.232],["N9","N",2.84,1.554,-0.233],["C8","C",2.501,2.874,-0.233],["N7","N",3.574,3.609,-0.233],["C5","C",4.668,2.81,-0.227],["C6","C",6.055,3.033,-0.234],["N6","N",6.565,4.319,-0.235],["N1","N",6.866,1.98,-0.233],["C2","C",6.389,0.749,-0.232],["N3","N",5.097,0.492,-0.232],["C4","C",4.21,1.482,-0.232],["HOG2","H",-8.761,3.621,-6.357],["HOG3","H",-8.251,1.051,-4.87],["HOB2","H",-6.308,0.176,-3.435],["HOA2","H",-2.974,3.185,-1.517],["H5'1","H",-2.436,-0.342,-0.12],["H5'2","H",-1.811,1.316,0.045],["H4'","H",-0.205,-1.107,-0.906],["H3'","H",-0.559,0.292,1.75],["HO3'","H",0.098,-1.79,2.444],["H2'","H",1.673,0.88,1.885],["HO2'","H",2.007,-1.314,2.54],["H1'","H",2.352,-0.429,-0.753],["H8","H",1.489,3.253,-0.233],["HN61","H",7.525,4.461,-0.236],["HN62","H",5.963,5.079,-0.239],["H2","H",7.083,-0.078,-0.232]],"bindungen":[[0,1,2],[0,2,1],[0,3,1],[0,7,1],[2,31,1],[3,32,1],[4,5,2],[4,6,1],[4,7,1],[4,11,1],[6,33,1],[8,9,2],[8,10,1],[8,11,1],[8,12,1],[10,34,1],[12,13,1],[13,14,1],[13,35,1],[13,36,1],[14,15,1],[14,16,1],[14,37,1],[15,20,1],[16,17,1],[16,18,1],[16,38,1],[17,39,1],[18,19,1],[18,20,1],[18,40,1],[19,41,1],[20,21,1],[20,42,1],[21,22,1],[21,30,1],[22,23,2],[22,43,1],[23,24,1],[24,25,1],[24,30,2],[25,26,1],[25,27,2],[26,44,1],[26,45,1],[27,28,1],[28,29,2],[28,46,1],[29,30,1]]},"U":{"id":"UTP","atome":[["PA","P",-3.522,1.171,-1.971],["O1A","O",-4.444,0.296,-1.214],["O2A","O",-3.541,2.65,-1.334],["O3A","O",-3.993,1.244,-3.509],["O5'","O",-2.03,0.572,-1.895],["PB","P",-5.589,1.46,-3.497],["O1B","O",-5.919,3.011,-3.221],["O2B","O",-6.191,0.63,-2.43],["O3B","O",-6.2,1.027,-4.922],["PG","P",-7.79,0.883,-4.723],["O1G","O",-8.471,2.341,-4.765],["O2G","O",-8.068,0.246,-3.416],["O3G","O",-8.399,-0.027,-5.903],["C5'","C",-1.716,0.423,-0.509],["C4'","C",-0.302,-0.146,-0.365],["O4'","O",0.676,0.81,-0.837],["C1'","C",1.922,0.417,-0.225],["C2'","C",1.545,0.017,1.219],["O2'","O",2.319,-1.105,1.649],["C3'","C",0.05,-0.363,1.123],["O3'","O",-0.144,-1.73,1.489],["N1","N",2.864,1.539,-0.212],["C6","C",4.136,1.363,-0.684],["C2","C",2.468,2.736,0.259],["O2","O",1.333,2.871,0.673],["N3","N",3.313,3.784,0.286],["C4","C",4.575,3.65,-0.17],["O4","O",5.339,4.598,-0.15],["C5","C",5.004,2.398,-0.672],["H2A","H",-2.929,3.187,-1.856],["H1B","H",-5.51,3.516,-3.937],["H1G","H",-8.267,2.72,-5.63],["H3G","H",-9.351,-0.089,-5.747],["H5'1","H",-2.429,-0.258,-0.046],["H5'2","H",-1.768,1.394,-0.018],["H4'","H",-0.212,-1.082,-0.916],["H1'","H",2.354,-0.433,-0.754],["H2'","H",1.682,0.858,1.897],["HA","H",1.996,-1.346,2.528],["H3'","H",-0.551,0.29,1.757],["HB","H",0.118,-1.812,2.416],["H6","H",4.445,0.4,-1.063],["H3","H",3.012,4.638,0.632],["H5","H",6.01,2.272,-1.042]],"bindungen":[[0,1,2],[0,2,1],[0,3,1],[0,4,1],[2,29,1],[3,5,1],[4,13,1],[5,6,1],[5,7,2],[5,8,1],[6,30,1],[8,9,1],[9,10,1],[9,11,2],[9,12,1],[10,31,1],[12,32,1],[13,14,1],[13,33,1],[13,34,1],[14,15,1],[14,19,1],[14,35,1],[15,16,1],[16,17,1],[16,21,1],[16,36,1],[17,18,1],[17,19,1],[17,37,1],[18,38,1],[19,20,1],[19,39,1],[20,40,1],[21,22,1],[21,23,1],[22,28,2],[22,41,1],[23,24,2],[23,25,1],[25,26,1],[25,42,1],[26,27,2],[26,28,1],[28,43,1]]},"G":{"id":"GTP","atome":[["PG","P",-3.489,3.066,-7.847],["O1G","O",-4.85,3.595,-8.089],["O2G","O",-3.046,2.138,-9.086],["O3G","O",-2.456,4.292,-7.697],["O3B","O",-3.486,2.193,-6.495],["PB","P",-4.182,2.362,-5.052],["O1B","O",-4.128,3.784,-4.642],["O2B","O",-5.717,1.886,-5.138],["O3A","O",-3.4,1.462,-3.971],["PA","P",-3.378,1.412,-2.362],["O1A","O",-3.41,2.792,-1.826],["O2A","O",-4.666,0.602,-1.833],["O5'","O",-2.038,0.673,-1.864],["C5'","C",-1.675,0.562,-0.486],["C4'","C",-0.352,-0.194,-0.366],["O4'","O",0.711,0.585,-0.943],["C3'","C",-0.005,-0.412,1.119],["O3'","O",0.091,-1.808,1.41],["C2'","C",1.372,0.274,1.294],["O2'","O",2.232,-0.511,2.122],["C1'","C",1.897,0.32,-0.164],["N9","N",2.872,1.402,-0.326],["C8","C",2.599,2.686,-0.696],["N7","N",3.701,3.376,-0.74],["C5","C",4.743,2.58,-0.403],["C6","C",6.138,2.781,-0.281],["O6","O",6.634,3.872,-0.505],["N1","N",6.908,1.734,0.088],["C2","C",6.344,0.517,0.336],["N2","N",7.149,-0.528,0.711],["N3","N",5.048,0.318,0.227],["C4","C",4.223,1.309,-0.129],["HOG2","H",-3.025,2.6,-9.935],["HOG3","H",-1.543,4.019,-7.537],["HOB2","H",-5.828,0.962,-5.402],["HOA2","H",-4.711,-0.312,-2.146],["H5'","H",-1.565,1.559,-0.059],["H5''","H",-2.454,0.021,0.052],["H4'","H",-0.426,-1.154,-0.877],["H3'","H",-0.752,0.059,1.759],["HO3'","H",0.307,-2.003,2.333],["H2'","H",1.256,1.279,1.698],["HO2'","H",1.899,-0.644,3.02],["H1'","H",2.335,-0.638,-0.444],["H8","H",1.615,3.072,-0.919],["HN1","H",7.868,1.847,0.178],["HN21","H",8.107,-0.396,0.795],["HN22","H",6.762,-1.399,0.89]],"bindungen":[[0,1,2],[0,2,1],[0,3,1],[0,4,1],[2,32,1],[3,33,1],[4,5,1],[5,6,2],[5,7,1],[5,8,1],[7,34,1],[8,9,1],[9,10,2],[9,11,1],[9,12,1],[11,35,1],[12,13,1],[13,14,1],[13,36,1],[13,37,1],[14,15,1],[14,16,1],[14,38,1],[15,20,1],[16,17,1],[16,18,1],[16,39,1],[17,40,1],[18,19,1],[18,20,1],[18,41,1],[19,42,1],[20,21,1],[20,43,1],[21,22,1],[21,31,1],[22,23,2],[22,44,1],[23,24,1],[24,25,1],[24,31,2],[25,26,2],[25,27,1],[27,28,1],[27,45,1],[28,29,1],[28,30,2],[29,46,1],[29,47,1],[30,31,1]]},"C":{"id":"CTP","atome":[["N1","N",2.839,1.554,-0.232],["C2","C",2.481,2.712,0.35],["N3","N",3.306,3.759,0.364],["C4","C",4.505,3.683,-0.2],["C5","C",4.909,2.486,-0.823],["C6","C",4.061,1.429,-0.824],["O2","O",1.384,2.805,0.874],["N4","N",5.347,4.771,-0.18],["C1'","C",1.912,0.421,-0.232],["C2'","C",1.542,0.03,1.215],["O2'","O",2.325,-1.08,1.658],["C3'","C",0.048,-0.363,1.126],["C4'","C",-0.304,-0.166,-0.365],["O4'","O",0.66,0.796,-0.848],["O3'","O",-0.135,-1.728,1.507],["C5'","C",-1.724,0.384,-0.512],["O5'","O",-2.0,0.626,-1.892],["PA","P",-3.501,1.2,-1.973],["O1A","O",-3.592,2.454,-1.192],["O2A","O",-4.524,0.115,-1.366],["O3A","O",-3.883,1.496,-3.508],["PB","P",-5.388,2.065,-3.513],["O1B","O",-5.45,3.305,-2.709],["O2B","O",-6.379,0.965,-2.882],["O3B","O",-5.837,2.384,-5.026],["PG","P",-7.344,2.946,-4.957],["O1G","O",-7.375,4.172,-4.13],["O2G","O",-7.858,3.287,-6.444],["O3G","O",-8.302,1.831,-4.302],["H5","H",5.88,2.409,-1.285],["H6","H",4.349,0.499,-1.291],["HN41","H",5.065,5.595,0.247],["HN42","H",6.224,4.712,-0.588],["H1'","H",2.352,-0.429,-0.754],["H2'","H",1.673,0.881,1.884],["HO2'","H",2.006,-1.313,2.54],["H3'","H",-0.558,0.292,1.752],["H4'","H",-0.204,-1.107,-0.906],["HO3'","H",0.098,-1.789,2.444],["H5'1","H",-2.437,-0.342,-0.12],["H5'2","H",-1.811,1.317,0.045],["HOA2","H",-4.433,-0.685,-1.902],["HOB2","H",-6.309,0.175,-3.434],["HOG2","H",-8.762,3.62,-6.357],["HOG3","H",-8.253,1.051,-4.869]],"bindungen":[[0,1,1],[0,5,1],[0,8,1],[1,2,1],[1,6,2],[2,3,2],[3,4,1],[3,7,1],[4,5,2],[4,29,1],[5,30,1],[7,31,1],[7,32,1],[8,9,1],[8,13,1],[8,33,1],[9,10,1],[9,11,1],[9,34,1],[10,35,1],[11,12,1],[11,14,1],[11,36,1],[12,13,1],[12,15,1],[12,37,1],[14,38,1],[15,16,1],[15,39,1],[15,40,1],[16,17,1],[17,18,2],[17,19,1],[17,20,1],[19,41,1],[20,21,1],[21,22,2],[21,23,1],[21,24,1],[23,42,1],[24,25,1],[25,26,2],[25,27,1],[25,28,1],[27,43,1],[28,44,1]]}}};
 const HELIX = {"DNA":{"drehung":36.0,"anstieg":3.4,"R":[[-0.98803,-0.15383,0.01179],[0.15426,-0.98405,0.08857],[-0.00202,0.08933,0.996]],"O":[-3.271,0.446,-27.295],"vorlage":{"C":{"atome":[["P","P",-2.391,-9.49,-1.871],["OP1","O",-1.607,-10.69,-2.226],["OP2","O",-3.366,-9.597,-0.769],["O5'","O",-1.34,-8.347,-1.52],["C5'","C",-0.162,-8.198,-2.321],["C4'","C",0.566,-7.049,-1.712],["O4'","O",-0.412,-6.013,-1.599],["C3'","C",1.107,-7.26,-0.302],["O3'","O",2.537,-7.085,-0.239],["C2'","C",0.273,-6.281,0.521],["C1'","C",0.0,-5.206,-0.507],["N1","N",-1.177,-4.347,-0.301],["C2","C",-0.992,-3.005,-0.232],["O2","O",0.163,-2.585,-0.256],["N3","N",-2.044,-2.189,-0.15],["C4","C",-3.281,-2.685,-0.118],["N4","N",-4.353,-1.846,-0.063],["C5","C",-3.509,-4.058,-0.157],["C6","C",-2.415,-4.905,-0.265]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[10,11],[11,12],[11,18],[12,13],[12,14],[14,15],[15,16],[15,17],[17,18]]},"G":{"atome":[["P","P",-2.391,-9.49,-1.871],["OP1","O",-1.607,-10.69,-2.226],["OP2","O",-3.366,-9.597,-0.769],["O5'","O",-1.34,-8.347,-1.52],["C5'","C",-0.162,-8.198,-2.321],["C4'","C",0.566,-7.049,-1.712],["O4'","O",-0.412,-6.013,-1.599],["C3'","C",1.107,-7.26,-0.302],["O3'","O",2.537,-7.085,-0.239],["C2'","C",0.273,-6.281,0.521],["C1'","C",0.0,-5.206,-0.507],["N9","N",-1.21,-4.373,-0.562],["C8","C",-2.525,-4.752,-0.528],["N7","N",-3.362,-3.703,-0.551],["C5","C",-2.535,-2.635,-0.605],["C6","C",-2.838,-1.241,-0.636],["O6","O",-3.939,-0.687,-0.593],["N1","N",-1.693,-0.483,-0.695],["C2","C",-0.407,-0.935,-0.716],["N2","N",0.594,-0.013,-0.735],["N3","N",-0.121,-2.236,-0.674],["C4","C",-1.227,-3.012,-0.629]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[10,11],[11,12],[11,21],[12,13],[13,14],[14,15],[14,21],[15,16],[15,17],[17,18],[18,19],[18,20],[20,21]]},"A":{"atome":[["P","P",-2.391,-9.49,-1.871],["OP1","O",-1.607,-10.69,-2.226],["OP2","O",-3.366,-9.597,-0.769],["O5'","O",-1.34,-8.347,-1.52],["C5'","C",-0.162,-8.198,-2.321],["C4'","C",0.566,-7.049,-1.712],["O4'","O",-0.412,-6.013,-1.599],["C3'","C",1.107,-7.26,-0.302],["O3'","O",2.537,-7.085,-0.239],["C2'","C",0.273,-6.281,0.521],["C1'","C",0.0,-5.206,-0.507],["N9","N",-1.198,-4.4,-0.167],["C8","C",-2.466,-4.844,0.087],["N7","N",-3.345,-3.846,0.259],["C5","C",-2.602,-2.731,0.101],["C6","C",-2.953,-1.343,0.113],["N6","N",-4.234,-0.91,0.293],["N1","N",-1.978,-0.463,-0.111],["C2","C",-0.736,-0.9,-0.326],["N3","N",-0.285,-2.152,-0.366],["C4","C",-1.29,-3.025,-0.141]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[10,11],[11,12],[11,20],[12,13],[13,14],[14,15],[14,20],[15,16],[15,17],[17,18],[18,19],[19,20]]},"T":{"atome":[["P","P",-2.391,-9.49,-1.871],["OP1","O",-1.607,-10.69,-2.226],["OP2","O",-3.366,-9.597,-0.769],["O5'","O",-1.34,-8.347,-1.52],["C5'","C",-0.162,-8.198,-2.321],["C4'","C",0.566,-7.049,-1.712],["O4'","O",-0.412,-6.013,-1.599],["C3'","C",1.107,-7.26,-0.302],["O3'","O",2.537,-7.085,-0.239],["C2'","C",0.273,-6.281,0.521],["C1'","C",0.0,-5.206,-0.507],["N1","N",-1.201,-4.377,-0.213],["C2","C",-1.111,-3.017,-0.225],["O2","O",-0.029,-2.461,-0.387],["N3","N",-2.255,-2.284,-0.119],["C4","C",-3.483,-2.865,0.035],["O4","O",-4.463,-2.119,0.079],["C5","C",-3.562,-4.259,0.105],["C7","C",-4.884,-4.957,0.303],["C6","C",-2.399,-5.012,-0.059]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[10,11],[11,12],[11,19],[12,13],[12,14],[14,15],[15,16],[15,17],[17,18],[17,19]]}}},"RNA":{"drehung":32.7,"anstieg":2.6,"R":[[-0.5285,-0.8142,-0.24035],[0.84893,-0.50743,-0.14775],[-0.00166,-0.28213,0.95938]],"O":[-3.203,6.553,31.698],"vorlage":{"A":{"atome":[["P","P",-3.361,-9.271,0.698],["OP1","O",-3.047,-10.495,1.473],["OP2","O",-4.648,-8.57,0.913],["O5'","O",-2.191,-8.207,0.921],["C5'","C",-0.851,-8.582,0.572],["C4'","C",0.05,-7.39,0.469],["O4'","O",-0.376,-6.525,-0.608],["C3'","C",0.163,-6.451,1.661],["O3'","O",0.969,-6.999,2.688],["C2'","C",0.824,-5.25,0.982],["C1'","C",-0.0,-5.201,-0.314],["O2'","O",2.17,-5.488,0.61],["N9","N",-1.19,-4.372,-0.191],["C8","C",-2.485,-4.806,-0.053],["N7","N",-3.357,-3.829,0.025],["C5","C",-2.587,-2.68,-0.081],["C6","C",-2.912,-1.313,-0.069],["N6","N",-4.157,-0.85,0.057],["N1","N",-1.912,-0.408,-0.191],["C2","C",-0.666,-0.88,-0.317],["N3","N",-0.235,-2.137,-0.343],["C4","C",-1.252,-3.003,-0.22]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[9,11],[10,12],[12,13],[12,21],[13,14],[14,15],[15,16],[15,21],[16,17],[16,18],[18,19],[19,20],[20,21]]},"U":{"atome":[["P","P",-3.361,-9.271,0.698],["OP1","O",-3.047,-10.495,1.473],["OP2","O",-4.648,-8.57,0.913],["O5'","O",-2.191,-8.207,0.921],["C5'","C",-0.851,-8.582,0.572],["C4'","C",0.05,-7.39,0.469],["O4'","O",-0.376,-6.525,-0.608],["C3'","C",0.163,-6.451,1.661],["O3'","O",0.969,-6.999,2.688],["C2'","C",0.824,-5.25,0.982],["C1'","C",-0.0,-5.201,-0.314],["O2'","O",2.17,-5.488,0.61],["N1","N",-1.221,-4.408,-0.133],["C2","C",-1.128,-3.051,0.035],["O2","O",-0.1,-2.409,0.118],["N3","N",-2.339,-2.425,0.146],["C4","C",-3.589,-2.995,0.174],["O4","O",-4.584,-2.291,0.336],["C5","C",-3.592,-4.419,0.064],["C6","C",-2.43,-5.056,-0.101]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[9,11],[10,12],[12,13],[12,19],[13,14],[13,15],[15,16],[16,17],[16,18],[18,19]]},"C":{"atome":[["P","P",-3.361,-9.271,0.698],["OP1","O",-3.047,-10.495,1.473],["OP2","O",-4.648,-8.57,0.913],["O5'","O",-2.191,-8.207,0.921],["C5'","C",-0.851,-8.582,0.572],["C4'","C",0.05,-7.39,0.469],["O4'","O",-0.376,-6.525,-0.608],["C3'","C",0.163,-6.451,1.661],["O3'","O",0.969,-6.999,2.688],["C2'","C",0.824,-5.25,0.982],["C1'","C",-0.0,-5.201,-0.314],["O2'","O",2.17,-5.488,0.61],["N1","N",-1.206,-4.369,-0.218],["C2","C",-1.081,-2.976,-0.247],["O2","O",0.054,-2.484,-0.352],["N3","N",-2.186,-2.203,-0.165],["C4","C",-3.392,-2.76,-0.04],["N4","N",-4.462,-1.967,0.055],["C5","C",-3.552,-4.173,-0.01],["C6","C",-2.45,-4.924,-0.111]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[9,11],[10,12],[12,13],[12,19],[13,14],[13,15],[15,16],[16,17],[16,18],[18,19]]},"G":{"atome":[["P","P",-3.361,-9.271,0.698],["OP1","O",-3.047,-10.495,1.473],["OP2","O",-4.648,-8.57,0.913],["O5'","O",-2.191,-8.207,0.921],["C5'","C",-0.851,-8.582,0.572],["C4'","C",0.05,-7.39,0.469],["O4'","O",-0.376,-6.525,-0.608],["C3'","C",0.163,-6.451,1.661],["O3'","O",0.969,-6.999,2.688],["C2'","C",0.824,-5.25,0.982],["C1'","C",-0.0,-5.201,-0.314],["O2'","O",2.17,-5.488,0.61],["N9","N",-1.206,-4.383,-0.217],["C8","C",-2.505,-4.81,-0.13],["N7","N",-3.363,-3.83,-0.045],["C5","C",-2.589,-2.68,-0.083],["C6","C",-2.96,-1.31,-0.032],["O6","O",-4.106,-0.829,0.051],["N1","N",-1.85,-0.465,-0.093],["C2","C",-0.551,-0.902,-0.192],["N2","N",0.412,0.027,-0.244],["N3","N",-0.195,-2.178,-0.239],["C4","C",-1.256,-3.008,-0.182]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[9,11],[10,12],[12,13],[12,22],[13,14],[14,15],[15,16],[15,22],[16,17],[16,18],[18,19],[19,20],[19,21],[21,22]]}}}};
 /*__/NUC__*/
-/*__HELIX__*/
-// Doppelhelix aus einer Sequenz bauen (Quelle: template/site/helix.js, von build.py in die Seiten kopiert).
-// Braucht HELIX aus nuc-data.js. Einheiten: Ångström. Die Helixachse ist die z-Achse.
-// Jedes Basenpaar k liegt um k·Drehwinkel gedreht und k·Anstieg höher; Strang 1 läuft 5'→3' nach oben,
-// Strang 2 (um die Dyade des Paares gedreht) nach unten.
-const HELIX_BAU = (() => {
-  const KOMP = {DNA: {A: "T", T: "A", G: "C", C: "G"}, RNA: {A: "U", U: "A", G: "C", C: "G"}};
-  const RUECKEN = new Set(["P", "OP1", "OP2", "O5'", "C5'", "C4'", "O4'", "C3'", "O3'", "C2'", "C1'", "O2'"]);
-  const PHOSPHAT = new Set(["P", "OP1", "OP2"]);
-
-  // Gegenstrang, 5'→3' gelesen
-  const gegenstrang = (seq, form) => [...seq].reverse().map(b => KOMP[form][b]).join("");
-  const mul = (R, p) => [R[0][0]*p[0] + R[0][1]*p[1] + R[0][2]*p[2],
-                         R[1][0]*p[0] + R[1][1]*p[1] + R[1][2]*p[2],
-                         R[2][0]*p[0] + R[2][1]*p[1] + R[2][2]*p[2]];
-  const rz = (grad) => { const a = grad * Math.PI / 180, c = Math.cos(a), s = Math.sin(a); return [[c, -s, 0], [s, c, 0], [0, 0, 1]]; };
-  const mm = (A, B) => A.map(r => [0, 1, 2].map(j => r[0]*B[0][j] + r[1]*B[1][j] + r[2]*B[2][j]));
-
-  // Rückgabe: {atome, bindungen, n, form, strang1, strang2}
-  // atom: {strang, bp, name, el, base, pos, art: "base"|"ruecken", rolle: "p5"|"oh3"|null}
-  function bauen(seq, form) {
-    const H = HELIX[form], n = seq.length, atome = [], bindungen = [], index = {};
-    const bpIdx = [];
-    for (let k = 0; k < n; k++) {
-      const Rk = mm(rz(k * H.drehung), H.R);
-      const Ok = mul(rz(k * H.drehung), H.O); Ok[2] += k * H.anstieg;
-      for (const strang of [1, 2]) {
-        const b = strang === 1 ? seq[k] : KOMP[form][seq[k]];
-        const vorl = H.vorlage[b], von = atome.length;
-        for (const [name, el, x, y, z] of vorl.atome) {
-          const q = strang === 2 ? [x, -y, -z] : [x, y, z];
-          const p = mul(Rk, q);
-          const frei5 = PHOSPHAT.has(name) && ((strang === 1 && k === 0) || (strang === 2 && k === n - 1));
-          const frei3 = name === "O3'" && ((strang === 1 && k === n - 1) || (strang === 2 && k === 0));
-          index[strang + ":" + k + ":" + name] = atome.length;
-          atome.push({strang, bp: k, name, el, base: b, pos: [p[0] + Ok[0], p[1] + Ok[1], p[2] + Ok[2]],
-                      art: RUECKEN.has(name) ? "ruecken" : "base", rolle: frei5 ? "p5" : frei3 ? "oh3" : null});
-        }
-        for (const [i, j] of vorl.bindungen) bindungen.push([von + i, von + j]);
-      }
-    }
-    // Phosphodiesterbindungen: O3' des Vorgängers an P des Nachfolgers
-    for (let k = 0; k < n - 1; k++) {
-      bindungen.push([index["1:" + k + ":O3'"], index["1:" + (k + 1) + ":P"]]);
-      bindungen.push([index["2:" + (k + 1) + ":O3'"], index["2:" + k + ":P"]]);
-    }
-    return {atome, bindungen, n, form, strang1: seq, strang2: gegenstrang(seq, form), index};
-  }
-
-  const abstand = (a, b) => Math.hypot(a.pos[0] - b.pos[0], a.pos[1] - b.pos[1], a.pos[2] - b.pos[2]);
-  return {bauen, gegenstrang, abstand, KOMP};
-})();
-/*__/HELIX__*/
 /*__MOL3D__*/
 // Kleine 3D-Ansicht für Moleküle (WebGL): Kugeln, Stäbe, gestrichelte Bindungen, Drehen/Zoomen,
 // Achsenpfeile, Beschriftungen, Schnittebene, Auswahl per Maus. Quelle: template/site/mol3d.js,
@@ -756,14 +662,6 @@ const DNA2D = (() => {
 
   // NH2 → NH₂ (Ziffer tiefgestellt), O⁻ (Minus hochgestellt)
   const fmt = t => t.replace(/(\d)$/, '<tspan dy="0.12" font-size="0.36">$1</tspan>').replace("⁻", '<tspan dy="-0.2" font-size="0.36">−</tspan>');
-  const hull = pts => {                    // konvexe Hülle (Andrew)
-    const p = pts.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-    const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
-    const lo = [], up = [];
-    for (const q of p){ while (lo.length > 1 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
-    for (const q of p.slice().reverse()){ while (up.length > 1 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
-    return lo.slice(0, -1).concat(up.slice(0, -1));
-  };
 
   // Zeichnung eines Nukleosidtriphosphats. art: "dNTP" | "NTP"; opt.hervor: Menge aus "c2", "c5", "schnitt"
   // (werden farbig hervorgehoben); 5'-Phosphat und 3'-OH sind immer farbig.
@@ -818,51 +716,48 @@ const DNA2D = (() => {
       T.push(`<text x="${(x - 0.17).toFixed(3)}" y="${(-y).toFixed(3)}" text-anchor="start" dominant-baseline="central" font-size="0.5" font-weight="600" fill="${col}"${extra || ""}>${fmt(text)}</text>`);
     };
 
-    // Hintergrundfläche der Base in ihrer Farbe (gleiche Farbe wie im 3D-Bild)
-    const bp = BASE_ATOME[b].map(n => A[n]);
-    Z.unshift(`<polygon points="${hull(bp).map(q => q[0].toFixed(2) + "," + (-q[1]).toFixed(2)).join(" ")}" fill="${farbe.base}" fill-opacity="0.28" stroke="${farbe.base}" stroke-opacity="0.28" stroke-width="0.85" stroke-linejoin="round"/>`);
     const sechser = ["N1", "C2", "N3", "C4", "C5", "C6"].map(m => A[m]);
     const mitte = [sechser.reduce((s, p) => s + p[0], 0) / 6, sechser.reduce((s, p) => s + p[1], 0) / 6];
     const BL = BESCHRIFTUNG[b], istDoppelt = (a, c) => DOPPELT[b].some(([x, y]) => (x === a && y === c) || (x === c && y === a));
     const imRing = new Set(["N1", "C2", "N3", "C4", "C5", "C6", "N7", "C8", "N9"]);
     for (const [a, c] of pl.bind){
-      if (a === "C1'" || c === "C1'"){ line(A["C1'"], A[GLYKO[b]], ink); continue; }
+      if (a === "C1'" || c === "C1'"){ line(A["C1'"], A[GLYKO[b]], P("zucker"), 0.08); continue; }
       const [p, q] = kurz(A[a], A[c], BL[a], BL[c]);
-      line(p, q, ink);
+      line(p, q, farbe.base, 0.09);
       if (istDoppelt(a, c)){
         const fuenf = ["C4", "C5", "N7", "C8", "N9"];
         const ringBindung = imRing.has(a) && imRing.has(c);
         const zentrum = ringBindung && fuenf.includes(a) && fuenf.includes(c) && !(["C4", "C5"].includes(a) && ["C4", "C5"].includes(c)) ? [(A["C4"][0] + A["C5"][0] + A["N7"][0] + A["C8"][0] + A["N9"][0]) / 5, (A["C4"][1] + A["C5"][1] + A["N7"][1] + A["C8"][1] + A["N9"][1]) / 5] : mitte;
         const [p2, q2] = doppel(p, q, ringBindung ? zentrum : null);
-        line(p2, q2, ink);
+        line(p2, q2, farbe.base, 0.09);
       }
     }
     for (const n of BASE_ATOME[b]) if (BL[n]) label(n, BL[n], ink);
     // Zucker
     const zucker = [["C1'", "C2'"], ["C2'", "C3'"], ["C3'", "C4'"], ["C4'", "O4'"], ["O4'", "C1'"]];
     const bei = ["O4'"];
-    for (const [a, c] of zucker){ const [p, q] = kurz(A[a], A[c], bei.includes(a), bei.includes(c)); line(p, q, ink); }
+    for (const [a, c] of zucker){ const [p, q] = kurz(A[a], A[c], bei.includes(a), bei.includes(c)); line(p, q, P("zucker"), 0.08); }
     label("O4'", "O", ink);
     // 2'-Position
     const c2farbe = hv.has("c2") ? farbe.oh2 : ink;
     const c2text = art === "NTP" ? "OH" : "H";
-    { const [p, q] = kurz(A["C2'"], A["X2"], false, true); line(p, q, c2farbe, hv.has("c2") ? 0.12 : 0.07); label("X2", c2text, c2farbe, ' font-weight="700"'); }
+    { const [p, q] = kurz(A["C2'"], A["X2"], false, true); line(p, q, hv.has("c2") ? farbe.oh2 : P("zucker"), 0.09); label("X2", c2text, c2farbe, ' font-weight="700"'); }
     // 3'-OH (immer farbig)
-    { const [p, q] = kurz(A["C3'"], A["O3'"], false, true); line(p, q, farbe.oh3, 0.12); label("O3'", "OH", farbe.oh3, ' font-weight="700"'); }
+    { const [p, q] = kurz(A["C3'"], A["O3'"], false, true); line(p, q, farbe.oh3, 0.09); label("O3'", "OH", farbe.oh3, ' font-weight="700"'); }
     // 5'-Seite: C5' neutral, ab O5' Triphosphat farbig (5'-Phosphat)
-    { const [p, q] = kurz(A["C4'"], A["C5'"], false, false); line(p, q, ink); }
+    { const [p, q] = kurz(A["C4'"], A["C5'"], false, false); line(p, q, P("zucker"), 0.08); }
     const folge = [["C5'", "O5'"], ["O5'", "PA"], ["PA", "O3A"], ["O3A", "PB"], ["PB", "O3B"], ["O3B", "PG"]];
     for (const [a, c] of folge){
       const la = /^[OP]/.test(a), lc = /^[OP]/.test(c), [p, q] = kurz(A[a], A[c], la, lc);
-      line(p, q, a === "C5'" ? ink : farbe.p5, a === "C5'" ? 0.07 : 0.12);
+      line(p, q, a === "C5'" ? P("zucker") : farbe.p5, a === "C5'" ? 0.08 : 0.07);
     }
     for (const [p, dp, o] of [["PA", true, "O1A"], ["PB", true, "O1B"], ["PG", true, "O1G"]]){
       const [x, y] = kurz(A[p], A[o], true, true);
-      line(x, y, farbe.p5, 0.12);
+      line(x, y, farbe.p5, 0.07);
       const dx = y[0] - x[0], dy = y[1] - x[1], L = Math.hypot(dx, dy);
-      line([x[0] - dy / L * 0.09, x[1] + dx / L * 0.09], [y[0] - dy / L * 0.09, y[1] + dx / L * 0.09], farbe.p5, 0.12);
+      line([x[0] - dy / L * 0.09, x[1] + dx / L * 0.09], [y[0] - dy / L * 0.09, y[1] + dx / L * 0.09], farbe.p5, 0.07);
     }
-    for (const [p, o] of [["PA", "O2A"], ["PB", "O2B"], ["PG", "O2G"], ["PG", "O3G"]]){ const [x, y] = kurz(A[p], A[o], true, true); line(x, y, farbe.p5, 0.12); }
+    for (const [p, o] of [["PA", "O2A"], ["PB", "O2B"], ["PG", "O2G"], ["PG", "O3G"]]){ const [x, y] = kurz(A[p], A[o], true, true); line(x, y, farbe.p5, 0.07); }
     for (const n of ["PA", "PB", "PG"]) label(n, "P", farbe.p5, ' font-weight="800"');
     for (const n of ["O5'", "O3A", "O3B", "O1A", "O1B", "O1G"]) label(n, "O", farbe.p5);
     for (const n of ["O2A", "O2B", "O2G", "O3G"]) label(n, "O⁻", farbe.p5);
@@ -966,22 +861,20 @@ const DNA2D = (() => {
       Z.push(`<rect x="${(links ? x - w + 0.28 : x - 0.28).toFixed(3)}" y="${(-y - 0.3).toFixed(3)}" width="${w.toFixed(3)}" height="0.6" rx="0.22" fill="var(--surface)"/>`);
       T.push(`<text x="${(links ? x + 0.17 : x - 0.17).toFixed(3)}" y="${(-y).toFixed(3)}" text-anchor="${links ? "end" : "start"}" dominant-baseline="central" font-size="0.5" font-weight="600" fill="${col}"${extra || ""}>${fmt(text)}</text>`);
     };
-    // Hintergrundfläche der Base
-    Z.push(`<polygon points="${hull(BASE_ATOME[b].map(n => A[n])).map(xy).join(" ")}" fill="${farbe.base}" fill-opacity="0.3" stroke="${farbe.base}" stroke-opacity="0.3" stroke-width="0.85" stroke-linejoin="round"/>`);
     const sechser = ["N1", "C2", "N3", "C4", "C5", "C6"].map(m => A[m]);
     const mitte = [sechser.reduce((q, p) => q + p[0], 0) / 6, sechser.reduce((q, p) => q + p[1], 0) / 6];
     const BL = BESCHRIFTUNG[b], istDoppelt = (a, c) => DOPPELT[b].some(([x, y]) => (x === a && y === c) || (x === c && y === a));
     const imRing = new Set(["N1", "C2", "N3", "C4", "C5", "C6", "N7", "C8", "N9"]), fuenf = ["C4", "C5", "N7", "C8", "N9"];
     for (const [a, c] of pl.bind){
-      if (a === "C1'" || c === "C1'"){ const [p, q] = kurz(A["C1'"], A[GLYKO[b]], false, BL[GLYKO[b]]); line(p, q, ink); continue; }
+      if (a === "C1'" || c === "C1'"){ const [p, q] = kurz(A["C1'"], A[GLYKO[b]], false, BL[GLYKO[b]]); line(p, q, P("zucker"), 0.08); continue; }
       const [p, q] = kurz(A[a], A[c], BL[a], BL[c]);
-      line(p, q, ink);
+      line(p, q, farbe.base, 0.09);
       if (istDoppelt(a, c)){
         const ringB = imRing.has(a) && imRing.has(c);
         const z5 = ringB && fuenf.includes(a) && fuenf.includes(c) && !(["C4", "C5"].includes(a) && ["C4", "C5"].includes(c));
         const zentrum = z5 ? [fuenf.reduce((q, n) => q + A[n][0], 0) / 5, fuenf.reduce((q, n) => q + A[n][1], 0) / 5] : mitte;
         const [p2, q2] = doppel(p, q, ringB ? zentrum : null);
-        line(p2, q2, ink);
+        line(p2, q2, farbe.base, 0.09);
       }
     }
     for (const n of BASE_ATOME[b]) if (BL[n]) label(n, BL[n], ink);
@@ -993,12 +886,12 @@ const DNA2D = (() => {
     { const [p, q] = kurz(A["C2'"], A["X2"], false, true); line(p, q, P("zucker"), 0.08); label("X2", f === "RNA" ? "OH" : "H", P("oh2"), ' font-weight="700"'); }
     // 3'-OH (cyan) und 5'-Phosphat (magenta)
     const frei3 = opt.frei3 !== false;
-    { const [p, q] = kurz(A["C3'"], A["O3'"], false, true); line(p, q, farbe.oh3, 0.12);
+    { const [p, q] = kurz(A["C3'"], A["O3'"], false, true); line(p, q, farbe.oh3, 0.09);
       if (frei3) label("O3'", "OH", farbe.oh3, ' font-weight="700"');
       else S.push(`<circle cx="${A["O3'"][0].toFixed(3)}" cy="${(-A["O3'"][1]).toFixed(3)}" r="0.15" fill="${farbe.oh3}"/>`); }
     { const [p, q] = kurz(A["C4'"], A["C5'"], false, false); line(p, q, P("zucker"), 0.08); }
     { const [p, q] = kurz(A["C5'"], A["O5'"], false, true); line(p, q, P("zucker"), 0.08); label("O5'", "O", farbe.p5); }
-    { const [p, q] = kurz(A["O5'"], A["P"], true, true); line(p, q, farbe.p5, 0.12); }
+    { const [p, q] = kurz(A["O5'"], A["P"], true, true); line(p, q, farbe.p5, 0.07); }
     S.push(`<circle cx="${A["P"][0].toFixed(3)}" cy="${(-A["P"][1]).toFixed(3)}" r="0.36" fill="${farbe.p5}"/>`);
     T.push(`<text x="${A["P"][0].toFixed(3)}" y="${(-A["P"][1]).toFixed(3)}" text-anchor="middle" dominant-baseline="central" font-size="0.46" font-weight="800" fill="#fff">P</text>`);
     const st = HB_STELLEN[b];
@@ -1036,7 +929,7 @@ const DNA2D = (() => {
 "use strict";
 const $ = id => document.getElementById(id);
 const ARTEN = ["dNTP", "NTP"];
-const S = {einfach: false, base: "A", modus: "finden", gefunden: new Set(), spalt: false, farben: "nukleotid", h: true, beschr: true};
+const S = {einfach: $("einfach").checked, base: "A", modus: "finden", gefunden: new Set(), spalt: false, farben: "nukleotid", h: true, beschr: true};
 const GL = MOL3D.supported();
 
 /* ---------- Namen und Gruppen ---------- */
@@ -1217,211 +1110,5 @@ grundstatus();
 })();
 </script>
 
-<script>
-(() => {
-"use strict";
-const $ = id => document.getElementById(id);
-const svg = $("leiter");
-const ROWS = 5, PITCH = 4.0, XL = -3.714, XR = 3.714;
-const POOL = [[12.8, -1.2], [20.6, -1.2], [12.8, -8.9], [20.6, -8.9]];
-const Z = {art: "DNA", seq: [], placed: [], sel: null, drag: null};
-const ALPH = {DNA: ["A", "C", "G", "T"], RNA: ["A", "C", "G", "U"]};
-const KOMP = {DNA: {A: "T", T: "A", G: "C", C: "G"}, RNA: {A: "U", U: "A", G: "C", C: "G"}};
-const NAMEN = {A: "Adenin", C: "Cytosin", G: "Guanin", T: "Thymin", U: "Uracil"};
-const einfach = () => $("einfach").checked;
-const yRow = i => -i * PITCH;
-const dim = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
-const tr = (x, y) => `translate(${x.toFixed(3)},${(-y).toFixed(3)})`;
-
-function neueSequenz(){
-  const al = ALPH[Z.art];
-  let seq;
-  do { seq = Array.from({length: ROWS}, () => al[Math.floor(Math.random() * 4)]); }
-  while (!seq.some(b => b === "G" || b === "C") || !seq.some(b => b === "A" || b === "T" || b === "U"));
-  Z.seq = seq; Z.placed = Array(ROWS).fill(null); Z.sel = null;
-}
-const kacheln = () => ({
-  links: Z.seq.map((b, i) => DNA2D.kachel(b, Z.art, "l", {frei3: i === ROWS - 1})),
-  rechts: Z.placed.map((b, i) => b ? DNA2D.kachel(b, Z.art, "r", {frei3: i === 0}) : null),
-});
-const chip = (b, x, y) => {
-  const c = PALETTE.get(b), l = lumi(c);
-  return `<circle cx="${x}" cy="${-y}" r="0.46" fill="${c}" stroke="var(--surface)" stroke-width="0.08"/><text x="${x}" y="${-y}" text-anchor="middle" dominant-baseline="central" font-size="0.6" font-weight="800" fill="${l > 0.55 ? "#111" : "#fff"}">${b}</text>`;
-};
-const lumi = h => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
-// Verbindung O3' (cyan) – P (magenta) zwischen zwei Nukleotiden: die Hälften zeigen, welche Gruppe von welchem Nukleotid stammt
-function verbinder(o3, p){
-  const m = [(o3[0] + p[0]) / 2, (o3[1] + p[1]) / 2], c = PALETTE.get("oh3"), q = PALETTE.get("p5");
-  const ln = (a, b, col) => `<line x1="${a[0].toFixed(3)}" y1="${(-a[1]).toFixed(3)}" x2="${b[0].toFixed(3)}" y2="${(-b[1]).toFixed(3)}" stroke="${col}" stroke-width="0.12" stroke-linecap="round"/>`;
-  return ln(o3, m, c) + ln(m, p, q);
-}
-const bondLinien = (liste, klasse) => liste.map(q => `<line class="${klasse}" x1="${q.von[0].toFixed(3)}" y1="${(-q.von[1]).toFixed(3)}" x2="${q.nach[0].toFixed(3)}" y2="${(-q.nach[1]).toFixed(3)}" stroke="${PALETTE.get("hbruecke")}" stroke-width="0.11" stroke-dasharray="0.2 0.16" stroke-linecap="round"/>`).join("");
-
-function render(){
-  const f = Z.art, K = kacheln(), P = PALETTE.get;
-  let t = "", unten = "";
-  // Beschriftung der Stränge
-  const kopf = (x, y, txt, col) => `<text x="${x}" y="${-y}" text-anchor="middle" font-size="0.9" font-weight="800" fill="${col}">${txt}</text>`;
-  t += `<text x="${XL}" y="${-(yRow(0) + 4.6)}" text-anchor="middle" font-size="0.8" font-weight="700" fill="currentColor">Vorlage</text>`;
-  t += `<text x="${XR}" y="${-(yRow(0) + 4.6)}" text-anchor="middle" font-size="0.8" font-weight="700" fill="currentColor">Gegenstrang</text>`;
-  // Linke Kacheln und Verbinder
-  for (let i = 0; i < ROWS; i++){
-    const L = K.links[i], y = yRow(i);
-    t += `<g transform="${tr(XL, y)}">${L.svg}${chip(Z.seq[i], L.mitte[0], L.mitte[1])}</g>`;
-    if (i > 0){
-      const K0 = K.links[i - 1];
-      unten += verbinder([XL + K0.atome["O3'"][0], yRow(i - 1) + K0.atome["O3'"][1]], [XL + L.atome["P"][0], y + L.atome["P"][1]]);
-    }
-  }
-  t += kopf(XL + K.links[0].atome["P"][0] - 0.2, yRow(0) + K.links[0].atome["P"][1] + 1.0, "5'", P("p5"));
-  const l3 = K.links[ROWS - 1].atome["O3'"];
-  t += kopf(XL + l3[0] + 0.1, yRow(ROWS - 1) + l3[1] - 1.15, "3'", P("oh3"));
-  // Rechte Seite: Plätze und gesetzte Kacheln
-  for (let i = 0; i < ROWS; i++){
-    const y = yRow(i), R = K.rechts[i];
-    if (R){
-      t += `<g class="gesetzt" data-zeile="${i}" tabindex="0" role="button" aria-label="Zeile ${i + 1}: ${NAMEN[Z.placed[i]]} gesetzt. Zum Entfernen Eingabetaste drücken." transform="${tr(XR, y)}">${R.svg}${chip(Z.placed[i], R.mitte[0], R.mitte[1])}</g>`;
-      t += bondLinien(DNA2D.bruecken(K.links[i], [XL, y], R, [XR, y]).liste.map(q => ({...q, von: [q.von[0], q.von[1]], nach: [q.nach[0], q.nach[1]]})), "hb");
-      if (i < ROWS - 1 && K.rechts[i + 1]){
-        const R1 = K.rechts[i + 1];
-        unten += verbinder([XR + R1.atome["O3'"][0], yRow(i + 1) + R1.atome["O3'"][1]], [XR + R.atome["P"][0], y + R.atome["P"][1]]);
-      }
-    } else {
-      const bn = NAMEN[Z.seq[i]];
-      t += `<g class="platz" data-zeile="${i}" tabindex="0" role="button" aria-label="Leeres Feld in Zeile ${i + 1}, Partner für ${bn}. Ein ausgewähltes Nukleotid mit der Eingabetaste hier einsetzen." transform="${tr(XR, y)}"><rect class="rahmen" x="-3.8" y="-3.4" width="6.8" height="6.4" rx="0.5" transform="translate(0,-0.1)"/></g>`;
-    }
-  }
-  // Enden der rechten Seite
-  const first = K.rechts[0], last = K.rechts[ROWS - 1];
-  if (first) t += kopf(XR + first.atome["O3'"][0] + 0.2, yRow(0) + first.atome["O3'"][1] + 0.85, "3'", P("oh3"));
-  if (last) t += kopf(XR + last.atome["P"][0] + 0.1, yRow(ROWS - 1) + last.atome["P"][1] - 1.25, "5'", P("p5"));
-  // Vorrat
-  t += `<text x="16.7" y="${-(yRow(0) + 4.6)}" text-anchor="middle" font-size="0.8" font-weight="700" fill="currentColor">Vorrat</text>`;
-  ALPH[f].forEach((b, k) => {
-    const R = DNA2D.kachel(b, f, "r", {frei3: true}), o = POOL[k];
-    t += `<g class="vorrat" data-base="${b}" tabindex="0" role="button" aria-pressed="${Z.sel === b}" aria-label="Nukleotid ${NAMEN[b]} (${b}). Ziehen oder mit der Eingabetaste auswählen." transform="${tr(o[0], o[1])}"><rect class="rahmen" x="-3.9" y="-3.5" width="7.2" height="7" rx="0.5" transform="translate(0,-0.3)"/>${R.svg}${chip(b, R.mitte[0], R.mitte[1])}</g>`;
-  });
-  svg.setAttribute("viewBox", `-7.6 -5.8 31.6 ${(5.8 + (ROWS - 1) * PITCH + 5.4).toFixed(1)}`);
-  svg.innerHTML = unten + t;
-  // Ereignisse
-  svg.querySelectorAll(".vorrat").forEach(g => {
-    g.addEventListener("pointerdown", e => starteZiehen(e, g));
-    g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); Z.sel = Z.sel === g.dataset.base ? null : g.dataset.base; render(); const n = svg.querySelector(`.vorrat[data-base="${g.dataset.base}"]`); if (n) n.focus(); if (Z.sel) status(einfach() ? "Wähle jetzt ein leeres Feld rechts aus." : "Ausgewählt: " + NAMEN[Z.sel] + ". Wähle mit Tab ein leeres Feld und drücke die Eingabetaste."); } });
-  });
-  svg.querySelectorAll(".platz").forEach(g => g.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && Z.sel){ e.preventDefault(); setze(+g.dataset.zeile, Z.sel); } }));
-  svg.querySelectorAll(".platz").forEach(g => g.addEventListener("click", () => { if (Z.sel) setze(+g.dataset.zeile, Z.sel); }));
-  svg.querySelectorAll(".gesetzt").forEach(g => {
-    const weg = () => { Z.placed[+g.dataset.zeile] = null; render(); status("Das Feld ist wieder frei."); };
-    g.addEventListener("click", weg);
-    g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); weg(); } });
-  });
-  $("f-at").textContent = f === "DNA" ? "A–T" : "A–U";
-  $("z-richtung").hidden = einfach();
-  $("r-gegen").hidden = einfach();
-}
-
-function status(txt){ $("status2").innerHTML = txt; }
-const grundtext = () => "Ziehe ein Nukleotid aus dem Vorrat in ein leeres Feld des Gegenstrangs. Wenn zwei Basen zueinander passen, erscheinen gestrichelte Linien zwischen ihnen.";
-
-/* ---------- Ziehen ---------- */
-function svgPunkt(e){
-  const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
-  const p = pt.matrixTransform(svg.getScreenCTM().inverse());
-  return [p.x, -p.y];
-}
-function starteZiehen(e, g){
-  if (e.button > 0) return;
-  e.preventDefault();
-  const b = g.dataset.base, k = ALPH[Z.art].indexOf(b), p = svgPunkt(e), o = POOL[k];
-  const R = DNA2D.kachel(b, Z.art, "r", {frei3: true});
-  const el = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  el.setAttribute("class", "zieh"); el.setAttribute("pointer-events", "none"); el.setAttribute("opacity", "0.92");
-  el.innerHTML = R.svg + chip(b, R.mitte[0], R.mitte[1]);
-  const live = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  svg.appendChild(live); svg.appendChild(el);
-  Z.drag = {b, R, el, live, off: [p[0] - o[0], p[1] - o[1]], pos: o.slice(), zeile: -1, id: e.pointerId};
-  el.setAttribute("transform", tr(o[0], o[1]));
-  svg.setPointerCapture(e.pointerId);
-  status("Bewege den Baustein zu einer Base des linken Strangs.");
-}
-svg.addEventListener("pointermove", e => {
-  const d = Z.drag; if (!d || e.pointerId !== d.id) return;
-  const p = svgPunkt(e), pos = [p[0] - d.off[0], p[1] - d.off[1]];
-  d.pos = pos; d.el.setAttribute("transform", tr(pos[0], pos[1]));
-  // nächstes freies Feld
-  let best = -1, bd = 1e9;
-  for (let i = 0; i < ROWS; i++) if (!Z.placed[i]){ const q = dim(pos, [XR, yRow(i)]); if (q < bd){ bd = q; best = i; } }
-  d.zeile = bd < 6 ? best : -1;
-  if (d.zeile >= 0 && bd < 1.8){ pos[0] = XR; pos[1] = yRow(d.zeile); d.pos = pos; d.el.setAttribute("transform", tr(pos[0], pos[1])); }   // magnetisch einrasten
-  svg.querySelectorAll(".platz").forEach(g => g.classList.toggle("nah", +g.dataset.zeile === d.zeile));
-  if (d.zeile >= 0){
-    const L = DNA2D.kachel(Z.seq[d.zeile], Z.art, "l", {});
-    const r = DNA2D.bruecken(L, [XL, yRow(d.zeile)], d.R, pos);
-    d.live.innerHTML = bondLinien(r.liste, "live");
-  } else d.live.innerHTML = "";
-});
-function beendeZiehen(e){
-  const d = Z.drag; if (!d || e.pointerId !== d.id) return;
-  Z.drag = null;
-  d.el.remove(); d.live.remove();
-  svg.querySelectorAll(".platz").forEach(g => g.classList.remove("nah"));
-  if (d.zeile >= 0 && dim(d.pos, [XR, yRow(d.zeile)]) < 2.4) setze(d.zeile, d.b);
-  else status("Lasse den Baustein genau auf einem leeren Feld los.");
-}
-svg.addEventListener("pointerup", beendeZiehen);
-svg.addEventListener("pointercancel", beendeZiehen);
-
-/* ---------- Setzen ---------- */
-function setze(i, b){
-  if (Z.placed[i]) return;
-  const L = DNA2D.kachel(Z.seq[i], Z.art, "l", {}), R = DNA2D.kachel(b, Z.art, "r", {}), r = DNA2D.bruecken(L, [XL, yRow(i)], R, [XR, yRow(i)]);
-  if (r.klirr < 2.3){
-    status("Das passt nicht: Die beiden Basen sind zu groß und überlappen sich. " + (einfach() ? "" : "Zwei Purine (A, G) mit zwei Ringen passen nicht gegenüber."));
-    return;
-  }
-  if (!r.passt){
-    status("Das passt nicht: Die beiden Basen liegen gegenüber, bilden aber keine stabile Paarung. Probiere einen anderen Baustein.");
-    return;
-  }
-  Z.placed[i] = b; Z.sel = null;
-  render();
-  if (Z.placed.every(Boolean)) status("Der Gegenstrang ist fertig. Vergleiche die Paare: Was ist bei den verschiedenen Paaren gleich, was ist anders? Beantworte dann die Fragen unten.");
-  else status("Das passt! Schau dir die gestrichelten Linien zwischen den beiden Basen an.");
-}
-
-/* ---------- Fragen ---------- */
-$("p-hb").addEventListener("click", () => {
-  const a = $("n-at").value, g = $("n-gc").value, out = $("r-hb");
-  if (a === "" || g === ""){ out.className = "rueck"; out.textContent = "Trage beide Zahlen ein."; return; }
-  const okA = +a === 2, okG = +g === 3;
-  out.className = "rueck" + (okA && okG ? " ok" : "");
-  out.textContent = okA && okG ? "Richtig: " + (Z.art === "DNA" ? "A–T" : "A–U") + " hat 2, G–C hat 3 Wasserstoffbrücken. G–C-Paare halten also fester zusammen."
-    : "Noch nicht ganz. Zähle die gestrichelten Linien zwischen den Basen eines gesetzten " + (okA ? "G–C" : okG ? (Z.art === "DNA" ? "A–T" : "A–U") : "Paars") + "-Paares noch einmal.";
-});
-$("p-gegen").addEventListener("click", () => {
-  const eingabe = $("t-gegen").value.toUpperCase().replace(/[^A-Z]/g, ""), out = $("r-gegen");
-  const komplement = Z.seq.map(b => KOMP[Z.art][b]);
-  const soll = komplement.slice().reverse().join(""), gleich = komplement.join("");
-  if (!eingabe){ out.className = "rueck"; out.textContent = "Trage den Gegenstrang ein."; return; }
-  out.className = "rueck" + (eingabe === soll ? " ok" : "");
-  out.textContent = eingabe === soll ? "Richtig: Der Gegenstrang ist antiparallel, von 5' nach 3' gelesen steht er in umgekehrter Reihenfolge."
-    : eingabe === gleich ? "Die Basen stimmen, aber die Richtung nicht: Oben im Bild liegt beim Gegenstrang das 3'-Ende. Lies von 5' nach 3'."
-    : "Das stimmt noch nicht. Welche Base steht jeweils gegenüber? Beginne am 5'-Ende des Gegenstrangs.";
-});
-
-/* ---------- Bedienung ---------- */
-$("sg-art").addEventListener("click", e => {
-  const bt = e.target.closest("button"); if (!bt) return;
-  $("sg-art").querySelectorAll("button").forEach(x => x.setAttribute("aria-checked", String(x === bt)));
-  Z.art = bt.dataset.wert; neueSequenz(); render(); status(grundtext()); $("r-hb").textContent = $("r-gegen").textContent = "";
-});
-$("neu").addEventListener("click", () => { neueSequenz(); render(); status(grundtext()); $("t-gegen").value = ""; $("r-gegen").textContent = ""; });
-$("leeren").addEventListener("click", () => { Z.placed = Array(ROWS).fill(null); Z.sel = null; render(); status(grundtext()); });
-$("einfach").addEventListener("change", render);
-if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
-
-neueSequenz(); render(); status(grundtext());
-})();
-</script>
 </body>
 </html>

@@ -50,14 +50,6 @@ const DNA2D = (() => {
 
   // NH2 → NH₂ (Ziffer tiefgestellt), O⁻ (Minus hochgestellt)
   const fmt = t => t.replace(/(\d)$/, '<tspan dy="0.12" font-size="0.36">$1</tspan>').replace("⁻", '<tspan dy="-0.2" font-size="0.36">−</tspan>');
-  const hull = pts => {                    // konvexe Hülle (Andrew)
-    const p = pts.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-    const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
-    const lo = [], up = [];
-    for (const q of p){ while (lo.length > 1 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
-    for (const q of p.slice().reverse()){ while (up.length > 1 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
-    return lo.slice(0, -1).concat(up.slice(0, -1));
-  };
 
   // Zeichnung eines Nukleosidtriphosphats. art: "dNTP" | "NTP"; opt.hervor: Menge aus "c2", "c5", "schnitt"
   // (werden farbig hervorgehoben); 5'-Phosphat und 3'-OH sind immer farbig.
@@ -112,51 +104,48 @@ const DNA2D = (() => {
       T.push(`<text x="${(x - 0.17).toFixed(3)}" y="${(-y).toFixed(3)}" text-anchor="start" dominant-baseline="central" font-size="0.5" font-weight="600" fill="${col}"${extra || ""}>${fmt(text)}</text>`);
     };
 
-    // Hintergrundfläche der Base in ihrer Farbe (gleiche Farbe wie im 3D-Bild)
-    const bp = BASE_ATOME[b].map(n => A[n]);
-    Z.unshift(`<polygon points="${hull(bp).map(q => q[0].toFixed(2) + "," + (-q[1]).toFixed(2)).join(" ")}" fill="${farbe.base}" fill-opacity="0.28" stroke="${farbe.base}" stroke-opacity="0.28" stroke-width="0.85" stroke-linejoin="round"/>`);
     const sechser = ["N1", "C2", "N3", "C4", "C5", "C6"].map(m => A[m]);
     const mitte = [sechser.reduce((s, p) => s + p[0], 0) / 6, sechser.reduce((s, p) => s + p[1], 0) / 6];
     const BL = BESCHRIFTUNG[b], istDoppelt = (a, c) => DOPPELT[b].some(([x, y]) => (x === a && y === c) || (x === c && y === a));
     const imRing = new Set(["N1", "C2", "N3", "C4", "C5", "C6", "N7", "C8", "N9"]);
     for (const [a, c] of pl.bind){
-      if (a === "C1'" || c === "C1'"){ line(A["C1'"], A[GLYKO[b]], ink); continue; }
+      if (a === "C1'" || c === "C1'"){ line(A["C1'"], A[GLYKO[b]], P("zucker"), 0.08); continue; }
       const [p, q] = kurz(A[a], A[c], BL[a], BL[c]);
-      line(p, q, ink);
+      line(p, q, farbe.base, 0.09);
       if (istDoppelt(a, c)){
         const fuenf = ["C4", "C5", "N7", "C8", "N9"];
         const ringBindung = imRing.has(a) && imRing.has(c);
         const zentrum = ringBindung && fuenf.includes(a) && fuenf.includes(c) && !(["C4", "C5"].includes(a) && ["C4", "C5"].includes(c)) ? [(A["C4"][0] + A["C5"][0] + A["N7"][0] + A["C8"][0] + A["N9"][0]) / 5, (A["C4"][1] + A["C5"][1] + A["N7"][1] + A["C8"][1] + A["N9"][1]) / 5] : mitte;
         const [p2, q2] = doppel(p, q, ringBindung ? zentrum : null);
-        line(p2, q2, ink);
+        line(p2, q2, farbe.base, 0.09);
       }
     }
     for (const n of BASE_ATOME[b]) if (BL[n]) label(n, BL[n], ink);
     // Zucker
     const zucker = [["C1'", "C2'"], ["C2'", "C3'"], ["C3'", "C4'"], ["C4'", "O4'"], ["O4'", "C1'"]];
     const bei = ["O4'"];
-    for (const [a, c] of zucker){ const [p, q] = kurz(A[a], A[c], bei.includes(a), bei.includes(c)); line(p, q, ink); }
+    for (const [a, c] of zucker){ const [p, q] = kurz(A[a], A[c], bei.includes(a), bei.includes(c)); line(p, q, P("zucker"), 0.08); }
     label("O4'", "O", ink);
     // 2'-Position
     const c2farbe = hv.has("c2") ? farbe.oh2 : ink;
     const c2text = art === "NTP" ? "OH" : "H";
-    { const [p, q] = kurz(A["C2'"], A["X2"], false, true); line(p, q, c2farbe, hv.has("c2") ? 0.12 : 0.07); label("X2", c2text, c2farbe, ' font-weight="700"'); }
+    { const [p, q] = kurz(A["C2'"], A["X2"], false, true); line(p, q, hv.has("c2") ? farbe.oh2 : P("zucker"), 0.09); label("X2", c2text, c2farbe, ' font-weight="700"'); }
     // 3'-OH (immer farbig)
-    { const [p, q] = kurz(A["C3'"], A["O3'"], false, true); line(p, q, farbe.oh3, 0.12); label("O3'", "OH", farbe.oh3, ' font-weight="700"'); }
+    { const [p, q] = kurz(A["C3'"], A["O3'"], false, true); line(p, q, farbe.oh3, 0.09); label("O3'", "OH", farbe.oh3, ' font-weight="700"'); }
     // 5'-Seite: C5' neutral, ab O5' Triphosphat farbig (5'-Phosphat)
-    { const [p, q] = kurz(A["C4'"], A["C5'"], false, false); line(p, q, ink); }
+    { const [p, q] = kurz(A["C4'"], A["C5'"], false, false); line(p, q, P("zucker"), 0.08); }
     const folge = [["C5'", "O5'"], ["O5'", "PA"], ["PA", "O3A"], ["O3A", "PB"], ["PB", "O3B"], ["O3B", "PG"]];
     for (const [a, c] of folge){
       const la = /^[OP]/.test(a), lc = /^[OP]/.test(c), [p, q] = kurz(A[a], A[c], la, lc);
-      line(p, q, a === "C5'" ? ink : farbe.p5, a === "C5'" ? 0.07 : 0.12);
+      line(p, q, a === "C5'" ? P("zucker") : farbe.p5, a === "C5'" ? 0.08 : 0.07);
     }
     for (const [p, dp, o] of [["PA", true, "O1A"], ["PB", true, "O1B"], ["PG", true, "O1G"]]){
       const [x, y] = kurz(A[p], A[o], true, true);
-      line(x, y, farbe.p5, 0.12);
+      line(x, y, farbe.p5, 0.07);
       const dx = y[0] - x[0], dy = y[1] - x[1], L = Math.hypot(dx, dy);
-      line([x[0] - dy / L * 0.09, x[1] + dx / L * 0.09], [y[0] - dy / L * 0.09, y[1] + dx / L * 0.09], farbe.p5, 0.12);
+      line([x[0] - dy / L * 0.09, x[1] + dx / L * 0.09], [y[0] - dy / L * 0.09, y[1] + dx / L * 0.09], farbe.p5, 0.07);
     }
-    for (const [p, o] of [["PA", "O2A"], ["PB", "O2B"], ["PG", "O2G"], ["PG", "O3G"]]){ const [x, y] = kurz(A[p], A[o], true, true); line(x, y, farbe.p5, 0.12); }
+    for (const [p, o] of [["PA", "O2A"], ["PB", "O2B"], ["PG", "O2G"], ["PG", "O3G"]]){ const [x, y] = kurz(A[p], A[o], true, true); line(x, y, farbe.p5, 0.07); }
     for (const n of ["PA", "PB", "PG"]) label(n, "P", farbe.p5, ' font-weight="800"');
     for (const n of ["O5'", "O3A", "O3B", "O1A", "O1B", "O1G"]) label(n, "O", farbe.p5);
     for (const n of ["O2A", "O2B", "O2G", "O3G"]) label(n, "O⁻", farbe.p5);
@@ -260,22 +249,20 @@ const DNA2D = (() => {
       Z.push(`<rect x="${(links ? x - w + 0.28 : x - 0.28).toFixed(3)}" y="${(-y - 0.3).toFixed(3)}" width="${w.toFixed(3)}" height="0.6" rx="0.22" fill="var(--surface)"/>`);
       T.push(`<text x="${(links ? x + 0.17 : x - 0.17).toFixed(3)}" y="${(-y).toFixed(3)}" text-anchor="${links ? "end" : "start"}" dominant-baseline="central" font-size="0.5" font-weight="600" fill="${col}"${extra || ""}>${fmt(text)}</text>`);
     };
-    // Hintergrundfläche der Base
-    Z.push(`<polygon points="${hull(BASE_ATOME[b].map(n => A[n])).map(xy).join(" ")}" fill="${farbe.base}" fill-opacity="0.3" stroke="${farbe.base}" stroke-opacity="0.3" stroke-width="0.85" stroke-linejoin="round"/>`);
     const sechser = ["N1", "C2", "N3", "C4", "C5", "C6"].map(m => A[m]);
     const mitte = [sechser.reduce((q, p) => q + p[0], 0) / 6, sechser.reduce((q, p) => q + p[1], 0) / 6];
     const BL = BESCHRIFTUNG[b], istDoppelt = (a, c) => DOPPELT[b].some(([x, y]) => (x === a && y === c) || (x === c && y === a));
     const imRing = new Set(["N1", "C2", "N3", "C4", "C5", "C6", "N7", "C8", "N9"]), fuenf = ["C4", "C5", "N7", "C8", "N9"];
     for (const [a, c] of pl.bind){
-      if (a === "C1'" || c === "C1'"){ const [p, q] = kurz(A["C1'"], A[GLYKO[b]], false, BL[GLYKO[b]]); line(p, q, ink); continue; }
+      if (a === "C1'" || c === "C1'"){ const [p, q] = kurz(A["C1'"], A[GLYKO[b]], false, BL[GLYKO[b]]); line(p, q, P("zucker"), 0.08); continue; }
       const [p, q] = kurz(A[a], A[c], BL[a], BL[c]);
-      line(p, q, ink);
+      line(p, q, farbe.base, 0.09);
       if (istDoppelt(a, c)){
         const ringB = imRing.has(a) && imRing.has(c);
         const z5 = ringB && fuenf.includes(a) && fuenf.includes(c) && !(["C4", "C5"].includes(a) && ["C4", "C5"].includes(c));
         const zentrum = z5 ? [fuenf.reduce((q, n) => q + A[n][0], 0) / 5, fuenf.reduce((q, n) => q + A[n][1], 0) / 5] : mitte;
         const [p2, q2] = doppel(p, q, ringB ? zentrum : null);
-        line(p2, q2, ink);
+        line(p2, q2, farbe.base, 0.09);
       }
     }
     for (const n of BASE_ATOME[b]) if (BL[n]) label(n, BL[n], ink);
@@ -287,12 +274,12 @@ const DNA2D = (() => {
     { const [p, q] = kurz(A["C2'"], A["X2"], false, true); line(p, q, P("zucker"), 0.08); label("X2", f === "RNA" ? "OH" : "H", P("oh2"), ' font-weight="700"'); }
     // 3'-OH (cyan) und 5'-Phosphat (magenta)
     const frei3 = opt.frei3 !== false;
-    { const [p, q] = kurz(A["C3'"], A["O3'"], false, true); line(p, q, farbe.oh3, 0.12);
+    { const [p, q] = kurz(A["C3'"], A["O3'"], false, true); line(p, q, farbe.oh3, 0.09);
       if (frei3) label("O3'", "OH", farbe.oh3, ' font-weight="700"');
       else S.push(`<circle cx="${A["O3'"][0].toFixed(3)}" cy="${(-A["O3'"][1]).toFixed(3)}" r="0.15" fill="${farbe.oh3}"/>`); }
     { const [p, q] = kurz(A["C4'"], A["C5'"], false, false); line(p, q, P("zucker"), 0.08); }
     { const [p, q] = kurz(A["C5'"], A["O5'"], false, true); line(p, q, P("zucker"), 0.08); label("O5'", "O", farbe.p5); }
-    { const [p, q] = kurz(A["O5'"], A["P"], true, true); line(p, q, farbe.p5, 0.12); }
+    { const [p, q] = kurz(A["O5'"], A["P"], true, true); line(p, q, farbe.p5, 0.07); }
     S.push(`<circle cx="${A["P"][0].toFixed(3)}" cy="${(-A["P"][1]).toFixed(3)}" r="0.36" fill="${farbe.p5}"/>`);
     T.push(`<text x="${A["P"][0].toFixed(3)}" y="${(-A["P"][1]).toFixed(3)}" text-anchor="middle" dominant-baseline="central" font-size="0.46" font-weight="800" fill="#fff">P</text>`);
     const st = HB_STELLEN[b];
