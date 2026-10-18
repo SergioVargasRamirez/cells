@@ -395,7 +395,7 @@ const GENCODE = (() => {
     TABELLE[c] = KETTE[i] === "*" ? "Stopp" : EIN[KETTE[i]];
     CODONS.push(c);
   }
-  // Acht Aminosäuren für die Übung mit Reagenzglas und Tabelle; Arg ist auf CGN beschränkt (AGA und AGG fehlen, damit vier Plätze genügen)
+  // Acht Aminosäuren für die Übung mit Reagenzglas und Tabelle; Arg hat alle sechs Codons
   const TEILCODE = [
     {aa: "Phe", codons: ["UUU", "UUC"]},
     {aa: "His", codons: ["CAU", "CAC"]},
@@ -403,7 +403,7 @@ const GENCODE = (() => {
     {aa: "Pro", codons: ["CCU", "CCC", "CCA", "CCG"]},
     {aa: "Ala", codons: ["GCU", "GCC", "GCA", "GCG"]},
     {aa: "Thr", codons: ["ACU", "ACC", "ACA", "ACG"]},
-    {aa: "Arg", codons: ["CGU", "CGC", "CGA", "CGG"]},
+    {aa: "Arg", codons: ["CGU", "CGC", "CGA", "CGG", "AGA", "AGG"]},
     {aa: "Gly", codons: ["GGU", "GGC", "GGA", "GGG"]},
   ];
   // Translation ab Position start (0-basiert), Codon für Codon, bis zum Stopp oder zum Ende der Sequenz

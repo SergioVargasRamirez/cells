@@ -368,7 +368,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
   <details>
     <summary>Modell und Grenzen</summary>
     <ul>
-      <li>Im Expertenmodus gilt der ganze Code mit 20 Aminosäuren und drei Stopp-Signalen (64 Codons); sonst gilt die vereinfachte Fassung. Die vereinfachte Tabelle zeigt acht der zwanzig Aminosäuren und 26 ihrer Codons. Der Rest des genetischen Codes ist weggelassen. Arginin hat in Wirklichkeit sechs Codons; AGA und AGG fehlen hier, damit jede Aminosäure mit vier Plätzen auskommt. Mit einer eigenen mRNA kannst du AGA oder AGG trotzdem ausprobieren: Die Kammer zeigt dann Arg.</li>
+      <li>Im Expertenmodus gilt der ganze Code mit 20 Aminosäuren und drei Stopp-Signalen (64 Codons); sonst gilt die vereinfachte Fassung. Die vereinfachte Tabelle zeigt acht der zwanzig Aminosäuren und 28 ihrer Codons. Der Rest des genetischen Codes ist weggelassen.</li>
       <li>Die Versuche folgen den historischen Experimenten (Nirenberg und Matthaei 1961: Poly-U ergibt Polyphenylalanin; Khorana in den 1960er Jahren: sich wiederholende Sequenzen mit zwei, drei oder vier Nucleotiden), sind aber vereinfacht. Die Ergebnisse stammen aus dem heute bekannten Code, nicht aus Messungen. In den echten Versuchen war die Zuordnung zudem mühsamer und brauchte weitere Methoden, zum Beispiel die Bindung von Triplets an Ribosomen.</li>
       <li>Aminosäuren außerhalb der acht gewählten erscheinen als „?“. Poly-G ist grundsätzlich nicht herstellbar, weil es sich zu Vierersträngen zusammenlagert.</li>
       <li>Das zellfreie System kann an jeder Stelle der Wiederholung beginnen, ohne Startcodon: Alle Leserahmen tragen bei, und angezeigt wird die Liste der entstandenen Aminosäuren (mit Häufigkeit), nicht die Reihenfolge in einer Kette. Das geht im Reagenzglas bei hoher Magnesiumkonzentration; in der Zelle beginnt die Translation am Startcodon AUG und ist durch die Stopp-Codons begrenzt. Hier ist die Zahl der gezeigten Aminosäuren auf die ersten 24 Nucleotide begrenzt.</li>
@@ -446,7 +446,7 @@ const GENCODE = (() => {
     TABELLE[c] = KETTE[i] === "*" ? "Stopp" : EIN[KETTE[i]];
     CODONS.push(c);
   }
-  // Acht Aminosäuren für die Übung mit Reagenzglas und Tabelle; Arg ist auf CGN beschränkt (AGA und AGG fehlen, damit vier Plätze genügen)
+  // Acht Aminosäuren für die Übung mit Reagenzglas und Tabelle; Arg hat alle sechs Codons
   const TEILCODE = [
     {aa: "Phe", codons: ["UUU", "UUC"]},
     {aa: "His", codons: ["CAU", "CAC"]},
@@ -454,7 +454,7 @@ const GENCODE = (() => {
     {aa: "Pro", codons: ["CCU", "CCC", "CCA", "CCG"]},
     {aa: "Ala", codons: ["GCU", "GCC", "GCA", "GCG"]},
     {aa: "Thr", codons: ["ACU", "ACC", "ACA", "ACG"]},
-    {aa: "Arg", codons: ["CGU", "CGC", "CGA", "CGG"]},
+    {aa: "Arg", codons: ["CGU", "CGC", "CGA", "CGG", "AGA", "AGG"]},
     {aa: "Gly", codons: ["GGU", "GGC", "GGA", "GGG"]},
   ];
   // Translation ab Position start (0-basiert), Codon für Codon, bis zum Stopp oder zum Ende der Sequenz
@@ -502,7 +502,7 @@ const GENCODE = (() => {
 const $ = id => document.getElementById(id);
 const G = GENCODE, LEN = 24, EIN = 6;
 let EXPERT = false, TEIL = G.TEILCODE;   // Expertenmodus: ganzer Code mit 20 Aminosäuren und Stopp
-const nSlots = () => EXPERT ? 6 : 4;
+const nSlots = () => 6;   // genug Plätze für Arg, Leu und Ser; die Zahl verrät nichts über die Codons einer Aminosäure
 const aaName = a => a === "Stopp" ? "Stopp-Signal" : G.AS[a].name;
 const S = {aktuell: null, rahmen: 1, entdeckt: [], slots: {}, log: [], sel: null, laeuft: false, geprueft: false, drag: null};
 const leereSlots = () => { S.slots = {}; TEIL.forEach(t => { S.slots[t.aa] = Array(nSlots()).fill(null); }); };
@@ -617,7 +617,6 @@ function bewerte(c){   // was die Kammer für ein Codon liefert
   if (EXPERT) return {aa: a, pool: true};
   if (a === "Stopp") return {aa: "Stopp"};
   if (G.IMTEIL.has(c)) return {aa: a, pool: true};
-  if (c === "AGA" || c === "AGG") return {aa: "Arg", hinweis: true};
   return {aa: "?"};
 }
 // Ein Ribosom kann an jeder Stelle der Wiederholung einsteigen, daher kommen alle Codons vor, die sich im Kreis der Wiederholung ergeben.
@@ -648,7 +647,6 @@ function los(){
     const res = $("ergebnis"); res.textContent = "";
     const t = document.createElement("div"); t.className = "klein"; t.textContent = "Entstandene Aminosäuren:"; res.appendChild(t);
     res.appendChild(aaListe(erg.reihe, true));
-    if (erg.reihe.some(r => r.hinweis)){ const n = document.createElement("p"); n.className = "klein"; n.textContent = "AGA und AGG sind weitere Codons für Arg; in der Tabelle ist dafür kein Platz."; res.appendChild(n); }
     renderLog(); renderVorrat(); status();
   }, dauer);
 }
