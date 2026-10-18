@@ -114,9 +114,9 @@ M6 chargaff.html
 - [ ] Chargaff gegenlesen (Texte, Historisches), Touch testen
 
 M7 schmelztemperatur.html
-- [ ] Zufällige DNA (feste Länge), GC/AT-Anteil, Doppelstrang bei Raumtemperatur
-- [ ] Temperaturregler, Strang öffnet sich (Nearest-Neighbor-Modell, SantaLucia 1998)
-- [ ] Tabelle der gemessenen Schmelztemperaturen, Diagramm Tm gegen GC-Anteil
+- [x] schmelztemperatur.html: 30 bp zufällig, Temperaturregler, schematische Öffnung, Schmelzkurve (SantaLucia 1998, 1 µM, 50 mM Na+), Protokoll, Tm gegen GC mit Ausgleichsgerade, Aussagen prüfen
+- [ ] Schmelztemperatur gegenlesen, Parameter prüfen (NN-Werte), Touch testen
+- [ ] Idee: Länge der DNA oder Salzgehalt variieren, Vergleich AT-reiche/GC-reiche Abschnitte
 
 M8 Später
 - [ ] polymerisation.html
