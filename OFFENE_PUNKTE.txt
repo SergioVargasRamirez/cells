@@ -122,7 +122,7 @@ M7 schmelztemperatur.html
 
 M8 Später
 - [ ] polymerisation.html
-- [ ] rna-typen.html (mRNA, tRNA, rRNA)
+- [x] rna-typen.html: tRNA Kleeblatt + 3D (1EHZ), Wackelpaarung mit Aufgabe, Ribosom-Schema (offen: gegenlesen, Touch, rRNA nur als Text, Ribosomzeichnung verfeinern)
 - [ ] mutationen.html (Mutationsspiel)
 - [ ] Reparatur (Desaminierung, Uracil/Thymin): eigene Seite, zurückgestellt
 

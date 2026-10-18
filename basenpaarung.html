@@ -169,6 +169,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
     <p class="sidenav-group">Genetischer Code</p>
     <a href="code-experiment.html">Der Code im Reagenzglas</a>
     <a href="codon-generator.html">Codon-Generator</a>
+    <a href="rna-typen.html">mRNA, tRNA und rRNA</a>
     <p class="sidenav-group">Proteine</p>
     <a href="peptidbindung.html">Die Peptidbindung</a>
     <a href="sekundaerstruktur.html">Helix und Faltblatt</a>
@@ -314,7 +315,8 @@ const PALETTE = (() => {
     hbruecke:"#53675e",
     aa_unpolar:"#b9822a", aa_polar:"#1f8f86", aa_sauer:"#d1495b", aa_basisch:"#3d6fd6", aa_sonder:"#8a63b8",
     peptid:"#e8590c", ebene2:"#1f8f86",
-    ss_helix:"#d1495b", ss_g:"#e68a97", ss_strang:"#e0a030", ss_schleife:"#8d9aa0", innen:"#1b6f8a", aussen:"#e9c46a"   // Eigenschaft der Aminosäure-Seitenkette
+    ss_helix:"#d1495b", ss_g:"#e68a97", ss_strang:"#e0a030", ss_schleife:"#8d9aa0", innen:"#1b6f8a", aussen:"#e9c46a",   // Eigenschaft der Aminosäure-Seitenkette
+    rg_akz:"#c0392b", rg_d:"#2e8b57", rg_ac:"#1b6f8a", rg_var:"#8d9aa0", rg_t:"#8e5bb5", rg_cca:"#e68a00"   // Bereiche der tRNA
   };
   const dunkel = {
     A:"#7d9bff", T:"#f5b83a", U:"#f7d77f", G:"#2fd1a0", C:"#f0a0c8",
@@ -323,7 +325,8 @@ const PALETTE = (() => {
     p5:"#ff5c8d", oh3:"#4fd8e6", oh2:"#c27be0", schnitt:"#ff6b6b", hbruecke:"#b3c5bd",
     aa_unpolar:"#e0a84a", aa_polar:"#4fcfc2", aa_sauer:"#ff7d8d", aa_basisch:"#7da2ff", aa_sonder:"#b99ae0",
     peptid:"#ff9a5c", ebene2:"#4fcfc2",
-    ss_helix:"#ff7d8d", ss_g:"#ffadb8", ss_strang:"#f2bd5a", ss_schleife:"#9fb0b8", innen:"#4fb3d6", aussen:"#f0d38a"
+    ss_helix:"#ff7d8d", ss_g:"#ffadb8", ss_strang:"#f2bd5a", ss_schleife:"#9fb0b8", innen:"#4fb3d6", aussen:"#f0d38a",
+    rg_akz:"#ff7d6e", rg_d:"#52d08a", rg_ac:"#4fb3d6", rg_var:"#9fb0b8", rg_t:"#c79af0", rg_cca:"#ffb347"
   };
   const istDunkel = () => {
     const r = document.documentElement.getAttribute("data-theme");
