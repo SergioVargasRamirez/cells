@@ -110,9 +110,8 @@ M5 dna-rna.html, Teil 2: Abschluss
 VORGEMERKT (Wunsch vom 18.10.2026, später wieder aufnehmen): chargaff.html und schmelztemperatur.html (M6, M7 unten)
 
 M6 chargaff.html
-- [ ] Verborgene zufällige Doppelstrang-DNA, Hydrolyse zu Nukleotiden, vier Röhrchen mit Prozentwerten
-- [ ] Wiederholbar mit neuen Molekülen, Protokolltabelle, Streudiagramm A/T und G/C
-- [ ] Regeln finden die Schüler selbst
+- [x] chargaff.html: simulierte Proben (Doppel- und Einzelstrang), Hydrolyse-Animation, vier Röhrchen, Protokoll, Streudiagramme A/T und G/C, Aussagen zum Ankreuzen und Prüfen
+- [ ] Chargaff gegenlesen (Texte, Historisches), Touch testen
 
 M7 schmelztemperatur.html
 - [ ] Zufällige DNA (feste Länge), GC/AT-Anteil, Doppelstrang bei Raumtemperatur

@@ -18,6 +18,7 @@ Online: https://cells.biodatum.io · Schwesterprojekt für die Chemie:
 | `code-experiment.html` | Der Code im Reagenzglas: künstliche mRNAs übersetzen, Codons den Aminosäuren zuordnen (8 Aminosäuren, 26 Codons) | von Hand, Daten und Test in `template/site/code.js`, `scripts/code` |
 | `codon-generator.html` | Codon-Generator: Walzen für die drei Basen, Aminosäure anzeigen, Tabelle des Standardcodes füllen | von Hand |
 | `peptidbindung.html` | Die Peptidbindung: Kondensationsreaktion in 2D, Peptidebene in 3D, Drehversuch (ω, φ, ψ), Resonanz, Kette aus starren Ebenen | von Hand, Geometrie aus `template/site/peptid.js`, Test `scripts/protein` |
+| `chargaff.html` | Chargaff-Experiment: simulierte DNA-Proben hydrolysieren, zählen, Streudiagramme, Aussagen prüfen | von Hand |
 | `proteinstruktur.html` | Von der Sequenz zur Faltung: Ubiquitin (1UBQ) in 3D, Primär-, Sekundär- und Tertiärstruktur, Cartoon, Faltung, hydrophober Kern | von Hand, Daten aus `scripts/protein/export_ubq.py` |
 | `transkription.html` | Transkription: RNA an einer DNA-Vorlage aufbauen (NTPs, Hybrid-Helix in 3D) | wie `basenpaarung.html` |
 | `quellen.html` | Quellen und Danksagung, Mitmachen (`#mitmachen`) | von Hand |
