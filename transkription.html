@@ -1055,7 +1055,8 @@ const DNA2D = (() => {
 //
 //   const d3 = HELIX3D.create({einfach: () => bool, namen: ["Strang 1", "Strang 2"], wiederholung: true, zoom: 1.2});
 //   d3.zeige("CGCGAATTCGCG", "DNA");   // Sequenz des Strangs 1 von 5' nach 3'; Modus: "DNA" (B-Form), "RNA" (A-Form),
-//                                      // "HYBRID" (DNA-Strang mit T und RNA-Strang, A-ähnlich), "RNA1" (nur der RNA-Strang)
+//                                      // "HYBRID" (DNA-Strang mit T und RNA-Strang, A-ähnlich), "RNA1" (nur der RNA-Strang zur
+//                                      // übergebenen DNA-Vorlage), "RNAEIN" (die übergebene RNA-Sequenz als Einzelstrang)
 const HELIX3D = (() => {
   "use strict";
   const GL = MOL3D.supported();
@@ -1065,6 +1066,7 @@ const HELIX3D = (() => {
   const lumi = h => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
   // Wasserstoffbrücken der Watson-Crick-Paare: [Atom der Purinbase, Atom der Pyrimidinbase]
   const HB_PAARE = {AT: [["N6", "O4"], ["N1", "N3"]], AU: [["N6", "O4"], ["N1", "N3"]], GC: [["N1", "N3"], ["N2", "O2"], ["O6", "N4"]]};
+  const INV_HYBRID = {U: "A", A: "T", C: "G", G: "C"};   // RNA-Base → Base der DNA-Vorlage, die sie paart
   const Rseite = MOL3D.rotX(-Math.PI / 2 + 0.2), Rachse = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
 
   function create(opt){
@@ -1074,6 +1076,7 @@ const HELIX3D = (() => {
     const V = {laenge: "lang", farbe: "nukleotid", enden: true, furchen: false, masse: false, hb: false, schnitt: 100, scheibe: true,
                viewer: null, schluessel: "", zmin: 0, zmax: 1, seq: "", modus: "DNA", eigen: 0, d: null, H: null};
     const weiss = "rgba(255,255,255,.92)";
+    const einzeln = () => V.modus === "RNA1" || V.modus === "RNAEIN";
 
     function farbe3(a, blass){
       let c;
@@ -1088,22 +1091,23 @@ const HELIX3D = (() => {
       }
       return c;
     }
-    const wiederholt = () => opt.wiederholung && V.laenge === "lang" && V.modus !== "RNA1";
+    const wiederholt = () => opt.wiederholung && V.laenge === "lang" && !einzeln();
     function baue3D(){
-      const seq = wiederholt() ? V.seq.repeat(3) : V.seq;
-      const form = V.modus === "DNA" ? "DNA" : "RNA", hybrid = V.modus === "HYBRID" || V.modus === "RNA1";
+      let seq = wiederholt() ? V.seq.repeat(3) : V.seq;
+      if (V.modus === "RNAEIN") seq = [...seq].reverse().map(b => INV_HYBRID[b]).join("");   // Vorlage, deren RNA-Strang genau die eingegebene Sequenz ist
+      const form = V.modus === "DNA" ? "DNA" : "RNA", hybrid = V.modus !== "DNA" && V.modus !== "RNA";
       let d = HELIX_BAU.bauen(seq, form, {hybrid});
-      if (V.modus === "RNA1"){   // nur der RNA-Strang (Strang 2) bleibt übrig
+      if (einzeln()){   // nur der RNA-Strang (Strang 2) bleibt übrig
         const idx = [], atome = [], index = {};
         d.atome.forEach((a, i) => { if (a.strang === 2){ idx[i] = atome.length; index[a.strang + ":" + a.bp + ":" + a.name] = atome.length; atome.push(a); } else idx[i] = -1; });
         d = {atome, bindungen: d.bindungen.filter(([i, j]) => idx[i] >= 0 && idx[j] >= 0).map(([i, j]) => [idx[i], idx[j]]), n: d.n, form: d.form, index};
       }
       const atome = d.atome.map(a => ({
         p: a.pos, c: farbe3(a, a.bp >= V.eigen), r: RAD3[a.el] || 0.3,
-        tip: (einfach() ? "" : a.name + " · ") + (V.modus === "RNA1" ? "RNA" : namen[a.strang - 1]) + ", Position " + (a.bp + 1) + " (" + a.base + ")",
+        tip: (einfach() ? "" : a.name + " · ") + (einzeln() ? "RNA" : namen[a.strang - 1]) + ", Position " + (a.bp + 1) + " (" + a.base + ")",
       }));
       const bindungen = d.bindungen.map(([i, j]) => ({a: i, b: j, r: 0.1}));
-      if (V.hb && V.modus !== "RNA1"){   // gestrichelte Wasserstoffbrücken
+      if (V.hb && !einzeln()){   // gestrichelte Wasserstoffbrücken
         const farbeHB = PALETTE.rgb("hbruecke");
         for (let k = 0; k < d.n; k++){
           const x1 = d.atome[d.index["1:" + k + ":C1'"]].base, x2 = d.atome[d.index["2:" + k + ":C1'"]].base;
@@ -1122,7 +1126,7 @@ const HELIX3D = (() => {
     }
     function beschriftungen3D(){
       const d = V.d, H = V.H, id = d.index, at = (st, k, n) => d.atome[id[st + ":" + k + ":" + n]], n = d.n, L = [], P = PALETTE.get;
-      const einzel = V.modus === "RNA1", s1 = einzel ? 2 : 1;
+      const einzel = einzeln(), s1 = einzel ? 2 : 1;
       const tag = (pos, text, col, dx, dy) => { const h = P(col); L.push({p: pos, text, bg: h, border: h, color: lumi(h) > 0.55 ? "#111" : "#fff", dx: dx || 0, dy: dy || -20}); };
       if (V.enden){
         if (!einzel){ tag(at(1, 0, "P").pos, "5'", "p5", -16, -6); tag(at(1, n - 1, "O3'").pos, "3'", "oh3", -16, 8); }
@@ -1163,7 +1167,7 @@ const HELIX3D = (() => {
     }
     function text3D(){
       const H = V.H, windung = 360 / H.drehung, ganghoehe = H.anstieg * windung, eig = einfach(), m = V.modus;
-      const titel = {DNA: "DNA in der B-Form", RNA: "RNA-Doppelstrang in der A-Form", HYBRID: "DNA-RNA-Hybrid (A-ähnliche Form)", RNA1: "RNA-Einzelstrang"}[m];
+      const titel = {DNA: "DNA in der B-Form", RNA: "RNA-Doppelstrang in der A-Form", HYBRID: "DNA-RNA-Hybrid (A-ähnliche Form)", RNA1: "RNA-Einzelstrang", RNAEIN: "RNA-Einzelstrang"}[m];
       let liste;
       if (m === "DNA") liste = [
         "<b>B-Form:</b> So liegt DNA in der Zelle meist vor. Die Helix ist schlank und lang gestreckt.",
@@ -1180,18 +1184,23 @@ const HELIX3D = (() => {
         "Eine volle Windung dauert etwa " + zahl(windung, 0) + " Basenpaare (" + zahl(ganghoehe, 0) + " Å), jedes Basenpaar steigt nur " + zahl(H.anstieg) + " Å an.",
         "Der RNA-Strang trägt 2'-OH-Gruppen, der DNA-Strang nicht.",
       ];
+      else if (m === "RNAEIN") liste = [
+        "<b>RNA-Einzelstrang:</b> RNA ist in der Zelle meist einsträngig. Die Basen stapeln sich dabei, hier in einer A-ähnlichen Anordnung.",
+        "Echte RNA-Stränge falten sich meist weiter: Abschnitte des Strangs paaren miteinander und bilden Haarnadeln und andere Strukturen, zum Beispiel in tRNA und rRNA. Diese Faltung zeigt das Modell nicht.",
+        "Jedes Nukleotid trägt eine 2'-OH-Gruppe. Das 5'-Ende ist hier als einzelnes Phosphat gezeichnet.",
+      ];
       else liste = [
         "<b>RNA-Einzelstrang:</b> So sieht die fertige RNA aus, nachdem sie sich von der DNA-Vorlage gelöst hat.",
         "Die Basen sind gestapelt gezeigt, in einer A-ähnlichen Anordnung wie in kurzen Abschnitten echter RNA. Längere RNA-Stränge falten sich meist weiter, zum Beispiel zur tRNA.",
         "Jedes Nukleotid trägt eine 2'-OH-Gruppe. Das 5'-Ende ist hier als einzelnes Phosphat gezeichnet.",
       ];
-      if (!eig) liste.push("Schnitt: Schiebe den Regler und wähle „Blick entlang der Achse“. Mit „Nur eine Scheibe“ siehst du " + (m === "RNA1" ? "einzelne Basen" : "ein einzelnes Basenpaar") + " von oben, mit dem Rückgrat außen.");
+      if (!eig) liste.push("Schnitt: Schiebe den Regler und wähle „Blick entlang der Achse“. Mit „Nur eine Scheibe“ siehst du " + (m === "RNA1" || m === "RNAEIN" ? "einzelne Basen" : "ein einzelnes Basenpaar") + " von oben, mit dem Rückgrat außen.");
       $("d3text").innerHTML = "<h3>" + titel + "</h3><ul>" + liste.map(x => "<li>" + x + "</li>").join("") + "</ul>";
     }
     function legende3(){
       const P = PALETTE.get, chip3 = (c, t) => '<span><i style="background:' + P(c) + '"></i>' + t + "</span>", m = V.modus;
       $("legende3").innerHTML = V.farbe === "nukleotid"
-        ? chip3("A", "Adenin") + chip3("G", "Guanin") + chip3("C", "Cytosin") + (m !== "RNA" && m !== "RNA1" ? chip3("T", "Thymin") : "") + (m !== "DNA" ? chip3("U", "Uracil") : "") + chip3("p5", "Phosphat (5')") + chip3("oh3", "3'-O") + chip3("zucker", "Zucker") + (V.hb && m !== "RNA1" ? chip3("hbruecke", "Wasserstoffbrücke") : "")
+        ? chip3("A", "Adenin") + chip3("G", "Guanin") + chip3("C", "Cytosin") + (m === "DNA" || m === "HYBRID" ? chip3("T", "Thymin") : "") + (m !== "DNA" ? chip3("U", "Uracil") : "") + chip3("p5", "Phosphat (5')") + chip3("oh3", "3'-O") + chip3("zucker", "Zucker") + (V.hb && !einzeln() ? chip3("hbruecke", "Wasserstoffbrücke") : "")
         : "<span>Kohlenstoff, Stickstoff, Sauerstoff und Phosphor in den üblichen Elementfarben</span>";
     }
     function zeichne3D(neu){
@@ -1199,7 +1208,7 @@ const HELIX3D = (() => {
       V.viewer.setScene(baue3D(), {keepView: !neu});
       V.viewer.setLabels(beschriftungen3D());
       schnittAnwenden(); text3D(); legende3();
-      for (const id of ["b-furchen", "b-hb"]){ const el = $(id), fl = el && el.closest("label"); if (fl) fl.hidden = V.modus === "RNA1"; }
+      for (const id of ["b-furchen", "b-hb"]){ const el = $(id), fl = el && el.closest("label"); if (fl) fl.hidden = einzeln(); }
     }
     function schnittAnwenden(){
       const f = V.schnitt / 100;

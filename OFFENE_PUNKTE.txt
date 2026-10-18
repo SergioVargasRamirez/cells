@@ -79,7 +79,8 @@ M4 basenpaarung.html, Teil 2: 3D des eigenen Moleküls (steht unter der Leiter, 
 
 M4b doppelhelix.html (neue Seite, unabhängig von Basenpaarung/Transkription)
 - [x] Sequenz per Text, FASTA/Textdatei ablegen, Bausteine ziehen/anklicken; Leiste zeigt beide Stränge (5'/3'), Umsortieren, Entfernen
-- [x] DNA (B-Form), RNA (A-Form) oder DNA-RNA-Hybrid; Beispiele (Dickerson-Dodekamer, TATA-Box, ...); 2 bis 40 Basen
+- [x] DNA als Doppelhelix (B-Form) oder RNA als Einzelstrang (kein RNA-Doppelstrang, kein Hybrid; 18.10.2026); Beispiele (Dickerson-Dodekamer, TATA-Box, ...); 2 bis 40 Basen
+- [x] 3D: Schalter Wasserstoffbrücken (gestrichelt, 2 bei A-T/U, 3 bei G-C); beim RNA-Einzelstrang ausgeblendet
 - [ ] Mit Touch testen (HTML5-Ziehen funktioniert dort nicht; Anklicken der Bausteine ist der Ersatz)
 - [ ] Bei "Nur eine Scheibe" könnte das Bild automatisch auf die Scheibe zoomen
 
