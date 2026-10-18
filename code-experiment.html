@@ -148,7 +148,7 @@ button.mrna:disabled{opacity:.55;cursor:not-allowed;background:var(--surface2)}
 .mgrund{font-size:.78rem;color:var(--muted)}
 .nt{font-weight:800}
 .eigen{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
-.eigen input[type=text]{font:inherit;font-family:ui-monospace,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase;width:15em;max-width:100%;padding:5px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.eigen input[type=text]{font:inherit;font-family:ui-monospace,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase;width:8em;max-width:100%;padding:5px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
 .ntbtn{width:34px;height:34px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);font:800 .95rem var(--sans);cursor:pointer;padding:0}
 .rahmen{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:8px 0}
 .rahmen label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
@@ -309,18 +309,13 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
             <h3><span class="nr">1</span>mRNA wählen</h3>
             <div class="mrnas" id="mrnas"></div>
             <div class="eigen">
-              <label for="eigen" class="etikett">Eigene mRNA (5' → 3')</label>
-              <input type="text" id="eigen" maxlength="24" autocomplete="off" spellcheck="false" placeholder="z. B. CCUCCUCCU" aria-label="Eigene mRNA">
+              <label for="eigen" class="etikett">Eigene <span style="text-transform:none">mRNA</span>: Wiederholungseinheit (5' → 3')</label>
+              <input type="text" id="eigen" maxlength="6" autocomplete="off" spellcheck="false" placeholder="z. B. CCU" aria-label="Wiederholungseinheit der eigenen mRNA">
               <span id="ntknoepfe" style="display:inline-flex;gap:6px"></span>
               <button class="btn" type="button" id="zufall">Zufällig</button>
               <button class="btn" type="button" id="leer">Leeren</button>
             </div>
-            <p class="klein" id="eigeninfo">Bis zu 24 Nucleotide. Mit eigenen mRNAs findest du Codons, die die vorgegebenen mRNAs nicht liefern.</p>
-          </div>
-          <div class="karte">
-            <h3>Protokoll</h3>
-            <div class="logwrap"><table class="logtab" id="logtab"><thead><tr><th>Nr.</th><th>mRNA</th><th>Start</th><th>Polypeptid</th></tr></thead><tbody></tbody></table></div>
-            <p class="klein" id="loginfo">Noch kein Versuch.</p>
+            <p class="klein" id="eigeninfo">Gib die Einheit ein (1 bis 6 Nucleotide); sie wird vielfach wiederholt, wie bei den vorgegebenen mRNAs. Mit eigenen mRNAs findest du Codons, die die vorgegebenen mRNAs nicht liefern.</p>
           </div>
         </div>
         <div>
@@ -343,19 +338,24 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
               </div>
             </div>
           </div>
-                    <div class="karte">
-            <h3><span class="nr">3</span>Codons den Aminosäuren zuordnen</h3>
-            <p class="klein" style="margin-top:0">Gefundene Codons: Ziehe sie in die Zeile der Aminosäure, für die sie stehen (oder klicke ein Codon und dann einen freien Platz).</p>
-            <div class="vorrat" id="vorrat" aria-label="Gefundene Codons"></div>
-            <div class="tabelle" id="tabelle"></div>
-            <div class="tknoepfe">
-              <button class="btn" type="button" id="pruefen">Tabelle prüfen</button>
-              <button class="btn" type="button" id="alleweg">Tabelle leeren</button>
-            </div>
-            <div class="fortschritt" id="fortschritt" aria-live="polite"></div>
+          <div class="karte">
+            <h3>Protokoll</h3>
+            <div class="logwrap"><table class="logtab" id="logtab"><thead><tr><th>Nr.</th><th>mRNA</th><th>Start</th><th>Polypeptid</th></tr></thead><tbody></tbody></table></div>
+            <p class="klein" id="loginfo">Noch kein Versuch.</p>
           </div>
         </div>
       </div>
+      <div class="karte">
+          <h3><span class="nr">3</span>Codons den Aminosäuren zuordnen</h3>
+          <p class="klein" style="margin-top:0">Gefundene Codons: Ziehe sie in die Zeile der Aminosäure, für die sie stehen (oder klicke ein Codon und dann einen freien Platz).</p>
+          <div class="vorrat" id="vorrat" aria-label="Gefundene Codons"></div>
+          <div class="tabelle" id="tabelle"></div>
+          <div class="tknoepfe">
+          <button class="btn" type="button" id="pruefen">Tabelle prüfen</button>
+          <button class="btn" type="button" id="alleweg">Tabelle leeren</button>
+          </div>
+          <div class="fortschritt" id="fortschritt" aria-live="polite"></div>
+        </div>
     </section>
     <p class="weiter">Weiter: <a href="codon-generator.html">Codon-Generator: der ganze Code</a></p>
   </main>
@@ -497,12 +497,13 @@ const GENCODE = (() => {
 (() => {
 "use strict";
 const $ = id => document.getElementById(id);
-const G = GENCODE, TEIL = G.TEILCODE, LEN = 24;
+const G = GENCODE, TEIL = G.TEILCODE, LEN = 24, EIN = 6;
 const einfach = () => $("einfach").checked;
 const S = {aktuell: null, rahmen: 1, entdeckt: [], slots: {}, log: [], sel: null, laeuft: false, geprueft: false, drag: null};
 TEIL.forEach(t => { S.slots[t.aa] = [null, null, null, null]; });
 const lumi = h => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
 const buchstaben = txt => [...txt].map(ch => `<span class="nt" style="color:${PALETTE.get(ch)}">${ch}</span>`).join("");
+const ggt = (a, b) => b ? ggt(b, a % b) : a;
 const einheitMrna = (u, n) => u.repeat(Math.ceil(n / u.length)).slice(0, n);
 const klasseVon = a => G.AS[a] ? G.AS[a].klasse : null;
 function aaChip(a, neu){
@@ -520,13 +521,13 @@ function bauMrnas(){
   const box = $("mrnas"); box.textContent = "";
   for (const u of G.VERSUCHE){
     const b = document.createElement("button"); b.type = "button"; b.className = "mrna"; b.dataset.einheit = u; b.setAttribute("aria-pressed", "false");
-    b.innerHTML = `<span class="mname">(${u})<sub>n</sub></span><span class="mseq mono">${buchstaben(einheitMrna(u, 12))}…</span>`;
+    b.innerHTML = `<span class="mname">(${buchstaben(u)})<sub>n</sub></span>`;
     b.addEventListener("click", () => waehleVorgabe(u));
     box.appendChild(b);
   }
   for (const n of G.NICHT_HERSTELLBAR){
     const b = document.createElement("button"); b.type = "button"; b.className = "mrna"; b.disabled = true; b.title = n.grund;
-    b.innerHTML = `<span class="mname">(${n.einheit})<sub>n</sub></span><span class="mseq mono">${buchstaben(einheitMrna(n.einheit, 12))}…</span><span class="mgrund">nicht verfügbar</span>`;
+    b.innerHTML = `<span class="mname">(${buchstaben(n.einheit)})<sub>n</sub></span><span class="mgrund">nicht verfügbar</span>`;
     b.setAttribute("aria-label", "(" + n.einheit + ")n nicht verfügbar: " + n.grund);
     box.appendChild(b);
   }
@@ -540,9 +541,9 @@ function waehleVorgabe(u){
   $("eigen").value = ""; markiereAuswahl(); zeigeKammer(); $("ergebnis").textContent = "";
 }
 function waehleEigene(){
-  const t = $("eigen").value.toUpperCase().replace(/T/g, "U").replace(/[^ACGU]/g, "").slice(0, LEN);
+  const t = $("eigen").value.toUpperCase().replace(/T/g, "U").replace(/[^ACGU]/g, "").slice(0, EIN);
   if ($("eigen").value !== t) $("eigen").value = t;
-  S.aktuell = t.length >= 3 ? {typ: "eigen", mrna: t, name: "eigene mRNA"} : null;
+  S.aktuell = t.length >= 1 ? {typ: "eigen", einheit: t, mrna: einheitMrna(t, LEN), name: "(" + t + ")n"} : null;
   markiereAuswahl(); zeigeKammer(); $("ergebnis").textContent = "";
 }
 function ntKnoepfe(){
@@ -550,12 +551,12 @@ function ntKnoepfe(){
   for (const n of "ACGU"){
     const b = document.createElement("button"); b.type = "button"; b.className = "ntbtn"; b.textContent = n; b.setAttribute("aria-label", "Nucleotid " + n + " anhängen");
     const c = PALETTE.get(n); b.style.background = c; b.style.color = lumi(c) > 0.55 ? "#111" : "#fff";
-    b.addEventListener("click", () => { const i = $("eigen"); if (i.value.length < LEN){ i.value += n; waehleEigene(); } });
+    b.addEventListener("click", () => { const i = $("eigen"); if (i.value.length < EIN){ i.value += n; waehleEigene(); } });
     box.appendChild(b);
   }
 }
 $("eigen").addEventListener("input", waehleEigene);
-$("zufall").addEventListener("click", () => { $("eigen").value = Array.from({length: 12}, () => "ACGU"[Math.floor(Math.random() * 4)]).join(""); waehleEigene(); });
+$("zufall").addEventListener("click", () => { $("eigen").value = Array.from({length: 2 + Math.floor(Math.random() * 3)}, () => "ACGU"[Math.floor(Math.random() * 4)]).join(""); waehleEigene(); });
 $("leer").addEventListener("click", () => { $("eigen").value = ""; waehleEigene(); $("eigen").focus(); });
 
 /* ---------- Reaktionskammer ---------- */
@@ -565,13 +566,14 @@ function zeigeKammer(){
   if (!a){ box.textContent = "Wähle zuerst eine mRNA."; return; }
   const frames = a.typ === "vorgabe" ? G.rahmen(a.einheit) : [1, 2, 3].map(s => ({start: s, verfuegbar: true}));
   const mark = $("trip").checked;
-  let h = "5'-";
-  if (mark){
-    h += `<span class="ueber">${buchstaben(a.mrna.slice(0, S.rahmen - 1))}</span>`;
-    for (let i = S.rahmen - 1; i + 3 <= a.mrna.length; i += 3) h += `<span class="cod">${buchstaben(a.mrna.slice(i, i + 3))}</span>`;
-    h += `<span class="ueber">${buchstaben(a.mrna.slice(S.rahmen - 1 + 3 * Math.floor((a.mrna.length - S.rahmen + 1) / 3)))}</span>`;
-  } else h += buchstaben(a.mrna);
-  box.innerHTML = h + (a.typ === "vorgabe" ? "…" : "") + "-3'";
+  const u = a.einheit; let h;
+  if (mark){   // ein voller Umlauf der Codons, ab dem gewählten Start
+    const n = u.length / ggt(u.length, 3), m = u.repeat(4 * 3), k = S.rahmen - 1;
+    h = "5'-…" + `<span class="ueber">${buchstaben(m.slice(0, k))}</span>`;
+    for (let q = 0; q < n; q++) h += `<span class="cod">${buchstaben(m.slice(k + 3 * q, k + 3 * q + 3))}</span>`;
+    h += "…-3'";
+  } else h = "5'-(" + buchstaben(u) + ")<sub>n</sub>-3'";
+  box.innerHTML = h;
   frames.forEach(f => {
     const l = document.createElement("label"); if (!f.verfuegbar){ l.className = "aus"; l.title = "In diesem Leserahmen entstehen Aminosäuren oder Stopp-Signale, die nicht zu dieser Übung gehören."; }
     const i = document.createElement("input"); i.type = "radio"; i.name = "rahmen"; i.value = f.start; i.checked = f.start === S.rahmen; i.disabled = !f.verfuegbar;
@@ -603,7 +605,7 @@ function los(){
     const t = document.createElement("div"); t.className = "klein"; t.textContent = "Polypeptid:"; res.appendChild(t);
     const pep = document.createElement("div"); pep.className = "peptid";
     aas.forEach((x, i) => { const c = aaChip(x, true); c.style.animationDelay = (i * 0.12) + "s"; pep.appendChild(c); });
-    if (a.typ === "vorgabe"){ const m = document.createElement("span"); m.textContent = "…"; pep.appendChild(m); }
+    { const m = document.createElement("span"); m.textContent = "…"; pep.appendChild(m); }
     res.appendChild(pep);
     if (reaktion.some(r => r.hinweis)){ const n = document.createElement("p"); n.className = "klein"; n.textContent = "AGA und AGG sind weitere Codons für Arg; in der Tabelle ist dafür kein Platz."; res.appendChild(n); }
     renderLog(); renderVorrat(); status();
@@ -614,11 +616,11 @@ function renderLog(){
   const tb = $("logtab").querySelector("tbody"); tb.textContent = "";
   S.log.forEach(e => {
     const tr = document.createElement("tr");
-    const kurz = e.mrna.length > 15 ? e.mrna.slice(0, 15) + "…" : e.mrna;
-    tr.innerHTML = `<td>${e.nr}</td><td class="mono">${buchstaben(kurz)}</td><td>${e.start}</td><td></td>`;
+    const kurz = e.name;
+    tr.innerHTML = `<td>${e.nr}</td><td class="mono">${kurz.replace(/[ACGU]+/, m => buchstaben(m))}</td><td>${e.start}</td><td></td>`;
     const td = tr.lastChild; td.style.display = "flex"; td.style.flexWrap = "wrap"; td.style.gap = "3px";
     e.aas.slice(0, 8).forEach(x => td.appendChild(aaChip(x)));
-    if (e.aas.length > 8 || e.typ === "vorgabe") td.appendChild(document.createTextNode("…"));
+    if (true) td.appendChild(document.createTextNode("…"));
     tb.appendChild(tr);
   });
   $("loginfo").textContent = S.log.length ? "" : "Noch kein Versuch.";
