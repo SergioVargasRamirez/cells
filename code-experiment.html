@@ -302,7 +302,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
   <main>
     <section class="schritt" id="s-versuch">
       <h2>Versuch und Auswertung</h2>
-      <p>Im Reagenzglas steckt ein zellfreies System aus Ribosomen, tRNAs, Enzymen und Aminosäuren, aber ohne eigene mRNA. Gib eine künstliche mRNA hinein. Das System übersetzt sie ab dem Nucleotid, das du als Start wählst, und du siehst, welche Aminosäuren in welcher Reihenfolge entstehen. Daraus kannst du ableiten, welche Codons für welche Aminosäure stehen. Nicht jede mRNA lässt sich herstellen, und die Tabelle hat nur acht der zwanzig Aminosäuren.</p>
+      <p>Im Reagenzglas steckt ein zellfreies System aus Ribosomen, tRNAs, Enzymen und Aminosäuren, aber ohne eigene mRNA. Gib eine künstliche mRNA hinein. Das System übersetzt sie ab dem ersten Nucleotid, und du siehst, welche Aminosäuren in welcher Reihenfolge entstehen. Daraus kannst du ableiten, welche Codons für welche Aminosäure stehen. Nicht jede mRNA lässt sich herstellen, und die Tabelle hat nur acht der zwanzig Aminosäuren.</p>
       <div class="cx">
         <div>
           <div class="karte">
@@ -331,7 +331,6 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
               </svg>
               <div>
                 <div id="gewaehlt" class="zeile-mrna mono">Wähle zuerst eine mRNA.</div>
-                <div class="rahmen" id="rahmen" role="radiogroup" aria-label="Start der Übersetzung"></div>
                 <button class="btn" type="button" id="los" disabled>In die Reaktionskammer geben</button>
                 <label class="switch" style="margin-left:10px"><input type="checkbox" id="trip"> Codons markieren</label>
                 <div id="ergebnis" aria-live="polite"></div>
@@ -340,7 +339,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
           </div>
           <div class="karte">
             <h3>Protokoll</h3>
-            <div class="logwrap"><table class="logtab" id="logtab"><thead><tr><th>Nr.</th><th>mRNA</th><th>Start</th><th>Polypeptid</th></tr></thead><tbody></tbody></table></div>
+            <div class="logwrap"><table class="logtab" id="logtab"><thead><tr><th>Nr.</th><th>mRNA</th><th>Polypeptid</th></tr></thead><tbody></tbody></table></div>
             <p class="klein" id="loginfo">Noch kein Versuch.</p>
           </div>
         </div>
@@ -365,8 +364,8 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
     <ul>
       <li>Die Tabelle zeigt acht der zwanzig Aminosäuren und 26 ihrer Codons. Der Rest des genetischen Codes ist weggelassen. Arginin hat in Wirklichkeit sechs Codons; AGA und AGG fehlen hier, damit jede Aminosäure mit vier Plätzen auskommt. Mit einer eigenen mRNA kannst du AGA oder AGG trotzdem ausprobieren: Die Kammer zeigt dann Arg.</li>
       <li>Die Versuche folgen den historischen Experimenten (Nirenberg und Matthaei 1961: Poly-U ergibt Polyphenylalanin; Khorana in den 1960er Jahren: sich wiederholende Sequenzen mit zwei, drei oder vier Nucleotiden), sind aber vereinfacht. Die Ergebnisse stammen aus dem heute bekannten Code, nicht aus Messungen. In den echten Versuchen war die Zuordnung zudem mühsamer und brauchte weitere Methoden, zum Beispiel die Bindung von Triplets an Ribosomen.</li>
-      <li>Ein Leserahmen heißt „nicht verfügbar“, wenn er Aminosäuren oder Stopp-Signale außerhalb der acht gewählten liefern würde. So bleibt die Übung überschaubar. Poly-G ist grundsätzlich nicht herstellbar, weil es sich zu Vierersträngen zusammenlagert.</li>
-      <li>Das zellfreie System startet an dem Nucleotid, das du wählst, ohne Startcodon. Das geht im Reagenzglas bei hoher Magnesiumkonzentration; in der Zelle beginnt die Translation am Startcodon AUG und ist durch die Stopp-Codons begrenzt. Hier ist die Zahl der gezeigten Aminosäuren auf die ersten 24 Nucleotide begrenzt.</li>
+      <li>Aminosäuren außerhalb der acht gewählten erscheinen als „?“. Poly-G ist grundsätzlich nicht herstellbar, weil es sich zu Vierersträngen zusammenlagert.</li>
+      <li>Das zellfreie System liest immer ab dem ersten Nucleotid, ohne Startcodon. Wer andere Codons sehen will, wählt eine andere Wiederholungseinheit (zum Beispiel CGA statt ACG). Das geht im Reagenzglas bei hoher Magnesiumkonzentration; in der Zelle beginnt die Translation am Startcodon AUG und ist durch die Stopp-Codons begrenzt. Hier ist die Zahl der gezeigten Aminosäuren auf die ersten 24 Nucleotide begrenzt.</li>
     </ul>
   </details>
 </div>
@@ -537,7 +536,6 @@ function markiereAuswahl(){
 }
 function waehleVorgabe(u){
   S.aktuell = {typ: "vorgabe", einheit: u, mrna: einheitMrna(u, LEN), name: "(" + u + ")n"};
-  const r = G.rahmen(u); if (!r[S.rahmen - 1].verfuegbar) S.rahmen = r.find(x => x.verfuegbar).start;
   $("eigen").value = ""; markiereAuswahl(); zeigeKammer(); $("ergebnis").textContent = "";
 }
 function waehleEigene(){
@@ -561,10 +559,9 @@ $("leer").addEventListener("click", () => { $("eigen").value = ""; waehleEigene(
 
 /* ---------- Reaktionskammer ---------- */
 function zeigeKammer(){
-  const a = S.aktuell, box = $("gewaehlt"), r = $("rahmen"); r.textContent = "";
+  const a = S.aktuell, box = $("gewaehlt");
   $("los").disabled = !a || S.laeuft;
   if (!a){ box.textContent = "Wähle zuerst eine mRNA."; return; }
-  const frames = a.typ === "vorgabe" ? G.rahmen(a.einheit) : [1, 2, 3].map(s => ({start: s, verfuegbar: true}));
   const mark = $("trip").checked;
   const u = a.einheit; let h;
   if (mark){   // ein voller Umlauf der Codons, ab dem gewählten Start
@@ -574,12 +571,6 @@ function zeigeKammer(){
     h += "…-3'";
   } else h = "5'-(" + buchstaben(u) + ")<sub>n</sub>-3'";
   box.innerHTML = h;
-  frames.forEach(f => {
-    const l = document.createElement("label"); if (!f.verfuegbar){ l.className = "aus"; l.title = "In diesem Leserahmen entstehen Aminosäuren oder Stopp-Signale, die nicht zu dieser Übung gehören."; }
-    const i = document.createElement("input"); i.type = "radio"; i.name = "rahmen"; i.value = f.start; i.checked = f.start === S.rahmen; i.disabled = !f.verfuegbar;
-    i.addEventListener("change", () => { S.rahmen = f.start; zeigeKammer(); });
-    l.append(i, document.createTextNode(" Start bei Nucleotid " + f.start)); r.appendChild(l);
-  });
 }
 $("trip").addEventListener("change", zeigeKammer);
 function bewerte(c){   // was die Kammer für ein Codon liefert
@@ -600,7 +591,7 @@ function los(){
     S.laeuft = false; $("glas").classList.remove("laeuft"); $("los").disabled = false;
     const aas = [];
     reaktion.forEach((r, i) => { aas.push(r.aa); if (r.pool && !S.entdeckt.includes(ue.codons[i])) S.entdeckt.push(ue.codons[i]); });
-    S.log.unshift({nr: S.log.length + 1, name: a.name, mrna: a.mrna, start: S.rahmen, aas, typ: a.typ});
+    S.log.unshift({nr: S.log.length + 1, name: a.name, mrna: a.mrna, aas, typ: a.typ});
     const res = $("ergebnis"); res.textContent = "";
     const t = document.createElement("div"); t.className = "klein"; t.textContent = "Polypeptid:"; res.appendChild(t);
     const pep = document.createElement("div"); pep.className = "peptid";
@@ -617,7 +608,7 @@ function renderLog(){
   S.log.forEach(e => {
     const tr = document.createElement("tr");
     const kurz = e.name;
-    tr.innerHTML = `<td>${e.nr}</td><td class="mono">${kurz.replace(/[ACGU]+/, m => buchstaben(m))}</td><td>${e.start}</td><td></td>`;
+    tr.innerHTML = `<td>${e.nr}</td><td class="mono">${kurz.replace(/[ACGU]+/, m => buchstaben(m))}</td><td></td>`;
     const td = tr.lastChild; td.style.display = "flex"; td.style.flexWrap = "wrap"; td.style.gap = "3px";
     e.aas.slice(0, 8).forEach(x => td.appendChild(aaChip(x)));
     if (true) td.appendChild(document.createTextNode("…"));
