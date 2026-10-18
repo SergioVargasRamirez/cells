@@ -139,6 +139,10 @@ button:focus-visible,input:focus-visible,summary:focus-visible,canvas:focus-visi
 .karte h3 .nr{display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:700 .8em var(--sans);margin-right:8px}
 .mrnas{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:8px}
 button.mrna{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;font:inherit;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:6px 9px;cursor:pointer}
+button.mrna:not(:disabled){touch-action:none;cursor:grab}
+button.mrna.schwebt{position:fixed;z-index:80;pointer-events:none;width:150px;box-shadow:0 6px 18px rgba(0,0,0,.3);cursor:grabbing}
+button.mrna.zieht{opacity:.4}
+#kammerkarte.ziel{outline:3px dashed var(--accent);outline-offset:2px}
 button.mrna:hover:not(:disabled){border-color:var(--accent)}
 button.mrna[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 35%,transparent);background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
 button.mrna:disabled{opacity:.55;cursor:not-allowed;background:var(--surface2)}
@@ -301,7 +305,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
   <main>
     <section class="schritt" id="s-versuch">
       <h2>Versuch und Auswertung</h2>
-      <p>Im Reagenzglas steckt ein zellfreies System aus Ribosomen, tRNAs, Enzymen und Aminosäuren, aber ohne eigene mRNA. Gib eine künstliche mRNA hinein. Das System übersetzt sie in allen drei Leserahmen, und du siehst, welche Aminosäuren entstehen. Daraus kannst du ableiten, welche Codons für welche Aminosäure stehen. Nicht jede mRNA lässt sich herstellen, und die Tabelle hat nur acht der zwanzig Aminosäuren.</p>
+      <p>Im Reagenzglas steckt ein zellfreies System aus Ribosomen, tRNAs, Enzymen und Aminosäuren, aber ohne eigene mRNA. Gib eine künstliche mRNA hinein: Ziehe sie in die Reaktionskammer oder wähle sie aus und tippe auf „In die Reaktionskammer geben“. Das System übersetzt sie in allen drei Leserahmen, und du siehst, welche Aminosäuren entstehen. Daraus kannst du ableiten, welche Codons für welche Aminosäure stehen. Nicht jede mRNA lässt sich herstellen, und die Tabelle hat nur acht der zwanzig Aminosäuren.</p>
       <div class="cx">
         <div>
           <div class="karte">
@@ -311,6 +315,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
               <label for="eigen" class="etikett">Eigene <span style="text-transform:none">mRNA</span>: Wiederholungseinheit (5' → 3')</label>
               <input type="text" id="eigen" maxlength="6" autocomplete="off" spellcheck="false" placeholder="z. B. CCU" aria-label="Wiederholungseinheit der eigenen mRNA">
               <span id="ntknoepfe" style="display:inline-flex;gap:6px"></span>
+              <button class="mrna" type="button" id="eigenchip" hidden aria-label="Eigene mRNA in die Reaktionskammer ziehen"></button>
               <button class="btn" type="button" id="zufall">Zufällig</button>
               <button class="btn" type="button" id="leer">Leeren</button>
             </div>
@@ -318,7 +323,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
           </div>
         </div>
         <div>
-          <div class="karte">
+          <div class="karte" id="kammerkarte">
             <h3><span class="nr">2</span>Reaktionskammer</h3>
             <div class="kammer">
               <svg class="glas" id="glas" viewBox="0 0 96 150" role="img" aria-label="Reagenzglas mit zellfreiem System">
@@ -329,7 +334,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
                 <text x="48" y="104" text-anchor="middle" font-size="9" fill="currentColor" opacity=".8">tRNAs</text>
               </svg>
               <div>
-                <div id="gewaehlt" class="zeile-mrna mono">Wähle zuerst eine mRNA.</div>
+                <div id="gewaehlt" class="zeile-mrna mono">Ziehe eine mRNA hierher oder wähle sie aus.</div>
                 <button class="btn" type="button" id="los" disabled>In die Reaktionskammer geben</button>
                 <div id="ergebnis" aria-live="polite"></div>
               </div>
@@ -511,7 +516,8 @@ function bauMrnas(){
   for (const u of G.VERSUCHE){
     const b = document.createElement("button"); b.type = "button"; b.className = "mrna"; b.dataset.einheit = u; b.setAttribute("aria-pressed", "false");
     b.innerHTML = `<span class="mname">(${buchstaben(u)})<sub>n</sub></span>`;
-    b.addEventListener("click", () => waehleVorgabe(u));
+    b.addEventListener("click", () => { if (!b.dataset.gezogen) waehleVorgabe(u); });
+    b.addEventListener("pointerdown", ev => ziehMrna(ev, b, () => waehleVorgabe(u)));
     box.appendChild(b);
   }
   for (const n of G.NICHT_HERSTELLBAR){
@@ -533,6 +539,7 @@ function waehleEigene(){
   if ($("eigen").value !== t) $("eigen").value = t;
   S.aktuell = t.length >= 1 ? {typ: "eigen", einheit: t, mrna: einheitMrna(t, LEN), name: "(" + t + ")n"} : null;
   markiereAuswahl(); zeigeKammer(); $("ergebnis").textContent = "";
+  const ec = $("eigenchip"); ec.hidden = !S.aktuell; if (S.aktuell) ec.innerHTML = `<span class="mname">(${buchstaben(t)})<sub>n</sub></span>`;
 }
 function ntKnoepfe(){
   const box = $("ntknoepfe"); box.textContent = "";
@@ -544,14 +551,38 @@ function ntKnoepfe(){
   }
 }
 $("eigen").addEventListener("input", waehleEigene);
+$("eigenchip").addEventListener("pointerdown", ev => ziehMrna(ev, $("eigenchip"), waehleEigene));
+$("eigenchip").addEventListener("click", () => $("eigen").focus());
 $("zufall").addEventListener("click", () => { $("eigen").value = Array.from({length: 2 + Math.floor(Math.random() * 3)}, () => "ACGU"[Math.floor(Math.random() * 4)]).join(""); waehleEigene(); });
 $("leer").addEventListener("click", () => { $("eigen").value = ""; waehleEigene(); $("eigen").focus(); });
+
+/* ---------- Ziehen in die Reaktionskammer (zusätzlich zum Antippen) ---------- */
+function ziehMrna(ev, knopf, waehle){
+  if (ev.button > 0 || S.laeuft) return;
+  const x0 = ev.clientX, y0 = ev.clientY, id = ev.pointerId, kammer = $("kammerkarte");
+  let geist = null;
+  const drin = (x, y) => document.elementsFromPoint(x, y).includes(kammer);
+  const bewegt = e => {
+    if (e.pointerId !== id) return;
+    if (!geist && Math.hypot(e.clientX - x0, e.clientY - y0) > 6){ geist = knopf.cloneNode(true); geist.classList.add("schwebt"); geist.removeAttribute("id"); document.body.appendChild(geist); knopf.classList.add("zieht"); }
+    if (geist){ geist.style.left = (e.clientX - 60) + "px"; geist.style.top = (e.clientY - 20) + "px"; kammer.classList.toggle("ziel", drin(e.clientX, e.clientY)); }
+  };
+  const ende = e => {
+    if (e.pointerId !== id) return;
+    document.removeEventListener("pointermove", bewegt); document.removeEventListener("pointerup", ende); document.removeEventListener("pointercancel", ende);
+    kammer.classList.remove("ziel");
+    if (!geist) return;   // kein Ziehen: der normale Klick wählt die mRNA aus
+    geist.remove(); knopf.classList.remove("zieht"); knopf.dataset.gezogen = "1"; setTimeout(() => delete knopf.dataset.gezogen, 0);
+    if (e.type === "pointerup" && drin(e.clientX, e.clientY)){ waehle(); los(); }
+  };
+  document.addEventListener("pointermove", bewegt); document.addEventListener("pointerup", ende); document.addEventListener("pointercancel", ende);
+}
 
 /* ---------- Reaktionskammer ---------- */
 function zeigeKammer(){
   const a = S.aktuell, box = $("gewaehlt");
   $("los").disabled = !a || S.laeuft;
-  if (!a){ box.textContent = "Wähle zuerst eine mRNA."; return; }
+  if (!a){ box.textContent = "Ziehe eine mRNA hierher oder wähle sie aus."; return; }
   box.innerHTML = "5'-(" + buchstaben(a.einheit) + ")<sub>n</sub>-3'";
 }
 function bewerte(c){   // was die Kammer für ein Codon liefert
