@@ -190,7 +190,7 @@ button.mrna:disabled{opacity:.55;cursor:not-allowed;background:var(--surface2)}
 .chip.zieht{opacity:.35}
 .chip.schwebt{position:fixed;z-index:80;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.3);cursor:grabbing}
 .tabelle{display:grid;gap:6px;margin-top:10px}
-.trow{display:grid;grid-template-columns:96px repeat(4,minmax(0,1fr));gap:6px;align-items:center}
+.trow{display:grid;grid-template-columns:96px repeat(var(--sl,4),minmax(0,1fr));gap:6px;align-items:center}
 .trow .kopf{display:flex;flex-direction:column;gap:2px}
 .trow .kopf .aa{align-self:flex-start;height:26px}
 .trow .kopf small{color:var(--muted);font-size:.74rem;line-height:1.1}
@@ -302,12 +302,13 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
   <header>
     <h1>Der Code im Reagenzglas</h1>
     <p class="lede">Wie ordnet die Zelle Codons Aminosäuren zu? Anfang der 1960er Jahre haben Marshall Nirenberg und Har Gobind Khorana das mit künstlichen mRNAs in zellfreien Extrakten herausgefunden. Mach den Versuch nach und stelle die Codon-Tabelle zusammen.</p>
+    <label class="switch"><input type="checkbox" id="experte"> Expertenmodus: ganzer genetischer Code (20 Aminosäuren, 64 Codons)</label>
   </header>
 
   <main>
     <section class="schritt" id="s-versuch">
       <h2>Versuch und Auswertung</h2>
-      <p>Im Reagenzglas steckt ein zellfreies System aus Ribosomen, tRNAs, Enzymen und Aminosäuren, aber ohne eigene mRNA. Gib eine künstliche mRNA hinein: Ziehe sie in die Reaktionskammer oder wähle sie aus und tippe auf „In die Reaktionskammer geben“. Das System übersetzt sie in allen drei Leserahmen, und du siehst, welche Aminosäuren entstehen. Daraus kannst du ableiten, welche Codons für welche Aminosäure stehen. Nicht jede mRNA lässt sich herstellen, und die Tabelle hat nur acht der zwanzig Aminosäuren.</p>
+      <p>Im Reagenzglas steckt ein zellfreies System aus Ribosomen, tRNAs, Enzymen und Aminosäuren, aber ohne eigene mRNA. Gib eine künstliche mRNA hinein: Ziehe sie in die Reaktionskammer oder wähle sie aus und tippe auf „In die Reaktionskammer geben“. Das System übersetzt sie in allen drei Leserahmen, und du siehst, welche Aminosäuren entstehen. Daraus kannst du ableiten, welche Codons für welche Aminosäure stehen. Nicht jede mRNA lässt sich herstellen. <span id="umfang">Die Tabelle hat nur acht der zwanzig Aminosäuren</span>.</p>
       <div class="cx">
         <div>
           <div class="karte">
@@ -343,7 +344,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
             </div>
           </div>
           <div class="karte">
-            <h3>Protokoll</h3>
+            <h3 style="display:flex;justify-content:space-between;align-items:center;gap:8px">Protokoll <button class="btn" type="button" id="protleer" style="font-size:.85rem;padding:3px 10px">Protokoll leeren</button></h3>
             <div class="logwrap"><table class="logtab" id="logtab"><thead><tr><th>Nr.</th><th>mRNA</th><th>Aminosäuren</th></tr></thead><tbody></tbody></table></div>
             <p class="klein" id="loginfo">Noch kein Versuch.</p>
           </div>
@@ -367,7 +368,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
   <details>
     <summary>Modell und Grenzen</summary>
     <ul>
-      <li>Die Tabelle zeigt acht der zwanzig Aminosäuren und 26 ihrer Codons. Der Rest des genetischen Codes ist weggelassen. Arginin hat in Wirklichkeit sechs Codons; AGA und AGG fehlen hier, damit jede Aminosäure mit vier Plätzen auskommt. Mit einer eigenen mRNA kannst du AGA oder AGG trotzdem ausprobieren: Die Kammer zeigt dann Arg.</li>
+      <li>Im Expertenmodus gilt der ganze Code mit 20 Aminosäuren und drei Stopp-Signalen (64 Codons); sonst gilt die vereinfachte Fassung. Die vereinfachte Tabelle zeigt acht der zwanzig Aminosäuren und 26 ihrer Codons. Der Rest des genetischen Codes ist weggelassen. Arginin hat in Wirklichkeit sechs Codons; AGA und AGG fehlen hier, damit jede Aminosäure mit vier Plätzen auskommt. Mit einer eigenen mRNA kannst du AGA oder AGG trotzdem ausprobieren: Die Kammer zeigt dann Arg.</li>
       <li>Die Versuche folgen den historischen Experimenten (Nirenberg und Matthaei 1961: Poly-U ergibt Polyphenylalanin; Khorana in den 1960er Jahren: sich wiederholende Sequenzen mit zwei, drei oder vier Nucleotiden), sind aber vereinfacht. Die Ergebnisse stammen aus dem heute bekannten Code, nicht aus Messungen. In den echten Versuchen war die Zuordnung zudem mühsamer und brauchte weitere Methoden, zum Beispiel die Bindung von Triplets an Ribosomen.</li>
       <li>Aminosäuren außerhalb der acht gewählten erscheinen als „?“. Poly-G ist grundsätzlich nicht herstellbar, weil es sich zu Vierersträngen zusammenlagert.</li>
       <li>Das zellfreie System kann an jeder Stelle der Wiederholung beginnen, ohne Startcodon: Alle Leserahmen tragen bei, und angezeigt wird die Liste der entstandenen Aminosäuren (mit Häufigkeit), nicht die Reihenfolge in einer Kette. Das geht im Reagenzglas bei hoher Magnesiumkonzentration; in der Zelle beginnt die Translation am Startcodon AUG und ist durch die Stopp-Codons begrenzt. Hier ist die Zahl der gezeigten Aminosäuren auf die ersten 24 Nucleotide begrenzt.</li>
@@ -480,13 +481,18 @@ const GENCODE = (() => {
       return {start: f + 1, codons, verfuegbar: codons.every(c => IMTEIL.has(c))};
     });
   }
-  const VERSUCHE = ["U", "C", "A", "UUC", "CG", "CGC", "CA", "CCA", "CGG", "CGGG", "CGCA", "ACG", "AAG", "GGA"];
-  const NICHT_HERSTELLBAR = [
+  const VERSUCHE = ["U", "C", "A", "UUC", "CG", "CA", "CGC", "CCA", "CGG", "ACG", "AAG", "GGA", "CCU", "GCU", "ACU", "CAU", "CGU", "GGU", "CGGG", "CGCA"];
+  // Expertenmodus (ganzer Code): zusätzliche Versuche, damit alle 64 Codons erreichbar sind (die Reihenfolge verrät nichts)
+  const VERSUCHE_VOLL = VERSUCHE.concat(["UC", "AUG", "UA", "CAA", "CAG", "UUGA", "UUAG", "UAUG", "UUAA"]);
+  // Zeilen des ganzen Codes, alphabetisch nach Name (Stopp zuletzt); jede Zeile hat Platz für alle Codons
+  const VOLLCODE = Object.keys(AS).sort((a, b) => AS[a].name.localeCompare(AS[b].name, "de")).map(aa => ({aa, codons: CODONS.filter(c => TABELLE[c] === aa)}))
+    .concat([{aa: "Stopp", codons: CODONS.filter(c => TABELLE[c] === "Stopp")}]);
+  const NICHT_HERSTELLBAR = [   // nur im vereinfachten Code; im Expertenmodus ist nur Poly-G nicht herstellbar
     {einheit: "G", grund: "Poly-G faltet sich zu Vierersträngen und lässt sich nicht herstellen."},
     {einheit: "UC", grund: "Dieser Versuch liefert Aminosäuren, die nicht zu den acht dieser Übung gehören."},
     {einheit: "AUG", grund: "Dieser Versuch liefert Aminosäuren und ein Stopp-Signal außerhalb dieser Übung."},
   ];
-  return {AS, TABELLE, CODONS, REIHE, KLASSEN, TEILCODE, IMTEIL, uebersetze, rahmen, VERSUCHE, NICHT_HERSTELLBAR};
+  return {AS, TABELLE, CODONS, REIHE, KLASSEN, TEILCODE, VOLLCODE, IMTEIL, uebersetze, rahmen, VERSUCHE, VERSUCHE_VOLL, NICHT_HERSTELLBAR};
 })();
 /*__/CODE__*/
 </script>
@@ -494,9 +500,13 @@ const GENCODE = (() => {
 (() => {
 "use strict";
 const $ = id => document.getElementById(id);
-const G = GENCODE, TEIL = G.TEILCODE, LEN = 24, EIN = 6;
+const G = GENCODE, LEN = 24, EIN = 6;
+let EXPERT = false, TEIL = G.TEILCODE;   // Expertenmodus: ganzer Code mit 20 Aminosäuren und Stopp
+const nSlots = () => EXPERT ? 6 : 4;
+const aaName = a => a === "Stopp" ? "Stopp-Signal" : G.AS[a].name;
 const S = {aktuell: null, rahmen: 1, entdeckt: [], slots: {}, log: [], sel: null, laeuft: false, geprueft: false, drag: null};
-TEIL.forEach(t => { S.slots[t.aa] = [null, null, null, null]; });
+const leereSlots = () => { S.slots = {}; TEIL.forEach(t => { S.slots[t.aa] = Array(nSlots()).fill(null); }); };
+leereSlots();
 const lumi = h => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
 const buchstaben = txt => [...txt].map(ch => `<span class="nt" style="color:${PALETTE.get(ch)}">${ch}</span>`).join("");
 const ggt = (a, b) => b ? ggt(b, a % b) : a;
@@ -512,17 +522,32 @@ function aaChip(a, neu){
 }
 const codonHtml = c => `<span class="nt">${buchstaben(c)}</span>`;
 
+/* ---------- Expertenmodus ---------- */
+function setzeModus(exp){
+  EXPERT = exp; TEIL = exp ? G.VOLLCODE : G.TEILCODE;
+  S.log = []; S.entdeckt = []; S.aktuell = null; S.sel = null; S.geprueft = false; leereSlots();
+  $("eigen").value = ""; $("ergebnis").textContent = ""; $("fortschritt").textContent = "";
+  $("umfang").textContent = exp ? "Die Tabelle enthält alle zwanzig Aminosäuren und die Stopp-Signale" : "acht der zwanzig Aminosäuren";
+  bauMrnas(); markiereAuswahl(); zeigeKammer(); renderVorrat(); renderTabelle(); renderLog(); status();
+}
+$("experte").addEventListener("change", e => {
+  const fortschritt = S.log.length || S.entdeckt.length || Object.values(S.slots).flat().some(Boolean);
+  if (fortschritt && !confirm("Beim Wechsel des Modus wird der bisherige Stand (Protokoll, Codons und Tabelle) gelöscht. Fortfahren?")){ e.target.checked = !e.target.checked; return; }
+  try { localStorage.setItem("cells-experte", e.target.checked ? "1" : "0"); } catch (x) {}
+  setzeModus(e.target.checked);
+});
+
 /* ---------- mRNA wählen ---------- */
 function bauMrnas(){
   const box = $("mrnas"); box.textContent = "";
-  for (const u of G.VERSUCHE){
+  for (const u of (EXPERT ? G.VERSUCHE_VOLL : G.VERSUCHE)){
     const b = document.createElement("button"); b.type = "button"; b.className = "mrna"; b.dataset.einheit = u; b.setAttribute("aria-pressed", "false");
     b.innerHTML = `<span class="mname">(${buchstaben(u)})<sub>n</sub></span>`;
     b.addEventListener("click", () => { if (!b.dataset.gezogen) waehleVorgabe(u); });
     b.addEventListener("pointerdown", ev => ziehMrna(ev, b, () => waehleVorgabe(u)));
     box.appendChild(b);
   }
-  for (const n of G.NICHT_HERSTELLBAR){
+  for (const n of (EXPERT ? G.NICHT_HERSTELLBAR.slice(0, 1) : G.NICHT_HERSTELLBAR)){
     const b = document.createElement("button"); b.type = "button"; b.className = "mrna"; b.disabled = true; b.title = n.grund;
     b.innerHTML = `<span class="mname">(${buchstaben(n.einheit)})<sub>n</sub></span><span class="mgrund">nicht verfügbar</span>`;
     b.setAttribute("aria-label", "(" + n.einheit + ")n nicht verfügbar: " + n.grund);
@@ -589,6 +614,7 @@ function zeigeKammer(){
 }
 function bewerte(c){   // was die Kammer für ein Codon liefert
   const a = G.TABELLE[c];
+  if (EXPERT) return {aa: a, pool: true};
   if (a === "Stopp") return {aa: "Stopp"};
   if (G.IMTEIL.has(c)) return {aa: a, pool: true};
   if (c === "AGA" || c === "AGG") return {aa: "Arg", hinweis: true};
@@ -657,12 +683,12 @@ function renderVorrat(){
 function renderTabelle(){
   const t = $("tabelle"); t.textContent = "";
   TEIL.forEach(row => {
-    const z = document.createElement("div"); z.className = "trow";
+    const z = document.createElement("div"); z.className = "trow"; z.style.setProperty("--sl", nSlots());
     const k = document.createElement("div"); k.className = "kopf"; k.appendChild(aaChip(row.aa));
-    const sm = document.createElement("small"); sm.textContent = G.AS[row.aa].name; k.appendChild(sm); z.appendChild(k);
+    const sm = document.createElement("small"); sm.textContent = aaName(row.aa); k.appendChild(sm); z.appendChild(k);
     S.slots[row.aa].forEach((c, i) => {
       const s = document.createElement("div"); s.className = "slot"; s.dataset.aa = row.aa; s.dataset.i = i; s.tabIndex = 0; s.setAttribute("role", "button");
-      s.setAttribute("aria-label", "Platz " + (i + 1) + " für " + G.AS[row.aa].name + (c ? ", belegt mit " + c : ", frei"));
+      s.setAttribute("aria-label", "Platz " + (i + 1) + " für " + aaName(row.aa) + (c ? ", belegt mit " + c : ", frei"));
       // Eine richtige Zuordnung wird sofort grün, eine falsche erst nach „Tabelle prüfen“
       if (c){ s.appendChild(chipEl(c)); const ok = G.TABELLE[c] === row.aa, st = (ok || S.geprueft) ? ok : null; if (st !== null){ s.classList.add(st ? "richtig" : "falsch"); const m = document.createElement("span"); m.className = "marke"; m.textContent = st ? "✓" : "✗"; s.appendChild(m); } }
       s.addEventListener("click", ev => { if (S.sel && !c && !ev.target.closest(".chip")){ setzeCodon(S.sel, row.aa, i); } });
@@ -723,7 +749,7 @@ function unterZeiger(x, y){
 }
 
 /* ---------- Prüfen und Fortschritt ---------- */
-const GESAMT = TEIL.reduce((s, t) => s + t.codons.length, 0);
+const gesamt = () => TEIL.reduce((s, t) => s + t.codons.length, 0);
 function zaehle(){
   let ok = 0, falsch = 0;
   for (const t of TEIL) for (const c of S.slots[t.aa]) if (c){ if (G.TABELLE[c] === t.aa) ok++; else falsch++; }
@@ -739,12 +765,15 @@ $("pruefen").addEventListener("click", () => {
   if (!z.gesetzt){ f.textContent = "Ziehe zuerst Codons in die Tabelle."; return; }
   if (z.falsch) f.textContent = z.falsch + " von " + z.gesetzt + " Codons stehen in der falschen Zeile (rot). Vergleiche noch einmal die Aminosäuren im Protokoll: Welche Aminosäure gehört zu welchem Triplet?";
   else if (rest) f.textContent = "Alle " + z.ok + " gesetzten Codons stimmen. Im Vorrat warten noch Codons.";
-  else if (z.ok < GESAMT) f.textContent = "Alle " + z.ok + " gesetzten Codons stimmen. Es gibt aber noch weitere Codons, die die vorgegebenen mRNAs nicht liefern: Baue eigene mRNAs und probiere es aus.";
-  else f.innerHTML = "Geschafft: Alle " + GESAMT + " Codons stehen richtig in der Tabelle. Dieser kleine Teil des Codes zeigt schon die Regeln: Mehrere Codons können für dieselbe Aminosäure stehen, und die dritte Base ist oft unwichtig. Weiter geht es mit dem <a href=\"codon-generator.html\">Codon-Generator</a>.";
+  else if (z.ok < gesamt()) f.textContent = "Alle " + z.ok + " gesetzten Codons stimmen. Es fehlen noch Codons: Probiere weitere mRNAs aus (auch eigene Wiederholungseinheiten).";
+  else if (EXPERT) f.innerHTML = "Geschafft: Du hast den ganzen genetischen Code im Reagenzglas aufgeklärt. Weiter geht es mit dem <a href=\"codon-generator.html\">Codon-Generator</a>.";
+  else f.innerHTML = "Geschafft: Alle " + gesamt() + " Codons stehen richtig in der Tabelle. Dieser kleine Teil des Codes zeigt schon die Regeln: Mehrere Codons können für dieselbe Aminosäure stehen, und die dritte Base ist oft unwichtig. Weiter geht es mit dem <a href=\"codon-generator.html\">Codon-Generator</a>.";
 });
-$("alleweg").addEventListener("click", () => { TEIL.forEach(t => { S.slots[t.aa] = [null, null, null, null]; }); S.sel = null; S.geprueft = false; renderTabelle(); renderVorrat(); status(); });
+$("protleer").addEventListener("click", () => { S.log = []; $("ergebnis").textContent = ""; renderLog(); });   // die Tabelle und der Vorrat bleiben unberührt
+$("alleweg").addEventListener("click", () => { leereSlots(); S.sel = null; S.geprueft = false; renderTabelle(); renderVorrat(); status(); });
 if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { bauMrnas(); markiereAuswahl(); ntKnoepfe(); zeigeKammer(); renderLog(); renderVorrat(); renderTabelle(); });
 
+try { if (localStorage.getItem("cells-experte") === "1"){ $("experte").checked = true; EXPERT = true; TEIL = G.VOLLCODE; leereSlots(); $("umfang").textContent = "Die Tabelle enthält alle zwanzig Aminosäuren und die Stopp-Signale"; } } catch (x) {}
 bauMrnas(); ntKnoepfe(); zeigeKammer(); renderVorrat(); renderTabelle(); renderLog(); status();
 })();
 </script>

@@ -61,11 +61,16 @@ const GENCODE = (() => {
       return {start: f + 1, codons, verfuegbar: codons.every(c => IMTEIL.has(c))};
     });
   }
-  const VERSUCHE = ["U", "C", "A", "UUC", "CG", "CGC", "CA", "CCA", "CGG", "CGGG", "CGCA", "ACG", "AAG", "GGA"];
-  const NICHT_HERSTELLBAR = [
+  const VERSUCHE = ["U", "C", "A", "UUC", "CG", "CA", "CGC", "CCA", "CGG", "ACG", "AAG", "GGA", "CCU", "GCU", "ACU", "CAU", "CGU", "GGU", "CGGG", "CGCA"];
+  // Expertenmodus (ganzer Code): zusätzliche Versuche, damit alle 64 Codons erreichbar sind (die Reihenfolge verrät nichts)
+  const VERSUCHE_VOLL = VERSUCHE.concat(["UC", "AUG", "UA", "CAA", "CAG", "UUGA", "UUAG", "UAUG", "UUAA"]);
+  // Zeilen des ganzen Codes, alphabetisch nach Name (Stopp zuletzt); jede Zeile hat Platz für alle Codons
+  const VOLLCODE = Object.keys(AS).sort((a, b) => AS[a].name.localeCompare(AS[b].name, "de")).map(aa => ({aa, codons: CODONS.filter(c => TABELLE[c] === aa)}))
+    .concat([{aa: "Stopp", codons: CODONS.filter(c => TABELLE[c] === "Stopp")}]);
+  const NICHT_HERSTELLBAR = [   // nur im vereinfachten Code; im Expertenmodus ist nur Poly-G nicht herstellbar
     {einheit: "G", grund: "Poly-G faltet sich zu Vierersträngen und lässt sich nicht herstellen."},
     {einheit: "UC", grund: "Dieser Versuch liefert Aminosäuren, die nicht zu den acht dieser Übung gehören."},
     {einheit: "AUG", grund: "Dieser Versuch liefert Aminosäuren und ein Stopp-Signal außerhalb dieser Übung."},
   ];
-  return {AS, TABELLE, CODONS, REIHE, KLASSEN, TEILCODE, IMTEIL, uebersetze, rahmen, VERSUCHE, NICHT_HERSTELLBAR};
+  return {AS, TABELLE, CODONS, REIHE, KLASSEN, TEILCODE, VOLLCODE, IMTEIL, uebersetze, rahmen, VERSUCHE, VERSUCHE_VOLL, NICHT_HERSTELLBAR};
 })();
