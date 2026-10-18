@@ -20,6 +20,7 @@ Online: https://cells.biodatum.io · Schwesterprojekt für die Chemie:
 | `peptidbindung.html` | Die Peptidbindung: Kondensationsreaktion in 2D, Peptidebene in 3D, Drehversuch (ω, φ, ψ), Resonanz, Kette aus starren Ebenen | von Hand, Geometrie aus `template/site/peptid.js`, Test `scripts/protein` |
 | `chargaff.html` | Chargaff-Experiment: simulierte DNA-Proben hydrolysieren, zählen, Streudiagramme, Aussagen prüfen | von Hand |
 | `schmelztemperatur.html` | Schmelztemperatur: 30-bp-DNA erhitzen, Schmelzkurve (Nächste-Nachbarn-Modell), Tm gegen GC-Anteil | von Hand |
+| `sekundaerstruktur.html` | Helix und Faltblatt: α-Helix, antiparalleles und paralleles β-Faltblatt aus Idealgeometrie in 3D, H-Brücken, Seitenketten, Perlen/Atome/Cartoon | von Hand (`peptid.js`, `cartoon.js`) |
 | `proteinstruktur.html` | Von der Sequenz zur Faltung: Ubiquitin (1UBQ) in 3D, Primär-, Sekundär- und Tertiärstruktur, Cartoon, Faltung, hydrophober Kern | von Hand, Daten aus `scripts/protein/export_ubq.py` |
 | `transkription.html` | Transkription: RNA an einer DNA-Vorlage aufbauen (NTPs, Hybrid-Helix in 3D) | wie `basenpaarung.html` |
 | `quellen.html` | Quellen und Danksagung, Mitmachen (`#mitmachen`) | von Hand |

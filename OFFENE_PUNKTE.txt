@@ -97,6 +97,8 @@ P1 peptidbindung.html (Peptidbindung, Ebene), P2 Proteinstruktur Primär bis Ter
 - [ ] P1 gegenlesen: Energiewerte (Barriere ca. 20 kcal/mol, trans-cis 2 bis 3 kcal/mol), Aussagen zu Prolin und zum Ribosom
 - [ ] P1 Touch testen (Drehregler, 3D)
 - [x] P2 proteinstruktur.html: Ubiquitin 1UBQ, drei Strukturebenen, Perlenkette und Cartoon (cartoon.js), Faltung als Überblendung Knäuel -> Struktur, Farbe nach Aminosäure/Sekundärstruktur/innen-außen/N→C, Seitenketten, Schnitt, Sequenzleiste; Zugänglichkeit (Shrake-Rupley) in ubq-data.js; Tests: node scripts/protein/test_cartoon.js
+- [x] P3 sekundaerstruktur.html: Helix und parallele/antiparallele Faltblätter aus Idealgeometrie, H-Brücken (DSSP-Energie), Seitenketten (Cβ), Perlen/Atome/Cartoon, Ansichten
+- [ ] P3 gegenlesen (Texte, Winkel), Touch testen; Idee: eigene φ/ψ-Werkstatt mit Live-Bau von Helix/Strang, Ramachandran
 - [ ] P2 gegenlesen: Texte zu Sekundär-/Tertiärstruktur, Aussagen zu Ubiquitin (Funktion, kein Cystein), Schwelle "vergraben" (20 % RSA)
 - [ ] P2 ideen: Ramachandran-Diagramm (aus der Geometrie berechnet) und eigene Sekundärstruktur bauen; Wasserstoffbrücken im Faltblatt zeigen; zweites Protein zum Vergleichen (zum Beispiel Myoglobin: nur Helices); Quartärstruktur (Hämoglobin)
 - [ ] P2 Touch testen
