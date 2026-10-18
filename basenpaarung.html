@@ -230,6 +230,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
             <label class="switch"><input type="checkbox" id="b-enden" checked> Enden (5', 3')</label>
             <label class="switch"><input type="checkbox" id="b-furchen"> Furchen</label>
             <label class="switch"><input type="checkbox" id="b-masse"> Abstände und Winkel</label>
+            <label class="switch"><input type="checkbox" id="b-hb"> Wasserstoffbrücken</label>
           </div>
           <div class="steuer klein">
             <label class="regler">Schnitt <input type="range" id="schnitt" min="0" max="100" value="100" aria-label="Schnitt durch die Helix, von unten nach oben"><output id="schnitt-o" for="schnitt">kein Schnitt</output></label>
@@ -1056,7 +1057,8 @@ const DNA2D = (() => {
 // von build.py in die Seiten kopiert). Braucht PALETTE, HELIX, HELIX_BAU und MOL3D.
 //
 // Erwartet im Markup der Seite diese Elemente (ids): gl3, ov3, d3text, legende3, sg-farbe3, b-enden, b-furchen,
-// b-masse, schnitt, schnitt-o, b-scheibe, v-achse, v-seite und optional sg-laenge (Dein Stück 3 × wiederholt).
+// b-masse, schnitt, schnitt-o, b-scheibe, v-achse, v-seite und optional sg-laenge (Dein Stück 3 × wiederholt) und b-hb
+// (Wasserstoffbrücken zwischen den Basen).
 //
 //   const d3 = HELIX3D.create({einfach: () => bool, namen: ["Strang 1", "Strang 2"], wiederholung: true, zoom: 1.2});
 //   d3.zeige("CGCGAATTCGCG", "DNA");   // Sequenz des Strangs 1 von 5' nach 3'; Modus: "DNA" (B-Form), "RNA" (A-Form),
@@ -1068,13 +1070,15 @@ const HELIX3D = (() => {
   const RUECKEN_NAMEN = new Set(["P", "OP1", "OP2", "O5'"]);
   const zahl = (x, n = 1) => x.toLocaleString("de-DE", {minimumFractionDigits: n, maximumFractionDigits: n});
   const lumi = h => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+  // Wasserstoffbrücken der Watson-Crick-Paare: [Atom der Purinbase, Atom der Pyrimidinbase]
+  const HB_PAARE = {AT: [["N6", "O4"], ["N1", "N3"]], AU: [["N6", "O4"], ["N1", "N3"]], GC: [["N1", "N3"], ["N2", "O2"], ["O6", "N4"]]};
   const Rseite = MOL3D.rotX(-Math.PI / 2 + 0.2), Rachse = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
 
   function create(opt){
     opt = opt || {};
     const $ = id => document.getElementById(id);
     const einfach = opt.einfach || (() => false), namen = opt.namen || ["Strang 1", "Strang 2"];
-    const V = {laenge: "lang", farbe: "nukleotid", enden: true, furchen: false, masse: false, schnitt: 100, scheibe: true,
+    const V = {laenge: "lang", farbe: "nukleotid", enden: true, furchen: false, masse: false, hb: false, schnitt: 100, scheibe: true,
                viewer: null, schluessel: "", zmin: 0, zmax: 1, seq: "", modus: "DNA", eigen: 0, d: null, H: null};
     const weiss = "rgba(255,255,255,.92)";
 
@@ -1106,6 +1110,18 @@ const HELIX3D = (() => {
         tip: (einfach() ? "" : a.name + " · ") + (V.modus === "RNA1" ? "RNA" : namen[a.strang - 1]) + ", Position " + (a.bp + 1) + " (" + a.base + ")",
       }));
       const bindungen = d.bindungen.map(([i, j]) => ({a: i, b: j, r: 0.1}));
+      if (V.hb && V.modus !== "RNA1"){   // gestrichelte Wasserstoffbrücken
+        const farbeHB = PALETTE.rgb("hbruecke");
+        for (let k = 0; k < d.n; k++){
+          const x1 = d.atome[d.index["1:" + k + ":C1'"]].base, x2 = d.atome[d.index["2:" + k + ":C1'"]].base;
+          const pur = "AG".includes(x1) ? 1 : 2, liste = HB_PAARE[("AG".includes(x1) ? x1 + x2 : x2 + x1)];
+          if (!liste) continue;
+          for (const [p, q] of liste){
+            const i = d.index[(pur === 1 ? 1 : 2) + ":" + k + ":" + p], j = d.index[(pur === 1 ? 2 : 1) + ":" + k + ":" + q];
+            if (i !== undefined && j !== undefined) bindungen.push({a: i, b: j, strich: true, r: 0.09, c: farbeHB});
+          }
+        }
+      }
       let zmin = 1e9, zmax = -1e9;
       for (const a of atome){ zmin = Math.min(zmin, a.p[2]); zmax = Math.max(zmax, a.p[2]); }
       V.zmin = zmin - 0.5; V.zmax = zmax + 0.5; V.d = d; V.H = HELIX[form];
@@ -1182,7 +1198,7 @@ const HELIX3D = (() => {
     function legende3(){
       const P = PALETTE.get, chip3 = (c, t) => '<span><i style="background:' + P(c) + '"></i>' + t + "</span>", m = V.modus;
       $("legende3").innerHTML = V.farbe === "nukleotid"
-        ? chip3("A", "Adenin") + chip3("G", "Guanin") + chip3("C", "Cytosin") + (m !== "RNA" && m !== "RNA1" ? chip3("T", "Thymin") : "") + (m !== "DNA" ? chip3("U", "Uracil") : "") + chip3("p5", "Phosphat (5')") + chip3("oh3", "3'-O") + chip3("zucker", "Zucker")
+        ? chip3("A", "Adenin") + chip3("G", "Guanin") + chip3("C", "Cytosin") + (m !== "RNA" && m !== "RNA1" ? chip3("T", "Thymin") : "") + (m !== "DNA" ? chip3("U", "Uracil") : "") + chip3("p5", "Phosphat (5')") + chip3("oh3", "3'-O") + chip3("zucker", "Zucker") + (V.hb && m !== "RNA1" ? chip3("hbruecke", "Wasserstoffbrücke") : "")
         : "<span>Kohlenstoff, Stickstoff, Sauerstoff und Phosphor in den üblichen Elementfarben</span>";
     }
     function zeichne3D(neu){
@@ -1190,7 +1206,7 @@ const HELIX3D = (() => {
       V.viewer.setScene(baue3D(), {keepView: !neu});
       V.viewer.setLabels(beschriftungen3D());
       schnittAnwenden(); text3D(); legende3();
-      const fl = $("b-furchen").closest("label"); if (fl) fl.hidden = V.modus === "RNA1";
+      for (const id of ["b-furchen", "b-hb"]){ const el = $(id), fl = el && el.closest("label"); if (fl) fl.hidden = V.modus === "RNA1"; }
     }
     function schnittAnwenden(){
       const f = V.schnitt / 100;
@@ -1222,6 +1238,7 @@ const HELIX3D = (() => {
     segment("sg-laenge", "laenge", () => { V.schluessel = ""; if (V.viewer) zeige(V.seq, V.modus, V.eigen); });
     segment("sg-farbe3", "farbe", () => zeichne3D(false));
     for (const [id, k] of [["b-enden", "enden"], ["b-furchen", "furchen"], ["b-masse", "masse"]]) $(id).addEventListener("change", e => { V[k] = e.target.checked; if (V.viewer) V.viewer.setLabels(beschriftungen3D()); });
+    if ($("b-hb")) $("b-hb").addEventListener("change", e => { V.hb = e.target.checked; zeichne3D(false); });
     $("b-scheibe").addEventListener("change", e => { V.scheibe = e.target.checked; if (V.viewer) schnittAnwenden(); });
     $("schnitt").addEventListener("input", e => { V.schnitt = +e.target.value; if (V.viewer) schnittAnwenden(); });
     $("v-achse").addEventListener("click", () => V.viewer && V.viewer.animateTo(Rachse, 700));
