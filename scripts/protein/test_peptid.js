@@ -67,5 +67,17 @@ const nah = (a, b, t) => Math.abs(a - b) <= t;
   pruefe(proRest > 3.0 && proRest < 3.6, "β-Strang: Cα–Cα über zwei Reste " + proRest.toFixed(2));
   console.log(`β-Strang: Abstand je Rest entlang der Kette ≈ ${proRest.toFixed(2)} Å`);
 }
+// 4) Überlagerung: eine bekannte Drehung und Verschiebung muss wiedergefunden werden
+{
+  const zuf = (() => { let sd = 7; return () => { sd = (sd * 1103515245 + 12345) & 0x7fffffff; return sd / 0x7fffffff - 0.5; }; })();
+  const A = Array.from({length: 40}, () => [zuf() * 30, zuf() * 20, zuf() * 25]);
+  const ax = P.norm([0.3, -0.7, 0.4]), w = 1.9, c = Math.cos(w), s = Math.sin(w);
+  const dreh = p => P.add(P.add(P.mul(p, c), P.mul(P.cross(ax, p), s)), P.mul(ax, P.dot(ax, p) * (1 - c)));
+  const B = A.map(p => P.add(dreh(p), [5, -3, 12]));
+  const f = P.ausrichtung(A, B);
+  const fehl = Math.max(...A.map((p, i) => P.abstand(f(p), B[i])));
+  pruefe(fehl < 1e-6, "Überlagerung: größter Fehler " + fehl.toExponential(1));
+  console.log("Überlagerung: größter Fehler " + fehl.toExponential(1) + " Å");
+}
 console.log(fehler ? fehler + " Fehler" : "OK: Peptid-Geometrie stimmt.");
 process.exit(fehler ? 1 : 0);

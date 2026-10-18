@@ -226,6 +226,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
     <a href="codon-generator.html">Codon-Generator</a>
     <p class="sidenav-group">Proteine</p>
     <a href="peptidbindung.html" aria-current="page">Die Peptidbindung</a>
+    <a href="proteinstruktur.html">Von der Sequenz zur Faltung</a>
     <p class="sidenav-group">Über die Seiten</p>
     <a href="quellen.html">Quellen und Danksagung</a>
     <a href="quellen.html#mitmachen">Mitmachen</a>
@@ -364,7 +365,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         </div>
       </div>
     </section>
-    <p class="weiter">Weiter: <a href="proteinstruktur.html">Von der Sequenz zur Faltung: Primär- bis Tertiärstruktur</a> (in Arbeit)</p>
+    <p class="weiter">Weiter: <a href="proteinstruktur.html">Von der Sequenz zur Faltung: Primär- bis Tertiärstruktur</a></p>
   </main>
 
   <details>
@@ -402,7 +403,8 @@ const PALETTE = (() => {
     schnitt:"#d32f2f", // Bindung, die bei der Polymerisation gespalten wird
     hbruecke:"#53675e",
     aa_unpolar:"#b9822a", aa_polar:"#1f8f86", aa_sauer:"#d1495b", aa_basisch:"#3d6fd6", aa_sonder:"#8a63b8",
-    peptid:"#e8590c", ebene2:"#1f8f86"   // Eigenschaft der Aminosäure-Seitenkette
+    peptid:"#e8590c", ebene2:"#1f8f86",
+    ss_helix:"#d1495b", ss_g:"#e68a97", ss_strang:"#e0a030", ss_schleife:"#8d9aa0", innen:"#1b6f8a", aussen:"#e9c46a"   // Eigenschaft der Aminosäure-Seitenkette
   };
   const dunkel = {
     A:"#7d9bff", T:"#f5b83a", U:"#f7d77f", G:"#2fd1a0", C:"#f0a0c8",
@@ -410,7 +412,8 @@ const PALETTE = (() => {
     el_C:"#aab3ba", el_H:"#f2f5f7", el_N:"#6f8cff", el_O:"#ff6b5e", el_P:"#ffa733",
     p5:"#ff5c8d", oh3:"#4fd8e6", oh2:"#c27be0", schnitt:"#ff6b6b", hbruecke:"#b3c5bd",
     aa_unpolar:"#e0a84a", aa_polar:"#4fcfc2", aa_sauer:"#ff7d8d", aa_basisch:"#7da2ff", aa_sonder:"#b99ae0",
-    peptid:"#ff9a5c", ebene2:"#4fcfc2"
+    peptid:"#ff9a5c", ebene2:"#4fcfc2",
+    ss_helix:"#ff7d8d", ss_g:"#ffadb8", ss_strang:"#f2bd5a", ss_schleife:"#9fb0b8", innen:"#4fb3d6", aussen:"#f0d38a"
   };
   const istDunkel = () => {
     const r = document.documentElement.getAttribute("data-theme");
@@ -432,6 +435,7 @@ const PALETTE = (() => {
 //
 //   const v = MOL3D.create(canvas, overlayCanvas, {onHover(i), onPick(i)});
 //   v.setScene({atome: [{p:[x,y,z], c:[r,g,b], r:0.3}], bindungen: [{a, b, r:0.1, c:[r,g,b], strich:true}]});
+//   Zusätzlich: scene.netze = [{pos, nor, col}] (Float32Array) für fertige Dreiecksnetze.
 //   Zusätzlich: scene.flaechen = [{p: [[x,y,z], …] (konvexes Vieleck), c: [r,g,b], rand: [r,g,b]}], scene.flaechenAlpha (Standard 0,38):
 //   durchscheinende Flächen, zum Beispiel für eine Ebene.
 //   v.setClip({n:[0,0,1], d:5, min:2})   // zeigt nur, was min <= dot(n, p) <= d erfüllt (min ist optional); null schaltet aus
@@ -548,7 +552,9 @@ const MOL3D = (() => {
       const SP = atome.length > 700 ? SPHERE_LOW : SPHERE;
       const flaechen = S.scene.flaechen || [];
       const kanten = flaechen.reduce((n, f) => n + (f.rand ? f.p.length : 0), 0);
-      const nV = atome.length * SP.length + solid.length * 2 * CYL.length + dashes.length * CYL.length + kanten * CYL.length;
+      const netze = S.scene.netze || [];   // fertige Dreiecksnetze {pos, nor, col} (flache Float32Arrays), zum Beispiel ein Cartoon
+      const netzV = netze.reduce((n, m) => n + m.pos.length / 3, 0);
+      const nV = atome.length * SP.length + solid.length * 2 * CYL.length + dashes.length * CYL.length + kanten * CYL.length + netzV;
       const pos = new Float32Array(nV * 3), nor = new Float32Array(nV * 3), col = new Float32Array(nV * 3);
       let o = 0;
       const put = (px, py, pz, nx, ny, nz, c) => { pos[o] = px; pos[o + 1] = py; pos[o + 2] = pz; nor[o] = nx; nor[o + 1] = ny; nor[o + 2] = nz; col[o] = c[0]; col[o + 1] = c[1]; col[o + 2] = c[2]; o += 3; };
@@ -578,6 +584,7 @@ const MOL3D = (() => {
         cyl(at(t0), at(t1), b.r || 0.07, b.c || [0.5, 0.5, 0.5]);
       }
       for (const f of flaechen) if (f.rand) for (let i = 0; i < f.p.length; i++) cyl(f.p[i], f.p[(i + 1) % f.p.length], f.randR || 0.035, f.rand);
+      for (const m of netze){ pos.set(m.pos, o); nor.set(m.nor, o); col.set(m.col, o); o += m.pos.length; }
       for (const [k, arr] of [["pos", pos], ["nor", nor], ["col", col]]){ gl.bindBuffer(gl.ARRAY_BUFFER, bufs[k]); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW); }
       bufs.n = nV;
       // Flächen (konvexe Vielecke) als Dreiecksfächer
@@ -800,6 +807,7 @@ const MOL3D = (() => {
 //   k.bindungen  [[i, j], ...]
 //   k.ebenen     [{res, atome: [6 Indizes]}]   Peptideinheit zwischen Rest res und res+1:
 //                                              Cα(i), C(i), O(i), N(i+1), H(i+1), Cα(i+1)
+//   Option keineH: true lässt alle Wasserstoffatome weg (dann gibt es keine ebenen).
 //   PEPTID.ebeneFit(punkte) → {mitte, normale, abweichung: [...], max}
 //
 // Die Standardwerte stammen aus den Idealwerten für Proteine (Engh und Huber 1991).
@@ -884,16 +892,18 @@ const PEPTID = (() => {
       ver(idx["N" + r], idx["CA" + r]); ver(idx["CA" + r], idx["C" + r]); ver(idx["C" + r], idx["O" + r]);
       if (i > 0){
         ver(idx["C" + (r - 1)], idx["N" + r]);
+        if (o.keineH) { /* ohne Amid-H */ } else {
         const H = platziere(CA[i - 1], C[i - 1], N[i], g.NH, g.CNH, omega(i - 1) + 180);
         idx["H" + r] = neu("H", "H", r, H, "h"); ver(idx["N" + r], idx["H" + r]);
-      } else if (o.nTerminus !== false){
+        }
+      } else if (o.nTerminus !== false && !o.keineH){
         [60, 180, -60].forEach((t, k) => { const H = platziere(C[0], CA[0], N[0], g.NH, g.CANH, t); const h = neu("H" + (k + 1), "H", r, H, "h"); ver(idx["N" + r], h); });
       }
       if (i === n - 1 && o.cTerminus !== false){
         const X = platziere(N[i], CA[i], C[i], g.COXT, g.CAOXT, psi(i));
         idx["OXT"] = neu("OXT", "O", r, X, "ruecken"); ver(idx["C" + r], idx["OXT"]);
       }
-      if (o.h !== false){
+      if (o.h !== false && !o.keineH){
         const HA = platziere(C[i], N[i], CA[i], g.CAHA, g.NCAHA, -g.CB_TOR);
         const h = neu("HA", "H", r, HA, "h"); ver(idx["CA" + r], h);
       }
@@ -901,19 +911,48 @@ const PEPTID = (() => {
       if (rr && rr !== "H"){
         const CB = platziere(C[i], N[i], CA[i], g.CACB, g.NCACB, g.CB_TOR);
         idx["CB" + r] = neu(rr === "R" ? "R" : "CB", "C", r, CB, "rest"); ver(idx["CA" + r], idx["CB" + r]);
-      } else if (rr === "H"){
+      } else if (rr === "H" && !o.keineH){
         const HB = platziere(C[i], N[i], CA[i], g.CAHA, g.NCAHA, g.CB_TOR);
         const h = neu("HA2", "H", r, HB, "h"); ver(idx["CA" + r], h);
       }
     }
     const ebenen = [];
-    for (let i = 1; i < n; i++){
+    for (let i = 1; i < n && !o.keineH; i++){
       const teile = [idx["CA" + i], idx["C" + i], idx["O" + i], idx["N" + (i + 1)], idx["H" + (i + 1)], idx["CA" + (i + 1)]];
       ebenen.push({res: i, atome: teile});
     }
     return {atome, bindungen: bind, ebenen, idx, n};
   }
-  return {GEO, kette, platziere, torsion, winkel, abstand, ebeneFit, norm, sub, add, mul, dot, cross, len};
+  // Beste Überlagerung (Drehung und Verschiebung) einer Punktmenge A auf B nach Horn (1987), über Quaternionen.
+  // Rückgabe: Funktion, die einen Punkt aus dem System von A in das von B überführt.
+  function ausrichtung(A, B){
+    const n = A.length, ca = [0, 0, 0], cb = [0, 0, 0];
+    A.forEach(p => { for (let i = 0; i < 3; i++) ca[i] += p[i] / n; }); B.forEach(p => { for (let i = 0; i < 3; i++) cb[i] += p[i] / n; });
+    const Sm = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+    for (let k = 0; k < n; k++) for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) Sm[i][j] += (A[k][i] - ca[i]) * (B[k][j] - cb[j]);
+    const [[xx, xy, xz], [yx, yy, yz], [zx, zy, zz]] = Sm;
+    const M = [[xx + yy + zz, yz - zy, zx - xz, xy - yx], [yz - zy, xx - yy - zz, xy + yx, zx + xz], [zx - xz, xy + yx, -xx + yy - zz, yz + zy], [xy - yx, zx + xz, yz + zy, -xx - yy + zz]];
+    // Jacobi-Verfahren für die symmetrische 4×4-Matrix
+    const m = 4; let a = M.map(r => r.slice()), v = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]];
+    for (let sweep = 0; sweep < 60; sweep++){
+      let off = 0; for (let i = 0; i < m; i++) for (let j = i + 1; j < m; j++) off += a[i][j] * a[i][j];
+      if (off < 1e-24) break;
+      for (let p2 = 0; p2 < m; p2++) for (let q = p2 + 1; q < m; q++){
+        if (Math.abs(a[p2][q]) < 1e-30) continue;
+        const th = 0.5 * Math.atan2(2 * a[p2][q], a[q][q] - a[p2][p2]), c = Math.cos(th), s = Math.sin(th);
+        for (let k = 0; k < m; k++){ const kp = a[k][p2], kq = a[k][q]; a[k][p2] = c * kp - s * kq; a[k][q] = s * kp + c * kq; }
+        for (let k = 0; k < m; k++){ const pk = a[p2][k], qk = a[q][k]; a[p2][k] = c * pk - s * qk; a[q][k] = s * pk + c * qk; }
+        for (let k = 0; k < m; k++){ const kp = v[k][p2], kq = v[k][q]; v[k][p2] = c * kp - s * kq; v[k][q] = s * kp + c * kq; }
+      }
+    }
+    let imax = 0; for (let i = 1; i < m; i++) if (a[i][i] > a[imax][imax]) imax = i;
+    const [q0, q1, q2, q3] = [v[0][imax], v[1][imax], v[2][imax], v[3][imax]];
+    const Rm = [[q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3, 2 * (q1 * q2 - q0 * q3), 2 * (q1 * q3 + q0 * q2)],
+                [2 * (q1 * q2 + q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3, 2 * (q2 * q3 - q0 * q1)],
+                [2 * (q1 * q3 - q0 * q2), 2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3]];
+    return p => { const d = [p[0] - ca[0], p[1] - ca[1], p[2] - ca[2]]; return [0, 1, 2].map(i => Rm[i][0] * d[0] + Rm[i][1] * d[1] + Rm[i][2] * d[2] + cb[i]); };
+  }
+  return {GEO, kette, ausrichtung, platziere, torsion, winkel, abstand, ebeneFit, norm, sub, add, mul, dot, cross, len};
 })();
 /*__/PEPTID__*/
 </script>

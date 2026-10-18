@@ -169,6 +169,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
     <a href="codon-generator.html">Codon-Generator</a>
     <p class="sidenav-group">Proteine</p>
     <a href="peptidbindung.html">Die Peptidbindung</a>
+    <a href="proteinstruktur.html">Von der Sequenz zur Faltung</a>
     <p class="sidenav-group">Über die Seiten</p>
     <a href="quellen.html">Quellen und Danksagung</a>
     <a href="quellen.html#mitmachen">Mitmachen</a>
@@ -309,7 +310,8 @@ const PALETTE = (() => {
     schnitt:"#d32f2f", // Bindung, die bei der Polymerisation gespalten wird
     hbruecke:"#53675e",
     aa_unpolar:"#b9822a", aa_polar:"#1f8f86", aa_sauer:"#d1495b", aa_basisch:"#3d6fd6", aa_sonder:"#8a63b8",
-    peptid:"#e8590c", ebene2:"#1f8f86"   // Eigenschaft der Aminosäure-Seitenkette
+    peptid:"#e8590c", ebene2:"#1f8f86",
+    ss_helix:"#d1495b", ss_g:"#e68a97", ss_strang:"#e0a030", ss_schleife:"#8d9aa0", innen:"#1b6f8a", aussen:"#e9c46a"   // Eigenschaft der Aminosäure-Seitenkette
   };
   const dunkel = {
     A:"#7d9bff", T:"#f5b83a", U:"#f7d77f", G:"#2fd1a0", C:"#f0a0c8",
@@ -317,7 +319,8 @@ const PALETTE = (() => {
     el_C:"#aab3ba", el_H:"#f2f5f7", el_N:"#6f8cff", el_O:"#ff6b5e", el_P:"#ffa733",
     p5:"#ff5c8d", oh3:"#4fd8e6", oh2:"#c27be0", schnitt:"#ff6b6b", hbruecke:"#b3c5bd",
     aa_unpolar:"#e0a84a", aa_polar:"#4fcfc2", aa_sauer:"#ff7d8d", aa_basisch:"#7da2ff", aa_sonder:"#b99ae0",
-    peptid:"#ff9a5c", ebene2:"#4fcfc2"
+    peptid:"#ff9a5c", ebene2:"#4fcfc2",
+    ss_helix:"#ff7d8d", ss_g:"#ffadb8", ss_strang:"#f2bd5a", ss_schleife:"#9fb0b8", innen:"#4fb3d6", aussen:"#f0d38a"
   };
   const istDunkel = () => {
     const r = document.documentElement.getAttribute("data-theme");
@@ -402,6 +405,7 @@ const HELIX_BAU = (() => {
 //
 //   const v = MOL3D.create(canvas, overlayCanvas, {onHover(i), onPick(i)});
 //   v.setScene({atome: [{p:[x,y,z], c:[r,g,b], r:0.3}], bindungen: [{a, b, r:0.1, c:[r,g,b], strich:true}]});
+//   Zusätzlich: scene.netze = [{pos, nor, col}] (Float32Array) für fertige Dreiecksnetze.
 //   Zusätzlich: scene.flaechen = [{p: [[x,y,z], …] (konvexes Vieleck), c: [r,g,b], rand: [r,g,b]}], scene.flaechenAlpha (Standard 0,38):
 //   durchscheinende Flächen, zum Beispiel für eine Ebene.
 //   v.setClip({n:[0,0,1], d:5, min:2})   // zeigt nur, was min <= dot(n, p) <= d erfüllt (min ist optional); null schaltet aus
@@ -518,7 +522,9 @@ const MOL3D = (() => {
       const SP = atome.length > 700 ? SPHERE_LOW : SPHERE;
       const flaechen = S.scene.flaechen || [];
       const kanten = flaechen.reduce((n, f) => n + (f.rand ? f.p.length : 0), 0);
-      const nV = atome.length * SP.length + solid.length * 2 * CYL.length + dashes.length * CYL.length + kanten * CYL.length;
+      const netze = S.scene.netze || [];   // fertige Dreiecksnetze {pos, nor, col} (flache Float32Arrays), zum Beispiel ein Cartoon
+      const netzV = netze.reduce((n, m) => n + m.pos.length / 3, 0);
+      const nV = atome.length * SP.length + solid.length * 2 * CYL.length + dashes.length * CYL.length + kanten * CYL.length + netzV;
       const pos = new Float32Array(nV * 3), nor = new Float32Array(nV * 3), col = new Float32Array(nV * 3);
       let o = 0;
       const put = (px, py, pz, nx, ny, nz, c) => { pos[o] = px; pos[o + 1] = py; pos[o + 2] = pz; nor[o] = nx; nor[o + 1] = ny; nor[o + 2] = nz; col[o] = c[0]; col[o + 1] = c[1]; col[o + 2] = c[2]; o += 3; };
@@ -548,6 +554,7 @@ const MOL3D = (() => {
         cyl(at(t0), at(t1), b.r || 0.07, b.c || [0.5, 0.5, 0.5]);
       }
       for (const f of flaechen) if (f.rand) for (let i = 0; i < f.p.length; i++) cyl(f.p[i], f.p[(i + 1) % f.p.length], f.randR || 0.035, f.rand);
+      for (const m of netze){ pos.set(m.pos, o); nor.set(m.nor, o); col.set(m.col, o); o += m.pos.length; }
       for (const [k, arr] of [["pos", pos], ["nor", nor], ["col", col]]){ gl.bindBuffer(gl.ARRAY_BUFFER, bufs[k]); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW); }
       bufs.n = nV;
       // Flächen (konvexe Vielecke) als Dreiecksfächer

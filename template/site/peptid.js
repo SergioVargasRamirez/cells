@@ -6,6 +6,7 @@
 //   k.bindungen  [[i, j], ...]
 //   k.ebenen     [{res, atome: [6 Indizes]}]   Peptideinheit zwischen Rest res und res+1:
 //                                              Cα(i), C(i), O(i), N(i+1), H(i+1), Cα(i+1)
+//   Option keineH: true lässt alle Wasserstoffatome weg (dann gibt es keine ebenen).
 //   PEPTID.ebeneFit(punkte) → {mitte, normale, abweichung: [...], max}
 //
 // Die Standardwerte stammen aus den Idealwerten für Proteine (Engh und Huber 1991).
@@ -90,16 +91,18 @@ const PEPTID = (() => {
       ver(idx["N" + r], idx["CA" + r]); ver(idx["CA" + r], idx["C" + r]); ver(idx["C" + r], idx["O" + r]);
       if (i > 0){
         ver(idx["C" + (r - 1)], idx["N" + r]);
+        if (o.keineH) { /* ohne Amid-H */ } else {
         const H = platziere(CA[i - 1], C[i - 1], N[i], g.NH, g.CNH, omega(i - 1) + 180);
         idx["H" + r] = neu("H", "H", r, H, "h"); ver(idx["N" + r], idx["H" + r]);
-      } else if (o.nTerminus !== false){
+        }
+      } else if (o.nTerminus !== false && !o.keineH){
         [60, 180, -60].forEach((t, k) => { const H = platziere(C[0], CA[0], N[0], g.NH, g.CANH, t); const h = neu("H" + (k + 1), "H", r, H, "h"); ver(idx["N" + r], h); });
       }
       if (i === n - 1 && o.cTerminus !== false){
         const X = platziere(N[i], CA[i], C[i], g.COXT, g.CAOXT, psi(i));
         idx["OXT"] = neu("OXT", "O", r, X, "ruecken"); ver(idx["C" + r], idx["OXT"]);
       }
-      if (o.h !== false){
+      if (o.h !== false && !o.keineH){
         const HA = platziere(C[i], N[i], CA[i], g.CAHA, g.NCAHA, -g.CB_TOR);
         const h = neu("HA", "H", r, HA, "h"); ver(idx["CA" + r], h);
       }
@@ -107,17 +110,46 @@ const PEPTID = (() => {
       if (rr && rr !== "H"){
         const CB = platziere(C[i], N[i], CA[i], g.CACB, g.NCACB, g.CB_TOR);
         idx["CB" + r] = neu(rr === "R" ? "R" : "CB", "C", r, CB, "rest"); ver(idx["CA" + r], idx["CB" + r]);
-      } else if (rr === "H"){
+      } else if (rr === "H" && !o.keineH){
         const HB = platziere(C[i], N[i], CA[i], g.CAHA, g.NCAHA, g.CB_TOR);
         const h = neu("HA2", "H", r, HB, "h"); ver(idx["CA" + r], h);
       }
     }
     const ebenen = [];
-    for (let i = 1; i < n; i++){
+    for (let i = 1; i < n && !o.keineH; i++){
       const teile = [idx["CA" + i], idx["C" + i], idx["O" + i], idx["N" + (i + 1)], idx["H" + (i + 1)], idx["CA" + (i + 1)]];
       ebenen.push({res: i, atome: teile});
     }
     return {atome, bindungen: bind, ebenen, idx, n};
   }
-  return {GEO, kette, platziere, torsion, winkel, abstand, ebeneFit, norm, sub, add, mul, dot, cross, len};
+  // Beste Überlagerung (Drehung und Verschiebung) einer Punktmenge A auf B nach Horn (1987), über Quaternionen.
+  // Rückgabe: Funktion, die einen Punkt aus dem System von A in das von B überführt.
+  function ausrichtung(A, B){
+    const n = A.length, ca = [0, 0, 0], cb = [0, 0, 0];
+    A.forEach(p => { for (let i = 0; i < 3; i++) ca[i] += p[i] / n; }); B.forEach(p => { for (let i = 0; i < 3; i++) cb[i] += p[i] / n; });
+    const Sm = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+    for (let k = 0; k < n; k++) for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) Sm[i][j] += (A[k][i] - ca[i]) * (B[k][j] - cb[j]);
+    const [[xx, xy, xz], [yx, yy, yz], [zx, zy, zz]] = Sm;
+    const M = [[xx + yy + zz, yz - zy, zx - xz, xy - yx], [yz - zy, xx - yy - zz, xy + yx, zx + xz], [zx - xz, xy + yx, -xx + yy - zz, yz + zy], [xy - yx, zx + xz, yz + zy, -xx - yy + zz]];
+    // Jacobi-Verfahren für die symmetrische 4×4-Matrix
+    const m = 4; let a = M.map(r => r.slice()), v = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]];
+    for (let sweep = 0; sweep < 60; sweep++){
+      let off = 0; for (let i = 0; i < m; i++) for (let j = i + 1; j < m; j++) off += a[i][j] * a[i][j];
+      if (off < 1e-24) break;
+      for (let p2 = 0; p2 < m; p2++) for (let q = p2 + 1; q < m; q++){
+        if (Math.abs(a[p2][q]) < 1e-30) continue;
+        const th = 0.5 * Math.atan2(2 * a[p2][q], a[q][q] - a[p2][p2]), c = Math.cos(th), s = Math.sin(th);
+        for (let k = 0; k < m; k++){ const kp = a[k][p2], kq = a[k][q]; a[k][p2] = c * kp - s * kq; a[k][q] = s * kp + c * kq; }
+        for (let k = 0; k < m; k++){ const pk = a[p2][k], qk = a[q][k]; a[p2][k] = c * pk - s * qk; a[q][k] = s * pk + c * qk; }
+        for (let k = 0; k < m; k++){ const kp = v[k][p2], kq = v[k][q]; v[k][p2] = c * kp - s * kq; v[k][q] = s * kp + c * kq; }
+      }
+    }
+    let imax = 0; for (let i = 1; i < m; i++) if (a[i][i] > a[imax][imax]) imax = i;
+    const [q0, q1, q2, q3] = [v[0][imax], v[1][imax], v[2][imax], v[3][imax]];
+    const Rm = [[q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3, 2 * (q1 * q2 - q0 * q3), 2 * (q1 * q3 + q0 * q2)],
+                [2 * (q1 * q2 + q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3, 2 * (q2 * q3 - q0 * q1)],
+                [2 * (q1 * q3 - q0 * q2), 2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3]];
+    return p => { const d = [p[0] - ca[0], p[1] - ca[1], p[2] - ca[2]]; return [0, 1, 2].map(i => Rm[i][0] * d[0] + Rm[i][1] * d[1] + Rm[i][2] * d[2] + cb[i]); };
+  }
+  return {GEO, kette, ausrichtung, platziere, torsion, winkel, abstand, ebeneFit, norm, sub, add, mul, dot, cross, len};
 })();

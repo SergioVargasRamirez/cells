@@ -4,6 +4,7 @@
 //
 //   const v = MOL3D.create(canvas, overlayCanvas, {onHover(i), onPick(i)});
 //   v.setScene({atome: [{p:[x,y,z], c:[r,g,b], r:0.3}], bindungen: [{a, b, r:0.1, c:[r,g,b], strich:true}]});
+//   Zusätzlich: scene.netze = [{pos, nor, col}] (Float32Array) für fertige Dreiecksnetze.
 //   Zusätzlich: scene.flaechen = [{p: [[x,y,z], …] (konvexes Vieleck), c: [r,g,b], rand: [r,g,b]}], scene.flaechenAlpha (Standard 0,38):
 //   durchscheinende Flächen, zum Beispiel für eine Ebene.
 //   v.setClip({n:[0,0,1], d:5, min:2})   // zeigt nur, was min <= dot(n, p) <= d erfüllt (min ist optional); null schaltet aus
@@ -120,7 +121,9 @@ const MOL3D = (() => {
       const SP = atome.length > 700 ? SPHERE_LOW : SPHERE;
       const flaechen = S.scene.flaechen || [];
       const kanten = flaechen.reduce((n, f) => n + (f.rand ? f.p.length : 0), 0);
-      const nV = atome.length * SP.length + solid.length * 2 * CYL.length + dashes.length * CYL.length + kanten * CYL.length;
+      const netze = S.scene.netze || [];   // fertige Dreiecksnetze {pos, nor, col} (flache Float32Arrays), zum Beispiel ein Cartoon
+      const netzV = netze.reduce((n, m) => n + m.pos.length / 3, 0);
+      const nV = atome.length * SP.length + solid.length * 2 * CYL.length + dashes.length * CYL.length + kanten * CYL.length + netzV;
       const pos = new Float32Array(nV * 3), nor = new Float32Array(nV * 3), col = new Float32Array(nV * 3);
       let o = 0;
       const put = (px, py, pz, nx, ny, nz, c) => { pos[o] = px; pos[o + 1] = py; pos[o + 2] = pz; nor[o] = nx; nor[o + 1] = ny; nor[o + 2] = nz; col[o] = c[0]; col[o + 1] = c[1]; col[o + 2] = c[2]; o += 3; };
@@ -150,6 +153,7 @@ const MOL3D = (() => {
         cyl(at(t0), at(t1), b.r || 0.07, b.c || [0.5, 0.5, 0.5]);
       }
       for (const f of flaechen) if (f.rand) for (let i = 0; i < f.p.length; i++) cyl(f.p[i], f.p[(i + 1) % f.p.length], f.randR || 0.035, f.rand);
+      for (const m of netze){ pos.set(m.pos, o); nor.set(m.nor, o); col.set(m.col, o); o += m.pos.length; }
       for (const [k, arr] of [["pos", pos], ["nor", nor], ["col", col]]){ gl.bindBuffer(gl.ARRAY_BUFFER, bufs[k]); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW); }
       bufs.n = nV;
       // Flächen (konvexe Vielecke) als Dreiecksfächer
