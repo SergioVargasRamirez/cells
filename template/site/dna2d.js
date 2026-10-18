@@ -224,6 +224,8 @@ const DNA2D = (() => {
       A["C5'"] = dir(A["C4'"][0], A["C4'"][1], 1, -60);
       A["O5'"] = dir(A["C5'"][0], A["C5'"][1], 1, -90); A["P"] = dir(A["O5'"][0], A["O5'"][1], 1, -90);
     }
+    const fy = opt.flip ? -1 : 1;   // senkrecht gespiegelt: das 5'-Ende liegt dann auf der anderen Seite (Seiten bleiben gleich)
+    if (opt.flip) for (const n in A) A[n] = [A[n][0], -A[n][1]];
     const farbe = {base: P(b), p5: P("p5"), oh3: P("oh3")};
     const S = [], T = [], Z = [];
     const xy = q => q[0].toFixed(3) + "," + (-q[1]).toFixed(3);
@@ -286,8 +288,8 @@ const DNA2D = (() => {
     };
     if (opt.tri){   // Triphosphat: Pα–O–Pβ–O–Pγ als Zickzack nach außen (rechte Kachel: nach rechts, linke: nach links)
       const w = a => rechts ? a : 180 - a;
-      A["O3A"] = dir(A["P"][0], A["P"][1], 1, w(-30)); A["PB"] = dir(A["O3A"][0], A["O3A"][1], 1, w(30));
-      A["O3B"] = dir(A["PB"][0], A["PB"][1], 1, w(-30)); A["PG"] = dir(A["O3B"][0], A["O3B"][1], 1, w(30));
+      A["O3A"] = dir(A["P"][0], A["P"][1], 1, fy * w(-30)); A["PB"] = dir(A["O3A"][0], A["O3A"][1], 1, fy * w(30));
+      A["O3B"] = dir(A["PB"][0], A["PB"][1], 1, fy * w(-30)); A["PG"] = dir(A["O3B"][0], A["O3B"][1], 1, fy * w(30));
       for (const [a, c] of [["P", "O3A"], ["O3A", "PB"], ["PB", "O3B"], ["O3B", "PG"]]) line(A[a], A[c], farbe.p5, 0.07);
       for (const n of ["O3A", "O3B"]) S.push(`<circle cx="${A[n][0].toFixed(3)}" cy="${(-A[n][1]).toFixed(3)}" r="0.13" fill="${farbe.p5}"/>`);
       pScheibe("PB"); pScheibe("PG");

@@ -25,5 +25,14 @@ for (const [f, alph, at] of [["DNA", "ACGT", "T"], ["RNA", "ACGU", "U"]]){
     if (r.passt !== ok || (ok && r.liste.length !== anzahl)){ fehler++; console.log(`FEHLER Transkription ${a}·${b}: passt=${r.passt}, Brücken=${r.liste.length}, klirr=${r.klirr.toFixed(2)}`); }
   }
 }
+// Senkrecht gespiegelte Darstellung (3'-Ende oben): dieselben Ergebnisse
+{
+  const soll = {A: "T", T: "A", G: "C", C: "G"};
+  for (const a of "ACGT") for (const b of "ACGT"){
+    const r = D.bruecken(D.kachel(a, "DNA", "l", {flip: true}), [-x, 0], D.kachel(b, "DNA", "r", {flip: true}), [x, 0]);
+    const ok = soll[a] === b;
+    if (r.passt !== ok){ fehler++; console.log(`FEHLER gespiegelt ${a}·${b}: passt=${r.passt}`); }
+  }
+}
 console.log(fehler ? fehler + " Fehler" : "OK: alle Kombinationen richtig (A-T/U 2, G-C 3 Brücken, Purine überlappen), auch DNA-Matrize mit RNA.");
 process.exit(fehler ? 1 : 0);

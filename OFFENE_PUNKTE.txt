@@ -55,6 +55,9 @@ M3 basenpaarung.html (DNA -> DNA) und transkription.html (DNA -> RNA), beide aus
 - [x] Vorrat zeigt Nukleosidtriphosphate; beim Anfügen leuchtet die reagierende P-O-Stelle, Pyrophosphat (zwei P) und H2O erscheinen, bleiben einige Sekunden und verschwinden; das erste RNA-Nukleotid behält sein Triphosphat
 - [x] 8 Basenpaare, Buchstaben der Basen am Rand, kleinerer Vorrat in einer Spalte rechts, kein Primer und kein vorgegebenes erstes Nukleotid (18.10.2026; vereinfacht, das erste Nukleotid behält sein Triphosphat)
 - [x] Vorlage wechselt bei jeder neuen Sequenz zufällig: 5'-Ende oben (links, neuer Strang wächst nach oben) oder 3'-Ende oben (rechts, neuer Strang links, wächst nach unten)
+- [x] Vorlage bleibt immer links; nur die Richtung wird senkrecht gespiegelt (5'-Ende oben oder unten), der neue Strang rechts (18.10.2026)
+- [x] 3D erscheint neben der Zeichnung, sobald der Strang fertig ist (der Vorrat verschwindet); gemeinsames Modul template/site/helix3d.js
+- [x] Transkription: Die fertige RNA löst sich von der DNA-Vorlage (Bild), die 3D-Ansicht zeigt nur den RNA-Einzelstrang (kein Hybrid mehr)
 - [ ] FACHLICH KLÄREN: Bei der Phosphodiesterbildung entsteht Pyrophosphat, aber kein Wasser (das 3'-OH greift das alpha-Phosphat an, das Proton geht an das Pyrophosphat; Wasser wird erst bei der Hydrolyse von PPi durch die Pyrophosphatase verbraucht). Die Animation zeigt auf Wunsch trotzdem H2O; abschaltbar mit "wasser: false" in der Konfiguration von PAARUNG.start (siehe Seiten)
 - [ ] Phosphat-/Zucker-Zeichnung der Kacheln ist schematisch: bei der Prüfung auf Fachfehler achten
 - [ ] Schmale Bildschirme: Zeichnung hat Mindestbreite 640 px und scrollt seitlich

@@ -42,6 +42,16 @@ const MOL3D = (() => {
     }
     return v;
   })();
+  const SPHERE_LOW = (() => {   // gröbere Kugel für große Moleküle
+    const nLat = 5, nLon = 8, v = [];
+    const pt = (i, j) => { const th = Math.PI * i / nLat, ph = 2 * Math.PI * j / nLon; return [Math.sin(th) * Math.cos(ph), Math.sin(th) * Math.sin(ph), Math.cos(th)]; };
+    for (let i = 0; i < nLat; i++) for (let j = 0; j < nLon; j++){
+      const a = pt(i, j), b = pt(i + 1, j), c = pt(i + 1, j + 1), d = pt(i, j + 1);
+      if (i > 0) v.push(a, b, d);
+      if (i < nLat - 1) v.push(d, b, c);
+    }
+    return v;
+  })();
   const CYL = (() => {
     const n = 10, v = [];
     for (let j = 0; j < n; j++){
@@ -104,13 +114,14 @@ const MOL3D = (() => {
         for (let t = 0; t + seg <= L + 1e-6; t += seg + gap) dashes.push([b, t / L, (t + seg) / L]);
       }
       const solid = bindungen.filter(b => !b.strich);
-      const nV = atome.length * SPHERE.length + solid.length * 2 * CYL.length + dashes.length * CYL.length;
+      const SP = atome.length > 700 ? SPHERE_LOW : SPHERE;
+      const nV = atome.length * SP.length + solid.length * 2 * CYL.length + dashes.length * CYL.length;
       const pos = new Float32Array(nV * 3), nor = new Float32Array(nV * 3), col = new Float32Array(nV * 3);
       let o = 0;
       const put = (px, py, pz, nx, ny, nz, c) => { pos[o] = px; pos[o + 1] = py; pos[o + 2] = pz; nor[o] = nx; nor[o + 1] = ny; nor[o + 2] = nz; col[o] = c[0]; col[o + 1] = c[1]; col[o + 2] = c[2]; o += 3; };
       for (const a of atome){
         const r = a.r || 0.3;
-        for (const v of SPHERE) put(a.p[0] + r * v[0], a.p[1] + r * v[1], a.p[2] + r * v[2], v[0], v[1], v[2], a.c);
+        for (const v of SP) put(a.p[0] + r * v[0], a.p[1] + r * v[1], a.p[2] + r * v[2], v[0], v[1], v[2], a.c);
       }
       const cyl = (A, B, r, c) => {
         const dx = B[0] - A[0], dy = B[1] - A[1], dz = B[2] - A[2], L = Math.hypot(dx, dy, dz);
