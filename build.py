@@ -89,7 +89,9 @@ def sync_font_and_nav():
 # Neuer Eintrag: (MARKE, Dateiname, Bezeichnung), zum Beispiel
 #   ("DNA", "dna.js", "DNA-Zeichnung")
 
-SNIPPETS = []
+SNIPPETS = [("PALETTE", "palette.js", "Farbtabelle"), ("NUC", "nuc-data.js", "Nukleotid-Daten"),
+            ("HELIX", "helix.js", "Helix-Bau"), ("MOL3D", "mol3d.js", "3D-Ansicht"),
+            ("DNA2D", "dna2d.js", "Strukturformeln")]
 
 
 def sync_snippet(tag, source, label):

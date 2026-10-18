@@ -12,6 +12,7 @@ Online: https://cells.biodatum.io · Schwesterprojekt für die Chemie:
 | Datei | Inhalt | Entstehung |
 |---|---|---|
 | `index.html` | Startseite mit Karten zu den Werkzeugen, nach Themen gruppiert | von Hand |
+| `dna-rna.html` | DNA und RNA: dNTP/NTP in Zeichnung und 3D, Unterschiede finden (weitere Teile folgen, siehe `OFFENE_PUNKTE.txt`) | von Hand, Daten aus `scripts/nukleotide` |
 | `quellen.html` | Quellen und Danksagung, Mitmachen (`#mitmachen`) | von Hand |
 | `impressum.html` | Impressum, Haftungsausschluss, Lizenz, Einbetten | von Hand |
 | `datenschutz.html` | Datenschutz (keine Cookies, kein Tracking, keine genetischen Daten, Hosting GitHub Pages) | von Hand |
@@ -26,6 +27,7 @@ selbstständige Datei bleibt:
 |---|---|
 | `template/site/nav.html` | Seitenmenü (links, auf dem Handy oben mit „Menü“-Knopf), direkt nach `<body>` zwischen `<!--SITENAV-->` und `<!--/SITENAV-->`; die eigene Seite bekommt `aria-current="page"` |
 | `template/site/nav.css` | `<style id="sitenav-css">` vor `</head>` |
+| `template/site/palette.js`, `nuc-data.js`, `helix.js`, `mol3d.js`, `dna2d.js` | Farbtabelle, Nukleotid-Daten, Helix-Bau, 3D-Ansicht, Strukturformeln: zwischen `/*__MARKE__*/` in `dna-rna.html` |
 | `template/site/font.css` | `<style id="font-css">` vor `</head>`: Source Sans 3 als woff2, normal und kursiv |
 
 Diese Blöcke in den Seiten nicht von Hand bearbeiten, sie werden beim
@@ -108,7 +110,7 @@ template/site/
   nav.html            — Seitenmenü (Einträge nach Themen gruppiert, Schutz vor Einbetten)
   nav.css             — Aussehen des Menüs
   font.css            — eingebettete Schrift
-scripts/              — Skripte, die Daten für die Seiten erzeugen
+scripts/              — Skripte, die Daten für die Seiten erzeugen (nukleotide/: Nukleotid- und Helixdaten, Test mit node)
 build.py              — kopiert Menü, Schrift und gemeinsame Skripte in jede Seite
 CNAME                 — Domain für GitHub Pages (cells.biodatum.io)
 *.html                — die Seiten, werden von GitHub Pages ausgeliefert
