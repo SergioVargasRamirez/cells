@@ -164,6 +164,9 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
     <a href="basenpaarung.html">Basenpaarung</a>
     <a href="transkription.html" aria-current="page">Transkription</a>
     <a href="doppelhelix.html">Doppelhelix in 3D</a>
+    <p class="sidenav-group">Genetischer Code</p>
+    <a href="code-experiment.html">Der Code im Reagenzglas</a>
+    <a href="codon-generator.html">Codon-Generator</a>
     <p class="sidenav-group">Über die Seiten</p>
     <a href="quellen.html">Quellen und Danksagung</a>
     <a href="quellen.html#mitmachen">Mitmachen</a>
@@ -295,13 +298,15 @@ const PALETTE = (() => {
     oh3:"#17b8c9",  // 3'-OH (Hervorhebung)
     oh2:"#7b1fa2",  // 2'-OH bzw. 2'-H (Unterschied RNA/DNA)
     schnitt:"#d32f2f", // Bindung, die bei der Polymerisation gespalten wird
-    hbruecke:"#53675e"
+    hbruecke:"#53675e",
+    aa_unpolar:"#b9822a", aa_polar:"#1f8f86", aa_sauer:"#d1495b", aa_basisch:"#3d6fd6", aa_sonder:"#8a63b8"   // Eigenschaft der Aminosäure-Seitenkette
   };
   const dunkel = {
     A:"#7d9bff", T:"#f5b83a", U:"#f7d77f", G:"#2fd1a0", C:"#f0a0c8",
     zucker:"#8fa199",
     el_C:"#aab3ba", el_H:"#f2f5f7", el_N:"#6f8cff", el_O:"#ff6b5e", el_P:"#ffa733",
-    p5:"#ff5c8d", oh3:"#4fd8e6", oh2:"#c27be0", schnitt:"#ff6b6b", hbruecke:"#b3c5bd"
+    p5:"#ff5c8d", oh3:"#4fd8e6", oh2:"#c27be0", schnitt:"#ff6b6b", hbruecke:"#b3c5bd",
+    aa_unpolar:"#e0a84a", aa_polar:"#4fcfc2", aa_sauer:"#ff7d8d", aa_basisch:"#7da2ff", aa_sonder:"#b99ae0"
   };
   const istDunkel = () => {
     const r = document.documentElement.getAttribute("data-theme");

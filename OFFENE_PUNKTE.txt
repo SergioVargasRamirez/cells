@@ -84,6 +84,14 @@ M4b doppelhelix.html (neue Seite, unabhängig von Basenpaarung/Transkription)
 - [ ] Mit Touch testen (HTML5-Ziehen funktioniert dort nicht; Anklicken der Bausteine ist der Ersatz)
 - [ ] Bei "Nur eine Scheibe" könnte das Bild automatisch auf die Scheibe zoomen
 
+G1 code-experiment.html (Der Code im Reagenzglas), G2 codon-generator.html (18.10.2026)
+- [x] Teilcode: Phe, His, Lys, Pro, Ala, Thr, Arg (nur CGN), Gly = 26 Codons; 14 vorgegebene mRNAs (Wiederholungen) erreichen 20 davon (77 %), die 6 übrigen (CAU, CCU, ACU, CGU, GCU, GGU) nur mit eigener mRNA
+- [x] Leserahmen wählbar (Start bei Nucleotid 1, 2 oder 3); nicht verfügbare Rahmen und mRNAs ausgegraut; Protokoll; Codons ziehen (Zeiger, Tastatur) und mit "Prüfen" bewerten
+- [x] Codon-Generator mit drei Walzen, Aminosäure-Karte (Klasse, Codons), Standard-Tabelle (64) zum Füllen; Test: node scripts/code/test_code.js
+- [ ] Fachlich gegenlesen: Texte in "Modell und Grenzen" (Nirenberg/Khorana), Aussage "dritte Base oft unwichtig"
+- [ ] Mit Touch testen (Walzen ziehen, Codons ziehen)
+- [ ] Nächste Schritte: Proteinebene (Aminosäuren, Peptidbindung, Primär-/Sekundär-/Tertiärstruktur)
+
 M5 dna-rna.html, Teil 2: Abschluss
 - [ ] Merkmale sortieren (DNA / RNA / beide)
 - [ ] Kurzes Quiz
