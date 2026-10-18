@@ -189,6 +189,8 @@ button:focus-visible,input:focus-visible,summary:focus-visible,canvas:focus-visi
 .strang .kappe{min-width:58px;height:40px;border-radius:20px;background:#6d4c9f;color:#fff;display:grid;place-items:center;font:800 .8rem var(--sans);padding:0 8px}
 .abfall{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
 .abfall span{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px dashed var(--line);border-radius:999px;font:700 .85rem ui-monospace,Consolas,monospace;color:var(--muted)}
+.spalte{display:flex;flex-direction:column;align-items:center}
+.lineal{height:15px;font:700 .72rem ui-monospace,Consolas,monospace;color:var(--muted);line-height:15px;min-width:34px;text-align:center}
 .abfall span.ok{border:2px solid #2e9d62;color:#1f7a4a;background:color-mix(in srgb,#2e9d62 12%,var(--surface))}
 .abfall span.fehl{border:2px solid #d1495b;color:#b0283c;background:color-mix(in srgb,#d1495b 10%,var(--surface))}
 .werkzeuge{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
@@ -519,12 +521,11 @@ function zeichne(){
     const b = document.createElement("button"); b.type = "button"; b.className = "z"; b.textContent = n.c;
     const f = PALETTE.get(n.c); b.style.background = f; b.style.color = lumi(f) > 0.6 ? "#111" : "#fff";
     b.setAttribute("aria-label", "Base " + n.c + ", Position " + (i + 1));
-    if ((i + 1) % 10 === 0){ const s = document.createElement("small"); s.textContent = i + 1; b.appendChild(s); }
     if (S.loesung){ const r = REGION(n.id); b.style.boxShadow = "inset 0 -5px 0 " + (r === "intron" ? "#c0392b" : "#2e9d62"); if (n.id >= 118 && n.id <= 123) b.style.outline = "2px dashed var(--ink)"; if (n.id >= 12 && n.id <= 14) b.style.outline = "2px dashed var(--ink)"; }
     if (br && i >= br[0] && i <= br[1]) b.classList.add("bereich");
     if (br && (i === br[0] || i === br[1])) b.classList.add("sel");
     b.addEventListener("click", () => tippe(i));
-    box.appendChild(b);
+    const sp = document.createElement("div"); sp.className = "spalte"; const nr = document.createElement("span"); nr.className = "lineal"; nr.textContent = (i === 0 || (i + 1) % 10 === 0) ? i + 1 : ""; sp.append(nr, b); box.appendChild(sp);
   });
   for (let i = 0; i < S.tail; i++){ const t = document.createElement("span"); t.textContent = "A"; t.style.cssText = "width:26px;height:40px;display:grid;place-items:center;border-radius:7px;font:800 1rem ui-monospace,Consolas,monospace;color:#fff;opacity:.75;background:" + PALETTE.get("A"); box.appendChild(t); }
   const ende3 = document.createElement("span"); ende3.className = "ende"; ende3.textContent = "3'"; box.appendChild(ende3);
