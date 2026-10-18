@@ -540,6 +540,7 @@ $("experte").addEventListener("change", e => {
 /* ---------- mRNA wählen ---------- */
 function bauMrnas(){
   const box = $("mrnas"); box.textContent = "";
+  if (EXPERT){ const p = document.createElement("p"); p.className = "klein"; p.style.gridColumn = "1 / -1"; p.textContent = "Im Expertenmodus gibt es keine vorgegebenen mRNAs: Entwirf deine Wiederholungseinheiten selbst (1 bis 6 Nucleotide). Poly-G lässt sich nicht herstellen."; box.appendChild(p); return; }
   for (const u of (EXPERT ? G.VERSUCHE_VOLL : G.VERSUCHE)){
     const b = document.createElement("button"); b.type = "button"; b.className = "mrna"; b.dataset.einheit = u; b.setAttribute("aria-pressed", "false");
     b.innerHTML = `<span class="mname">(${buchstaben(u)})<sub>n</sub></span>`;
@@ -561,10 +562,13 @@ function waehleVorgabe(u){
   S.aktuell = {typ: "vorgabe", einheit: u, mrna: einheitMrna(u, LEN), name: "(" + u + ")n"};
   $("eigen").value = ""; markiereAuswahl(); zeigeKammer(); $("ergebnis").textContent = "";
 }
+const EIGENINFO = $("eigeninfo").textContent;
 function waehleEigene(){
   const t = $("eigen").value.toUpperCase().replace(/T/g, "U").replace(/[^ACGU]/g, "").slice(0, EIN);
   if ($("eigen").value !== t) $("eigen").value = t;
-  S.aktuell = t.length >= 1 ? {typ: "eigen", einheit: t, mrna: einheitMrna(t, LEN), name: "(" + t + ")n"} : null;
+  const nurG = /^G+$/.test(t);
+  $("eigeninfo").textContent = nurG ? "Poly-G lässt sich nicht herstellen: Es faltet sich zu Vierersträngen." : EIGENINFO;
+  S.aktuell = t.length >= 1 && !nurG ? {typ: "eigen", einheit: t, mrna: einheitMrna(t, LEN), name: "(" + t + ")n"} : null;
   markiereAuswahl(); zeigeKammer(); $("ergebnis").textContent = "";
   const ec = $("eigenchip"); ec.hidden = !S.aktuell; if (S.aktuell) ec.innerHTML = `<span class="mname">(${buchstaben(t)})<sub>n</sub></span>`;
 }
