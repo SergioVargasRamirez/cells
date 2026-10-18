@@ -178,6 +178,8 @@ button:focus-visible,input:focus-visible,summary:focus-visible,canvas:focus-visi
 .seg button[disabled]{opacity:.45;cursor:not-allowed}
 .restinfo{min-height:3.2em;font-size:.95rem}
 .karte h3 .nr{display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:700 .8em var(--sans);margin-right:8px}
+.diagleg{display:flex;flex-wrap:wrap;gap:8px 24px;margin:8px 0 12px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);font-size:1.02rem}
+.diagleg span{display:inline-flex;align-items:center;gap:8px}
 /* Chargaff */
 .tubenbild{display:block;width:100%;max-width:700px;margin-inline:auto;height:auto;color:var(--ink)}
 .tubenbild .glasr{fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round}
@@ -334,8 +336,8 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       <div class="karte">
         <h3><span class="nr">3</span>Diagramme</h3>
         <p class="klein" style="margin-top:0">Jeder Punkt ist eine Probe.</p>
+        <div class="diagleg" aria-label="Legende der Diagramme"><span><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="8.5" fill="var(--accent)" fill-opacity=".75" stroke="var(--surface)" stroke-width="1.5"/></svg><b>Kreis:</b> Doppelstrang-DNA</span><span><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 3L24 22H2Z" fill="#d95f02" fill-opacity=".85" stroke="var(--surface)" stroke-width="1.5" stroke-linejoin="round"/></svg><b>Dreieck:</b> Einzelstrang-DNA</span></div>
         <div class="diagramme"><svg id="dg1" viewBox="0 0 300 300" role="img" aria-label="Streudiagramm: Anteil A gegen Anteil T"></svg><svg id="dg2" viewBox="0 0 300 300" role="img" aria-label="Streudiagramm: Anteil G gegen Anteil C"></svg></div>
-        <div class="legende" aria-label="Legende der Diagramme"><span><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.5" fill="var(--accent)" fill-opacity=".75"/></svg>Doppelstrang-DNA</span><span><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2L14 13H2Z" fill="#d95f02" fill-opacity=".85"/></svg>Einzelstrang-DNA</span></div>
       </div>
       <div class="karte">
         <h3><span class="nr">4</span>Was folgt aus deinen Messungen?</h3>
