@@ -340,6 +340,10 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <div class="hinweiszeile" id="meldung" aria-live="polite"></div>
         <div class="abfall" id="abfall" aria-label="Herausgeschnittene Stücke"></div>
       </div>
+      <details class="lehr"><summary>Für Lehrkräfte: Lösung anzeigen</summary>
+        <label class="switch" style="margin-top:8px"><input type="checkbox" id="loesung"> Exons, Introns und Signale in der RNA markieren</label>
+        <div class="legende" id="loesleg" hidden></div>
+      </details>
       <div class="karte">
         <h3><span class="nr">2</span>Kernexport und Translation</h3>
         <p class="klein" style="margin-top:0">Wenn du fertig bist: Schicke die RNA aus dem Zellkern ins Zytoplasma und lass sie vom Ribosom übersetzen.</p>
@@ -492,7 +496,8 @@ const G = GENCODE;
 const PRE = "GGCAGUCACAACAUGUCCCCUCGUAAGUCAUCGCUAACGUUUUCUUUCCCCAGUGAUCUGCGUGAGUAUUCCUGACUAACAUUUCUUUUCUCCUAGGAGGACUAACUGGCAUUGACAUAAUAAAGUCUUGCAGCUUCAUCGAGAUCCAGUUUUGGAUCCAGUAGG";
 const ZIEL = "MSPLICED";
 const lumi = h => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
-const S = {seq: [], kappe: false, tail: 0, gespalten: false, a: null, b: null, abfall: []};
+const REGION = (id) => id < 22 ? "exon" : id < 53 ? "intron" : id < 61 ? "exon" : id < 96 ? "intron" : id < 165 ? "exon" : "exon";   // Position 1-22 Exon 1, 23-53 Intron 1, 54-61 Exon 2, 62-96 Intron 2, ab 97 Exon 3 (mit 3'-UTR)
+const S = {loesung: false, seq: [], kappe: false, tail: 0, gespalten: false, a: null, b: null, abfall: []};
 function neu(){
   S.seq = PRE.split("").map((c, i) => ({c, id: i})); S.kappe = false; S.tail = 0; S.gespalten = false; S.a = S.b = null; S.abfall = [];
   $("ergebnis").textContent = ""; meldung(""); zeichne();
@@ -509,6 +514,7 @@ function zeichne(){
     const f = PALETTE.get(n.c); b.style.background = f; b.style.color = lumi(f) > 0.6 ? "#111" : "#fff";
     b.setAttribute("aria-label", "Base " + n.c + ", Position " + (i + 1));
     if ((i + 1) % 10 === 0){ const s = document.createElement("small"); s.textContent = i + 1; b.appendChild(s); }
+    if (S.loesung){ const r = REGION(n.id); b.style.boxShadow = "inset 0 -5px 0 " + (r === "intron" ? "#c0392b" : "#2e9d62"); if (n.id >= 118 && n.id <= 123) b.style.outline = "2px dashed var(--ink)"; if (n.id >= 12 && n.id <= 14) b.style.outline = "2px dashed var(--ink)"; }
     if (br && i >= br[0] && i <= br[1]) b.classList.add("bereich");
     if (br && (i === br[0] || i === br[1])) b.classList.add("sel");
     b.addEventListener("click", () => tippe(i));
@@ -548,6 +554,7 @@ function polyA(n){
 }
 $("w-a1").addEventListener("click", () => polyA(1)); $("w-a10").addEventListener("click", () => polyA(10));
 $("neu").addEventListener("click", neu);
+$("loesung").addEventListener("change", e => { S.loesung = e.target.checked; $("loesleg").hidden = !S.loesung; $("loesleg").innerHTML = '<span><i style="background:#2e9d62;border-radius:3px"></i>Exon (mit UTR)</span><span><i style="background:#c0392b;border-radius:3px"></i>Intron</span><span>gestrichelt: Startcodon AUG und Signal AAUAAA</span>'; zeichne(); });
 
 /* ---------- Kernexport und Translation ---------- */
 const AAK = {}; Object.keys(G.AS).forEach(k => { AAK[k] = G.AS[k].e; });
