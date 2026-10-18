@@ -316,7 +316,6 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
             <span class="etikett" id="l-seit">Seitenketten</span>
             <div class="seg" role="radiogroup" aria-labelledby="l-seit" id="sg-seit"><button type="button" role="radio" aria-checked="true" data-wert="aus">aus</button><button type="button" role="radio" aria-checked="false" data-wert="unpolar">unpolare</button><button type="button" role="radio" aria-checked="false" data-wert="alle">alle</button></div>
             <label class="switch"><input type="checkbox" id="hb"> Wasserstoffbrücken</label>
-            <label class="regler" style="flex:1;min-width:200px">Schnitt <input type="range" id="schnitt" min="0" max="100" value="100" aria-label="Schnitt durch das Protein"><output id="schnitt-o">kein Schnitt</output></label>
           </div>
           <p class="hinweis" id="seithinweis"></p>
           <div class="legende" id="legende"></div>
@@ -1203,9 +1202,6 @@ function zeichne(){
   if (!viewer) return;
   const s = szene(); pickMap = s.pick;
   viewer.setScene(s.scene, {keepView: false}); viewer.setLabels(s.labels);
-  let xmin = 1e9, xmax = -1e9; s.g.ca.forEach(p => { xmin = Math.min(xmin, p[0]); xmax = Math.max(xmax, p[0]); });
-  const f = S.schnitt / 100; $("schnitt-o").textContent = S.schnitt >= 100 ? "kein Schnitt" : Math.round(f * 100) + " %";
-  viewer.setClip(S.schnitt >= 100 ? null : {n: [1, 0, 0], d: xmin - 4 + (xmax - xmin + 8) * f});
   $("falt-o").textContent = S.t < 0.02 ? "Knäuel" : S.t > 0.98 ? "gefaltet" : Math.abs(S.t - 0.5) < 0.02 ? "Helix und Strang" : Math.round(S.t * 100) + " %";
   const seitOK = s.g.nativ;
   $("sg-seit").querySelectorAll("button").forEach(b => { b.disabled = !seitOK && b.dataset.wert !== "aus"; });
@@ -1270,7 +1266,7 @@ function stufentext(){
       "Welche Winkel φ und ψ zu Helix und Strang führen, kannst du auf der Seite <a href=\"peptidbindung.html#s-kette\">Die Peptidbindung</a> ausprobieren."]],
     3: ["Tertiärstruktur: die Gesamtform", [
       "Die Tertiärstruktur ist die räumliche Gesamtform einer Kette: Helix, Faltblatt und Schleifen packen sich zu einem kompakten Körper zusammen.",
-      "Eine wichtige Triebkraft ist der <b>hydrophobe Effekt</b>: Unpolare Seitenketten meiden das Wasser und sammeln sich im Inneren (hydrophober Kern), polare und geladene bleiben außen. Zeige die unpolaren Seitenketten und schneide das Protein auf, um den Kern zu sehen. Zum Vergleich ist „innen/außen“ aus den Koordinaten berechnet.",
+      "Eine wichtige Triebkraft ist der <b>hydrophobe Effekt</b>: Unpolare Seitenketten meiden das Wasser und sammeln sich im Inneren (hydrophober Kern), polare und geladene bleiben außen. Zeige die unpolaren Seitenketten und drehe das Protein, um den Kern zu sehen. Zum Vergleich ist „innen/außen“ aus den Koordinaten berechnet.",
       "In Ubiquitin sind " + ub + " von " + unp.length + " unpolaren Resten (" + Math.round(100 * ub / unp.length) + " %) fast ganz vom Wasser abgeschirmt, aber nur " + gb + " von " + gel.length + " geladenen (Asp, Glu, Lys, Arg; " + Math.round(100 * gb / gel.length) + " %).",
       "Weitere stabilisierende Kräfte sind Wasserstoffbrücken, Ionenbindungen (Salzbrücken) und Van-der-Waals-Kräfte. Disulfidbrücken zwischen Cysteinen gibt es hier nicht: Ubiquitin enthält kein Cystein."]]};
   const [titel, absaetze] = T[S.stufe];
@@ -1284,7 +1280,7 @@ function setzeSeg(id, wert){ $(id).querySelectorAll("button").forEach(x => x.set
 function stufe(n){
   S.stufe = n;
   const vor = {1: {t: 0, dar: "perlen", farbe: "klasse", seiten: "aus"}, 2: {t: 0.5, dar: "cartoon", farbe: "ss", seiten: "aus"}, 3: {t: 1, dar: "cartoon", farbe: "lage", seiten: "unpolar"}}[n];
-  S.dar = vor.dar; S.farbe = vor.farbe; S.seiten = vor.seiten; S.schnitt = 100; $("schnitt").value = 100;
+  S.dar = vor.dar; S.farbe = vor.farbe; S.seiten = vor.seiten; 
   setzeSeg("sg-dar", vor.dar); setzeSeg("sg-farbe", vor.farbe); setzeSeg("sg-seit", vor.seiten); setzeSeg("sg-stufe", String(n));
   stufentext(); animiereZu(vor.t);
 }
@@ -1299,7 +1295,6 @@ segment("sg-dar", "dar", () => zeichne()); segment("sg-farbe", "farbe", () => ze
 $("falt").addEventListener("input", e => { cancelAnimationFrame(anim); setzeT(+e.target.value / 100); });
 $("spiel").addEventListener("click", () => { if (S.t >= 0.999) setzeT(0); animiereZu(1); });
 $("hb").addEventListener("change", e => { S.hb = e.target.checked; zeichne(); });
-$("schnitt").addEventListener("input", e => { S.schnitt = +e.target.value; zeichne(); });
 document.addEventListener("einfach-geaendert", () => { stufentext(); if (S.sel >= 0) waehle(S.sel); });
 if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => zeichne());
 
