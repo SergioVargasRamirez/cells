@@ -315,6 +315,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
           <div class="steuerzeile">
             <span class="etikett" id="l-seit">Seitenketten</span>
             <div class="seg" role="radiogroup" aria-labelledby="l-seit" id="sg-seit"><button type="button" role="radio" aria-checked="true" data-wert="aus">aus</button><button type="button" role="radio" aria-checked="false" data-wert="unpolar">unpolare</button><button type="button" role="radio" aria-checked="false" data-wert="alle">alle</button></div>
+            <label class="switch"><input type="checkbox" id="hb"> Wasserstoffbrücken</label>
             <label class="regler" style="flex:1;min-width:200px">Schnitt <input type="range" id="schnitt" min="0" max="100" value="100" aria-label="Schnitt durch das Protein"><output id="schnitt-o">kein Schnitt</output></label>
           </div>
           <p class="hinweis" id="seithinweis"></p>
@@ -1103,15 +1104,34 @@ function waehleKnaeuel(){
 const knaeuel = waehleKnaeuel(), fAus = P.ausrichtung(knaeuel.map(a => a.ca), nat.ca);
 const spuleG = {ca: knaeuel.map(a => fAus(a.ca)), c: knaeuel.map(a => fAus(a.c)), o: knaeuel.map(a => fAus(a.o)), n: knaeuel.map(a => fAus(a.n))};
 const natG = {ca: nat.ca, c: nat.c, o: nat.o, n: nat.n, nativ: true};
+// Zwischenstufe "Sekundärstruktur": Helices und Stränge haben ihre echten Winkel φ/ψ, die Schleifen dazwischen bleiben locker (Zufallswinkel).
+// So sind die Elemente ausgebildet, liegen aber noch nicht zum kompakten Körper gepackt zusammen.
+const phiN = R.map((r, i) => i ? P.torsion(nat.c[i - 1], nat.n[i], nat.ca[i], nat.c[i]) : -120);
+const psiN = R.map((r, i) => i < N - 1 ? P.torsion(nat.n[i], nat.ca[i], nat.c[i], nat.n[i + 1]) : 140);
+function waehleSekundaer(){
+  for (let seed = 1; seed < 20000; seed++){
+    const w = spule(1000 + seed).map((x, i) => R[i].ss !== "C" ? [phiN[i], psiN[i]] : x), g = baueKnaeuel(w), ca = g.map(a => a.ca);
+    let ok = true;
+    for (let i = 0; i < N && ok; i++) for (let j = i + 3; j < N; j++) if (P.abstand(ca[i], ca[j]) < 4.6){ ok = false; break; }
+    if (!ok) continue;
+    const c = ca.reduce((s2, p) => add(s2, mul(p, 1 / N)), [0, 0, 0]), rg = Math.sqrt(ca.reduce((s2, p) => s2 + P.abstand(p, c) ** 2, 0) / N);
+    if (rg < 24) return g;
+  }
+  return baueKnaeuel(R.map((r, i) => r.ss !== "C" ? [phiN[i], psiN[i]] : [-70, 145]));
+}
+const sekK = waehleSekundaer(), idxSS = R.map((r, i) => i).filter(i => R[i].ss !== "C");
+const fSek = P.ausrichtung(idxSS.map(i => sekK[i].ca), idxSS.map(i => nat.ca[i]));
+const sekG = {ca: sekK.map(a => fSek(a.ca)), c: sekK.map(a => fSek(a.c)), o: sekK.map(a => fSek(a.o)), n: sekK.map(a => fSek(a.n))};
 const mischen = (a, b, s) => a.map((p, i) => add(mul(p, 1 - s), mul(b[i], s)));
-function geom(t){
+function geom(t){   // 0 = Knäuel, 0,5 = Sekundärstruktur ausgebildet, 1 = gefaltet
   if (t >= 0.999) return natG;
-  const s = glatt(t);
-  return {ca: mischen(spuleG.ca, natG.ca, s), c: mischen(spuleG.c, natG.c, s), o: mischen(spuleG.o, natG.o, s), n: mischen(spuleG.n, natG.n, s), nativ: false};
+  const ein = t < 0.5, von = ein ? spuleG : sekG, nach = ein ? sekG : natG, s = glatt(ein ? t * 2 : (t - 0.5) * 2);
+  const m = k => mischen(von[k], nach[k], s);
+  return {ca: m("ca"), c: m("c"), o: m("o"), n: m("n"), nativ: false};
 }
 
 /* ---------- Farben ---------- */
-const S = {t: 0, stufe: 1, dar: "perlen", farbe: "klasse", seiten: "aus", schnitt: 100, sel: -1};
+const S = {hb: false, t: 0, stufe: 1, dar: "perlen", farbe: "klasse", seiten: "aus", schnitt: 100, sel: -1};
 function farbeVon(i){
   const r = R[i];
   if (S.farbe === "klasse") return PALETTE.rgb("aa_" + G.AS[r.aa].klasse);
@@ -1122,6 +1142,26 @@ function farbeVon(i){
 }
 document.documentElement.style.setProperty("--c-helix", PALETTE.get("ss_helix")); document.documentElement.style.setProperty("--c-g", PALETTE.get("ss_g"));
 document.documentElement.style.setProperty("--c-strang", PALETTE.get("ss_strang")); document.documentElement.style.setProperty("--c-schleife", PALETTE.get("ss_schleife"));
+
+/* ---------- Wasserstoffbrücken der Hauptkette ---------- */
+// Nach Kabsch und Sander (DSSP): Das H am Amid-N sitzt 1,0 Å entfernt in Richtung der Verlängerung von O=C des Vorgängers;
+// eine Brücke C=O···H–N zählt, wenn die Energie unter −0,5 kcal/mol liegt.
+const hbCache = {};
+function hbruecken(g){
+  const key = Math.round(S.t * 100); if (hbCache[key]) return hbCache[key];
+  const out = [], d = P.abstand;
+  for (let n = 1; n < N; n++){
+    if (R[n].aa === "Pro") continue;
+    const v = P.norm(P.sub(g.c[n - 1], g.o[n - 1])), H = add(g.n[n], v);
+    for (let o = 0; o < N; o++){
+      if (Math.abs(o - n) < 3) continue;
+      if (d(g.o[o], g.n[n]) > 5) continue;
+      const E = 27.888 * (1 / d(g.o[o], g.n[n]) + 1 / d(g.c[o], H) - 1 / d(g.o[o], H) - 1 / d(g.c[o], g.n[n]));
+      if (E < -0.5) out.push([o, n]);
+    }
+  }
+  return hbCache[key] = out;
+}
 
 /* ---------- Szene ---------- */
 const ELEM = {N: "el_N", O: "el_O", S: "el_P", C: null};
@@ -1145,6 +1185,11 @@ function szene(){
   if (g.nativ){
     R.forEach((r, i) => { const zeigen = S.seiten === "alle" || (S.seiten === "unpolar" && UNPOLAR.has(r.aa)) || i === S.sel; if (zeigen && r.aa !== "Gly") seitenkette(i, atome, bindungen, pick, PALETTE.rgb("aa_" + G.AS[r.aa].klasse)); });
   }
+  if (S.hb){
+    const nb = hbruecken(g);
+    nb.forEach(([o, n]) => { const a0 = atome.length; atome.push({p: g.o[o], c: [1, 1, 1], r: 0.01, tip: ""}); atome.push({p: g.n[n], c: [1, 1, 1], r: 0.01, tip: ""}); pick.push(o, n);
+      bindungen.push({a: a0, b: a0 + 1, r: 0.14, c: PALETTE.rgb("hbruecke"), strich: true}); });
+  }
   const labels = [];
   if (S.sel >= 0){
     const p = g.ca[S.sel]; atome.push({p, c: [1, 0.84, 0.2], r: S.dar === "perlen" ? 1.45 : 0.9, tip: tip(S.sel)}); pick.push(S.sel);
@@ -1161,7 +1206,7 @@ function zeichne(){
   let xmin = 1e9, xmax = -1e9; s.g.ca.forEach(p => { xmin = Math.min(xmin, p[0]); xmax = Math.max(xmax, p[0]); });
   const f = S.schnitt / 100; $("schnitt-o").textContent = S.schnitt >= 100 ? "kein Schnitt" : Math.round(f * 100) + " %";
   viewer.setClip(S.schnitt >= 100 ? null : {n: [1, 0, 0], d: xmin - 4 + (xmax - xmin + 8) * f});
-  $("falt-o").textContent = Math.round(S.t * 100) + " %";
+  $("falt-o").textContent = S.t < 0.02 ? "Knäuel" : S.t > 0.98 ? "gefaltet" : Math.abs(S.t - 0.5) < 0.02 ? "Helix und Strang" : Math.round(S.t * 100) + " %";
   const seitOK = s.g.nativ;
   $("sg-seit").querySelectorAll("button").forEach(b => { b.disabled = !seitOK && b.dataset.wert !== "aus"; });
   $("seithinweis").textContent = seitOK ? "" : "Die Seitenketten gibt es nur für die fertig gefaltete Struktur: Stelle die Faltung auf 100 %.";
@@ -1219,7 +1264,7 @@ function stufentext(){
       "Hier ist die Kette ungefaltet gezeichnet, als lockeres Knäuel. Jede Kugel ist ein Cα-Atom, die Farbe zeigt die Eigenschaft der Seitenkette: unpolar, polar, sauer oder basisch. Die Peptidebenen dazwischen sind starr (siehe die Seite zur Peptidbindung), die Kette ist nur an den Cα-Atomen drehbar.",
       "Probiere: Ziehe den Regler „Faltung“. Aus dem Knäuel wird die Form, die das Protein in der Zelle hat."]],
     2: ["Sekundärstruktur: Helix und Faltblatt", [
-      "Die Sekundärstruktur sind regelmäßige Muster der Hauptkette. Sie werden durch Wasserstoffbrücken zwischen den Peptidgruppen stabilisiert (C=O···H–N), nicht durch die Seitenketten.",
+      "Die Sekundärstruktur sind regelmäßige Muster der Hauptkette. Sie werden durch Wasserstoffbrücken zwischen den Peptidgruppen stabilisiert (C=O···H–N), nicht durch die Seitenketten. Schalte „Wasserstoffbrücken“ ein, um sie zu sehen. Diese Ansicht zeigt Helix und Strang schon ausgebildet, die Kette ist aber noch nicht zum kompakten Körper gefaltet; mit dem Regler „Faltung“ geht es weiter.",
       "Die <b>α-Helix</b> ist eine Schraube: Jedes C=O bildet eine Wasserstoffbrücke zum N–H der vierten Aminosäure danach. Beim <b>β-Strang</b> ist die Kette gestreckt; mehrere Stränge lagern sich nebeneinander zu einem <b>Faltblatt</b> zusammen und halten sich über Wasserstoffbrücken zwischen den Strängen. <b>Schleifen</b> verbinden diese Elemente.",
       "Ubiquitin hat nach der Strukturdatei eine α-Helix (Reste " + rg(hel) + "), eine kurze 3₁₀-Helix (" + rg(g3) + ") und ein Faltblatt aus fünf β-Strängen (" + rg(str) + "). Zusammen sind " + R.filter(r => r.ss !== "C").length + " von 76 Resten in Helix oder Strang.",
       "Welche Winkel φ und ψ zu Helix und Strang führen, kannst du auf der Seite <a href=\"peptidbindung.html#s-kette\">Die Peptidbindung</a> ausprobieren."]],
@@ -1238,7 +1283,7 @@ function segment(id, key, nach){ $(id).addEventListener("click", e => { const b 
 function setzeSeg(id, wert){ $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-checked", String(x.dataset.wert === wert))); }
 function stufe(n){
   S.stufe = n;
-  const vor = {1: {t: 0, dar: "perlen", farbe: "klasse", seiten: "aus"}, 2: {t: 1, dar: "cartoon", farbe: "ss", seiten: "aus"}, 3: {t: 1, dar: "cartoon", farbe: "lage", seiten: "unpolar"}}[n];
+  const vor = {1: {t: 0, dar: "perlen", farbe: "klasse", seiten: "aus"}, 2: {t: 0.5, dar: "cartoon", farbe: "ss", seiten: "aus"}, 3: {t: 1, dar: "cartoon", farbe: "lage", seiten: "unpolar"}}[n];
   S.dar = vor.dar; S.farbe = vor.farbe; S.seiten = vor.seiten; S.schnitt = 100; $("schnitt").value = 100;
   setzeSeg("sg-dar", vor.dar); setzeSeg("sg-farbe", vor.farbe); setzeSeg("sg-seit", vor.seiten); setzeSeg("sg-stufe", String(n));
   stufentext(); animiereZu(vor.t);
@@ -1253,6 +1298,7 @@ $("sg-stufe").addEventListener("click", e => { const b = e.target.closest("butto
 segment("sg-dar", "dar", () => zeichne()); segment("sg-farbe", "farbe", () => zeichne()); segment("sg-seit", "seiten", () => zeichne());
 $("falt").addEventListener("input", e => { cancelAnimationFrame(anim); setzeT(+e.target.value / 100); });
 $("spiel").addEventListener("click", () => { if (S.t >= 0.999) setzeT(0); animiereZu(1); });
+$("hb").addEventListener("change", e => { S.hb = e.target.checked; zeichne(); });
 $("schnitt").addEventListener("input", e => { S.schnitt = +e.target.value; zeichne(); });
 document.addEventListener("einfach-geaendert", () => { stufentext(); if (S.sel >= 0) waehle(S.sel); });
 if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => zeichne());
