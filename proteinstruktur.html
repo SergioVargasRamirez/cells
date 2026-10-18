@@ -281,6 +281,11 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
   <main>
     <section class="schritt" id="s-struktur">
       <h2>Ubiquitin: 76 Aminosäuren</h2>
+      <div class="karte seqkarte" style="margin:0 0 12px">
+        <h3>Sequenz (N-Terminus links, C-Terminus rechts)</h3>
+        <div class="sequenz" id="sequenz" role="group" aria-label="Aminosäuresequenz des Ubiquitins"></div>
+        <div class="ssleg"><span><i style="background:var(--c-helix)"></i>α-Helix</span><span><i style="background:var(--c-g)"></i>3₁₀-Helix</span><span><i style="background:var(--c-strang)"></i>β-Strang</span><span><i style="background:var(--c-schleife)"></i>Schleife</span></div>
+      </div>
       <div class="steuerzeile">
         <span class="etikett" id="l-stufe">Strukturebene</span>
         <div class="seg" role="radiogroup" aria-labelledby="l-stufe" id="sg-stufe">
@@ -319,11 +324,6 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
           <div class="karte" id="stufentext"></div>
           <div class="karte"><h3>Ausgewählte Aminosäure</h3><div class="restinfo" id="restinfo">Klicke auf eine Aminosäure in der Sequenz unten oder auf das Modell.</div></div>
         </div>
-      </div>
-      <div class="karte seqkarte">
-        <h3>Sequenz (N-Terminus links, C-Terminus rechts)</h3>
-        <div class="sequenz" id="sequenz" role="group" aria-label="Aminosäuresequenz des Ubiquitins"></div>
-        <div class="ssleg"><span><i style="background:var(--c-helix)"></i>α-Helix</span><span><i style="background:var(--c-g)"></i>3₁₀-Helix</span><span><i style="background:var(--c-strang)"></i>β-Strang</span><span><i style="background:var(--c-schleife)"></i>Schleife</span></div>
       </div>
     </section>
     <p class="weiter">Zurück: <a href="peptidbindung.html">Die Peptidbindung</a> · Davor: <a href="codon-generator.html">Codon-Generator</a></p>
