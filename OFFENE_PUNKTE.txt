@@ -1,0 +1,84 @@
+Offene Punkte (Stand 18.10.2026)
+================================
+
+Erledigt
+- M0 (OFFENE_PUNKTE.txt, palette.js) am 18.10.2026
+- GitHub Pages läuft (cells.biodatum.io)
+
+Einmalig, von Hand
+- GitHub Pages einschalten: Settings > Pages > Deploy from a branch > main, / (root);
+  Custom domain cells.biodatum.io; DNS: CNAME cells -> sergiovargasramirez.github.io;
+  danach "Enforce HTTPS". Domain biodatum.io in den Konto-Einstellungen (Pages) verifizieren.
+
+M0 Grundlagen
+- [x] OFFENE_PUNKTE.txt
+- [x] template/site/palette.js (eine Farbtabelle für alle Ansichten; Farbenblindheit noch prüfen)
+- [ ] palette.js in build.py (SNIPPETS) eintragen, sobald die erste Seite sie nutzt
+
+M1 Daten und Machbarkeit
+- [x] scripts/nukleotide/helix_vorlagen.py + nuc_daten.py: dNTP/NTP (wwPDB Chemical Component
+      Dictionary: DTP, TTP, DGT, DCP, ATP, UTP, GTP, CTP), Helix-Vorlagen aus 1BNA (B-DNA) und
+      1QC0 (A-RNA, Ketten C/D) -> template/site/nuc-data.js (22 KiB)
+- [x] Quellen für nuc-data.js in quellen.html eingetragen
+- [x] template/site/helix.js: Helix aus Sequenz (B-DNA 36°/3,4 Å, A-RNA 32,7°/2,6 Å, Lehrbuchwerte)
+- [x] Test: node scripts/nukleotide/test_helix.js (Anstieg, Drehung, O3'-P 1,60 Å in beiden
+      Strängen, H-Brücken 2,55-3,19 Å) -> OK
+- [x] Entscheidung: Rückgrat als Atome (ein gemeinsames Zucker-Phosphat-Gerüst für alle Basen,
+      nur die Base wechselt; Lage der Basenpaare zur Achse um 0,4 Å / 6° (DNA) bzw. 0,4 Å / 1° (RNA)
+      angepasst, damit O3'-P schließt)
+- [ ] Bekannte Grenze (für "Modell und Grenzen"): gleichmäßige Idealhelix. In DNA liegen bei
+      CpG-Schritten zwei Stickstoffe der kleinen Furche (G N2 / G N3 gegenüber) ca. 2,1 Å statt
+      ca. 3,5 Å auseinander (echte CpG-Schritte haben größeren Anstieg und kleineren Drehwinkel,
+      Propellerdrehung hilft nicht). Im Kugel-Stab-Bild nicht sichtbar. Reale Basenpaar-Abstände:
+      Atome nahe 3,0 Å im Schnitt nur grob. Die Phosphor-Radius der RNA liegt bei ca. 10 Å (Literatur
+      ca. 9 Å): noch gegen 1QC0 prüfen.
+
+M2 dna-rna.html, Teil 1: Bausteine
+- [x] template/site/mol3d.js (WebGL, Drehen/Zoom, XYZ-Pfeile, Beschriftungen, Schnittebene, Auswahl)
+- [x] dNTP und NTP nebeneinander: Zeichnung (dna2d.js) und Kugel-Stab-Modell, Drehung gekoppelt
+- [x] 2'-H und 2'-OH hervorgehoben (Zeichnung und 3D)
+- [x] Spaltstelle (Pα-O zwischen α- und β-Phosphat) markierbar
+- [x] "Unterschiede finden": anklicken, dann aufdecken und erklären; Schalter Einfach/Ausführlich
+- [x] Seite in Menü, Startseite, README, Quellen
+- [ ] Fachlich und sprachlich gegenlesen (Texte der Rückmeldungen)
+- [ ] Mit Tastatur bedienbar? 3D ja (Pfeile, +/-, 0); die Klickflächen der Zeichnung noch nicht
+- [ ] Auf echtem Touchgerät und mit Screenreader testen (bisher nur Headless-Chromium)
+
+M3 dna-rna.html, Teil 2: Basenpaarung
+- [ ] Ziehen und Ablegen (auch per Tastatur), Gegenstrang antiparallel, 5'/3'-Beschriftung
+- [ ] 5'-Phosphat und 3'-OH in eigenen Farben
+- [ ] Wasserstoffbrücken erscheinen beim Annähern (2 bei A-T, 3 bei G-C), nirgends vorgesagt
+- [ ] Falsche Paare rasten nicht ein
+- [ ] Schalter DNA/RNA (T <-> U)
+
+M4 dna-rna.html, Teil 3: 3D des eigenen Moleküls
+- [ ] Helix aus der selbst gebauten Sequenz
+- [ ] Farben wie in den Kacheln
+- [ ] Schalter "Beschriftungen": große/kleine Furche, Abstände in Å, Winkel
+- [ ] Schnitt durch die Helix (Schieberegler, Blick entlang der Achse)
+- [ ] Umschalten DNA (B-Form) <-> RNA (A-Form)
+
+M5 dna-rna.html, Teil 4: Abschluss
+- [ ] Merkmale sortieren (DNA / RNA / beide)
+- [ ] Kurzes Quiz
+- [ ] Schalter Einfach / Ausführlich (Mittelstufe vs. Oberstufe)
+- [ ] "Modell und Grenzen"; Seite in Menü, Startseite, README, Quellen
+
+M6 chargaff.html
+- [ ] Verborgene zufällige Doppelstrang-DNA, Hydrolyse zu Nukleotiden, vier Röhrchen mit Prozentwerten
+- [ ] Wiederholbar mit neuen Molekülen, Protokolltabelle, Streudiagramm A/T und G/C
+- [ ] Regeln finden die Schüler selbst
+
+M7 schmelztemperatur.html
+- [ ] Zufällige DNA (feste Länge), GC/AT-Anteil, Doppelstrang bei Raumtemperatur
+- [ ] Temperaturregler, Strang öffnet sich (Nearest-Neighbor-Modell, SantaLucia 1998)
+- [ ] Tabelle der gemessenen Schmelztemperaturen, Diagramm Tm gegen GC-Anteil
+
+M8 Später
+- [ ] polymerisation.html
+- [ ] rna-typen.html (mRNA, tRNA, rRNA)
+- [ ] mutationen.html (Mutationsspiel)
+- [ ] Reparatur (Desaminierung, Uracil/Thymin): eigene Seite, zurückgestellt
+
+Für jede neue Seite
+- [ ] Menü (template/site/nav.html), Karte in index.html, quellen.html, README-Tabelle, python3 build.py
