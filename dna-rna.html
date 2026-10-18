@@ -291,7 +291,7 @@ const HELIX = {"DNA":{"drehung":36.0,"anstieg":3.4,"R":[[-0.98803,-0.15383,0.011
 //
 //   const v = MOL3D.create(canvas, overlayCanvas, {onHover(i), onPick(i)});
 //   v.setScene({atome: [{p:[x,y,z], c:[r,g,b], r:0.3}], bindungen: [{a, b, r:0.1, c:[r,g,b], strich:true}]});
-//   v.setClip({n:[0,0,1], d:5})   // zeigt nur, was dot(n, p) <= d erfüllt; null schaltet aus
+//   v.setClip({n:[0,0,1], d:5, min:2})   // zeigt nur, was min <= dot(n, p) <= d erfüllt (min ist optional); null schaltet aus
 //   v.setLabels([{p:[x,y,z], text:"5'", color:"#fff", bg:"#000"}, {a:[..], b:[..], text:"3,4 Å", linie:true}])
 //   v.setAchsen(true); v.setRotation(R); v.animateTo(R, 600); v.resetView();
 const MOL3D = (() => {
@@ -348,9 +348,9 @@ const MOL3D = (() => {
   const FS = `
     precision mediump float;
     varying vec3 vNor; varying vec3 vCol; varying vec3 vWorld;
-    uniform vec4 uClip;
+    uniform vec4 uClip; uniform float uClipMin;
     void main(){
-      if (uClip.w < 1.0e5 && dot(uClip.xyz, vWorld) > uClip.w) discard;
+      if (uClip.w < 1.0e5 && (dot(uClip.xyz, vWorld) > uClip.w || dot(uClip.xyz, vWorld) < uClipMin)) discard;
       vec3 n = normalize(vNor);
       if (!gl_FrontFacing) n = -n;
       vec3 L = normalize(vec3(0.4, 0.55, 0.75));
@@ -374,7 +374,7 @@ const MOL3D = (() => {
     gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
     const loc = {aPos: gl.getAttribLocation(prog, "aPos"), aNor: gl.getAttribLocation(prog, "aNor"), aCol: gl.getAttribLocation(prog, "aCol"),
-                 uMVP: gl.getUniformLocation(prog, "uMVP"), uRot: gl.getUniformLocation(prog, "uRot"), uClip: gl.getUniformLocation(prog, "uClip")};
+                 uMVP: gl.getUniformLocation(prog, "uMVP"), uRot: gl.getUniformLocation(prog, "uRot"), uClip: gl.getUniformLocation(prog, "uClip"), uClipMin: gl.getUniformLocation(prog, "uClipMin")};
     const bufs = {pos: gl.createBuffer(), nor: gl.createBuffer(), col: gl.createBuffer(), n: 0};
 
     const HOME_ZOOM = opts.zoom || 1;
@@ -467,23 +467,26 @@ const MOL3D = (() => {
       }
       gl.uniformMatrix4fv(loc.uMVP, false, mvp); gl.uniformMatrix4fv(loc.uRot, false, rot);
       const c = S.clip; gl.uniform4f(loc.uClip, c ? c.n[0] : 0, c ? c.n[1] : 0, c ? c.n[2] : 0, c ? c.d : 1e6);
+      gl.uniform1f(loc.uClipMin, c && c.min !== undefined ? c.min : -1e6);
       gl.drawArrays(gl.TRIANGLES, 0, bufs.n);
       S.screen = S.scene.atome.map(a => project(a.p, mvp));
       overlayDraw(mvp);
     }
 
+    const abgeschnitten = p => { const c = S.clip; if (!c) return false; const v = c.n[0] * p[0] + c.n[1] * p[1] + c.n[2] * p[2]; return v > c.d || (c.min !== undefined && v < c.min); };
     function overlayDraw(mvp){
       const dpr = S.dpr, g = octx;
       g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, S.w, S.h);
       const css = getComputedStyle(canvas), ink = css.color;
       g.font = "600 13px 'Source Sans 3', system-ui, sans-serif"; g.textBaseline = "middle"; g.textAlign = "center";
       for (const L of S.labels){
+        if (L.linie ? (abgeschnitten(L.a) || abgeschnitten(L.b)) : abgeschnitten(L.p)) continue;
         if (L.linie){
           const a = project(L.a, mvp), b = project(L.b, mvp);
           g.strokeStyle = L.color || ink; g.lineWidth = 1.5; g.setLineDash([5, 4]);
           g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); g.setLineDash([]);
           for (const e of [a, b]){ g.beginPath(); g.moveTo(e[0] + (a[0] === e[0] ? 0 : 0), e[1]); g.arc(e[0], e[1], 2.5, 0, 6.3); g.fillStyle = L.color || ink; g.fill(); }
-          tag(g, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, L.text, L);
+          if (L.text) tag(g, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, L.text, L);
         } else {
           const q = project(L.p, mvp);
           tag(g, q[0] + (L.dx || 0), q[1] + (L.dy || 0), L.text, L);

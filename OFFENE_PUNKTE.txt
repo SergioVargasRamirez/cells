@@ -56,12 +56,17 @@ M3 basenpaarung.html (eigene Seite seit 18.10.2026): Basenpaarung
 - [x] Zeichnung: keine Fläche hinter der Base, Linien nach Teilen gefärbt, Phosphat dünner
 - [x] Einstellung "Vereinfachte Ansicht" wird auf beiden Seiten gemerkt (localStorage)
 
-M4 basenpaarung.html, Teil 2: 3D des eigenen Moleküls (steht unter der Leiter; Sequenz kommt aus dem gelegten Paar)
-- [ ] Helix aus der selbst gebauten Sequenz
-- [ ] Farben wie in den Kacheln
-- [ ] Schalter "Beschriftungen": große/kleine Furche, Abstände in Å, Winkel
-- [ ] Schnitt durch die Helix (Schieberegler, Blick entlang der Achse)
-- [ ] Umschalten DNA (B-Form) <-> RNA (A-Form)
+M4 basenpaarung.html, Teil 2: 3D des eigenen Moleküls (steht unter der Leiter, erscheint nach dem letzten gelegten Nukleotid)
+- [x] Helix aus der selbst gebauten Sequenz (3x wiederholt, Fortsetzung blass, oder nur das eigene Stück)
+- [x] Farben wie in den Kacheln (Basen, Phosphat magenta, 3'-O cyan, Zucker grau); alternativ nach Element
+- [x] Schalter Enden (5'/3'), Furchen (große/kleine), Abstände und Winkel (Anstieg, Drehung, C1'-C1', P-P)
+- [x] Schnitt (Regler) mit Blick entlang der Achse; "Nur eine Scheibe" (5 Å)
+- [x] Umschalten DNA (B-Form) <-> RNA (A-Form)
+- [ ] Furchen-Beschriftung: Lage der Marken im Bild prüfen (große Furche wird aus der Richtung der Basenatome bestimmt)
+- [ ] Scheibe ist nur ein grober Schnitt (zeigt auch Reste der Nachbarpaare); Verbesserung: Schnitt auf ein Basenpaar einrasten
+- [ ] Fachlicher Abgleich der Furchen-/Windungsangaben im Text (A-Form: 11 bp, B-Form: 10 bp)
+- [ ] RNA-Phosphorradius im Modell ca. 10 Å (Literatur ca. 9 Å): gegen 1QC0 prüfen
+- [ ] Mit Touch testen: Ziehen und Zwei-Finger-Zoom im 3D-Bild
 
 M5 dna-rna.html, Teil 2: Abschluss
 - [ ] Merkmale sortieren (DNA / RNA / beide)

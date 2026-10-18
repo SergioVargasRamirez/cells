@@ -75,6 +75,24 @@ button:focus-visible,input:focus-visible,summary:focus-visible,canvas:focus-visi
 .fragen input[type=text]{width:12em;font:inherit;font-family:ui-monospace,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
 .fragen .rueck{font-weight:600;min-height:1.5em}
 .fragen .rueck.ok{color:var(--accent)}
+/* Schritt 3: 3D */
+.d3raster{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.d3raster{grid-template-columns:minmax(0,1fr)}}
+.dreid{position:relative;aspect-ratio:4/5;max-height:720px;width:100%;background:var(--surface2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.dreid canvas{position:absolute;inset:0;width:100%;height:100%;display:block;color:var(--ink)}
+.dreid canvas.gl{touch-action:none;cursor:grab}
+.dreid canvas.gl:active{cursor:grabbing}
+.dreid canvas.ov{pointer-events:none}
+.keingl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;color:var(--muted)}
+.d3text{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.d3text h3{font-size:1.05rem;margin:0 0 6px}
+.d3text ul{margin:6px 0 0;padding-left:1.15em}
+.d3text li{margin-bottom:6px}
+.regler{display:inline-flex;align-items:center;gap:10px;font-weight:600}
+.regler input[type=range]{width:min(260px,50vw);accent-color:var(--accent)}
+.legende{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.92rem;color:var(--muted);margin:8px 0 0}
+.legende span{display:inline-flex;align-items:center;gap:6px}
+.legende i{width:13px;height:13px;border-radius:50%;display:inline-block;flex:none}
 details{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
 summary{cursor:pointer;font-weight:700}
 details ul{margin:10px 0 0;padding-left:1.2em}
@@ -202,6 +220,49 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <div class="rueck" id="r-gegen" aria-live="polite"></div>
       </div>
     </section>
+
+    <section class="schritt" id="s-3d">
+      <h2>Dein Molekül in 3D</h2>
+      <div class="status" id="d3-leer">Setze zuerst alle Nukleotide des Gegenstrangs. Dann siehst du hier genau das Molekül, das du gebaut hast, als Doppelhelix.</div>
+      <div id="d3" hidden>
+        <p>Das ist deine Sequenz als Doppelhelix, mit denselben Farben wie die Bausteine oben. Dreh das Molekül, schalte Beschriftungen ein und schneide es auf.</p>
+        <div class="steuer">
+          <div class="gruppe"><span class="etikett" id="l-form">Form</span>
+            <div class="seg" role="radiogroup" aria-labelledby="l-form" id="sg-form">
+              <button type="button" role="radio" aria-checked="true" data-wert="DNA">DNA (B-Form)</button>
+              <button type="button" role="radio" aria-checked="false" data-wert="RNA">RNA (A-Form)</button>
+            </div>
+          </div>
+          <div class="gruppe"><span class="etikett" id="l-laenge">Länge</span>
+            <div class="seg" role="radiogroup" aria-labelledby="l-laenge" id="sg-laenge">
+              <button type="button" role="radio" aria-checked="true" data-wert="lang">Dein Stück 3 × wiederholt</button>
+              <button type="button" role="radio" aria-checked="false" data-wert="kurz">Nur dein Stück</button>
+            </div>
+          </div>
+          <div class="gruppe"><span class="etikett" id="l-farbe3">Farben</span>
+            <div class="seg" role="radiogroup" aria-labelledby="l-farbe3" id="sg-farbe3">
+              <button type="button" role="radio" aria-checked="true" data-wert="nukleotid">Wie oben</button>
+              <button type="button" role="radio" aria-checked="false" data-wert="element">Nach Element</button>
+            </div>
+          </div>
+        </div>
+        <div class="steuer">
+          <label class="switch"><input type="checkbox" id="b-enden" checked> Enden (5', 3')</label>
+          <label class="switch"><input type="checkbox" id="b-furchen"> Furchen</label>
+          <label class="switch"><input type="checkbox" id="b-masse"> Abstände und Winkel</label>
+          <label class="regler">Schnitt <input type="range" id="schnitt" min="0" max="100" value="100" aria-label="Schnitt durch die Helix, von unten nach oben"><output id="schnitt-o" for="schnitt">kein Schnitt</output></label>
+          <label class="switch"><input type="checkbox" id="b-scheibe" checked> Nur eine Scheibe</label>
+          <button class="btn" type="button" id="v-achse">Blick entlang der Achse</button>
+          <button class="btn" type="button" id="v-seite">Seitenansicht</button>
+        </div>
+        <div class="d3raster">
+          <div class="dreid"><canvas class="gl" tabindex="0" id="gl3"></canvas><canvas class="ov" id="ov3" aria-hidden="true"></canvas></div>
+          <div class="d3text" id="d3text"></div>
+        </div>
+        <div class="legende" id="legende3"></div>
+        <p class="legende">Ziehen oder Pfeiltasten drehen das Bild, Mausrad oder + / − vergrößern, 0 setzt zurück.</p>
+      </div>
+    </section>
     <p class="weiter">Zurück: <a href="dna-rna.html">DNA und RNA: Die Bausteine</a></p>
   </main>
 
@@ -212,6 +273,8 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       <li>Eine Wasserstoffbrücke wird gezeichnet, wenn ein Spender (N–H) und ein Empfänger (O oder N mit freiem Elektronenpaar) 2,4 bis 3,3 Å auseinanderliegen. Zwei Basen, deren Atome näher als 2,3 Å zusammenrücken, überlappen und können nicht gepaart werden (zum Beispiel zwei Purine). Ein Paar zählt als passend, wenn es mindestens zwei Wasserstoffbrücken bildet. Andere Paarungen, die es in der Natur gibt (zum Beispiel G–U in der RNA), sind hier nicht vorgesehen.</li>
       <li>Der Zucker und das Phosphat sind schematisch gezeichnet. Die Strangrichtung ist wie im Lehrbuch dargestellt: Der linke Strang läuft von 5' (oben) nach 3' (unten), der rechte entgegengesetzt (antiparallel).</li>
       <li>Die Wasserstoffbrücken sind nur zwischen den Basen gezeigt; Wasser, Ionen und die Stapelung der Basenpaare übereinander fehlen.</li>
+      <li><b>3D-Bild:</b> Die Doppelhelix ist ein idealisiertes Modell mit gleichmäßigem Aufbau: B-DNA mit 36° Drehung und 3,4 Å Anstieg je Basenpaar, A-RNA mit 32,7° und 2,6 Å (Lehrbuchwerte). Die Atome von Base, Zucker und Phosphat sind aus je einem Rest der Kristallstrukturen 1BNA und 1QC0 übernommen, ein gemeinsames Zucker-Phosphat-Gerüst für alle Basen. Echte DNA ist ungleichmäßiger: Je nach Sequenz ändern sich Drehung, Anstieg und Neigung, und die Helix biegt sich. Bei G·C-Paaren hintereinander (CpG) liegen im Modell zwei Stickstoffe der kleinen Furche etwa 1,4 Å näher als im Kristall.</li>
+      <li>Die Wiederholungen der Sequenz (blass) sollen nur zeigen, wie die Helix weiterläuft. Furchen, Abstände und Winkel sind aus dem Modell berechnet, nicht gemessen. „P–P“ ist der Abstand zweier Phosphoratome gegenüber, nicht der Durchmesser der Helix mit Atomradien. Die Scheibe ist 5 Å dick und enthält deshalb auch Teile benachbarter Basenpaare.</li>
     </ul>
   </details>
 </div>
@@ -265,6 +328,387 @@ const PALETTE = (() => {
 const NUKLEOTIDE = {"dNTP":{"A":{"id":"DTP","atome":[["PG","P",-7.5,2.523,-4.955],["O1G","O",-7.569,3.775,-4.17],["O2G","O",-8.05,2.79,-6.444],["O3G","O",-8.401,1.394,-4.246],["PB","P",-5.489,1.773,-3.513],["O1B","O",-6.349,0.746,-2.884],["O2B","O",-5.598,3.147,-2.684],["O3B","O",-5.972,2.02,-5.029],["PA","P",-3.546,1.04,-1.974],["O1A","O",-3.677,2.313,-1.235],["O2A","O",-4.515,-0.065,-1.315],["O3A","O",-3.961,1.265,-3.512],["O5'","O",-2.022,0.529,-1.898],["C5'","C",-1.715,0.347,-0.516],["C4'","C",-0.271,-0.139,-0.372],["O4'","O",0.658,0.878,-0.809],["C3'","C",0.09,-0.346,1.12],["O3'","O",-0.293,-1.65,1.563],["C2'","C",1.631,-0.198,1.105],["C1'","C",1.922,0.579,-0.193],["N9","N",2.628,1.823,0.122],["C8","C",2.056,3.029,0.395],["N7","N",2.979,3.916,0.628],["C5","C",4.199,3.337,0.524],["C6","C",5.523,3.79,0.656],["N6","N",5.79,5.109,0.976],["N1","N",6.51,2.921,0.471],["C2","C",6.264,1.661,0.164],["N3","N",5.041,1.195,0.025],["C4","C",3.989,1.989,0.192],["HOG2","H",-8.964,3.089,-6.354],["HOG3","H",-8.328,0.596,-4.787],["HOB2","H",-5.024,3.787,-3.127],["HOA2","H",-4.399,-0.878,-1.824],["H5'1","H",-2.391,-0.393,-0.086],["H5'2","H",-1.832,1.295,0.01],["H4'","H",-0.122,-1.062,-0.935],["H3'","H",-0.369,0.424,1.741],["HO3'","H",0.041,-1.747,2.466],["H2'1","H",2.107,-1.178,1.078],["H2'2","H",1.969,0.367,1.973],["H1'","H",2.527,-0.031,-0.863],["H8","H",0.993,3.22,0.416],["HN61","H",6.709,5.41,1.069],["HN62","H",5.061,5.736,1.105],["H2","H",7.097,0.988,0.023]],"bindungen":[[0,1,2],[0,2,1],[0,3,1],[0,7,1],[2,30,1],[3,31,1],[4,5,2],[4,6,1],[4,7,1],[4,11,1],[6,32,1],[8,9,2],[8,10,1],[8,11,1],[8,12,1],[10,33,1],[12,13,1],[13,14,1],[13,34,1],[13,35,1],[14,15,1],[14,16,1],[14,36,1],[15,19,1],[16,17,1],[16,18,1],[16,37,1],[17,38,1],[18,19,1],[18,39,1],[18,40,1],[19,20,1],[19,41,1],[20,21,1],[20,29,1],[21,22,2],[21,42,1],[22,23,1],[23,24,1],[23,29,2],[24,25,1],[24,26,2],[25,43,1],[25,44,1],[26,27,1],[27,28,2],[27,45,1],[28,29,1]]},"T":{"id":"TTP","atome":[["PA","P",-3.546,1.039,-1.973],["O1A","O",-3.677,2.313,-1.234],["O2A","O",-4.515,-0.066,-1.315],["O3A","O",-3.961,1.266,-3.513],["PB","P",-5.49,1.772,-3.513],["O1B","O",-6.349,0.745,-2.883],["O2B","O",-5.599,3.146,-2.683],["O3B","O",-5.973,2.019,-5.028],["PG","P",-7.5,2.521,-4.953],["O1G","O",-7.57,3.773,-4.169],["O2G","O",-8.051,2.79,-6.443],["O3G","O",-8.402,1.392,-4.245],["O5'","O",-2.022,0.529,-1.899],["C5'","C",-1.715,0.347,-0.515],["C4'","C",-0.271,-0.139,-0.372],["O4'","O",0.658,0.877,-0.809],["C3'","C",0.09,-0.346,1.121],["O3'","O",-0.293,-1.65,1.562],["C2'","C",1.631,-0.198,1.105],["C1'","C",1.922,0.58,-0.193],["N1","N",2.628,1.824,0.121],["C2","C",2.052,2.734,0.926],["O2","O",0.948,2.513,1.385],["N3","N",2.678,3.885,1.23],["C4","C",3.904,4.143,0.732],["O4","O",4.472,5.185,1.007],["C5","C",4.521,3.196,-0.12],["C5M","C",5.889,3.463,-0.693],["C6","C",3.87,2.05,-0.409],["HOA2","H",-4.4,-0.878,-1.824],["HOB2","H",-5.025,3.787,-3.126],["HOG2","H",-8.966,3.088,-6.353],["HOG3","H",-8.33,0.595,-4.786],["H5'1","H",-2.391,-0.393,-0.087],["H5'2","H",-1.833,1.294,0.011],["H4'","H",-0.121,-1.061,-0.934],["H3'","H",-0.368,0.424,1.742],["HO3'","H",0.041,-1.748,2.465],["H2'1","H",2.107,-1.177,1.078],["H2'2","H",1.969,0.367,1.972],["H1'","H",2.527,-0.031,-0.863],["HN3","H",2.247,4.529,1.813],["HM51","H",6.246,4.433,-0.347],["HM52","H",6.578,2.685,-0.365],["HM53","H",5.833,3.465,-1.781],["H6","H",4.327,1.315,-1.055]],"bindungen":[[0,1,2],[0,2,1],[0,3,1],[0,12,1],[2,29,1],[3,4,1],[4,5,2],[4,6,1],[4,7,1],[6,30,1],[7,8,1],[8,9,2],[8,10,1],[8,11,1],[10,31,1],[11,32,1],[12,13,1],[13,14,1],[13,33,1],[13,34,1],[14,15,1],[14,16,1],[14,35,1],[15,19,1],[16,17,1],[16,18,1],[16,36,1],[17,37,1],[18,19,1],[18,38,1],[18,39,1],[19,20,1],[19,40,1],[20,21,1],[20,28,1],[21,22,2],[21,23,1],[23,24,1],[23,41,1],[24,25,2],[24,26,1],[26,27,1],[26,28,2],[27,42,1],[27,43,1],[27,44,1],[28,45,1]]},"G":{"id":"DGT","atome":[["PG","P",-4.969,-0.25,-7.806],["O1G","O",-5.677,-1.661,-7.49],["O2G","O",-3.895,-0.442,-8.99],["O3G","O",-5.992,0.733,-8.223],["O3B","O",-4.22,0.282,-6.483],["PB","P",-4.722,0.946,-5.105],["O1B","O",-5.149,2.475,-5.37],["O2B","O",-5.886,0.192,-4.589],["O3A","O",-3.531,0.9,-4.022],["PA","P",-3.474,1.002,-2.417],["O1A","O",-3.703,2.53,-1.967],["O2A","O",-4.534,0.151,-1.832],["O5'","O",-2.036,0.499,-1.898],["C5'","C",-1.709,0.369,-0.513],["C4'","C",-0.269,-0.129,-0.372],["O4'","O",0.664,0.885,-0.803],["C3'","C",0.09,-0.347,1.119],["O3'","O",-0.3,-1.651,1.552],["C2'","C",1.631,-0.205,1.106],["C1'","C",1.928,0.579,-0.191],["N9","N",2.64,1.819,0.129],["C8","C",2.077,3.048,0.316],["N7","N",3.004,3.921,0.585],["C5","C",4.212,3.307,0.587],["C6","C",5.539,3.744,0.81],["O6","O",5.777,4.912,1.067],["N1","N",6.535,2.836,0.73],["C2","C",6.258,1.532,0.442],["N2","N",7.29,0.631,0.368],["N3","N",5.03,1.114,0.233],["C4","C",3.991,1.955,0.3],["HO1G","H",-5.065,-2.355,-7.21],["HO2G","H",-4.277,-0.762,-9.819],["HO1B","H",-4.434,3.03,-5.71],["HO1A","H",-3.043,3.146,-2.315],["H5'","H",-1.807,1.339,-0.024],["H5'A","H",-2.388,-0.343,-0.045],["H4'","H",-0.126,-1.048,-0.94],["H3'","H",-0.366,0.421,1.745],["HO3'","H",-0.096,-1.835,2.48],["H2'","H",1.972,0.353,1.978],["H2'A","H",2.104,-1.187,1.073],["H1'","H",2.528,-0.032,-0.865],["H8","H",1.02,3.263,0.251],["HN2","H",8.202,0.925,0.52],["HN2A","H",7.109,-0.299,0.164],["H16","H",7.453,3.112,0.88]],"bindungen":[[0,1,1],[0,2,1],[1,31,1],[2,32,1],[3,0,2],[4,0,1],[5,4,1],[5,6,1],[5,8,1],[6,33,1],[7,5,2],[9,8,1],[9,10,1],[10,34,1],[11,9,2],[12,9,1],[12,13,1],[13,35,1],[13,36,1],[14,13,1],[14,37,1],[15,14,1],[16,14,1],[16,17,1],[16,38,1],[17,39,1],[18,16,1],[18,19,1],[18,40,1],[18,41,1],[19,15,1],[19,42,1],[20,19,1],[20,30,1],[21,20,1],[21,43,1],[22,21,2],[22,23,1],[23,24,1],[23,30,2],[24,26,1],[25,24,2],[26,27,1],[27,29,2],[27,28,1],[28,44,1],[28,45,1],[30,29,1],[26,46,1]]},"C":{"id":"DCP","atome":[["N1","N",2.629,1.823,0.12],["C2","C",2.055,2.735,0.925],["N3","N",2.675,3.874,1.226],["C4","C",3.879,4.139,0.738],["C5","C",4.506,3.207,-0.112],["C6","C",3.866,2.051,-0.404],["O2","O",0.946,2.515,1.386],["N4","N",4.509,5.32,1.056],["C1'","C",1.922,0.58,-0.192],["C2'","C",1.631,-0.198,1.105],["C3'","C",0.09,-0.346,1.12],["C4'","C",-0.271,-0.14,-0.372],["O4'","O",0.658,0.877,-0.809],["O3'","O",-0.293,-1.65,1.563],["C5'","C",-1.715,0.347,-0.516],["O5'","O",-2.022,0.53,-1.898],["PA","P",-3.546,1.039,-1.974],["O1A","O",-4.436,0.024,-1.368],["O2A","O",-3.688,2.426,-1.17],["O3A","O",-3.961,1.266,-3.513],["PB","P",-5.489,1.772,-3.513],["O1B","O",-6.349,0.746,-2.883],["O2B","O",-5.598,3.147,-2.684],["O3B","O",-5.972,2.02,-5.029],["PG","P",-7.5,2.522,-4.954],["O1G","O",-7.568,3.774,-4.17],["O2G","O",-8.049,2.791,-6.443],["O3G","O",-8.401,1.394,-4.246],["H5","H",5.488,3.408,-0.518],["H6","H",4.328,1.318,-1.05],["HN41","H",4.073,5.961,1.638],["HN42","H",5.392,5.509,0.7],["H1'","H",2.527,-0.032,-0.863],["H2'1","H",2.107,-1.178,1.078],["H2'2","H",1.969,0.367,1.973],["H3'","H",-0.368,0.424,1.742],["H4'","H",-0.121,-1.061,-0.934],["HO3'","H",0.04,-1.747,2.465],["H5'1","H",-2.391,-0.392,-0.087],["H5'2","H",-1.832,1.295,0.01],["HOA2","H",-3.093,3.058,-1.596],["HOB2","H",-5.024,3.787,-3.127],["HOG2","H",-8.964,3.089,-6.354],["HOG3","H",-8.329,0.596,-4.786]],"bindungen":[[0,1,1],[0,5,1],[0,8,1],[1,2,1],[1,6,2],[2,3,2],[3,4,1],[3,7,1],[4,5,2],[4,28,1],[5,29,1],[7,30,1],[7,31,1],[8,9,1],[8,12,1],[8,32,1],[9,10,1],[9,33,1],[9,34,1],[10,11,1],[10,13,1],[10,35,1],[11,12,1],[11,14,1],[11,36,1],[13,37,1],[14,15,1],[14,38,1],[14,39,1],[15,16,1],[16,17,2],[16,18,1],[16,19,1],[18,40,1],[19,20,1],[20,21,2],[20,22,1],[20,23,1],[22,41,1],[23,24,1],[24,25,2],[24,26,1],[24,27,1],[26,42,1],[27,43,1]]}},"NTP":{"A":{"id":"ATP","atome":[["PG","P",-7.343,2.947,-4.957],["O1G","O",-7.375,4.173,-4.13],["O2G","O",-7.857,3.289,-6.444],["O3G","O",-8.301,1.832,-4.302],["PB","P",-5.388,2.065,-3.513],["O1B","O",-5.45,3.305,-2.709],["O2B","O",-6.379,0.966,-2.882],["O3B","O",-5.836,2.385,-5.026],["PA","P",-3.501,1.201,-1.973],["O1A","O",-4.441,0.202,-1.416],["O2A","O",-3.601,2.564,-1.123],["O3A","O",-3.882,1.497,-3.508],["O5'","O",-2.0,0.626,-1.892],["C5'","C",-1.724,0.385,-0.512],["C4'","C",-0.303,-0.166,-0.365],["O4'","O",0.661,0.795,-0.847],["C3'","C",0.049,-0.363,1.125],["O3'","O",-0.135,-1.728,1.508],["C2'","C",1.542,0.03,1.215],["O2'","O",2.326,-1.08,1.658],["C1'","C",1.912,0.422,-0.232],["N9","N",2.84,1.554,-0.233],["C8","C",2.501,2.874,-0.233],["N7","N",3.574,3.609,-0.233],["C5","C",4.668,2.81,-0.227],["C6","C",6.055,3.033,-0.234],["N6","N",6.565,4.319,-0.235],["N1","N",6.866,1.98,-0.233],["C2","C",6.389,0.749,-0.232],["N3","N",5.097,0.492,-0.232],["C4","C",4.21,1.482,-0.232],["HOG2","H",-8.761,3.621,-6.357],["HOG3","H",-8.251,1.051,-4.87],["HOB2","H",-6.308,0.176,-3.435],["HOA2","H",-2.974,3.185,-1.517],["H5'1","H",-2.436,-0.342,-0.12],["H5'2","H",-1.811,1.316,0.045],["H4'","H",-0.205,-1.107,-0.906],["H3'","H",-0.559,0.292,1.75],["HO3'","H",0.098,-1.79,2.444],["H2'","H",1.673,0.88,1.885],["HO2'","H",2.007,-1.314,2.54],["H1'","H",2.352,-0.429,-0.753],["H8","H",1.489,3.253,-0.233],["HN61","H",7.525,4.461,-0.236],["HN62","H",5.963,5.079,-0.239],["H2","H",7.083,-0.078,-0.232]],"bindungen":[[0,1,2],[0,2,1],[0,3,1],[0,7,1],[2,31,1],[3,32,1],[4,5,2],[4,6,1],[4,7,1],[4,11,1],[6,33,1],[8,9,2],[8,10,1],[8,11,1],[8,12,1],[10,34,1],[12,13,1],[13,14,1],[13,35,1],[13,36,1],[14,15,1],[14,16,1],[14,37,1],[15,20,1],[16,17,1],[16,18,1],[16,38,1],[17,39,1],[18,19,1],[18,20,1],[18,40,1],[19,41,1],[20,21,1],[20,42,1],[21,22,1],[21,30,1],[22,23,2],[22,43,1],[23,24,1],[24,25,1],[24,30,2],[25,26,1],[25,27,2],[26,44,1],[26,45,1],[27,28,1],[28,29,2],[28,46,1],[29,30,1]]},"U":{"id":"UTP","atome":[["PA","P",-3.522,1.171,-1.971],["O1A","O",-4.444,0.296,-1.214],["O2A","O",-3.541,2.65,-1.334],["O3A","O",-3.993,1.244,-3.509],["O5'","O",-2.03,0.572,-1.895],["PB","P",-5.589,1.46,-3.497],["O1B","O",-5.919,3.011,-3.221],["O2B","O",-6.191,0.63,-2.43],["O3B","O",-6.2,1.027,-4.922],["PG","P",-7.79,0.883,-4.723],["O1G","O",-8.471,2.341,-4.765],["O2G","O",-8.068,0.246,-3.416],["O3G","O",-8.399,-0.027,-5.903],["C5'","C",-1.716,0.423,-0.509],["C4'","C",-0.302,-0.146,-0.365],["O4'","O",0.676,0.81,-0.837],["C1'","C",1.922,0.417,-0.225],["C2'","C",1.545,0.017,1.219],["O2'","O",2.319,-1.105,1.649],["C3'","C",0.05,-0.363,1.123],["O3'","O",-0.144,-1.73,1.489],["N1","N",2.864,1.539,-0.212],["C6","C",4.136,1.363,-0.684],["C2","C",2.468,2.736,0.259],["O2","O",1.333,2.871,0.673],["N3","N",3.313,3.784,0.286],["C4","C",4.575,3.65,-0.17],["O4","O",5.339,4.598,-0.15],["C5","C",5.004,2.398,-0.672],["H2A","H",-2.929,3.187,-1.856],["H1B","H",-5.51,3.516,-3.937],["H1G","H",-8.267,2.72,-5.63],["H3G","H",-9.351,-0.089,-5.747],["H5'1","H",-2.429,-0.258,-0.046],["H5'2","H",-1.768,1.394,-0.018],["H4'","H",-0.212,-1.082,-0.916],["H1'","H",2.354,-0.433,-0.754],["H2'","H",1.682,0.858,1.897],["HA","H",1.996,-1.346,2.528],["H3'","H",-0.551,0.29,1.757],["HB","H",0.118,-1.812,2.416],["H6","H",4.445,0.4,-1.063],["H3","H",3.012,4.638,0.632],["H5","H",6.01,2.272,-1.042]],"bindungen":[[0,1,2],[0,2,1],[0,3,1],[0,4,1],[2,29,1],[3,5,1],[4,13,1],[5,6,1],[5,7,2],[5,8,1],[6,30,1],[8,9,1],[9,10,1],[9,11,2],[9,12,1],[10,31,1],[12,32,1],[13,14,1],[13,33,1],[13,34,1],[14,15,1],[14,19,1],[14,35,1],[15,16,1],[16,17,1],[16,21,1],[16,36,1],[17,18,1],[17,19,1],[17,37,1],[18,38,1],[19,20,1],[19,39,1],[20,40,1],[21,22,1],[21,23,1],[22,28,2],[22,41,1],[23,24,2],[23,25,1],[25,26,1],[25,42,1],[26,27,2],[26,28,1],[28,43,1]]},"G":{"id":"GTP","atome":[["PG","P",-3.489,3.066,-7.847],["O1G","O",-4.85,3.595,-8.089],["O2G","O",-3.046,2.138,-9.086],["O3G","O",-2.456,4.292,-7.697],["O3B","O",-3.486,2.193,-6.495],["PB","P",-4.182,2.362,-5.052],["O1B","O",-4.128,3.784,-4.642],["O2B","O",-5.717,1.886,-5.138],["O3A","O",-3.4,1.462,-3.971],["PA","P",-3.378,1.412,-2.362],["O1A","O",-3.41,2.792,-1.826],["O2A","O",-4.666,0.602,-1.833],["O5'","O",-2.038,0.673,-1.864],["C5'","C",-1.675,0.562,-0.486],["C4'","C",-0.352,-0.194,-0.366],["O4'","O",0.711,0.585,-0.943],["C3'","C",-0.005,-0.412,1.119],["O3'","O",0.091,-1.808,1.41],["C2'","C",1.372,0.274,1.294],["O2'","O",2.232,-0.511,2.122],["C1'","C",1.897,0.32,-0.164],["N9","N",2.872,1.402,-0.326],["C8","C",2.599,2.686,-0.696],["N7","N",3.701,3.376,-0.74],["C5","C",4.743,2.58,-0.403],["C6","C",6.138,2.781,-0.281],["O6","O",6.634,3.872,-0.505],["N1","N",6.908,1.734,0.088],["C2","C",6.344,0.517,0.336],["N2","N",7.149,-0.528,0.711],["N3","N",5.048,0.318,0.227],["C4","C",4.223,1.309,-0.129],["HOG2","H",-3.025,2.6,-9.935],["HOG3","H",-1.543,4.019,-7.537],["HOB2","H",-5.828,0.962,-5.402],["HOA2","H",-4.711,-0.312,-2.146],["H5'","H",-1.565,1.559,-0.059],["H5''","H",-2.454,0.021,0.052],["H4'","H",-0.426,-1.154,-0.877],["H3'","H",-0.752,0.059,1.759],["HO3'","H",0.307,-2.003,2.333],["H2'","H",1.256,1.279,1.698],["HO2'","H",1.899,-0.644,3.02],["H1'","H",2.335,-0.638,-0.444],["H8","H",1.615,3.072,-0.919],["HN1","H",7.868,1.847,0.178],["HN21","H",8.107,-0.396,0.795],["HN22","H",6.762,-1.399,0.89]],"bindungen":[[0,1,2],[0,2,1],[0,3,1],[0,4,1],[2,32,1],[3,33,1],[4,5,1],[5,6,2],[5,7,1],[5,8,1],[7,34,1],[8,9,1],[9,10,2],[9,11,1],[9,12,1],[11,35,1],[12,13,1],[13,14,1],[13,36,1],[13,37,1],[14,15,1],[14,16,1],[14,38,1],[15,20,1],[16,17,1],[16,18,1],[16,39,1],[17,40,1],[18,19,1],[18,20,1],[18,41,1],[19,42,1],[20,21,1],[20,43,1],[21,22,1],[21,31,1],[22,23,2],[22,44,1],[23,24,1],[24,25,1],[24,31,2],[25,26,2],[25,27,1],[27,28,1],[27,45,1],[28,29,1],[28,30,2],[29,46,1],[29,47,1],[30,31,1]]},"C":{"id":"CTP","atome":[["N1","N",2.839,1.554,-0.232],["C2","C",2.481,2.712,0.35],["N3","N",3.306,3.759,0.364],["C4","C",4.505,3.683,-0.2],["C5","C",4.909,2.486,-0.823],["C6","C",4.061,1.429,-0.824],["O2","O",1.384,2.805,0.874],["N4","N",5.347,4.771,-0.18],["C1'","C",1.912,0.421,-0.232],["C2'","C",1.542,0.03,1.215],["O2'","O",2.325,-1.08,1.658],["C3'","C",0.048,-0.363,1.126],["C4'","C",-0.304,-0.166,-0.365],["O4'","O",0.66,0.796,-0.848],["O3'","O",-0.135,-1.728,1.507],["C5'","C",-1.724,0.384,-0.512],["O5'","O",-2.0,0.626,-1.892],["PA","P",-3.501,1.2,-1.973],["O1A","O",-3.592,2.454,-1.192],["O2A","O",-4.524,0.115,-1.366],["O3A","O",-3.883,1.496,-3.508],["PB","P",-5.388,2.065,-3.513],["O1B","O",-5.45,3.305,-2.709],["O2B","O",-6.379,0.965,-2.882],["O3B","O",-5.837,2.384,-5.026],["PG","P",-7.344,2.946,-4.957],["O1G","O",-7.375,4.172,-4.13],["O2G","O",-7.858,3.287,-6.444],["O3G","O",-8.302,1.831,-4.302],["H5","H",5.88,2.409,-1.285],["H6","H",4.349,0.499,-1.291],["HN41","H",5.065,5.595,0.247],["HN42","H",6.224,4.712,-0.588],["H1'","H",2.352,-0.429,-0.754],["H2'","H",1.673,0.881,1.884],["HO2'","H",2.006,-1.313,2.54],["H3'","H",-0.558,0.292,1.752],["H4'","H",-0.204,-1.107,-0.906],["HO3'","H",0.098,-1.789,2.444],["H5'1","H",-2.437,-0.342,-0.12],["H5'2","H",-1.811,1.317,0.045],["HOA2","H",-4.433,-0.685,-1.902],["HOB2","H",-6.309,0.175,-3.434],["HOG2","H",-8.762,3.62,-6.357],["HOG3","H",-8.253,1.051,-4.869]],"bindungen":[[0,1,1],[0,5,1],[0,8,1],[1,2,1],[1,6,2],[2,3,2],[3,4,1],[3,7,1],[4,5,2],[4,29,1],[5,30,1],[7,31,1],[7,32,1],[8,9,1],[8,13,1],[8,33,1],[9,10,1],[9,11,1],[9,34,1],[10,35,1],[11,12,1],[11,14,1],[11,36,1],[12,13,1],[12,15,1],[12,37,1],[14,38,1],[15,16,1],[15,39,1],[15,40,1],[16,17,1],[17,18,2],[17,19,1],[17,20,1],[19,41,1],[20,21,1],[21,22,2],[21,23,1],[21,24,1],[23,42,1],[24,25,1],[25,26,2],[25,27,1],[25,28,1],[27,43,1],[28,44,1]]}}};
 const HELIX = {"DNA":{"drehung":36.0,"anstieg":3.4,"R":[[-0.98803,-0.15383,0.01179],[0.15426,-0.98405,0.08857],[-0.00202,0.08933,0.996]],"O":[-3.271,0.446,-27.295],"vorlage":{"C":{"atome":[["P","P",-2.391,-9.49,-1.871],["OP1","O",-1.607,-10.69,-2.226],["OP2","O",-3.366,-9.597,-0.769],["O5'","O",-1.34,-8.347,-1.52],["C5'","C",-0.162,-8.198,-2.321],["C4'","C",0.566,-7.049,-1.712],["O4'","O",-0.412,-6.013,-1.599],["C3'","C",1.107,-7.26,-0.302],["O3'","O",2.537,-7.085,-0.239],["C2'","C",0.273,-6.281,0.521],["C1'","C",0.0,-5.206,-0.507],["N1","N",-1.177,-4.347,-0.301],["C2","C",-0.992,-3.005,-0.232],["O2","O",0.163,-2.585,-0.256],["N3","N",-2.044,-2.189,-0.15],["C4","C",-3.281,-2.685,-0.118],["N4","N",-4.353,-1.846,-0.063],["C5","C",-3.509,-4.058,-0.157],["C6","C",-2.415,-4.905,-0.265]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[10,11],[11,12],[11,18],[12,13],[12,14],[14,15],[15,16],[15,17],[17,18]]},"G":{"atome":[["P","P",-2.391,-9.49,-1.871],["OP1","O",-1.607,-10.69,-2.226],["OP2","O",-3.366,-9.597,-0.769],["O5'","O",-1.34,-8.347,-1.52],["C5'","C",-0.162,-8.198,-2.321],["C4'","C",0.566,-7.049,-1.712],["O4'","O",-0.412,-6.013,-1.599],["C3'","C",1.107,-7.26,-0.302],["O3'","O",2.537,-7.085,-0.239],["C2'","C",0.273,-6.281,0.521],["C1'","C",0.0,-5.206,-0.507],["N9","N",-1.21,-4.373,-0.562],["C8","C",-2.525,-4.752,-0.528],["N7","N",-3.362,-3.703,-0.551],["C5","C",-2.535,-2.635,-0.605],["C6","C",-2.838,-1.241,-0.636],["O6","O",-3.939,-0.687,-0.593],["N1","N",-1.693,-0.483,-0.695],["C2","C",-0.407,-0.935,-0.716],["N2","N",0.594,-0.013,-0.735],["N3","N",-0.121,-2.236,-0.674],["C4","C",-1.227,-3.012,-0.629]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[10,11],[11,12],[11,21],[12,13],[13,14],[14,15],[14,21],[15,16],[15,17],[17,18],[18,19],[18,20],[20,21]]},"A":{"atome":[["P","P",-2.391,-9.49,-1.871],["OP1","O",-1.607,-10.69,-2.226],["OP2","O",-3.366,-9.597,-0.769],["O5'","O",-1.34,-8.347,-1.52],["C5'","C",-0.162,-8.198,-2.321],["C4'","C",0.566,-7.049,-1.712],["O4'","O",-0.412,-6.013,-1.599],["C3'","C",1.107,-7.26,-0.302],["O3'","O",2.537,-7.085,-0.239],["C2'","C",0.273,-6.281,0.521],["C1'","C",0.0,-5.206,-0.507],["N9","N",-1.198,-4.4,-0.167],["C8","C",-2.466,-4.844,0.087],["N7","N",-3.345,-3.846,0.259],["C5","C",-2.602,-2.731,0.101],["C6","C",-2.953,-1.343,0.113],["N6","N",-4.234,-0.91,0.293],["N1","N",-1.978,-0.463,-0.111],["C2","C",-0.736,-0.9,-0.326],["N3","N",-0.285,-2.152,-0.366],["C4","C",-1.29,-3.025,-0.141]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[10,11],[11,12],[11,20],[12,13],[13,14],[14,15],[14,20],[15,16],[15,17],[17,18],[18,19],[19,20]]},"T":{"atome":[["P","P",-2.391,-9.49,-1.871],["OP1","O",-1.607,-10.69,-2.226],["OP2","O",-3.366,-9.597,-0.769],["O5'","O",-1.34,-8.347,-1.52],["C5'","C",-0.162,-8.198,-2.321],["C4'","C",0.566,-7.049,-1.712],["O4'","O",-0.412,-6.013,-1.599],["C3'","C",1.107,-7.26,-0.302],["O3'","O",2.537,-7.085,-0.239],["C2'","C",0.273,-6.281,0.521],["C1'","C",0.0,-5.206,-0.507],["N1","N",-1.201,-4.377,-0.213],["C2","C",-1.111,-3.017,-0.225],["O2","O",-0.029,-2.461,-0.387],["N3","N",-2.255,-2.284,-0.119],["C4","C",-3.483,-2.865,0.035],["O4","O",-4.463,-2.119,0.079],["C5","C",-3.562,-4.259,0.105],["C7","C",-4.884,-4.957,0.303],["C6","C",-2.399,-5.012,-0.059]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[10,11],[11,12],[11,19],[12,13],[12,14],[14,15],[15,16],[15,17],[17,18],[17,19]]}}},"RNA":{"drehung":32.7,"anstieg":2.6,"R":[[-0.5285,-0.8142,-0.24035],[0.84893,-0.50743,-0.14775],[-0.00166,-0.28213,0.95938]],"O":[-3.203,6.553,31.698],"vorlage":{"A":{"atome":[["P","P",-3.361,-9.271,0.698],["OP1","O",-3.047,-10.495,1.473],["OP2","O",-4.648,-8.57,0.913],["O5'","O",-2.191,-8.207,0.921],["C5'","C",-0.851,-8.582,0.572],["C4'","C",0.05,-7.39,0.469],["O4'","O",-0.376,-6.525,-0.608],["C3'","C",0.163,-6.451,1.661],["O3'","O",0.969,-6.999,2.688],["C2'","C",0.824,-5.25,0.982],["C1'","C",-0.0,-5.201,-0.314],["O2'","O",2.17,-5.488,0.61],["N9","N",-1.19,-4.372,-0.191],["C8","C",-2.485,-4.806,-0.053],["N7","N",-3.357,-3.829,0.025],["C5","C",-2.587,-2.68,-0.081],["C6","C",-2.912,-1.313,-0.069],["N6","N",-4.157,-0.85,0.057],["N1","N",-1.912,-0.408,-0.191],["C2","C",-0.666,-0.88,-0.317],["N3","N",-0.235,-2.137,-0.343],["C4","C",-1.252,-3.003,-0.22]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[9,11],[10,12],[12,13],[12,21],[13,14],[14,15],[15,16],[15,21],[16,17],[16,18],[18,19],[19,20],[20,21]]},"U":{"atome":[["P","P",-3.361,-9.271,0.698],["OP1","O",-3.047,-10.495,1.473],["OP2","O",-4.648,-8.57,0.913],["O5'","O",-2.191,-8.207,0.921],["C5'","C",-0.851,-8.582,0.572],["C4'","C",0.05,-7.39,0.469],["O4'","O",-0.376,-6.525,-0.608],["C3'","C",0.163,-6.451,1.661],["O3'","O",0.969,-6.999,2.688],["C2'","C",0.824,-5.25,0.982],["C1'","C",-0.0,-5.201,-0.314],["O2'","O",2.17,-5.488,0.61],["N1","N",-1.221,-4.408,-0.133],["C2","C",-1.128,-3.051,0.035],["O2","O",-0.1,-2.409,0.118],["N3","N",-2.339,-2.425,0.146],["C4","C",-3.589,-2.995,0.174],["O4","O",-4.584,-2.291,0.336],["C5","C",-3.592,-4.419,0.064],["C6","C",-2.43,-5.056,-0.101]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[9,11],[10,12],[12,13],[12,19],[13,14],[13,15],[15,16],[16,17],[16,18],[18,19]]},"C":{"atome":[["P","P",-3.361,-9.271,0.698],["OP1","O",-3.047,-10.495,1.473],["OP2","O",-4.648,-8.57,0.913],["O5'","O",-2.191,-8.207,0.921],["C5'","C",-0.851,-8.582,0.572],["C4'","C",0.05,-7.39,0.469],["O4'","O",-0.376,-6.525,-0.608],["C3'","C",0.163,-6.451,1.661],["O3'","O",0.969,-6.999,2.688],["C2'","C",0.824,-5.25,0.982],["C1'","C",-0.0,-5.201,-0.314],["O2'","O",2.17,-5.488,0.61],["N1","N",-1.206,-4.369,-0.218],["C2","C",-1.081,-2.976,-0.247],["O2","O",0.054,-2.484,-0.352],["N3","N",-2.186,-2.203,-0.165],["C4","C",-3.392,-2.76,-0.04],["N4","N",-4.462,-1.967,0.055],["C5","C",-3.552,-4.173,-0.01],["C6","C",-2.45,-4.924,-0.111]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[9,11],[10,12],[12,13],[12,19],[13,14],[13,15],[15,16],[16,17],[16,18],[18,19]]},"G":{"atome":[["P","P",-3.361,-9.271,0.698],["OP1","O",-3.047,-10.495,1.473],["OP2","O",-4.648,-8.57,0.913],["O5'","O",-2.191,-8.207,0.921],["C5'","C",-0.851,-8.582,0.572],["C4'","C",0.05,-7.39,0.469],["O4'","O",-0.376,-6.525,-0.608],["C3'","C",0.163,-6.451,1.661],["O3'","O",0.969,-6.999,2.688],["C2'","C",0.824,-5.25,0.982],["C1'","C",-0.0,-5.201,-0.314],["O2'","O",2.17,-5.488,0.61],["N9","N",-1.206,-4.383,-0.217],["C8","C",-2.505,-4.81,-0.13],["N7","N",-3.363,-3.83,-0.045],["C5","C",-2.589,-2.68,-0.083],["C6","C",-2.96,-1.31,-0.032],["O6","O",-4.106,-0.829,0.051],["N1","N",-1.85,-0.465,-0.093],["C2","C",-0.551,-0.902,-0.192],["N2","N",0.412,0.027,-0.244],["N3","N",-0.195,-2.178,-0.239],["C4","C",-1.256,-3.008,-0.182]],"bindungen":[[0,1],[0,2],[0,3],[3,4],[4,5],[5,6],[5,7],[6,10],[7,8],[7,9],[9,10],[9,11],[10,12],[12,13],[12,22],[13,14],[14,15],[15,16],[15,22],[16,17],[16,18],[18,19],[19,20],[19,21],[21,22]]}}}};
 /*__/NUC__*/
+/*__HELIX__*/
+// Doppelhelix aus einer Sequenz bauen (Quelle: template/site/helix.js, von build.py in die Seiten kopiert).
+// Braucht HELIX aus nuc-data.js. Einheiten: Ångström. Die Helixachse ist die z-Achse.
+// Jedes Basenpaar k liegt um k·Drehwinkel gedreht und k·Anstieg höher; Strang 1 läuft 5'→3' nach oben,
+// Strang 2 (um die Dyade des Paares gedreht) nach unten.
+const HELIX_BAU = (() => {
+  const KOMP = {DNA: {A: "T", T: "A", G: "C", C: "G"}, RNA: {A: "U", U: "A", G: "C", C: "G"}};
+  const RUECKEN = new Set(["P", "OP1", "OP2", "O5'", "C5'", "C4'", "O4'", "C3'", "O3'", "C2'", "C1'", "O2'"]);
+  const PHOSPHAT = new Set(["P", "OP1", "OP2"]);
+
+  // Gegenstrang, 5'→3' gelesen
+  const gegenstrang = (seq, form) => [...seq].reverse().map(b => KOMP[form][b]).join("");
+  const mul = (R, p) => [R[0][0]*p[0] + R[0][1]*p[1] + R[0][2]*p[2],
+                         R[1][0]*p[0] + R[1][1]*p[1] + R[1][2]*p[2],
+                         R[2][0]*p[0] + R[2][1]*p[1] + R[2][2]*p[2]];
+  const rz = (grad) => { const a = grad * Math.PI / 180, c = Math.cos(a), s = Math.sin(a); return [[c, -s, 0], [s, c, 0], [0, 0, 1]]; };
+  const mm = (A, B) => A.map(r => [0, 1, 2].map(j => r[0]*B[0][j] + r[1]*B[1][j] + r[2]*B[2][j]));
+
+  // Rückgabe: {atome, bindungen, n, form, strang1, strang2}
+  // atom: {strang, bp, name, el, base, pos, art: "base"|"ruecken", rolle: "p5"|"oh3"|null}
+  function bauen(seq, form) {
+    const H = HELIX[form], n = seq.length, atome = [], bindungen = [], index = {};
+    const bpIdx = [];
+    for (let k = 0; k < n; k++) {
+      const Rk = mm(rz(k * H.drehung), H.R);
+      const Ok = mul(rz(k * H.drehung), H.O); Ok[2] += k * H.anstieg;
+      for (const strang of [1, 2]) {
+        const b = strang === 1 ? seq[k] : KOMP[form][seq[k]];
+        const vorl = H.vorlage[b], von = atome.length;
+        for (const [name, el, x, y, z] of vorl.atome) {
+          const q = strang === 2 ? [x, -y, -z] : [x, y, z];
+          const p = mul(Rk, q);
+          const frei5 = PHOSPHAT.has(name) && ((strang === 1 && k === 0) || (strang === 2 && k === n - 1));
+          const frei3 = name === "O3'" && ((strang === 1 && k === n - 1) || (strang === 2 && k === 0));
+          index[strang + ":" + k + ":" + name] = atome.length;
+          atome.push({strang, bp: k, name, el, base: b, pos: [p[0] + Ok[0], p[1] + Ok[1], p[2] + Ok[2]],
+                      art: RUECKEN.has(name) ? "ruecken" : "base", rolle: frei5 ? "p5" : frei3 ? "oh3" : null});
+        }
+        for (const [i, j] of vorl.bindungen) bindungen.push([von + i, von + j]);
+      }
+    }
+    // Phosphodiesterbindungen: O3' des Vorgängers an P des Nachfolgers
+    for (let k = 0; k < n - 1; k++) {
+      bindungen.push([index["1:" + k + ":O3'"], index["1:" + (k + 1) + ":P"]]);
+      bindungen.push([index["2:" + (k + 1) + ":O3'"], index["2:" + k + ":P"]]);
+    }
+    return {atome, bindungen, n, form, strang1: seq, strang2: gegenstrang(seq, form), index};
+  }
+
+  const abstand = (a, b) => Math.hypot(a.pos[0] - b.pos[0], a.pos[1] - b.pos[1], a.pos[2] - b.pos[2]);
+  return {bauen, gegenstrang, abstand, KOMP};
+})();
+/*__/HELIX__*/
+/*__MOL3D__*/
+// Kleine 3D-Ansicht für Moleküle (WebGL): Kugeln, Stäbe, gestrichelte Bindungen, Drehen/Zoomen,
+// Achsenpfeile, Beschriftungen, Schnittebene, Auswahl per Maus. Quelle: template/site/mol3d.js,
+// wird von build.py in die Seiten kopiert. Einheiten: Ångström, Farben als [r, g, b] von 0 bis 1.
+//
+//   const v = MOL3D.create(canvas, overlayCanvas, {onHover(i), onPick(i)});
+//   v.setScene({atome: [{p:[x,y,z], c:[r,g,b], r:0.3}], bindungen: [{a, b, r:0.1, c:[r,g,b], strich:true}]});
+//   v.setClip({n:[0,0,1], d:5, min:2})   // zeigt nur, was min <= dot(n, p) <= d erfüllt (min ist optional); null schaltet aus
+//   v.setLabels([{p:[x,y,z], text:"5'", color:"#fff", bg:"#000"}, {a:[..], b:[..], text:"3,4 Å", linie:true}])
+//   v.setAchsen(true); v.setRotation(R); v.animateTo(R, 600); v.resetView();
+const MOL3D = (() => {
+  "use strict";
+  const M4 = {
+    id(){ const o = new Float32Array(16); o[0] = o[5] = o[10] = o[15] = 1; return o; },
+    mul(a, b){ const o = new Float32Array(16); for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++){ let s = 0; for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k]; o[c * 4 + r] = s; } return o; },
+    persp(fov, asp, n, f){ const t = 1 / Math.tan(fov / 2), o = new Float32Array(16); o[0] = t / asp; o[5] = t; o[10] = (f + n) / (n - f); o[11] = -1; o[14] = 2 * f * n / (n - f); return o; },
+    trans(x, y, z){ const o = M4.id(); o[12] = x; o[13] = y; o[14] = z; return o; },
+    fromR(R){ const o = M4.id(); for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) o[j * 4 + i] = R[i][j]; return o; },
+  };
+  const I3 = () => [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+  const mul3 = (A, B) => A.map(r => [0, 1, 2].map(j => r[0] * B[0][j] + r[1] * B[1][j] + r[2] * B[2][j]));
+  const rotX3 = a => { const c = Math.cos(a), s = Math.sin(a); return [[1, 0, 0], [0, c, -s], [0, s, c]]; };
+  const rotY3 = a => { const c = Math.cos(a), s = Math.sin(a); return [[c, 0, s], [0, 1, 0], [-s, 0, c]]; };
+  const orthonorm = R => {   // gegen Rundungsfehler beim vielen Drehen
+    let a = R[0], b = R[1];
+    const n = v => { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; };
+    a = n(a); b = n([b[0] - (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) * a[0], b[1] - (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) * a[1], b[2] - (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) * a[2]]);
+    return [a, b, [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]];
+  };
+
+  function supported(){
+    try { return !!document.createElement("canvas").getContext("webgl"); } catch (e){ return false; }
+  }
+
+  // ---- Vorlagen: Kugel (Dreiecksliste, Einheitsradius) und Zylinder (Länge 1 entlang z, Radius 1) ----
+  const SPHERE = (() => {
+    const nLat = 9, nLon = 14, v = [];
+    const pt = (i, j) => { const th = Math.PI * i / nLat, ph = 2 * Math.PI * j / nLon; return [Math.sin(th) * Math.cos(ph), Math.sin(th) * Math.sin(ph), Math.cos(th)]; };
+    for (let i = 0; i < nLat; i++) for (let j = 0; j < nLon; j++){
+      const a = pt(i, j), b = pt(i + 1, j), c = pt(i + 1, j + 1), d = pt(i, j + 1);
+      if (i > 0) v.push(a, b, d);
+      if (i < nLat - 1) v.push(d, b, c);
+    }
+    return v;
+  })();
+  const CYL = (() => {
+    const n = 10, v = [];
+    for (let j = 0; j < n; j++){
+      const a0 = 2 * Math.PI * j / n, a1 = 2 * Math.PI * (j + 1) / n;
+      const p = (a, z) => [Math.cos(a), Math.sin(a), z, Math.cos(a), Math.sin(a), 0];
+      const A = p(a0, 0), B = p(a1, 0), C = p(a1, 1), D = p(a0, 1);
+      v.push(A, B, D, D, B, C);
+    }
+    return v;
+  })();
+
+  const VS = `
+    attribute vec3 aPos; attribute vec3 aNor; attribute vec3 aCol;
+    uniform mat4 uMVP; uniform mat4 uRot;
+    varying vec3 vNor; varying vec3 vCol; varying vec3 vWorld;
+    void main(){ gl_Position = uMVP * vec4(aPos, 1.0); vNor = (uRot * vec4(aNor, 0.0)).xyz; vCol = aCol; vWorld = aPos; }`;
+  const FS = `
+    precision mediump float;
+    varying vec3 vNor; varying vec3 vCol; varying vec3 vWorld;
+    uniform vec4 uClip; uniform float uClipMin;
+    void main(){
+      if (uClip.w < 1.0e5 && (dot(uClip.xyz, vWorld) > uClip.w || dot(uClip.xyz, vWorld) < uClipMin)) discard;
+      vec3 n = normalize(vNor);
+      if (!gl_FrontFacing) n = -n;
+      vec3 L = normalize(vec3(0.4, 0.55, 0.75));
+      float d = max(dot(n, L), 0.0), sp = pow(max(dot(n, normalize(L + vec3(0.0, 0.0, 1.0))), 0.0), 40.0);
+      vec3 c = vCol * (0.38 + 0.72 * d) + vec3(0.28) * sp;
+      if (!gl_FrontFacing) c *= 0.7;
+      gl_FragColor = vec4(c, 1.0);
+    }`;
+
+  function create(canvas, overlay, opts){
+    opts = opts || {};
+    const gl = canvas.getContext("webgl", {antialias: true, alpha: true, premultipliedAlpha: false});
+    if (!gl) throw new Error("kein WebGL");
+    const octx = overlay.getContext("2d");
+    const prog = gl.createProgram();
+    for (const [type, src] of [[gl.VERTEX_SHADER, VS], [gl.FRAGMENT_SHADER, FS]]){
+      const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+      gl.attachShader(prog, s);
+    }
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+    const loc = {aPos: gl.getAttribLocation(prog, "aPos"), aNor: gl.getAttribLocation(prog, "aNor"), aCol: gl.getAttribLocation(prog, "aCol"),
+                 uMVP: gl.getUniformLocation(prog, "uMVP"), uRot: gl.getUniformLocation(prog, "uRot"), uClip: gl.getUniformLocation(prog, "uClip"), uClipMin: gl.getUniformLocation(prog, "uClipMin")};
+    const bufs = {pos: gl.createBuffer(), nor: gl.createBuffer(), col: gl.createBuffer(), n: 0};
+
+    const HOME_ZOOM = opts.zoom || 1;
+    const S = {scene: {atome: [], bindungen: []}, R: I3(), R0: I3(), zoom: HOME_ZOOM, center: [0, 0, 0], radius: 5, clip: null,
+               labels: [], achsen: true, screen: [], dirty: true, anim: null, w: 0, h: 0, dpr: 1, hover: -1};
+    const FOV = (opts.fov || 28) * Math.PI / 180;
+
+    function build(){
+      const {atome, bindungen} = S.scene;
+      const dashes = [];
+      for (const b of bindungen){
+        if (!b.strich) continue;
+        const A = atome[b.a].p, B = atome[b.b].p, L = Math.hypot(B[0] - A[0], B[1] - A[1], B[2] - A[2]), seg = 0.16, gap = 0.12;
+        for (let t = 0; t + seg <= L + 1e-6; t += seg + gap) dashes.push([b, t / L, (t + seg) / L]);
+      }
+      const solid = bindungen.filter(b => !b.strich);
+      const nV = atome.length * SPHERE.length + solid.length * 2 * CYL.length + dashes.length * CYL.length;
+      const pos = new Float32Array(nV * 3), nor = new Float32Array(nV * 3), col = new Float32Array(nV * 3);
+      let o = 0;
+      const put = (px, py, pz, nx, ny, nz, c) => { pos[o] = px; pos[o + 1] = py; pos[o + 2] = pz; nor[o] = nx; nor[o + 1] = ny; nor[o + 2] = nz; col[o] = c[0]; col[o + 1] = c[1]; col[o + 2] = c[2]; o += 3; };
+      for (const a of atome){
+        const r = a.r || 0.3;
+        for (const v of SPHERE) put(a.p[0] + r * v[0], a.p[1] + r * v[1], a.p[2] + r * v[2], v[0], v[1], v[2], a.c);
+      }
+      const cyl = (A, B, r, c) => {
+        const dx = B[0] - A[0], dy = B[1] - A[1], dz = B[2] - A[2], L = Math.hypot(dx, dy, dz);
+        if (L < 1e-6) return;
+        const w = [dx / L, dy / L, dz / L], t = Math.abs(w[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
+        let u = [w[1] * t[2] - w[2] * t[1], w[2] * t[0] - w[0] * t[2], w[0] * t[1] - w[1] * t[0]];
+        const lu = Math.hypot(...u); u = [u[0] / lu, u[1] / lu, u[2] / lu];
+        const v2 = [w[1] * u[2] - w[2] * u[1], w[2] * u[0] - w[0] * u[2], w[0] * u[1] - w[1] * u[0]];
+        for (const q of CYL){
+          const x = q[0] * r, y = q[1] * r, z = q[2] * L;
+          put(A[0] + u[0] * x + v2[0] * y + w[0] * z, A[1] + u[1] * x + v2[1] * y + w[1] * z, A[2] + u[2] * x + v2[2] * y + w[2] * z,
+              u[0] * q[3] + v2[0] * q[4], u[1] * q[3] + v2[1] * q[4], u[2] * q[3] + v2[2] * q[4], c);
+        }
+      };
+      for (const b of solid){
+        const A = atome[b.a].p, B = atome[b.b].p, M = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2, (A[2] + B[2]) / 2], r = b.r || 0.11;
+        cyl(A, M, r, b.c || atome[b.a].c); cyl(M, B, r, b.c || atome[b.b].c);
+      }
+      for (const [b, t0, t1] of dashes){
+        const A = atome[b.a].p, B = atome[b.b].p, at = t => [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t];
+        cyl(at(t0), at(t1), b.r || 0.07, b.c || [0.5, 0.5, 0.5]);
+      }
+      for (const [k, arr] of [["pos", pos], ["nor", nor], ["col", col]]){ gl.bindBuffer(gl.ARRAY_BUFFER, bufs[k]); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW); }
+      bufs.n = nV;
+    }
+
+    function fit(){
+      const a = S.scene.atome;
+      if (!a.length){ S.center = [0, 0, 0]; S.radius = 5; return; }
+      const c = [0, 0, 0];
+      for (const x of a) for (let i = 0; i < 3; i++) c[i] += x.p[i] / a.length;
+      let r = 0;
+      for (const x of a) r = Math.max(r, Math.hypot(x.p[0] - c[0], x.p[1] - c[1], x.p[2] - c[2]) + (x.r || 0.3));
+      S.center = c; S.radius = r;
+    }
+
+    function resize(){
+      const dpr = Math.min(window.devicePixelRatio || 1, 2), w = canvas.clientWidth, h = canvas.clientHeight;
+      if (w === S.w && h === S.h && dpr === S.dpr) return;
+      S.w = w; S.h = h; S.dpr = dpr;
+      for (const c of [canvas, overlay]){ c.width = Math.max(1, Math.round(w * dpr)); c.height = Math.max(1, Math.round(h * dpr)); }
+    }
+
+    function matrices(){
+      const asp = S.w / Math.max(1, S.h), dist = S.radius / Math.sin(Math.min(FOV / 2, FOV * asp / 2)) * 1.08 / S.zoom;
+      const rot = M4.fromR(S.R);
+      const mv = M4.mul(M4.trans(0, 0, -dist), M4.mul(rot, M4.trans(-S.center[0], -S.center[1], -S.center[2])));
+      return {mvp: M4.mul(M4.persp(FOV, asp, Math.max(0.5, dist - S.radius * 1.5), dist + S.radius * 1.5), mv), rot, dist};
+    }
+
+    function project(p, mvp){
+      const x = mvp[0] * p[0] + mvp[4] * p[1] + mvp[8] * p[2] + mvp[12], y = mvp[1] * p[0] + mvp[5] * p[1] + mvp[9] * p[2] + mvp[13];
+      const w = mvp[3] * p[0] + mvp[7] * p[1] + mvp[11] * p[2] + mvp[15], z = mvp[2] * p[0] + mvp[6] * p[1] + mvp[10] * p[2] + mvp[14];
+      return [(x / w * 0.5 + 0.5) * S.w, (0.5 - y / w * 0.5) * S.h, z / w];
+    }
+
+    function draw(){
+      S.dirty = false;
+      resize();
+      const {mvp, rot} = matrices();
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.enable(gl.DEPTH_TEST);
+      gl.useProgram(prog);
+      for (const [name, key] of [["aPos", "pos"], ["aNor", "nor"], ["aCol", "col"]]){
+        gl.bindBuffer(gl.ARRAY_BUFFER, bufs[key]); gl.enableVertexAttribArray(loc[name]); gl.vertexAttribPointer(loc[name], 3, gl.FLOAT, false, 0, 0);
+      }
+      gl.uniformMatrix4fv(loc.uMVP, false, mvp); gl.uniformMatrix4fv(loc.uRot, false, rot);
+      const c = S.clip; gl.uniform4f(loc.uClip, c ? c.n[0] : 0, c ? c.n[1] : 0, c ? c.n[2] : 0, c ? c.d : 1e6);
+      gl.uniform1f(loc.uClipMin, c && c.min !== undefined ? c.min : -1e6);
+      gl.drawArrays(gl.TRIANGLES, 0, bufs.n);
+      S.screen = S.scene.atome.map(a => project(a.p, mvp));
+      overlayDraw(mvp);
+    }
+
+    const abgeschnitten = p => { const c = S.clip; if (!c) return false; const v = c.n[0] * p[0] + c.n[1] * p[1] + c.n[2] * p[2]; return v > c.d || (c.min !== undefined && v < c.min); };
+    function overlayDraw(mvp){
+      const dpr = S.dpr, g = octx;
+      g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, S.w, S.h);
+      const css = getComputedStyle(canvas), ink = css.color;
+      g.font = "600 13px 'Source Sans 3', system-ui, sans-serif"; g.textBaseline = "middle"; g.textAlign = "center";
+      for (const L of S.labels){
+        if (L.linie ? (abgeschnitten(L.a) || abgeschnitten(L.b)) : abgeschnitten(L.p)) continue;
+        if (L.linie){
+          const a = project(L.a, mvp), b = project(L.b, mvp);
+          g.strokeStyle = L.color || ink; g.lineWidth = 1.5; g.setLineDash([5, 4]);
+          g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); g.setLineDash([]);
+          for (const e of [a, b]){ g.beginPath(); g.moveTo(e[0] + (a[0] === e[0] ? 0 : 0), e[1]); g.arc(e[0], e[1], 2.5, 0, 6.3); g.fillStyle = L.color || ink; g.fill(); }
+          if (L.text) tag(g, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, L.text, L);
+        } else {
+          const q = project(L.p, mvp);
+          tag(g, q[0] + (L.dx || 0), q[1] + (L.dy || 0), L.text, L);
+        }
+      }
+      if (S.achsen) axes(g);
+      if (S.hover >= 0 && S.screen[S.hover]){
+        const q = S.screen[S.hover], a = S.scene.atome[S.hover];
+        if (a.tip) tag(g, q[0], q[1] - 18, a.tip, {bg: css.getPropertyValue("--surface") || "#fff", color: ink, border: ink});
+      }
+    }
+    function tag(g, x, y, text, L){
+      const w = g.measureText(text).width + 12, h = 20;
+      g.fillStyle = L.bg || "rgba(255,255,255,.85)"; g.strokeStyle = L.border || L.color || "rgba(0,0,0,.35)"; g.lineWidth = 1;
+      g.beginPath(); g.roundRect ? g.roundRect(x - w / 2, y - h / 2, w, h, 6) : g.rect(x - w / 2, y - h / 2, w, h); g.fill(); g.stroke();
+      g.fillStyle = L.color || "#000"; g.fillText(text, x, y + 0.5);
+    }
+    function axes(g){   // Achsenpfeile unten links; Länge ~ 34 px
+      const ox = 62, oy = S.h - 54, len = 34, R = S.R;
+      const A = [["x", [1, 0, 0], "#d93636"], ["y", [0, 1, 0], "#2e9d44"], ["z", [0, 0, 1], "#2f6bd9"]]
+        .map(([n, v, c]) => {
+          const x = R[0][0] * v[0] + R[0][1] * v[1] + R[0][2] * v[2], y = R[1][0] * v[0] + R[1][1] * v[1] + R[1][2] * v[2], z = R[2][0] * v[0] + R[2][1] * v[1] + R[2][2] * v[2];
+          return {n, c, x, y: -y, z};
+        }).sort((a, b) => a.z - b.z);
+      g.lineWidth = 2.5; g.lineCap = "round"; g.textAlign = "center";
+      for (const a of A){
+        const ex = ox + a.x * len, ey = oy + a.y * len, d = Math.hypot(a.x, a.y);
+        g.strokeStyle = a.c; g.fillStyle = a.c; g.beginPath(); g.moveTo(ox, oy); g.lineTo(ex, ey); g.stroke();
+        if (d > 0.18){
+          const ang = Math.atan2(a.y, a.x);
+          g.beginPath(); g.moveTo(ex, ey); g.lineTo(ex - 8 * Math.cos(ang - 0.4), ey - 8 * Math.sin(ang - 0.4)); g.lineTo(ex - 8 * Math.cos(ang + 0.4), ey - 8 * Math.sin(ang + 0.4)); g.closePath(); g.fill();
+        }
+        g.font = "700 13px 'Source Sans 3', system-ui, sans-serif"; g.fillText(a.n, ox + a.x * (len + 11), oy + a.y * (len + 11));
+      }
+    }
+
+    function request(){ S.dirty = true; if (!S.raf) S.raf = requestAnimationFrame(tick); }
+    function tick(t){
+      S.raf = 0;
+      if (S.anim){
+        const k = Math.min(1, (t - S.anim.t0) / S.anim.ms), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+        S.R = orthonorm(S.anim.from.map((r, i) => r.map((v, j) => v + (S.anim.to[i][j] - v) * e)));
+        if (k >= 1) S.anim = null; else S.dirty = true;
+      }
+      if (S.dirty){ draw(); if (S.anim) S.raf = requestAnimationFrame(tick); }
+    }
+
+    // ---- Eingaben ----
+    const gedreht = () => { if (opts.onRotate) opts.onRotate(S.R.map(r => r.slice())); };
+    const ptrs = new Map();
+    let moved = 0, pinch = 0;
+    canvas.style.touchAction = "none";
+    canvas.addEventListener("pointerdown", e => { canvas.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, [e.clientX, e.clientY]); moved = 0; S.anim = null; if (ptrs.size === 2) pinch = 0; });
+    canvas.addEventListener("pointermove", e => {
+      const prev = ptrs.get(e.pointerId);
+      if (!prev){ hover(e); return; }
+      const dx = e.clientX - prev[0], dy = e.clientY - prev[1];
+      ptrs.set(e.pointerId, [e.clientX, e.clientY]);
+      moved += Math.abs(dx) + Math.abs(dy);
+      if (ptrs.size === 1){ S.R = orthonorm(mul3(mul3(rotX3(dy * 0.01), rotY3(dx * 0.01)), S.R)); gedreht(); request(); }
+      else if (ptrs.size === 2){
+        const [a, b] = [...ptrs.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]);
+        if (pinch) S.zoom = Math.min(8, Math.max(0.3, S.zoom * d / pinch));
+        pinch = d; request();
+      }
+    });
+    const up = e => {
+      const was = ptrs.has(e.pointerId); ptrs.delete(e.pointerId); pinch = 0;
+      if (was && e.type === "pointerup" && moved < 5 && ptrs.size === 0 && opts.onPick){
+        const i = nearest(e); if (i >= 0) opts.onPick(i);
+      }
+    };
+    canvas.addEventListener("pointerup", up); canvas.addEventListener("pointercancel", up);
+    canvas.addEventListener("pointerleave", () => { if (S.hover >= 0){ S.hover = -1; if (opts.onHover) opts.onHover(-1); request(); } });
+    canvas.addEventListener("wheel", e => { e.preventDefault(); S.zoom = Math.min(8, Math.max(0.3, S.zoom * Math.exp(-e.deltaY * 0.0012))); request(); }, {passive: false});
+    canvas.addEventListener("keydown", e => {
+      const k = e.key, s = 0.12;
+      if (k === "ArrowLeft") S.R = orthonorm(mul3(rotY3(-s), S.R));
+      else if (k === "ArrowRight") S.R = orthonorm(mul3(rotY3(s), S.R));
+      else if (k === "ArrowUp") S.R = orthonorm(mul3(rotX3(-s), S.R));
+      else if (k === "ArrowDown") S.R = orthonorm(mul3(rotX3(s), S.R));
+      else if (k === "+" || k === "=") S.zoom = Math.min(8, S.zoom * 1.15);
+      else if (k === "-") S.zoom = Math.max(0.3, S.zoom / 1.15);
+      else if (k === "0"){ S.R = S.R0.map(r => r.slice()); S.zoom = HOME_ZOOM; gedreht(); }
+      else return;
+      e.preventDefault(); gedreht(); request();
+    });
+    function nearest(e){
+      const r = canvas.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      let best = -1, bd = 1e9;
+      S.screen.forEach((q, i) => {
+        const a = S.scene.atome[i]; if (a.stumm) return;
+        if (S.clip && S.clip.n[0] * a.p[0] + S.clip.n[1] * a.p[1] + S.clip.n[2] * a.p[2] > S.clip.d) return;
+        const d = Math.hypot(q[0] - x, q[1] - y) - 0 + q[2] * 3;
+        if (Math.hypot(q[0] - x, q[1] - y) < 16 && d < bd){ bd = d; best = i; }
+      });
+      return best;
+    }
+    function hover(e){
+      if (!opts.onHover && !S.scene.atome.some(a => a.tip)) return;
+      const i = nearest(e);
+      if (i !== S.hover){ S.hover = i; if (opts.onHover) opts.onHover(i); canvas.style.cursor = i >= 0 ? "pointer" : ""; request(); }
+    }
+    if (window.ResizeObserver) new ResizeObserver(() => request()).observe(canvas);
+
+    return {
+      setScene(scene, o){ S.scene = scene; build(); if (!o || !o.keepView){ fit(); } S.hover = -1; request(); },
+      setClip(c){ S.clip = c; request(); },
+      setLabels(l){ S.labels = l || []; request(); },
+      setAchsen(on){ S.achsen = on; request(); },
+      setRotation(R, home){ S.R = orthonorm(R); if (home) S.R0 = S.R.map(r => r.slice()); S.anim = null; request(); },
+      getRotation(){ return S.R.map(r => r.slice()); },
+      animateTo(R, ms){
+        if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches){ S.R = orthonorm(R); request(); return; }
+        S.anim = {from: S.R.map(r => r.slice()), to: R, t0: performance.now(), ms: ms || 600}; request();
+      },
+      setZoom(z){ S.zoom = z; request(); },
+      resetView(){ S.R = S.R0.map(r => r.slice()); S.zoom = HOME_ZOOM; request(); },
+      project(p){ return project(p, matrices().mvp); },
+      redraw: request,
+    };
+  }
+  return {create, supported, rotX: rotX3, rotY: rotY3, mul3};
+})();
+/*__/MOL3D__*/
 /*__DNA2D__*/
 // Strukturformeln als SVG (Quelle: template/site/dna2d.js, von build.py in die Seiten kopiert).
 // Braucht HELIX aus nuc-data.js und PALETTE aus palette.js.
@@ -681,6 +1125,7 @@ function render(){
   $("f-at").textContent = f === "DNA" ? "A–T" : "A–U";
   $("z-richtung").hidden = einfach();
   $("r-gegen").hidden = einfach();
+  aktualisiere3D();
 }
 
 function status(txt){ $("status2").innerHTML = txt; }
@@ -776,12 +1221,168 @@ $("p-gegen").addEventListener("click", () => {
 $("sg-art").addEventListener("click", e => {
   const bt = e.target.closest("button"); if (!bt) return;
   $("sg-art").querySelectorAll("button").forEach(x => x.setAttribute("aria-checked", String(x === bt)));
-  Z.art = bt.dataset.wert; neueSequenz(); render(); status(grundtext()); $("r-hb").textContent = $("r-gegen").textContent = "";
+  Z.art = bt.dataset.wert; V.art = Z.art; $("sg-form").querySelectorAll("button").forEach(x => x.setAttribute("aria-checked", String(x.dataset.wert === V.art))); neueSequenz(); render(); status(grundtext()); $("r-hb").textContent = $("r-gegen").textContent = "";
 });
 $("neu").addEventListener("click", () => { neueSequenz(); render(); status(grundtext()); $("t-gegen").value = ""; $("r-gegen").textContent = ""; });
 $("leeren").addEventListener("click", () => { Z.placed = Array(ROWS).fill(null); Z.sel = null; render(); status(grundtext()); });
 $("einfach").addEventListener("change", render);
 if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+
+
+/* ---------- Dein Molekül in 3D ---------- */
+const V = {art: "DNA", laenge: "lang", farbe: "nukleotid", enden: true, furchen: false, masse: false, schnitt: 100, scheibe: true, viewer: null, schluessel: "", zmin: 0, zmax: 1};
+const GL = MOL3D.supported();
+const RAD3 = {C: 0.3, N: 0.3, O: 0.28, P: 0.4};
+const Rseite = MOL3D.mul3(MOL3D.rotX(-Math.PI / 2 + 0.2), MOL3D.rotY(0));
+const Rachse = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+const zahl = (x, n = 1) => x.toLocaleString("de-DE", {minimumFractionDigits: n, maximumFractionDigits: n});
+const umForm = (seq, form) => seq.map(b => form === "DNA" ? (b === "U" ? "T" : b) : (b === "T" ? "U" : b));
+const RUECKEN_NAMEN = new Set(["P", "OP1", "OP2", "O5'"]);
+const vorlage = () => umForm(Z.seq, V.art).join("");
+
+function farbe3(a, blass){
+  let c;
+  if (V.farbe === "element") c = PALETTE.rgb("el_" + a.el);
+  else if (a.art === "base") c = PALETTE.rgb(a.base);
+  else if (RUECKEN_NAMEN.has(a.name)) c = PALETTE.rgb("p5");
+  else if (a.name === "O3'") c = PALETTE.rgb("oh3");
+  else c = PALETTE.rgb("zucker");
+  if (blass){   // Fortsetzung der Sequenz: zum Hintergrund hin aufgehellt
+    const g = PALETTE.istDunkel() ? [0.16, 0.2, 0.19] : [0.88, 0.91, 0.9];
+    c = c.map((v, i) => v * 0.45 + g[i] * 0.55);
+  }
+  return c;
+}
+
+function baue3D(){
+  const eigen = Z.seq.length, seq = V.laenge === "lang" ? vorlage().repeat(3) : vorlage();
+  const d = HELIX_BAU.bauen(seq, V.art), H = HELIX[V.art];
+  const atome = d.atome.map(a => ({
+    p: a.pos, c: farbe3(a, a.bp >= eigen), r: RAD3[a.el] || 0.3,
+    tip: (einfach() ? "" : a.name + " · ") + (a.strang === 1 ? "Strang 1" : "Gegenstrang") + ", Basenpaar " + (a.bp + 1) + " (" + a.base + ")",
+  }));
+  const bindungen = d.bindungen.map(([i, j]) => ({a: i, b: j, r: 0.1}));
+  let zmin = 1e9, zmax = -1e9;
+  for (const a of atome){ zmin = Math.min(zmin, a.p[2]); zmax = Math.max(zmax, a.p[2]); }
+  V.zmin = zmin - 0.5; V.zmax = zmax + 0.5; V.d = d; V.H = H;
+  return {atome, bindungen};
+}
+
+function beschriftungen3D(){
+  const d = V.d, H = V.H, id = d.index, at = (st, k, n) => d.atome[id[st + ":" + k + ":" + n]], n = d.n, L = [];
+  const P = PALETTE.get, lum = h => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+  const tag = (pos, text, col, dx, dy) => { const h = P(col); L.push({p: pos, text, bg: h, border: h, color: lum(h) > 0.55 ? "#111" : "#fff", dx: dx || 0, dy: dy || -20}); };
+  if (V.enden){
+    tag(at(1, 0, "P").pos, "5'", "p5", -16, -6); tag(at(1, n - 1, "O3'").pos, "3'", "oh3", -16, 8);
+    tag(at(2, n - 1, "P").pos, "5'", "p5", 16, -6); tag(at(2, 0, "O3'").pos, "3'", "oh3", 16, 8);
+  }
+  const mitte = Math.floor(n / 2), schritt = n >= 10 ? 2 : 1, b0 = Math.max(0, mitte - 3 * schritt + (schritt === 1 ? 1 : 0)), kk = j => Math.min(n - 2, b0 + j * schritt), weiss = "rgba(255,255,255,.92)";
+  if (V.furchen){
+    // Mitte des Basenpaares und Richtung zur großen Furche (dorthin liegen die Basenatome von der C1'-Linie aus)
+    const c1a = at(1, mitte, "C1'").pos, c1b = at(2, mitte, "C1'").pos;
+    const m = [(c1a[0] + c1b[0]) / 2, (c1a[1] + c1b[1]) / 2, (c1a[2] + c1b[2]) / 2];
+    let sx = 0, sy = 0, cnt = 0;
+    for (const a of d.atome) if (a.bp === mitte && a.art === "base"){ sx += a.pos[0]; sy += a.pos[1]; cnt++; }
+    let dx = sx / cnt - m[0], dy = sy / cnt - m[1]; const dl = Math.hypot(dx, dy); dx /= dl; dy /= dl;
+    const punkt = (rx, ry, r) => { // Punkt auf Richtung (rx, ry) ab der Paarmitte in Abstand r von der Achse
+      let t = 0; while (t < 30 && Math.hypot(m[0] + rx * t, m[1] + ry * t) < r) t += 0.1; return [m[0] + rx * t, m[1] + ry * t, m[2]];
+    };
+    for (const [rx, ry, text, col] of [[dx, dy, "große Furche", "oh2"], [-dx, -dy, "kleine Furche", "p5"]]){
+      const a = punkt(rx, ry, 6), b = punkt(rx, ry, 12.5);
+      L.push({a, b, linie: true, text: "", color: P(col)});
+      L.push({p: b, text, color: P(col), bg: weiss, border: P(col), dx: rx > 0 ? 50 : -50, dy: 0});
+    }
+  }
+  if (V.masse){
+    const zk = k => at(1, k, "C1'").pos[2], ax = k => [0, 0, zk(k)];
+    // Drehung je Basenpaar: zwei Radien von der Achse zu C1' von Strang 1 (unten)
+    const k0 = kk(0), r0 = at(1, k0, "C1'").pos, r1 = at(1, k0 + 1, "C1'").pos;
+    L.push({a: ax(k0), b: r0, linie: true, text: "", color: P("oh2")});
+    L.push({a: ax(k0 + 1), b: r1, linie: true, text: zahl(H.drehung) + "° Drehung", color: P("oh2"), bg: weiss, dx: -64, dy: 6});
+    // C1'–C1' im Basenpaar
+    const c1a = at(1, kk(1), "C1'").pos, c1b = at(2, kk(1), "C1'").pos;
+    L.push({a: c1a, b: c1b, linie: true, text: zahl(Math.hypot(c1a[0] - c1b[0], c1a[1] - c1b[1], c1a[2] - c1b[2])) + " Å (C1'–C1')", color: P("p5"), bg: weiss, dy: -14});
+    // Phosphor gegenüber: ungefährer Durchmesser des Rückgrats
+    const pa = at(1, kk(2), "P").pos;
+    const pb = d.atome.filter(a => a.name === "P" && a.strang === 2).reduce((best, a) => {
+      const l = Math.hypot(a.pos[0] - pa[0], a.pos[1] - pa[1], a.pos[2] - pa[2]);
+      return l > best.dist && Math.abs(a.pos[2] - pa[2]) < 4 ? {dist: l, pos: a.pos} : best;
+    }, {dist: 0, pos: pa});
+    L.push({a: pa, b: pb.pos, linie: true, text: "P–P " + zahl(pb.dist) + " Å", color: P("oh3"), bg: weiss, dy: 12});
+    // Anstieg zwischen zwei Basenpaaren, entlang der Achse (oben)
+    L.push({a: ax(kk(3)), b: ax(kk(3) + 1), linie: true, text: zahl(H.anstieg) + " Å Anstieg", color: P("schnitt"), bg: weiss, dx: 64});
+  }
+  return L;
+}
+
+function text3D(){
+  const H = V.H, windung = 360 / H.drehung, ganghoehe = H.anstieg * windung;
+  const eig = einfach();
+  const dna = V.art === "DNA";
+  const liste = dna ? [
+    "<b>B-Form:</b> So liegt DNA in der Zelle meist vor. Die Helix ist schlank und lang gestreckt.",
+    "Eine volle Windung dauert etwa " + zahl(windung, 0) + " Basenpaare (" + zahl(ganghoehe, 0) + " Å).",
+    "Die große und die kleine Furche sind verschieden breit: In der großen Furche liegen die Basen für Proteine gut zugänglich.",
+  ] : [
+    "<b>A-Form:</b> So liegen RNA-Doppelstränge vor. Die Helix ist gedrungener und dicker.",
+    "Eine volle Windung dauert etwa " + zahl(windung, 0) + " Basenpaare (" + zahl(ganghoehe, 0) + " Å), jedes Basenpaar steigt nur " + zahl(H.anstieg) + " Å an.",
+    "Die Basenpaare sind geneigt und liegen neben der Achse: In der Mitte entsteht ein Loch. Die große Furche ist tief und eng.",
+  ];
+  if (!eig) liste.push(dna ? "Vergleiche mit der RNA-Form: Schalte oben um." : "Die 2'-OH-Gruppen der RNA bevorzugen eine andere Zuckerfaltung (C3'-endo). Sie führt zur A-Form.");
+  if (!eig) liste.push("Schnitt: Schiebe den Regler und wähle „Blick entlang der Achse“. Mit „Nur eine Scheibe“ siehst du ein einzelnes Basenpaar von oben, mit dem Rückgrat außen.");
+  $("d3text").innerHTML = "<h3>" + (dna ? "DNA in der B-Form" : "RNA in der A-Form") + "</h3><ul>" + liste.map(x => "<li>" + x + "</li>").join("") + "</ul>";
+}
+
+function legende3(){
+  const P = PALETTE.get, chip = (c, t) => '<span><i style="background:' + P(c) + '"></i>' + t + "</span>";
+  $("legende3").innerHTML = V.farbe === "nukleotid"
+    ? chip("A", "Adenin") + chip("G", "Guanin") + chip("C", "Cytosin") + chip(V.art === "DNA" ? "T" : "U", V.art === "DNA" ? "Thymin" : "Uracil") + chip("p5", "Phosphat (5')") + chip("oh3", "3'-O") + chip("zucker", "Zucker")
+    : "<span>Kohlenstoff, Stickstoff, Sauerstoff und Phosphor in den üblichen Elementfarben</span>";
+}
+
+function zeichne3D(neu){
+  if (!V.viewer) return;
+  const sz = baue3D();
+  V.viewer.setScene(sz, {keepView: !neu});
+  V.viewer.setLabels(beschriftungen3D());
+  schnittAnwenden();
+  text3D(); legende3();
+}
+function schnittAnwenden(){
+  const f = V.schnitt / 100;
+  $("schnitt-o").textContent = V.schnitt >= 100 ? "kein Schnitt" : Math.round(f * 100) + " % der Länge";
+  const d = V.zmin + (V.zmax - V.zmin) * f;
+  V.viewer.setClip(V.schnitt >= 100 ? null : {n: [0, 0, 1], d, min: V.scheibe ? d - 5 : undefined});
+}
+function aktualisiere3D(){
+  const fertig = Z.placed.every(Boolean);
+  $("d3").hidden = !fertig; $("d3-leer").hidden = fertig;
+  if (!fertig) return;
+  if (!GL){ $("gl3").hidden = $("ov3").hidden = true; $("gl3").parentNode.insertAdjacentHTML("beforeend", '<div class="keingl">Das 3D-Bild braucht WebGL, das in diesem Browser nicht verfügbar ist.</div>'); return; }
+  const neu = !V.viewer;
+  if (neu){
+    V.viewer = MOL3D.create($("gl3"), $("ov3"), {zoom: 1.2});
+    V.viewer.setRotation(Rseite, true);
+  }
+  const key = Z.art + vorlage() + V.art;
+  if (neu || V.schluessel !== key){ V.schluessel = key; zeichne3D(true); }
+}
+function segment(id, schluessel, nach){
+  $(id).addEventListener("click", e => {
+    const bt = e.target.closest("button"); if (!bt) return;
+    $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-checked", String(x === bt)));
+    V[schluessel] = bt.dataset.wert; nach();
+  });
+}
+segment("sg-form", "art", () => { V.schluessel = ""; aktualisiere3D(); });
+segment("sg-laenge", "laenge", () => zeichne3D(true));
+segment("sg-farbe3", "farbe", () => zeichne3D(false));
+for (const [id, k] of [["b-enden", "enden"], ["b-furchen", "furchen"], ["b-masse", "masse"]]) $(id).addEventListener("change", e => { V[k] = e.target.checked; if (V.viewer) V.viewer.setLabels(beschriftungen3D()); });
+$("b-scheibe").addEventListener("change", e => { V.scheibe = e.target.checked; if (V.viewer) schnittAnwenden(); });
+$("schnitt").addEventListener("input", e => { V.schnitt = +e.target.value; if (V.viewer) schnittAnwenden(); });
+$("v-achse").addEventListener("click", () => V.viewer && V.viewer.animateTo(Rachse, 700));
+$("v-seite").addEventListener("click", () => V.viewer && V.viewer.animateTo(Rseite, 700));
+if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (V.viewer && !$("d3").hidden) zeichne3D(false); });
 
 neueSequenz(); render(); status(grundtext());
 })();
