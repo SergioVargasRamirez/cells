@@ -1232,8 +1232,8 @@ for (const id of ["k-ebenen", "k-hb"]) $(id).addEventListener("change", () => ak
 function startViewer(){
   const keins = id => { const c = $(id); c.hidden = true; c.parentNode.insertAdjacentHTML("beforeend", '<div class="keingl">Das 3D-Bild braucht WebGL, das in diesem Browser nicht verfügbar ist.</div>'); };
   if (!GL){ keins("gl3"); keins("gl4"); return; }
-  viewer3 = MOL3D.create($("gl3"), $("ov3"), {zoom: 1.15}); viewer3.setRotation(MOL3D.rotX(0.2), true); viewer3.setAchsen(false);
-  viewer4 = MOL3D.create($("gl4"), $("ov4"), {zoom: 1.35}); viewer4.setRotation(MOL3D.rotX(-1.2), true); viewer4.setAchsen(false);
+  viewer3 = MOL3D.create($("gl3"), $("ov3"), {zoom: 1.15}); viewer3.setRotation(MOL3D.rotX(0.2), true);
+  viewer4 = MOL3D.create($("gl4"), $("ov4"), {zoom: 1.35}); viewer4.setRotation(MOL3D.rotX(-1.2), true);
   aktualisiere3(true); ansicht("schraeg"); aktualisiere4(true);
 }
 if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { zeichneReaktion(+$("fortschritt").value / 100); bauReson(); aktualisiere3(); aktualisiere4(); });

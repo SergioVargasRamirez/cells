@@ -1262,7 +1262,7 @@ function start(){
   bauSequenz(); stufentext();
   if (!MOL3D.supported()){ $("gl3").hidden = true; $("gl3").parentNode.insertAdjacentHTML("beforeend", '<div class="keingl">Das 3D-Bild braucht WebGL, das in diesem Browser nicht verfügbar ist.</div>'); faerbeSequenz(); legende(); return; }
   viewer = MOL3D.create($("gl3"), $("ov3"), {zoom: 1.0, onPick: i => { const r = pickMap[i]; if (r !== undefined) waehle(S.sel === r ? -1 : r); }});
-  viewer.setRotation(MOL3D.mul3(MOL3D.rotX(-0.4), MOL3D.rotY(0.5)), true); viewer.setAchsen(false);
+  viewer.setRotation(MOL3D.mul3(MOL3D.rotX(-0.4), MOL3D.rotY(0.5)), true);
   zeichne();
 }
 start();
