@@ -128,3 +128,6 @@ M8 Später
 
 Für jede neue Seite
 - [ ] Menü (template/site/nav.html), Karte in index.html, quellen.html, README-Tabelle, python3 build.py
+
+
+GEPLANT: chromatin.html (DNA-Verpackung und Zugänglichkeit): Einsteiger- und Expertenmodus; Verpackungsleiter, Nucleosom 3D (1KX5), Remodeller; Experte: Histonmodifikationen, TF, Promotor
