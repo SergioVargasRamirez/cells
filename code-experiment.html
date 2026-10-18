@@ -351,7 +351,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       </div>
       <div class="karte">
           <h3><span class="nr">3</span>Codons den Aminosäuren zuordnen</h3>
-          <p class="klein" style="margin-top:0">Gefundene Codons: Ziehe sie in die Zeile der Aminosäure, für die sie stehen (oder klicke ein Codon und dann einen freien Platz).</p>
+          <p class="klein" style="margin-top:0">Gefundene Codons: Ziehe sie in die Zeile der Aminosäure, für die sie stehen (oder klicke ein Codon und dann einen freien Platz). Eine richtige Zuordnung wird sofort grün.</p>
           <div class="vorrat" id="vorrat" aria-label="Gefundene Codons"></div>
           <div class="tabelle" id="tabelle"></div>
           <div class="tknoepfe">
@@ -663,7 +663,8 @@ function renderTabelle(){
     S.slots[row.aa].forEach((c, i) => {
       const s = document.createElement("div"); s.className = "slot"; s.dataset.aa = row.aa; s.dataset.i = i; s.tabIndex = 0; s.setAttribute("role", "button");
       s.setAttribute("aria-label", "Platz " + (i + 1) + " für " + G.AS[row.aa].name + (c ? ", belegt mit " + c : ", frei"));
-      if (c){ s.appendChild(chipEl(c)); const st = S.geprueft ? (G.TABELLE[c] === row.aa) : null; if (st !== null){ s.classList.add(st ? "richtig" : "falsch"); const m = document.createElement("span"); m.className = "marke"; m.textContent = st ? "✓" : "✗"; s.appendChild(m); } }
+      // Eine richtige Zuordnung wird sofort grün, eine falsche erst nach „Tabelle prüfen“
+      if (c){ s.appendChild(chipEl(c)); const ok = G.TABELLE[c] === row.aa, st = (ok || S.geprueft) ? ok : null; if (st !== null){ s.classList.add(st ? "richtig" : "falsch"); const m = document.createElement("span"); m.className = "marke"; m.textContent = st ? "✓" : "✗"; s.appendChild(m); } }
       s.addEventListener("click", ev => { if (S.sel && !c && !ev.target.closest(".chip")){ setzeCodon(S.sel, row.aa, i); } });
       s.addEventListener("keydown", ev => { if ((ev.key === "Enter" || ev.key === " ") && S.sel && !c){ ev.preventDefault(); setzeCodon(S.sel, row.aa, i); } });
       z.appendChild(s);
