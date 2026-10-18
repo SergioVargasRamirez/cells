@@ -900,9 +900,10 @@ const DNA2D = (() => {
       S.push(`<circle cx="${A[n][0].toFixed(3)}" cy="${(-A[n][1]).toFixed(3)}" r="0.36" fill="${farbe.p5}"/>`);
       T.push(`<text x="${A[n][0].toFixed(3)}" y="${(-A[n][1]).toFixed(3)}" text-anchor="middle" dominant-baseline="central" font-size="0.46" font-weight="800" fill="#fff">P</text>`);
     };
-    if (opt.tri){   // Triphosphat: Pα–O–Pβ–O–Pγ als Zickzack nach rechts (nur für die rechte Kachel gedacht)
-      A["O3A"] = dir(A["P"][0], A["P"][1], 1, -30); A["PB"] = dir(A["O3A"][0], A["O3A"][1], 1, 30);
-      A["O3B"] = dir(A["PB"][0], A["PB"][1], 1, -30); A["PG"] = dir(A["O3B"][0], A["O3B"][1], 1, 30);
+    if (opt.tri){   // Triphosphat: Pα–O–Pβ–O–Pγ als Zickzack nach außen (rechte Kachel: nach rechts, linke: nach links)
+      const w = a => rechts ? a : 180 - a;
+      A["O3A"] = dir(A["P"][0], A["P"][1], 1, w(-30)); A["PB"] = dir(A["O3A"][0], A["O3A"][1], 1, w(30));
+      A["O3B"] = dir(A["PB"][0], A["PB"][1], 1, w(-30)); A["PG"] = dir(A["O3B"][0], A["O3B"][1], 1, w(30));
       for (const [a, c] of [["P", "O3A"], ["O3A", "PB"], ["PB", "O3B"], ["O3B", "PG"]]) line(A[a], A[c], farbe.p5, 0.07);
       for (const n of ["O3A", "O3B"]) S.push(`<circle cx="${A[n][0].toFixed(3)}" cy="${(-A[n][1]).toFixed(3)}" r="0.13" fill="${farbe.p5}"/>`);
       pScheibe("PB"); pScheibe("PG");

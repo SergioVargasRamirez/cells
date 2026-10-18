@@ -60,7 +60,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,canvas:focus-visi
 /* Schritt 2: Basenpaarung */
 .schritt + .schritt{margin-top:44px;padding-top:26px;border-top:1px solid var(--line)}
 .leiter{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
-.leiter svg{display:block;width:100%;min-width:640px;height:auto;touch-action:none;user-select:none;-webkit-user-select:none;color:var(--ink)}
+.leiter svg{display:block;width:100%;max-width:760px;margin-inline:auto;min-width:600px;height:auto;touch-action:none;user-select:none;-webkit-user-select:none;color:var(--ink)}
 .leiter .vorrat{cursor:grab}
 .leiter .vorrat:focus-visible .rahmen,.leiter .vorrat[aria-pressed="true"] .rahmen{stroke:var(--accent);stroke-width:.14;stroke-dasharray:none}
 .leiter .rahmen{fill:transparent;stroke:var(--line);stroke-width:.08;stroke-dasharray:.3 .25}
@@ -183,19 +183,19 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 <div class="page">
   <header>
     <h1>Basenpaarung</h1>
-    <p class="lede">Wie entsteht ein neuer DNA-Strang? Die Bausteine paaren mit der Matrize und werden zu einer Kette verknüpft.</p>
+    <p class="lede">Wie entsteht ein neuer DNA-Strang? Die Bausteine paaren mit der Vorlage und werden zu einer Kette verknüpft.</p>
     <label class="switch"><input type="checkbox" id="einfach"> Vereinfachte Ansicht (weniger Fachbegriffe)</label>
   </header>
 
   <main>
     <section class="schritt" id="s-paarung">
       <h2>Den neuen Strang bauen</h2>
-      <p>Bei der DNA-Synthese entsteht zu einem DNA-Strang ein neuer, passender Gegenstrang. Ein kurzes Startstück (Primer) ist schon an die Matrize gebunden. Ziehe aus dem Vorrat die Bausteine (dNTPs) in die leeren Felder. Kommen sich zwei Basen nahe, erscheinen gestrichelte Linien zwischen ihnen. Was fällt dir auf?</p>
+      <p>Bei der DNA-Synthese entsteht zu einem DNA-Strang ein neuer, passender Gegenstrang. Ziehe aus dem Vorrat die Bausteine (dNTPs) in die leeren Felder. Kommen sich zwei Basen nahe, erscheinen gestrichelte Linien zwischen ihnen. Was fällt dir auf?</p>
       <div class="steuer">
         <button class="btn" type="button" id="neu">Neue Sequenz</button>
         <button class="btn" type="button" id="leeren">Neuen Strang leeren</button>
       </div>
-      <div class="leiter"><svg id="leiter" role="group" aria-label="Matrize mit leeren Feldern für den neuen DNA-Strang und Vorrat an Desoxyribonukleosidtriphosphaten"></svg></div>
+      <div class="leiter"><svg id="leiter" role="group" aria-label="Vorlage mit leeren Feldern für den neuen DNA-Strang und Vorrat an Desoxyribonukleosidtriphosphaten"></svg></div>
       <div class="status" id="status2" aria-live="polite"></div>
       <div class="fragen" id="fragen">
         <h3>Auswertung</h3>
@@ -258,10 +258,10 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
   <details>
     <summary>Modell und Grenzen</summary>
     <ul>
-      <li>Der Primer ist als einzelnes Nukleotid angedeutet; in der Zelle ist er ein kurzes Stück RNA oder DNA mit freiem 3'-OH, an das die DNA-Polymerase anknüpft.</li>
+      <li>Die Synthese beginnt hier vereinfacht mit dem ersten Nukleotid. In der Zelle braucht die DNA-Polymerase ein Startstück (Primer) mit freiem 3'-OH, an das sie die Nukleotide anknüpft, und das erste Nukleotid behält nicht sein Triphosphat.</li>
       <li>Die Basen sind aus den Koordinaten kristallisierter Nukleinsäuren in die Ebene des Basenpaares projiziert (1BNA für DNA, 1QC0 für RNA). Gezeigt sind die Atome der Watson-Crick-Paarung; die Verdrillung der Doppelhelix und die Neigung der Basen fehlen in dieser Ansicht.</li>
       <li>Eine Wasserstoffbrücke wird gezeichnet, wenn ein Spender (N–H) und ein Empfänger (O oder N mit freiem Elektronenpaar) 2,4 bis 3,3 Å auseinanderliegen. Zwei Basen, deren Atome näher als 2,3 Å zusammenrücken, überlappen und können nicht gepaart werden (zum Beispiel zwei Purine). Ein Paar zählt als passend, wenn es mindestens zwei Wasserstoffbrücken bildet. Andere Paarungen, die es in der Natur gibt (zum Beispiel G–U in der RNA), sind hier nicht vorgesehen.</li>
-      <li>Zucker und Phosphat sind schematisch gezeichnet; die Strangrichtung ist wie im Lehrbuch dargestellt: Die Matrize läuft von 5' (oben) nach 3' (unten), der neue Strang entgegengesetzt (antiparallel).</li>
+      <li>Zucker und Phosphat sind schematisch gezeichnet; die Strangrichtung ist wie im Lehrbuch dargestellt: Die Vorlage läuft von 5' (oben) nach 3' (unten), der neue Strang entgegengesetzt (antiparallel).</li>
       <li>Die Reaktion ist vereinfacht dargestellt: Das 3'-OH der Kette greift das α-Phosphat des neuen Nukleotids an, es entsteht eine Phosphodiesterbindung, und die beiden äußeren Phosphatgruppen verlassen das Molekül als Pyrophosphat. Das Enzym und die Magnesiumionen, die das ermöglichen, sind nicht gezeigt.</li>
       <li><b>3D-Bild:</b> Die Doppelhelix ist ein idealisiertes Modell mit gleichmäßigem Aufbau: B-DNA mit 36° Drehung und 3,4 Å Anstieg je Basenpaar, A-RNA mit 32,7° und 2,6 Å (Lehrbuchwerte). Die Atome von Base, Zucker und Phosphat sind aus je einem Rest der Kristallstrukturen 1BNA und 1QC0 übernommen, ein gemeinsames Zucker-Phosphat-Gerüst für alle Basen. Echte DNA ist ungleichmäßiger: Je nach Sequenz ändern sich Drehung, Anstieg und Neigung, und die Helix biegt sich. Bei G·C-Paaren hintereinander (CpG) liegen im Modell zwei Stickstoffe der kleinen Furche etwa 1,4 Å näher als im Kristall.</li>
       <li>Die Wiederholungen der Sequenz (blass) sollen nur zeigen, wie die Helix weiterläuft. Furchen, Abstände und Winkel sind aus dem Modell berechnet, nicht gemessen. „P–P“ ist der Abstand zweier Phosphoratome gegenüber, nicht der Durchmesser der Helix mit Atomradien. Die Scheibe ist 5 Å dick und enthält deshalb auch Teile benachbarter Basenpaare.</li>
@@ -324,9 +324,10 @@ const HELIX = {"DNA":{"drehung":36.0,"anstieg":3.4,"R":[[-0.98803,-0.15383,0.011
 // Braucht PALETTE, HELIX, DNA2D, HELIX_BAU und MOL3D (aus den anderen Snippets) und das Markup der Seiten.
 //
 // Regeln der Übung:
-//  - Links steht die Matrize (5' oben). Der neue Strang entsteht rechts von unten nach oben (5' → 3').
-//  - Ein Nukleotid lässt sich nur an das 3'-Ende der wachsenden Kette anfügen, also in das Feld direkt über
-//    dem zuletzt gesetzten. Alles andere wird ohne Hinweis zurückgewiesen.
+//  - Die Vorlage steht mit dem 5'-Ende oben (links) oder mit dem 3'-Ende oben (rechts), zufällig bei jeder neuen Sequenz.
+//    Der neue Strang liegt auf der anderen Seite und entsteht antiparallel (5' → 3').
+//  - Das erste Nukleotid gehört an das Ende der Vorlage, an dem die Synthese beginnt; danach lässt sich ein Nukleotid
+//    nur an das 3'-Ende der wachsenden Kette anfügen. Alles andere wird ohne Hinweis zurückgewiesen.
 //  - Im Vorrat liegen die Nukleosidtriphosphate. Beim Anfügen reagiert das 3'-OH der Kette mit dem
 //    α-Phosphat (Leuchten); Pyrophosphat und Wasser werden freigesetzt, bleiben einige Sekunden und verschwinden.
 const PAARUNG = (() => {
@@ -337,14 +338,15 @@ const PAARUNG = (() => {
     const svg = $("leiter");
     const NS = "http://www.w3.org/2000/svg";
     const RNA = cfg.art === "rna";
-    const ROWS = 5, PITCH = 4.0, XL = -3.714, XR = 3.714, SK = DNA2D.SK;
-    const POOL_SKALA = 0.78, POOL = [[18.2, -1.2], [27.6, -1.2], [18.2, -8.6], [27.6, -8.6]];
+    const ROWS = 8, PITCH = 3.4, XL = -3.714, XR = 3.714;
+    const POOL_SKALA = 0.62, POOL_Y = [-2.9, -8.4, -13.9, -19.4], CHIP_X = 4.8, CHIP_Y = 2.0;
     const ZEIT = {glut: 1700, ppiStart: 500, ppiWeg: 2700, ppiAus: 5200, ende: 6200};
     const FORM_NEU = RNA ? "RNA" : "DNA", GEOM = RNA ? "RNA" : "DNA";
     const KOMP = RNA ? {A: "U", T: "A", G: "C", C: "G"} : {A: "T", T: "A", G: "C", C: "G"};
     const POOL_BASEN = RNA ? ["A", "C", "G", "U"] : ["A", "C", "G", "T"];
     const NAMEN = {A: "Adenin", C: "Cytosin", G: "Guanin", T: "Thymin", U: "Uracil"};
-    const Z = {seq: [], placed: [], sel: null, drag: null};
+    // spiegel = false: Vorlage links (5' oben), neuer Strang rechts, wächst nach oben. spiegel = true: Vorlage rechts (3' oben), neuer Strang links, wächst nach unten.
+    const Z = {seq: [], placed: [], sel: null, drag: null, spiegel: false};
     const einfach = () => $("einfach").checked;
     const yRow = i => -i * PITCH;
     const dim = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
@@ -357,21 +359,25 @@ const PAARUNG = (() => {
 
     /* ---------- Zustand ---------- */
     const anzahl = () => Z.placed.filter(Boolean).length;
-    const naechste = () => { const n = anzahl(); return n >= ROWS ? -1 : ROWS - 1 - n; };   // Feld direkt über dem 3'-Ende der Kette
+    const seiteV = () => Z.spiegel ? "r" : "l", seiteN = () => Z.spiegel ? "l" : "r";
+    const xV = () => Z.spiegel ? XR : XL, xN = () => Z.spiegel ? XL : XR;
+    const startZeile = () => Z.spiegel ? 0 : ROWS - 1, richtung = () => Z.spiegel ? 1 : -1;
+    const naechste = () => { const n = anzahl(); return n >= ROWS ? -1 : startZeile() + richtung() * n; };   // Feld am 3'-Ende der Kette
+    const ende3 = () => { const n = anzahl(); return n === 0 ? -1 : startZeile() + richtung() * (n - 1); };    // Zeile des 3'-Endes der Kette
+    const wachstum = () => Array.from({length: ROWS}, (_, k) => startZeile() + richtung() * k);               // Reihenfolge, in der gebaut wird
     function neueSequenz(){
       const al = ["A", "C", "G", "T"];
       let seq;
       do { seq = Array.from({length: ROWS}, () => al[Math.floor(Math.random() * 4)]); }
-      while (!seq.some(b => b === "G" || b === "C") || !seq.some(b => b === "A" || b === "T"));
-      Z.seq = seq; Z.placed = Array(ROWS).fill(null); Z.sel = null;
-      if (cfg.primer) Z.placed[ROWS - 1] = KOMP[seq[ROWS - 1]];
+      while (!seq.some(b => b === "G" || b === "C") || !seq.some(b => b === "A" || b === "T") || new Set(seq).size < 3);
+      Z.seq = seq; Z.placed = Array(ROWS).fill(null); Z.sel = null; Z.spiegel = Math.random() < 0.5;
     }
-    const istPrimer = i => cfg.primer && i === ROWS - 1;
-    const kachelL = (i) => DNA2D.kachel(Z.seq[i], "DNA", "l", {geometrie: GEOM, frei3: i === ROWS - 1});
-    const kachelR = (b, opt) => DNA2D.kachel(b, FORM_NEU, "r", Object.assign({geometrie: GEOM}, opt || {}));
-    const chip = (b, x, y) => {
-      const c = PALETTE.get(b), l = lumi(c);
-      return `<circle cx="${x}" cy="${-y}" r="0.46" fill="${c}" stroke="var(--surface)" stroke-width="0.08"/><text x="${x}" y="${-y}" text-anchor="middle" dominant-baseline="central" font-size="0.6" font-weight="800" fill="${l > 0.55 ? "#111" : "#fff"}">${b}</text>`;
+    const kachelV = i => DNA2D.kachel(Z.seq[i], "DNA", seiteV(), {geometrie: GEOM, frei3: i === (Z.spiegel ? 0 : ROWS - 1)});
+    const kachelN = (b, opt) => DNA2D.kachel(b, FORM_NEU, seiteN(), Object.assign({geometrie: GEOM}, opt || {}));
+    const brueckenV = (vT, vPos, nT, nPos) => Z.spiegel ? DNA2D.bruecken(nT, nPos, vT, vPos) : DNA2D.bruecken(vT, vPos, nT, nPos);   // links steht immer die linke Kachel
+    const chip = (b, x, y, k) => {   // Buchstabe der Base am Rand
+      const c = PALETTE.get(b), l = lumi(c), r = (k || 1) * 0.46;
+      return `<circle cx="${x}" cy="${-y}" r="${r.toFixed(3)}" fill="${c}" stroke="var(--surface)" stroke-width="0.08"/><text x="${x}" y="${-y}" text-anchor="middle" dominant-baseline="central" font-size="${((k || 1) * 0.6).toFixed(3)}" font-weight="800" fill="${l > 0.55 ? "#111" : "#fff"}">${b}</text>`;
     };
     // Verbindung O3' (cyan) – P (magenta) zwischen zwei Nukleotiden
     function verbinder(o3, p){
@@ -382,56 +388,64 @@ const PAARUNG = (() => {
     const bondLinien = (liste, klasse) => liste.map(q => `<line class="${klasse}" x1="${q.von[0].toFixed(3)}" y1="${(-q.von[1]).toFixed(3)}" x2="${q.nach[0].toFixed(3)}" y2="${(-q.nach[1]).toFixed(3)}" stroke="${PALETTE.get("hbruecke")}" stroke-width="0.11" stroke-dasharray="0.2 0.16" stroke-linecap="round"/>`).join("");
 
     /* ---------- Zeichnen ---------- */
+    const kopfText = (x, y, txt, col) => `<text x="${x.toFixed(3)}" y="${(-y).toFixed(3)}" text-anchor="middle" font-size="0.9" font-weight="800" fill="${col}">${txt}</text>`;
+    // Verbinder und Enden (5'/3') eines Strangs; tiles[i] gehört zu Zeile i, seite "l" oder "r", x = Ort der C1'-Atome
+    function strang(tiles, seite, x){
+      const P = PALETTE.get, vorhanden = tiles.map((t, i) => t ? i : -1).filter(i => i >= 0);
+      let unten = "", marken = "";
+      for (let i = 0; i < ROWS; i++){
+        if (seite === "l" && i > 0 && tiles[i] && tiles[i - 1])
+          unten += verbinder([x + tiles[i - 1].atome["O3'"][0], yRow(i - 1) + tiles[i - 1].atome["O3'"][1]], [x + tiles[i].atome["P"][0], yRow(i) + tiles[i].atome["P"][1]]);
+        if (seite === "r" && i < ROWS - 1 && tiles[i] && tiles[i + 1])
+          unten += verbinder([x + tiles[i + 1].atome["O3'"][0], yRow(i + 1) + tiles[i + 1].atome["O3'"][1]], [x + tiles[i].atome["P"][0], yRow(i) + tiles[i].atome["P"][1]]);
+      }
+      if (!vorhanden.length) return {unten, marken};
+      const oben = vorhanden[0], tief = vorhanden[vorhanden.length - 1];
+      if (seite === "l"){
+        if (oben === 0) marken += kopfText(x + tiles[0].atome["P"][0] - 0.2, yRow(0) + tiles[0].atome["P"][1] + 1.0, "5'", P("p5"));
+        marken += kopfText(x + tiles[tief].atome["O3'"][0] + 0.1, yRow(tief) + tiles[tief].atome["O3'"][1] - 1.15, "3'", P("oh3"));
+      } else {
+        marken += kopfText(x + tiles[oben].atome["O3'"][0] + 0.2, yRow(oben) + tiles[oben].atome["O3'"][1] + 0.85, "3'", P("oh3"));
+        if (tief === ROWS - 1) marken += kopfText(x + tiles[tief].atome["P"][0] + 0.1, yRow(tief) + tiles[tief].atome["P"][1] - 1.25, "5'", P("p5"));
+      }
+      return {unten, marken};
+    }
+    const slotRahmen = seite => seite === "r" ? '<rect class="rahmen" x="-3.9" y="-3.2" width="7.0" height="3.5" rx="0.5"/>' : '<rect class="rahmen" x="-3.1" y="-3.2" width="7.0" height="3.5" rx="0.5"/>';
+    const poolRahmen = seite => seite === "r" ? '<rect class="rahmen" x="-4.4" y="-3.7" width="11.2" height="8.1" rx="0.6"/>' : '<rect class="rahmen" x="-6.8" y="-3.7" width="11.2" height="8.1" rx="0.6"/>';
+    const poolX = () => Z.spiegel ? 17.6 : 15.8;
+
     function render(){
-      const P = PALETTE.get, links = Z.seq.map((b, i) => kachelL(i));
-      const oben = ROWS - anzahl();   // oberste gesetzte Zeile = 3'-Ende der Kette
-      const rechts = Z.placed.map((b, i) => {
-        if (!b) return null;
-        const erstes = i === ROWS - 1;
-        return kachelR(b, {frei3: i === oben, tri: erstes && !istPrimer(i)});   // das erste Nukleotid behält sein Triphosphat (ohne Primer)
-      });
-      let t = "", unten = "";
-      const kopf = (x, y, txt, col) => `<text x="${x}" y="${-y}" text-anchor="middle" font-size="0.9" font-weight="800" fill="${col}">${txt}</text>`;
-      t += `<text x="${XL}" y="${-(yRow(0) + 4.6)}" text-anchor="middle" font-size="0.8" font-weight="700" fill="currentColor">Matrize (DNA)</text>`;
-      t += `<text x="${XR + 1}" y="${-(yRow(0) + 4.6)}" text-anchor="middle" font-size="0.8" font-weight="700" fill="currentColor">${RNA ? "neue RNA" : "neuer Strang"}</text>`;
+      const P = PALETTE.get, ende = ende3();
+      const V_ = Z.seq.map((b, i) => kachelV(i));
+      const N_ = Z.placed.map((b, i) => b ? kachelN(b, {frei3: i === ende, tri: i === startZeile()}) : null);   // das erste Nukleotid behält sein Triphosphat
+      const xv = xV(), xn = xN();
+      let t = "";
+      t += `<text x="${xv}" y="${-(yRow(0) + 4.6)}" text-anchor="middle" font-size="0.8" font-weight="700" fill="currentColor">Vorlage (DNA)</text>`;
+      t += `<text x="${xn}" y="${-(yRow(0) + 4.6)}" text-anchor="middle" font-size="0.8" font-weight="700" fill="currentColor">${RNA ? "neue RNA" : "neuer Strang"}</text>`;
+      const chipX = x => x + (x < 0 ? -CHIP_X : CHIP_X);
       for (let i = 0; i < ROWS; i++){
-        const L = links[i], y = yRow(i);
-        t += `<g transform="${tr(XL, y)}">${L.svg}${chip(Z.seq[i], L.mitte[0], L.mitte[1])}</g>`;
-        if (i > 0){
-          const K0 = links[i - 1];
-          unten += verbinder([XL + K0.atome["O3'"][0], yRow(i - 1) + K0.atome["O3'"][1]], [XL + L.atome["P"][0], y + L.atome["P"][1]]);
-        }
-      }
-      t += kopf(XL + links[0].atome["P"][0] - 0.2, yRow(0) + links[0].atome["P"][1] + 1.0, "5'", P("p5"));
-      const l3 = links[ROWS - 1].atome["O3'"];
-      t += kopf(XL + l3[0] + 0.1, yRow(ROWS - 1) + l3[1] - 1.15, "3'", P("oh3"));
-      const next = naechste();
-      for (let i = 0; i < ROWS; i++){
-        const y = yRow(i), R = rechts[i];
+        const y = yRow(i);
+        t += `<g transform="${tr(xv, y)}">${V_[i].svg}</g>` + chip(Z.seq[i], chipX(xv), y + CHIP_Y);
+        const R = N_[i];
         if (R){
-          const entfernbar = i === oben && !istPrimer(i);
-          t += `<g class="gesetzt${entfernbar ? " entfernbar" : ""}" data-zeile="${i}" ${entfernbar ? 'tabindex="0" role="button" aria-label="Zeile ' + (i + 1) + ': ' + NAMEN[Z.placed[i]] + ' gesetzt. Eingabetaste entfernt es wieder."' : 'role="img" aria-label="Zeile ' + (i + 1) + ': ' + NAMEN[Z.placed[i]] + ' gesetzt"'} transform="${tr(XR, y)}">${R.svg}${chip(Z.placed[i], R.mitte[0], R.mitte[1])}</g>`;
-          t += bondLinien(DNA2D.bruecken(links[i], [XL, y], R, [XR, y]).liste, "hb");
-          if (i < ROWS - 1 && rechts[i + 1]){
-            const R1 = rechts[i + 1];
-            unten += verbinder([XR + R1.atome["O3'"][0], yRow(i + 1) + R1.atome["O3'"][1]], [XR + R.atome["P"][0], y + R.atome["P"][1]]);
-          }
+          const entfernbar = i === ende;
+          t += `<g class="gesetzt${entfernbar ? " entfernbar" : ""}" data-zeile="${i}" ${entfernbar ? 'tabindex="0" role="button" aria-label="Zeile ' + (i + 1) + ': ' + NAMEN[Z.placed[i]] + ' gesetzt. Eingabetaste entfernt es wieder."' : 'role="img" aria-label="Zeile ' + (i + 1) + ': ' + NAMEN[Z.placed[i]] + ' gesetzt"'} transform="${tr(xn, y)}">${R.svg}</g>` + chip(Z.placed[i], chipX(xn), y + CHIP_Y);
+          t += bondLinien(brueckenV(V_[i], [xv, y], R, [xn, y]).liste, "hb");
         } else {
-          t += `<g class="platz" data-zeile="${i}" tabindex="0" role="button" aria-label="Leeres Feld in Zeile ${i + 1}, Partner für ${NAMEN[Z.seq[i]]}. Ein ausgewähltes Nukleotid mit der Eingabetaste hier einsetzen." transform="${tr(XR, y)}"><rect class="rahmen" x="-3.9" y="-3.5" width="7.0" height="3.9" rx="0.5"/></g>`;
+          t += `<g class="platz" data-zeile="${i}" tabindex="0" role="button" aria-label="Leeres Feld in Zeile ${i + 1}, Partner für ${NAMEN[Z.seq[i]]}. Ein ausgewähltes Nukleotid mit der Eingabetaste hier einsetzen." transform="${tr(xn, y)}">${slotRahmen(seiteN())}</g>`;
         }
       }
-      const first = rechts[0], last = rechts[ROWS - 1];
-      if (first && oben === 0) t += kopf(XR + first.atome["O3'"][0] + 0.2, yRow(0) + first.atome["O3'"][1] + 0.85, "3'", P("oh3"));
-      else if (rechts[oben]) { const q = rechts[oben]; t += kopf(XR + q.atome["O3'"][0] + 0.2, yRow(oben) + q.atome["O3'"][1] + 0.85, "3'", P("oh3")); }
-      if (last) t += kopf(XR + last.atome["P"][0] + 0.1, yRow(ROWS - 1) + last.atome["P"][1] - 1.25, "5'", P("p5"));
+      const sv = strang(V_, seiteV(), xv), sn = strang(N_, seiteN(), xn);
       // Vorrat: Nukleosidtriphosphate
-      t += `<text x="${(POOL[0][0] + POOL[1][0]) / 2 + 0.4}" y="${-(yRow(0) + 4.6)}" text-anchor="middle" font-size="0.8" font-weight="700" fill="currentColor">Vorrat (${RNA ? "NTPs" : "dNTPs"})</text>`;
+      const px = poolX();
+      t += `<text x="${px + 0.6}" y="${-(yRow(0) + 4.6)}" text-anchor="middle" font-size="0.8" font-weight="700" fill="currentColor">Vorrat (${RNA ? "NTPs" : "dNTPs"})</text>`;
       POOL_BASEN.forEach((b, k) => {
-        const R = kachelR(b, {frei3: true, tri: true}), o = POOL[k];
-        t += `<g class="vorrat" data-base="${b}" tabindex="0" role="button" aria-pressed="${Z.sel === b}" aria-label="${RNA ? "Ribonukleosidtriphosphat" : "Desoxyribonukleosidtriphosphat"} mit ${NAMEN[b]} (${b}). Ziehen oder mit der Eingabetaste auswählen." transform="${tr(o[0], o[1], POOL_SKALA)}"><rect class="rahmen" x="-4.4" y="-3.7" width="11.2" height="8.1" rx="0.6"/>${R.svg}${chip(b, R.mitte[0], R.mitte[1])}</g>`;
+        const R = kachelN(b, {frei3: true, tri: true});
+        t += `<g class="vorrat" data-base="${b}" tabindex="0" role="button" aria-pressed="${Z.sel === b}" aria-label="${RNA ? "Ribonukleosidtriphosphat" : "Desoxyribonukleosidtriphosphat"} mit ${NAMEN[b]} (${b}). Ziehen oder mit der Eingabetaste auswählen." transform="${tr(px, POOL_Y[k], POOL_SKALA)}">${poolRahmen(seiteN())}${R.svg}</g>` + chip(b, px + (Z.spiegel ? -4.9 : -3.5), POOL_Y[k], 0.85);
       });
-      svg.setAttribute("viewBox", `-7.6 -5.8 41.4 ${(5.8 + (ROWS - 1) * PITCH + 5.4).toFixed(1)}`);
-      szene.innerHTML = unten + t;
+      const x0 = Z.spiegel ? -13.8 : -11.6;
+      svg.setAttribute("viewBox", `${x0} -5.8 ${(poolX() + 6.0 - x0).toFixed(1)} ${(5.8 + (ROWS - 1) * PITCH + 5.4).toFixed(1)}`);
+      szene.innerHTML = sv.unten + sn.unten + t + sv.marken + sn.marken;
       // Ereignisse
       szene.querySelectorAll(".vorrat").forEach(g => {
         g.addEventListener("pointerdown", e => starteZiehen(e, g));
@@ -439,7 +453,7 @@ const PAARUNG = (() => {
           if (e.key !== "Enter" && e.key !== " ") return;
           e.preventDefault(); Z.sel = Z.sel === g.dataset.base ? null : g.dataset.base; render();
           const n = szene.querySelector(`.vorrat[data-base="${g.dataset.base}"]`); if (n) n.focus();
-          if (Z.sel) status(einfach() ? "Wähle jetzt ein leeres Feld rechts aus." : "Ausgewählt: " + NAMEN[Z.sel] + ". Wähle mit Tab ein leeres Feld und drücke die Eingabetaste.");
+          if (Z.sel) status(einfach() ? "Wähle jetzt ein leeres Feld aus." : "Ausgewählt: " + NAMEN[Z.sel] + ". Wähle mit Tab ein leeres Feld und drücke die Eingabetaste.");
         });
       });
       szene.querySelectorAll(".platz").forEach(g => {
@@ -461,16 +475,15 @@ const PAARUNG = (() => {
     /* ---------- Effekte: Leuchten, Pyrophosphat und Wasser ---------- */
     function el(name, attrs){ const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
     function reaktion(i, b){
-      // 3'-OH der Kette (Zeile i+1) und α-Phosphat des neuen Nukleotids (Zeile i) reagieren
-      const Ku = kachelR(Z.placed[i + 1], {}), Kn = kachelR(b, {tri: true}), P = PALETTE.get;
-      const o3 = [XR + Ku.atome["O3'"][0], yRow(i + 1) + Ku.atome["O3'"][1]], pa = [XR + Kn.atome["P"][0], yRow(i) + Kn.atome["P"][1]];
+      // 3'-OH der Kette (Zeile davor, in Wachstumsrichtung) und α-Phosphat des neuen Nukleotids (Zeile i) reagieren
+      const vor = i - richtung(), xn = xN(), sg = Z.spiegel ? -1 : 1;
+      const Ku = kachelN(Z.placed[vor], {}), Kn = kachelN(b, {tri: true}), P = PALETTE.get;
+      const o3 = [xn + Ku.atome["O3'"][0], yRow(vor) + Ku.atome["O3'"][1]], pa = [xn + Kn.atome["P"][0], yRow(i) + Kn.atome["P"][1]];
       const J = [(o3[0] + pa[0]) / 2, (o3[1] + pa[1]) / 2];
-      const pb = [XR + Kn.atome["PB"][0], yRow(i) + Kn.atome["PB"][1]], pg = [XR + Kn.atome["PG"][0], yRow(i) + Kn.atome["PG"][1]], ob = [XR + Kn.atome["O3B"][0], yRow(i) + Kn.atome["O3B"][1]];
-      const o3a = [XR + Kn.atome["O3A"][0], yRow(i) + Kn.atome["O3A"][1]];
+      const abs = n => [xn + Kn.atome[n][0], yRow(i) + Kn.atome[n][1]];
+      const pb = abs("PB"), pg = abs("PG"), ob = abs("O3B"), o3a = abs("O3A");
       const g = el("g", {}); fx.appendChild(g);
-      // Leuchten am reagierenden Paar
       const glow = [0, 1].map(() => { const c = el("circle", {cx: J[0], cy: -J[1], r: 0.1, fill: "url(#glut)", opacity: 0}); g.appendChild(c); return c; });
-      // Pyrophosphat: zwei P-Kreise mit Brücken-O, von der Bindungsstelle gelöst
       const ppi = el("g", {opacity: 0}); g.appendChild(ppi);
       const ln = (a, c) => ppi.appendChild(el("line", {x1: a[0] - pb[0], y1: -(a[1] - pb[1]), x2: c[0] - pb[0], y2: -(c[1] - pb[1]), stroke: P("p5"), "stroke-width": 0.09, "stroke-linecap": "round"}));
       ln(pb, ob); ln(ob, pg);
@@ -479,10 +492,9 @@ const PAARUNG = (() => {
         const tx = el("text", {x: q[0] - pb[0], y: -(q[1] - pb[1]), "text-anchor": "middle", "dominant-baseline": "central", "font-size": 0.46, "font-weight": 800, fill: "#fff"}); tx.textContent = "P"; ppi.appendChild(tx);
       }
       ppi.appendChild(el("circle", {cx: ob[0] - pb[0], cy: -(ob[1] - pb[1]), r: 0.13, fill: P("p5")}));
-      // Spaltmarke an der gelösten Bindung Pα–O
-      const marke = el("polyline", {points: [[-0.2, 0.14], [0, -0.14], [0.2, 0.14]].map(q => ((o3a[0] + pa[0]) / 2 + q[0]).toFixed(2) + "," + (-((o3a[1] + pa[1]) / 2) + q[1]).toFixed(2)).join(" "), fill: "none", stroke: P("schnitt"), "stroke-width": 0.12, "stroke-linecap": "round", "stroke-linejoin": "round", opacity: 0});
+      const mid = [(o3a[0] + pa[0]) / 2, (o3a[1] + pa[1]) / 2];
+      const marke = el("polyline", {points: [[-0.2, 0.14], [0, -0.14], [0.2, 0.14]].map(q => (mid[0] + q[0]).toFixed(2) + "," + (-mid[1] + q[1]).toFixed(2)).join(" "), fill: "none", stroke: P("schnitt"), "stroke-width": 0.12, "stroke-linecap": "round", "stroke-linejoin": "round", opacity: 0});
       g.appendChild(marke);
-      // Wasser
       const wasser = el("text", {x: J[0], y: -J[1], "text-anchor": "middle", "dominant-baseline": "central", "font-size": 0.78, "font-weight": 700, fill: "currentColor", stroke: "var(--surface)", "stroke-width": 0.22, "paint-order": "stroke", opacity: 0});
       wasser.textContent = cfg.wasser === false ? "" : "H₂O"; g.appendChild(wasser);   // cfg.wasser: false blendet das Wasser aus
       const t0 = performance.now(), still = reduziert();
@@ -497,9 +509,9 @@ const PAARUNG = (() => {
         });
         const aus = t < ZEIT.ppiAus ? 1 : 1 - (t - ZEIT.ppiAus) / (ZEIT.ende - ZEIT.ppiAus);
         const sicht = t >= ZEIT.ppiStart ? aus : 0, w = still ? 0 : ease((t - ZEIT.ppiStart) / (ZEIT.ppiWeg - ZEIT.ppiStart));
-        ppi.setAttribute("transform", `translate(${(pb[0] + 3.2 * w).toFixed(3)},${(-pb[1] + 1.6 * w).toFixed(3)})`);
+        ppi.setAttribute("transform", `translate(${(pb[0] + sg * 2.6 * w).toFixed(3)},${(-pb[1]).toFixed(3)})`);
         ppi.setAttribute("opacity", sicht.toFixed(3));
-        wasser.setAttribute("x", (J[0] + 3.6 * w).toFixed(3)); wasser.setAttribute("y", (-J[1] - 2.4 * w).toFixed(3));
+        wasser.setAttribute("x", (J[0] + sg * 2.2 * w).toFixed(3)); wasser.setAttribute("y", (-J[1] + 1.3 * w).toFixed(3));
         wasser.setAttribute("opacity", (t >= ZEIT.ppiStart + 200 ? aus : 0).toFixed(3));
         marke.setAttribute("opacity", t < 1500 ? "1" : "0");
         requestAnimationFrame(schritt);
@@ -516,28 +528,28 @@ const PAARUNG = (() => {
     function starteZiehen(e, g){
       if (e.button > 0 || Z.drag) return;
       e.preventDefault();
-      const b = g.dataset.base, k = POOL_BASEN.indexOf(b), p = svgPunkt(e), R = kachelR(b, {frei3: true, tri: true});
+      const b = g.dataset.base, k = POOL_BASEN.indexOf(b), p = svgPunkt(e), R = kachelN(b, {frei3: true, tri: true});
       const elm = el("g", {class: "zieh", "pointer-events": "none", opacity: 0.93});
-      elm.innerHTML = R.svg + chip(b, R.mitte[0], R.mitte[1]);
+      elm.innerHTML = R.svg;
       const live = el("g", {});
       svg.appendChild(live); svg.appendChild(elm);
       const off = [R.mitte[0], R.mitte[1]], pos = [p[0] - off[0], p[1] - off[1]];
-      Z.drag = {b, R, el: elm, live, off, pos, zeile: -1, id: e.pointerId, ursprung: POOL[k]};
+      Z.drag = {b, R, el: elm, live, off, pos, zeile: -1, id: e.pointerId, ursprung: [poolX(), POOL_Y[k]]};
       elm.setAttribute("transform", tr(pos[0], pos[1]));
       svg.setPointerCapture(e.pointerId);
-      status("Bewege den Baustein zu einer Base des linken Strangs.");
+      status("Bewege den Baustein zu einer Base der Vorlage.");
     }
     svg.addEventListener("pointermove", e => {
       const d = Z.drag; if (!d || e.pointerId !== d.id) return;
-      const p = svgPunkt(e), pos = [p[0] - d.off[0], p[1] - d.off[1]];
+      const p = svgPunkt(e), pos = [p[0] - d.off[0], p[1] - d.off[1]], xn = xN(), xv = xV();
       let best = -1, bd = 1e9;
-      for (let i = 0; i < ROWS; i++) if (!Z.placed[i]){ const q = dim(pos, [XR, yRow(i)]); if (q < bd){ bd = q; best = i; } }
-      d.zeile = bd < 6 ? best : -1;
-      if (d.zeile >= 0 && bd < 1.8){ pos[0] = XR; pos[1] = yRow(d.zeile); }   // magnetisch einrasten
+      for (let i = 0; i < ROWS; i++) if (!Z.placed[i]){ const q = dim(pos, [xn, yRow(i)]); if (q < bd){ bd = q; best = i; } }
+      d.zeile = bd < 5 ? best : -1;
+      if (d.zeile >= 0 && bd < 1.5){ pos[0] = xn; pos[1] = yRow(d.zeile); }   // magnetisch einrasten
       d.pos = pos; d.el.setAttribute("transform", tr(pos[0], pos[1]));
       szene.querySelectorAll(".platz").forEach(g => g.classList.toggle("nah", +g.dataset.zeile === d.zeile));
       if (d.zeile >= 0){
-        const r = DNA2D.bruecken(kachelL(d.zeile), [XL, yRow(d.zeile)], d.R, pos);
+        const r = brueckenV(kachelV(d.zeile), [xv, yRow(d.zeile)], d.R, pos);
         d.live.innerHTML = bondLinien(r.liste, "live");
       } else d.live.innerHTML = "";
     });
@@ -546,7 +558,7 @@ const PAARUNG = (() => {
       Z.drag = null;
       d.live.remove();
       szene.querySelectorAll(".platz").forEach(g => g.classList.remove("nah"));
-      const ziel = d.zeile >= 0 && dim(d.pos, [XR, yRow(d.zeile)]) < 2.4;
+      const ziel = d.zeile >= 0 && dim(d.pos, [xN(), yRow(d.zeile)]) < 2.0;
       status(grundtext());
       if (ziel && setze(d.zeile, d.b)){ d.el.remove(); return; }
       zurueck(d);
@@ -567,7 +579,7 @@ const PAARUNG = (() => {
     /* ---------- Setzen ---------- */
     function setze(i, b){
       if (Z.placed[i] || i !== naechste()) return false;   // nur am 3'-Ende der Kette: ohne Meldung
-      const L = kachelL(i), R = kachelR(b), r = DNA2D.bruecken(L, [XL, yRow(i)], R, [XR, yRow(i)]);
+      const L = kachelV(i), R = kachelN(b), r = brueckenV(L, [xV(), yRow(i)], R, [xN(), yRow(i)]);
       if (r.klirr < 2.3){
         status("Das passt nicht: Die beiden Basen sind zu groß und überlappen sich." + (einfach() ? "" : " Zwei Purine (A, G) mit zwei Ringen passen nicht gegenüber."));
         return false;
@@ -578,7 +590,7 @@ const PAARUNG = (() => {
       }
       Z.placed[i] = b; Z.sel = null;
       render();
-      if (Z.placed[i + 1]) reaktion(i, b);   // Phosphodiesterbindung zur Kette: Leuchten, Pyrophosphat und Wasser
+      if (anzahl() > 1) reaktion(i, b);   // Phosphodiesterbindung zur Kette: Leuchten, Pyrophosphat und Wasser
       if (Z.placed.every(Boolean)) status(cfg.fertigtext);
       else status("Das passt! Schau dir die gestrichelten Linien zwischen den beiden Basen an.");
       return true;
@@ -595,16 +607,15 @@ const PAARUNG = (() => {
     });
     $("p-gegen").addEventListener("click", () => {
       const eingabe = $("t-gegen").value.toUpperCase().replace(/[^A-Z]/g, ""), out = $("r-gegen");
-      const komplement = Z.seq.map(b => KOMP[b]);
-      const soll = komplement.slice().reverse().join(""), gleich = komplement.join("");
+      const soll = wachstum().map(i => KOMP[Z.seq[i]]).join(""), gleich = soll.split("").reverse().join("");   // soll: in der Reihenfolge, in der gebaut wird (5' → 3')
       if (!eingabe){ out.className = "rueck"; out.textContent = "Trage die Sequenz ein."; return; }
       out.className = "rueck" + (eingabe === soll ? " ok" : "");
-      out.textContent = eingabe === soll ? "Richtig. Der neue Strang ist antiparallel zur Matrize: Von 5' nach 3' gelesen steht er in umgekehrter Reihenfolge."
-        : eingabe === gleich ? "Die Basen stimmen, aber die Richtung nicht: Oben im Bild liegt beim neuen Strang das 3'-Ende. Lies von 5' nach 3'."
+      out.textContent = eingabe === soll ? "Richtig. Der neue Strang ist antiparallel zur Vorlage: Er wird von 5' nach 3' gelesen, die Vorlage von 3' nach 5'."
+        : eingabe === gleich ? "Die Basen stimmen, aber die Richtung nicht. Lies den neuen Strang von seinem 5'-Ende zu seinem 3'-Ende."
         : "Das stimmt noch nicht. Welche Base steht jeweils gegenüber? Beginne am 5'-Ende des neuen Strangs.";
     });
     $("neu").addEventListener("click", () => { neueSequenz(); V.schluessel = ""; render(); status(grundtext()); $("t-gegen").value = ""; $("r-gegen").textContent = ""; $("r-hb").textContent = ""; });
-    $("leeren").addEventListener("click", () => { Z.placed = Array(ROWS).fill(null); if (cfg.primer) Z.placed[ROWS - 1] = KOMP[Z.seq[ROWS - 1]]; Z.sel = null; render(); status(grundtext()); });
+    $("leeren").addEventListener("click", () => { Z.placed = Array(ROWS).fill(null); Z.sel = null; render(); status(grundtext()); });
     $("einfach").addEventListener("change", render);
     if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
 
@@ -616,7 +627,7 @@ const PAARUNG = (() => {
     const Rachse = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
     const zahl = (x, n = 1) => x.toLocaleString("de-DE", {minimumFractionDigits: n, maximumFractionDigits: n});
     const RUECKEN_NAMEN = new Set(["P", "OP1", "OP2", "O5'"]);
-    const helixForm = RNA ? "RNA" : "DNA";   // beim Hybrid (DNA-Matrize, RNA) liegt die A-Form vor
+    const helixForm = RNA ? "RNA" : "DNA";   // beim Hybrid (DNA-Vorlage, RNA) liegt die A-Form vor
 
     function farbe3(a, blass){
       let c;
@@ -632,11 +643,11 @@ const PAARUNG = (() => {
       return c;
     }
     function baue3D(){
-      const eigen = Z.seq.length, seq = V.laenge === "lang" ? Z.seq.join("").repeat(3) : Z.seq.join("");
+      const eigen = Z.seq.length, v53 = (Z.spiegel ? Z.seq.slice().reverse() : Z.seq).join(""), seq = V.laenge === "lang" ? v53.repeat(3) : v53;   // Vorlage von 5' nach 3' gelesen
       const d = HELIX_BAU.bauen(seq, helixForm, {hybrid: RNA}), H = HELIX[helixForm];
       const atome = d.atome.map(a => ({
         p: a.pos, c: farbe3(a, a.bp >= eigen), r: RAD3[a.el] || 0.3,
-        tip: (einfach() ? "" : a.name + " · ") + (a.strang === 1 ? "Matrize" : (RNA ? "RNA" : "neuer Strang")) + ", Basenpaar " + (a.bp + 1) + " (" + a.base + ")",
+        tip: (einfach() ? "" : a.name + " · ") + (a.strang === 1 ? "Vorlage" : (RNA ? "RNA" : "neuer Strang")) + ", Basenpaar " + (a.bp + 1) + " (" + a.base + ")",
       }));
       const bindungen = d.bindungen.map(([i, j]) => ({a: i, b: j, r: 0.1}));
       let zmin = 1e9, zmax = -1e9;
@@ -690,9 +701,9 @@ const PAARUNG = (() => {
         "Eine volle Windung dauert etwa " + zahl(windung, 0) + " Basenpaare (" + zahl(ganghoehe, 0) + " Å).",
         "Die große und die kleine Furche sind verschieden breit: In der großen Furche liegen die Basen für Proteine gut zugänglich.",
       ] : [
-        "<b>DNA-RNA-Hybrid:</b> So liegt der neue RNA-Strang kurz an der DNA-Matrize an, solange die RNA-Polymerase ihn herstellt. Hybride haben eine A-ähnliche Form: gedrungener und dicker als die B-Form.",
+        "<b>DNA-RNA-Hybrid:</b> So liegt der neue RNA-Strang kurz an der DNA-Vorlage an, solange die RNA-Polymerase ihn herstellt. Hybride haben eine A-ähnliche Form: gedrungener und dicker als die B-Form.",
         "Eine volle Windung dauert etwa " + zahl(windung, 0) + " Basenpaare (" + zahl(ganghoehe, 0) + " Å), jedes Basenpaar steigt nur " + zahl(H.anstieg) + " Å an.",
-        "Die Basenpaare sind geneigt und liegen neben der Achse: In der Mitte entsteht ein Loch. Der RNA-Strang trägt 2'-OH-Gruppen, die DNA-Matrize nicht.",
+        "Die Basenpaare sind geneigt und liegen neben der Achse: In der Mitte entsteht ein Loch. Der RNA-Strang trägt 2'-OH-Gruppen, die DNA-Vorlage nicht.",
       ];
       if (!eig) liste.push("Schnitt: Schiebe den Regler und wähle „Blick entlang der Achse“. Mit „Nur eine Scheibe“ siehst du ein einzelnes Basenpaar von oben, mit dem Rückgrat außen.");
       $("d3text").innerHTML = "<h3>" + (RNA ? "DNA-RNA-Hybrid (A-ähnliche Form)" : "DNA in der B-Form") + "</h3><ul>" + liste.map(x => "<li>" + x + "</li>").join("") + "</ul>";
@@ -722,7 +733,7 @@ const PAARUNG = (() => {
       if (!GL){ $("gl3").hidden = $("ov3").hidden = true; if (!$("gl3").parentNode.querySelector(".keingl")) $("gl3").parentNode.insertAdjacentHTML("beforeend", '<div class="keingl">Das 3D-Bild braucht WebGL, das in diesem Browser nicht verfügbar ist.</div>'); return; }
       const neu = !V.viewer;
       if (neu){ V.viewer = MOL3D.create($("gl3"), $("ov3"), {zoom: 1.2}); V.viewer.setRotation(Rseite, true); }
-      const key = Z.seq.join("") + Z.placed.join("");
+      const key = Z.seq.join("") + Z.placed.join("") + Z.spiegel;
       if (neu || V.schluessel !== key){ V.schluessel = key; zeichne3D(true); }
     }
     function segment(id, schluessel, nach){
@@ -1417,9 +1428,10 @@ const DNA2D = (() => {
       S.push(`<circle cx="${A[n][0].toFixed(3)}" cy="${(-A[n][1]).toFixed(3)}" r="0.36" fill="${farbe.p5}"/>`);
       T.push(`<text x="${A[n][0].toFixed(3)}" y="${(-A[n][1]).toFixed(3)}" text-anchor="middle" dominant-baseline="central" font-size="0.46" font-weight="800" fill="#fff">P</text>`);
     };
-    if (opt.tri){   // Triphosphat: Pα–O–Pβ–O–Pγ als Zickzack nach rechts (nur für die rechte Kachel gedacht)
-      A["O3A"] = dir(A["P"][0], A["P"][1], 1, -30); A["PB"] = dir(A["O3A"][0], A["O3A"][1], 1, 30);
-      A["O3B"] = dir(A["PB"][0], A["PB"][1], 1, -30); A["PG"] = dir(A["O3B"][0], A["O3B"][1], 1, 30);
+    if (opt.tri){   // Triphosphat: Pα–O–Pβ–O–Pγ als Zickzack nach außen (rechte Kachel: nach rechts, linke: nach links)
+      const w = a => rechts ? a : 180 - a;
+      A["O3A"] = dir(A["P"][0], A["P"][1], 1, w(-30)); A["PB"] = dir(A["O3A"][0], A["O3A"][1], 1, w(30));
+      A["O3B"] = dir(A["PB"][0], A["PB"][1], 1, w(-30)); A["PG"] = dir(A["O3B"][0], A["O3B"][1], 1, w(30));
       for (const [a, c] of [["P", "O3A"], ["O3A", "PB"], ["PB", "O3B"], ["O3B", "PG"]]) line(A[a], A[c], farbe.p5, 0.07);
       for (const n of ["O3A", "O3B"]) S.push(`<circle cx="${A[n][0].toFixed(3)}" cy="${(-A[n][1]).toFixed(3)}" r="0.13" fill="${farbe.p5}"/>`);
       pScheibe("PB"); pScheibe("PG");
@@ -1456,7 +1468,7 @@ const DNA2D = (() => {
 /*__/DNA2D__*/
 </script>
 <script>
-PAARUNG.start({"art": "dna", "primer": true, "paarAT": "A–T", "grundtext": "Ziehe ein Nukleotid aus dem Vorrat in ein leeres Feld des neuen Strangs. Wenn zwei Basen zueinander passen, erscheinen gestrichelte Linien zwischen ihnen.", "fertigtext": "Der neue Strang ist fertig. Vergleiche die Paare: Was ist bei den verschiedenen Paaren gleich, was ist anders? Beantworte dann die Fragen unten."});
+PAARUNG.start({"art": "dna", "paarAT": "A–T", "grundtext": "Ziehe ein Nukleotid aus dem Vorrat in ein leeres Feld des neuen Strangs. Wenn zwei Basen zueinander passen, erscheinen gestrichelte Linien zwischen ihnen.", "fertigtext": "Der neue Strang ist fertig. Vergleiche die Paare: Was ist bei den verschiedenen Paaren gleich, was ist anders? Beantworte dann die Fragen unten."});
 </script>
 
 </body>
