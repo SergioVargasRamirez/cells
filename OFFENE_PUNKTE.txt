@@ -77,6 +77,12 @@ M4 basenpaarung.html, Teil 2: 3D des eigenen Moleküls (steht unter der Leiter, 
 - [ ] RNA-Phosphorradius im Modell ca. 10 Å (Literatur ca. 9 Å): gegen 1QC0 prüfen
 - [ ] Mit Touch testen: Ziehen und Zwei-Finger-Zoom im 3D-Bild
 
+M4b doppelhelix.html (neue Seite, unabhängig von Basenpaarung/Transkription)
+- [x] Sequenz per Text, FASTA/Textdatei ablegen, Bausteine ziehen/anklicken; Leiste zeigt beide Stränge (5'/3'), Umsortieren, Entfernen
+- [x] DNA (B-Form), RNA (A-Form) oder DNA-RNA-Hybrid; Beispiele (Dickerson-Dodekamer, TATA-Box, ...); 2 bis 40 Basen
+- [ ] Mit Touch testen (HTML5-Ziehen funktioniert dort nicht; Anklicken der Bausteine ist der Ersatz)
+- [ ] Bei "Nur eine Scheibe" könnte das Bild automatisch auf die Scheibe zoomen
+
 M5 dna-rna.html, Teil 2: Abschluss
 - [ ] Merkmale sortieren (DNA / RNA / beide)
 - [ ] Kurzes Quiz

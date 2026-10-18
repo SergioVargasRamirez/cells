@@ -163,6 +163,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
     <a href="dna-rna.html">DNA und RNA</a>
     <a href="basenpaarung.html">Basenpaarung</a>
     <a href="transkription.html" aria-current="page">Transkription</a>
+    <a href="doppelhelix.html">Doppelhelix in 3D</a>
     <p class="sidenav-group">Über die Seiten</p>
     <a href="quellen.html">Quellen und Danksagung</a>
     <a href="quellen.html#mitmachen">Mitmachen</a>
@@ -276,7 +277,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 (() => {   // Einstellung "Vereinfachte Ansicht" auf allen Seiten gleich halten
   const cb = document.getElementById("einfach");
   try { cb.checked = localStorage.getItem("cells-einfach") === "1"; } catch (e) {}
-  cb.addEventListener("change", () => { try { localStorage.setItem("cells-einfach", cb.checked ? "1" : "0"); } catch (e) {} });
+  cb.addEventListener("change", () => { try { localStorage.setItem("cells-einfach", cb.checked ? "1" : "0"); } catch (e) {} document.dispatchEvent(new Event("einfach-geaendert")); });
 })();
 </script>
 <script>

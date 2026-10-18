@@ -14,6 +14,7 @@ Online: https://cells.biodatum.io · Schwesterprojekt für die Chemie:
 | `index.html` | Startseite mit Karten zu den Werkzeugen, nach Themen gruppiert | von Hand |
 | `dna-rna.html` | DNA und RNA: dNTP/NTP in Zeichnung und 3D, Unterschiede finden (weitere Teile folgen, siehe `OFFENE_PUNKTE.txt`) | von Hand, Daten aus `scripts/nukleotide` |
 | `basenpaarung.html` | DNA-Synthese: neuen Strang aus dNTPs bauen (Richtung 5'→3', Pyrophosphat), Wasserstoffbrücken entdecken, 3D | Gerüst von Hand, Übung in `template/site/paarung.js` |
+| `doppelhelix.html` | Doppelhelix in 3D: beliebige Sequenz eingeben (Text, Datei, Bausteine ziehen), DNA, RNA oder Hybrid | von Hand, Modul `template/site/helix3d.js` |
 | `transkription.html` | Transkription: RNA an einer DNA-Vorlage aufbauen (NTPs, Hybrid-Helix in 3D) | wie `basenpaarung.html` |
 | `quellen.html` | Quellen und Danksagung, Mitmachen (`#mitmachen`) | von Hand |
 | `impressum.html` | Impressum, Haftungsausschluss, Lizenz, Einbetten | von Hand |
