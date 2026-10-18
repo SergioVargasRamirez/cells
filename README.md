@@ -22,6 +22,7 @@ Online: https://cells.biodatum.io · Schwesterprojekt für die Chemie:
 | `schmelztemperatur.html` | Schmelztemperatur: 30-bp-DNA erhitzen, Schmelzkurve (Nächste-Nachbarn-Modell), Tm gegen GC-Anteil | von Hand |
 | `sekundaerstruktur.html` | Helix und Faltblatt: α-Helix, antiparalleles und paralleles β-Faltblatt aus Idealgeometrie in 3D, H-Brücken, Seitenketten, Perlen/Atome/Cartoon | von Hand (`peptid.js`, `cartoon.js`) |
 | `rna-prozessierung.html` | Vom Transkript zur mRNA: Kappe, Spleißen (GU–AG), 3'-Spaltung nach AAUAAA, Poly(A)-Schwanz; Prüfung über das entstehende Protein (MSPLICED) | von Hand |
+| `chromatin.html` | DNA-Verpackung und Zugänglichkeit: Verpackungsleiter, Nucleosom in 3D (1KX5), Chromatin umbauen mit Zeitraffer; Expertenmodus mit Histonmodifikationen und Transkriptionsfaktor | von Hand, Daten aus `scripts/chromatin/export_nucleosom.py` |
 | `rna-typen.html` | mRNA, tRNA, rRNA: Kleeblatt und 3D der Hefe-tRNA-Phe (1EHZ), Anticodon und Wackelpaarung (mit Aufgabe), Ribosom-Schema | von Hand, Daten aus `scripts/rna/export_trna.py` |
 | `proteinstruktur.html` | Von der Sequenz zur Faltung: Ubiquitin (1UBQ) in 3D, Primär-, Sekundär- und Tertiärstruktur, Cartoon, Faltung, hydrophober Kern | von Hand, Daten aus `scripts/protein/export_ubq.py` |
 | `transkription.html` | Transkription: RNA an einer DNA-Vorlage aufbauen (NTPs, Hybrid-Helix in 3D) | wie `basenpaarung.html` |
