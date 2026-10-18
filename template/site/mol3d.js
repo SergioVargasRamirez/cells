@@ -4,6 +4,8 @@
 //
 //   const v = MOL3D.create(canvas, overlayCanvas, {onHover(i), onPick(i)});
 //   v.setScene({atome: [{p:[x,y,z], c:[r,g,b], r:0.3}], bindungen: [{a, b, r:0.1, c:[r,g,b], strich:true}]});
+//   Zusätzlich: scene.flaechen = [{p: [[x,y,z], …] (konvexes Vieleck), c: [r,g,b], rand: [r,g,b]}], scene.flaechenAlpha (Standard 0,38):
+//   durchscheinende Flächen, zum Beispiel für eine Ebene.
 //   v.setClip({n:[0,0,1], d:5, min:2})   // zeigt nur, was min <= dot(n, p) <= d erfüllt (min ist optional); null schaltet aus
 //   v.setLabels([{p:[x,y,z], text:"5'", color:"#fff", bg:"#000"}, {a:[..], b:[..], text:"3,4 Å", linie:true}])
 //   v.setAchsen(true); v.setRotation(R); v.animateTo(R, 600); v.resetView();
@@ -71,7 +73,7 @@ const MOL3D = (() => {
   const FS = `
     precision mediump float;
     varying vec3 vNor; varying vec3 vCol; varying vec3 vWorld;
-    uniform vec4 uClip; uniform float uClipMin;
+    uniform vec4 uClip; uniform float uClipMin; uniform float uAlpha;
     void main(){
       if (uClip.w < 1.0e5 && (dot(uClip.xyz, vWorld) > uClip.w || dot(uClip.xyz, vWorld) < uClipMin)) discard;
       vec3 n = normalize(vNor);
@@ -80,7 +82,7 @@ const MOL3D = (() => {
       float d = max(dot(n, L), 0.0), sp = pow(max(dot(n, normalize(L + vec3(0.0, 0.0, 1.0))), 0.0), 40.0);
       vec3 c = vCol * (0.38 + 0.72 * d) + vec3(0.28) * sp;
       if (!gl_FrontFacing) c *= 0.7;
-      gl_FragColor = vec4(c, 1.0);
+      gl_FragColor = vec4(c, uAlpha);
     }`;
 
   function create(canvas, overlay, opts){
@@ -97,8 +99,9 @@ const MOL3D = (() => {
     gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
     const loc = {aPos: gl.getAttribLocation(prog, "aPos"), aNor: gl.getAttribLocation(prog, "aNor"), aCol: gl.getAttribLocation(prog, "aCol"),
-                 uMVP: gl.getUniformLocation(prog, "uMVP"), uRot: gl.getUniformLocation(prog, "uRot"), uClip: gl.getUniformLocation(prog, "uClip"), uClipMin: gl.getUniformLocation(prog, "uClipMin")};
+                 uMVP: gl.getUniformLocation(prog, "uMVP"), uRot: gl.getUniformLocation(prog, "uRot"), uClip: gl.getUniformLocation(prog, "uClip"), uClipMin: gl.getUniformLocation(prog, "uClipMin"), uAlpha: gl.getUniformLocation(prog, "uAlpha")};
     const bufs = {pos: gl.createBuffer(), nor: gl.createBuffer(), col: gl.createBuffer(), n: 0};
+    const flb = {pos: gl.createBuffer(), nor: gl.createBuffer(), col: gl.createBuffer(), n: 0};   // durchscheinende Flächen
 
     const HOME_ZOOM = opts.zoom || 1;
     const S = {scene: {atome: [], bindungen: []}, R: I3(), R0: I3(), zoom: HOME_ZOOM, center: [0, 0, 0], radius: 5, clip: null,
@@ -115,7 +118,9 @@ const MOL3D = (() => {
       }
       const solid = bindungen.filter(b => !b.strich);
       const SP = atome.length > 700 ? SPHERE_LOW : SPHERE;
-      const nV = atome.length * SP.length + solid.length * 2 * CYL.length + dashes.length * CYL.length;
+      const flaechen = S.scene.flaechen || [];
+      const kanten = flaechen.reduce((n, f) => n + (f.rand ? f.p.length : 0), 0);
+      const nV = atome.length * SP.length + solid.length * 2 * CYL.length + dashes.length * CYL.length + kanten * CYL.length;
       const pos = new Float32Array(nV * 3), nor = new Float32Array(nV * 3), col = new Float32Array(nV * 3);
       let o = 0;
       const put = (px, py, pz, nx, ny, nz, c) => { pos[o] = px; pos[o + 1] = py; pos[o + 2] = pz; nor[o] = nx; nor[o + 1] = ny; nor[o + 2] = nz; col[o] = c[0]; col[o + 1] = c[1]; col[o + 2] = c[2]; o += 3; };
@@ -144,8 +149,22 @@ const MOL3D = (() => {
         const A = atome[b.a].p, B = atome[b.b].p, at = t => [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t];
         cyl(at(t0), at(t1), b.r || 0.07, b.c || [0.5, 0.5, 0.5]);
       }
+      for (const f of flaechen) if (f.rand) for (let i = 0; i < f.p.length; i++) cyl(f.p[i], f.p[(i + 1) % f.p.length], f.randR || 0.035, f.rand);
       for (const [k, arr] of [["pos", pos], ["nor", nor], ["col", col]]){ gl.bindBuffer(gl.ARRAY_BUFFER, bufs[k]); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW); }
       bufs.n = nV;
+      // Flächen (konvexe Vielecke) als Dreiecksfächer
+      let nf = 0; for (const f of flaechen) nf += (f.p.length - 2) * 3;
+      const fp = new Float32Array(nf * 3), fn = new Float32Array(nf * 3), fc = new Float32Array(nf * 3); let q = 0;
+      for (const f of flaechen){
+        const a = f.p[0], b = f.p[1], c = f.p[2];
+        const u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], v = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+        let n = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]]; const l = Math.hypot(...n) || 1; n = [n[0] / l, n[1] / l, n[2] / l];
+        for (let k = 1; k < f.p.length - 1; k++) for (const P of [f.p[0], f.p[k], f.p[k + 1]]){
+          fp[q] = P[0]; fp[q + 1] = P[1]; fp[q + 2] = P[2]; fn[q] = n[0]; fn[q + 1] = n[1]; fn[q + 2] = n[2]; fc[q] = f.c[0]; fc[q + 1] = f.c[1]; fc[q + 2] = f.c[2]; q += 3;
+        }
+      }
+      for (const [k, arr] of [["pos", fp], ["nor", fn], ["col", fc]]){ gl.bindBuffer(gl.ARRAY_BUFFER, flb[k]); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW); }
+      flb.n = nf;
     }
 
     function fit(){
@@ -192,7 +211,15 @@ const MOL3D = (() => {
       gl.uniformMatrix4fv(loc.uMVP, false, mvp); gl.uniformMatrix4fv(loc.uRot, false, rot);
       const c = S.clip; gl.uniform4f(loc.uClip, c ? c.n[0] : 0, c ? c.n[1] : 0, c ? c.n[2] : 0, c ? c.d : 1e6);
       gl.uniform1f(loc.uClipMin, c && c.min !== undefined ? c.min : -1e6);
+      gl.uniform1f(loc.uAlpha, 1);
       gl.drawArrays(gl.TRIANGLES, 0, bufs.n);
+      if (flb.n){   // durchscheinende Flächen zuletzt, ohne Tiefenschreiben
+        for (const [name, key] of [["aPos", "pos"], ["aNor", "nor"], ["aCol", "col"]]){ gl.bindBuffer(gl.ARRAY_BUFFER, flb[key]); gl.vertexAttribPointer(loc[name], 3, gl.FLOAT, false, 0, 0); }
+        gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); gl.depthMask(false);
+        gl.uniform1f(loc.uAlpha, S.scene.flaechenAlpha || 0.38);
+        gl.drawArrays(gl.TRIANGLES, 0, flb.n);
+        gl.depthMask(true); gl.disable(gl.BLEND);
+      }
       S.screen = S.scene.atome.map(a => project(a.p, mvp));
       overlayDraw(mvp);
     }

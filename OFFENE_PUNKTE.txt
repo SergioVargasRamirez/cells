@@ -92,11 +92,19 @@ G1 code-experiment.html (Der Code im Reagenzglas), G2 codon-generator.html (18.1
 - [ ] Mit Touch testen (Walzen ziehen, Codons ziehen)
 - [ ] Nächste Schritte: Proteinebene (Aminosäuren, Peptidbindung, Primär-/Sekundär-/Tertiärstruktur)
 
+P1 peptidbindung.html (Peptidbindung, Ebene), P2 Proteinstruktur Primär bis Tertiär (18.10.2026)
+- [x] P1 peptidbindung.html: Reaktion (2D, Regler), Peptidebene in 3D (durchscheinend, Aufsicht, Kantenblick), Drehversuch mit Federung und Energie (Modell), Resonanz und Bindungslängen, Kette aus Ebenen (φ/ψ, Wasserstoffbrücken); Test: node scripts/protein/test_peptid.js
+- [ ] P1 gegenlesen: Energiewerte (Barriere ca. 20 kcal/mol, trans-cis 2 bis 3 kcal/mol), Aussagen zu Prolin und zum Ribosom
+- [ ] P1 Touch testen (Drehregler, 3D)
+- [ ] P2 proteinstruktur.html: Primär- bis Tertiärstruktur (Ubiquitin 1UBQ, Sequenz, Sekundärstruktur mit φ/ψ-Werkstatt und Ramachandran-Diagramm, Faltung, hydrophober Kern)
+
 M5 dna-rna.html, Teil 2: Abschluss
 - [ ] Merkmale sortieren (DNA / RNA / beide)
 - [ ] Kurzes Quiz
 - [ ] Schalter Einfach / Ausführlich (Mittelstufe vs. Oberstufe)
 - [ ] "Modell und Grenzen"; Seite in Menü, Startseite, README, Quellen
+
+VORGEMERKT (Wunsch vom 18.10.2026, später wieder aufnehmen): chargaff.html und schmelztemperatur.html (M6, M7 unten)
 
 M6 chargaff.html
 - [ ] Verborgene zufällige Doppelstrang-DNA, Hydrolyse zu Nukleotiden, vier Röhrchen mit Prozentwerten
