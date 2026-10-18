@@ -8,7 +8,8 @@ const HELIX_BAU = (() => {
   const PHOSPHAT = new Set(["P", "OP1", "OP2"]);
 
   // Gegenstrang, 5'→3' gelesen
-  const gegenstrang = (seq, form) => [...seq].reverse().map(b => KOMP[form][b]).join("");
+  const KOMP_HYBRID = {A: "U", T: "A", G: "C", C: "G"};   // DNA-Matrize (T) → RNA-Strang
+  const gegenstrang = (seq, form, hybrid) => [...seq].reverse().map(b => (hybrid ? KOMP_HYBRID : KOMP[form])[b]).join("");
   const mul = (R, p) => [R[0][0]*p[0] + R[0][1]*p[1] + R[0][2]*p[2],
                          R[1][0]*p[0] + R[1][1]*p[1] + R[1][2]*p[2],
                          R[2][0]*p[0] + R[2][1]*p[1] + R[2][2]*p[2]];
@@ -17,25 +18,27 @@ const HELIX_BAU = (() => {
 
   // Rückgabe: {atome, bindungen, n, form, strang1, strang2}
   // atom: {strang, bp, name, el, base, pos, art: "base"|"ruecken", rolle: "p5"|"oh3"|null}
-  function bauen(seq, form) {
-    const H = HELIX[form], n = seq.length, atome = [], bindungen = [], index = {};
-    const bpIdx = [];
+  // opt.hybrid: Strang 1 ist DNA (mit T, ohne 2'-OH), Strang 2 RNA; beide in der A-Form (form "RNA").
+  function bauen(seq, form, opt){
+    const hybrid = !!(opt && opt.hybrid), H = HELIX[form], n = seq.length, atome = [], bindungen = [], index = {};
     for (let k = 0; k < n; k++) {
       const Rk = mm(rz(k * H.drehung), H.R);
       const Ok = mul(rz(k * H.drehung), H.O); Ok[2] += k * H.anstieg;
       for (const strang of [1, 2]) {
-        const b = strang === 1 ? seq[k] : KOMP[form][seq[k]];
-        const vorl = H.vorlage[b], von = atome.length;
-        for (const [name, el, x, y, z] of vorl.atome) {
+        const b = strang === 1 ? seq[k] : (hybrid ? KOMP_HYBRID : KOMP[form])[seq[k]];
+        const vorl = H.vorlage[b], neu = [];
+        vorl.atome.forEach(([name, el, x, y, z], i) => {
+          if (hybrid && strang === 1 && name === "O2'"){ neu[i] = -1; return; }   // DNA: Desoxyribose
           const q = strang === 2 ? [x, -y, -z] : [x, y, z];
           const p = mul(Rk, q);
           const frei5 = PHOSPHAT.has(name) && ((strang === 1 && k === 0) || (strang === 2 && k === n - 1));
           const frei3 = name === "O3'" && ((strang === 1 && k === n - 1) || (strang === 2 && k === 0));
           index[strang + ":" + k + ":" + name] = atome.length;
+          neu[i] = atome.length;
           atome.push({strang, bp: k, name, el, base: b, pos: [p[0] + Ok[0], p[1] + Ok[1], p[2] + Ok[2]],
                       art: RUECKEN.has(name) ? "ruecken" : "base", rolle: frei5 ? "p5" : frei3 ? "oh3" : null});
-        }
-        for (const [i, j] of vorl.bindungen) bindungen.push([von + i, von + j]);
+        });
+        for (const [i, j] of vorl.bindungen) if (neu[i] >= 0 && neu[j] >= 0) bindungen.push([neu[i], neu[j]]);
       }
     }
     // Phosphodiesterbindungen: O3' des Vorgängers an P des Nachfolgers
@@ -43,7 +46,7 @@ const HELIX_BAU = (() => {
       bindungen.push([index["1:" + k + ":O3'"], index["1:" + (k + 1) + ":P"]]);
       bindungen.push([index["2:" + (k + 1) + ":O3'"], index["2:" + k + ":P"]]);
     }
-    return {atome, bindungen, n, form, strang1: seq, strang2: gegenstrang(seq, form), index};
+    return {atome, bindungen, n, form, strang1: seq, strang2: gegenstrang(seq, form, hybrid), index};
   }
 
   const abstand = (a, b) => Math.hypot(a.pos[0] - b.pos[0], a.pos[1] - b.pos[1], a.pos[2] - b.pos[2]);

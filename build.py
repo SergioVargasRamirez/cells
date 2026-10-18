@@ -91,7 +91,7 @@ def sync_font_and_nav():
 
 SNIPPETS = [("PALETTE", "palette.js", "Farbtabelle"), ("NUC", "nuc-data.js", "Nukleotid-Daten"),
             ("HELIX", "helix.js", "Helix-Bau"), ("MOL3D", "mol3d.js", "3D-Ansicht"),
-            ("DNA2D", "dna2d.js", "Strukturformeln")]
+            ("DNA2D", "dna2d.js", "Strukturformeln"), ("PAARUNG", "paarung.js", "Basenpaarung")]
 
 
 def sync_snippet(tag, source, label):

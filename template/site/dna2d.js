@@ -202,7 +202,7 @@ const DNA2D = (() => {
 
   function kachel(b, f, seite, opt){
     opt = opt || {};
-    const P = PALETTE.get, rechts = seite === "r", pl = plan(b, f), A = {}, ink = "currentColor";
+    const P = PALETTE.get, rechts = seite === "r", pl = plan(b, opt.geometrie || f), A = {}, ink = "currentColor";   // f: Zucker (DNA/RNA), geometrie: woher die Basenkoordinaten stammen
     const c1 = pl.pos["C1'"], sp = rechts ? -1 : 1, R = 0.8507;
     for (const n of BASE_ATOME[b]) A[n] = [sp * (pl.pos[n][0] - c1[0]) / SK, (pl.pos[n][1] - c1[1]) / SK];
     A["C1'"] = [0, 0];
@@ -219,7 +219,7 @@ const DNA2D = (() => {
       const ctr = [R, 0];
       A["C2'"] = dir(ctr[0], ctr[1], R, 108); A["C3'"] = dir(ctr[0], ctr[1], R, 36);
       A["C4'"] = dir(ctr[0], ctr[1], R, -36); A["O4'"] = dir(ctr[0], ctr[1], R, -108);
-      A["X2"] = dir(A["C2'"][0], A["C2'"][1], 0.9, 108);
+      A["X2"] = dir(A["C2'"][0], A["C2'"][1], 1.0, 85);
       A["O3'"] = dir(A["C3'"][0], A["C3'"][1], 1, 75);
       A["C5'"] = dir(A["C4'"][0], A["C4'"][1], 1, -60);
       A["O5'"] = dir(A["C5'"][0], A["C5'"][1], 1, -90); A["P"] = dir(A["O5'"][0], A["O5'"][1], 1, -90);
@@ -280,8 +280,18 @@ const DNA2D = (() => {
     { const [p, q] = kurz(A["C4'"], A["C5'"], false, false); line(p, q, P("zucker"), 0.08); }
     { const [p, q] = kurz(A["C5'"], A["O5'"], false, true); line(p, q, P("zucker"), 0.08); label("O5'", "O", farbe.p5); }
     { const [p, q] = kurz(A["O5'"], A["P"], true, true); line(p, q, farbe.p5, 0.07); }
-    S.push(`<circle cx="${A["P"][0].toFixed(3)}" cy="${(-A["P"][1]).toFixed(3)}" r="0.36" fill="${farbe.p5}"/>`);
-    T.push(`<text x="${A["P"][0].toFixed(3)}" y="${(-A["P"][1]).toFixed(3)}" text-anchor="middle" dominant-baseline="central" font-size="0.46" font-weight="800" fill="#fff">P</text>`);
+    const pScheibe = n => {
+      S.push(`<circle cx="${A[n][0].toFixed(3)}" cy="${(-A[n][1]).toFixed(3)}" r="0.36" fill="${farbe.p5}"/>`);
+      T.push(`<text x="${A[n][0].toFixed(3)}" y="${(-A[n][1]).toFixed(3)}" text-anchor="middle" dominant-baseline="central" font-size="0.46" font-weight="800" fill="#fff">P</text>`);
+    };
+    if (opt.tri){   // Triphosphat: Pα–O–Pβ–O–Pγ als Zickzack nach rechts (nur für die rechte Kachel gedacht)
+      A["O3A"] = dir(A["P"][0], A["P"][1], 1, -30); A["PB"] = dir(A["O3A"][0], A["O3A"][1], 1, 30);
+      A["O3B"] = dir(A["PB"][0], A["PB"][1], 1, -30); A["PG"] = dir(A["O3B"][0], A["O3B"][1], 1, 30);
+      for (const [a, c] of [["P", "O3A"], ["O3A", "PB"], ["PB", "O3B"], ["O3B", "PG"]]) line(A[a], A[c], farbe.p5, 0.07);
+      for (const n of ["O3A", "O3B"]) S.push(`<circle cx="${A[n][0].toFixed(3)}" cy="${(-A[n][1]).toFixed(3)}" r="0.13" fill="${farbe.p5}"/>`);
+      pScheibe("PB"); pScheibe("PG");
+    }
+    pScheibe("P");
     const st = HB_STELLEN[b];
     return {svg: Z.join("") + S.join("") + T.join(""), atome: A, mitte, don: st.don, akz: st.akz, base: b, seite};
   }

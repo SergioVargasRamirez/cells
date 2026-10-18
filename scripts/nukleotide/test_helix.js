@@ -55,5 +55,28 @@ for (const [form, alph] of [["DNA", "ACGT"], ["RNA", "ACGU"]]) {
   pruefe(nah(linkMin, 1.6, 0.05) && nah(linkMax, 1.6, 0.05), form + " O3'-P-Abstand");
   pruefe(hbMin > 2.4 && hbMax < 3.3, form + " H-Brücken-Abstände");
 }
+// DNA-RNA-Hybrid (Transkription): Matrize DNA mit T ohne 2'-OH, neuer Strang RNA, A-Form
+{
+  let hbMin = 9, hbMax = 0, linkMin = 9, linkMax = 0;
+  for (let t = 0; t < 30; t++) {
+    const seq = zufall("ACGT", 12, 5 + t * 17), d = HB.bauen(seq, "RNA", {hybrid: true}), id = d.index;
+    pruefe(!d.atome.some(a => a.strang === 1 && a.name === "O2'"), "Hybrid: DNA-Strang ohne 2'-OH");
+    pruefe(d.atome.some(a => a.strang === 2 && a.name === "O2'"), "Hybrid: RNA-Strang mit 2'-OH");
+    const K = {A: "U", T: "A", G: "C", C: "G"};
+    for (let k = 0; k < 11; k++) for (const [a, b] of [["1:" + k + ":O3'", "1:" + (k + 1) + ":P"], ["2:" + (k + 1) + ":O3'", "2:" + k + ":P"]]) {
+      const l = HB.abstand(d.atome[id[a]], d.atome[id[b]]); linkMin = Math.min(linkMin, l); linkMax = Math.max(linkMax, l);
+    }
+    for (let k = 0; k < 12; k++) {
+      const b1 = seq[k], b2 = K[b1], key = (b1 === "T" ? "A" : b1) + (b2 === "U" ? "U" : b2);
+      const lst = {AU: [["N1", "N3"], ["N6", "O4"]], TA: [["N3", "N1"], ["O4", "N6"]], GC: [["N1", "N3"], ["N2", "O2"], ["O6", "N4"]], CG: [["N3", "N1"], ["O2", "N2"], ["N4", "O6"]]}[b1 + b2];
+      pruefe(!!lst, "Hybrid: Paar " + b1 + b2);
+      if (!lst) continue;
+      for (const [x, y] of lst) { const l = HB.abstand(d.atome[id["1:" + k + ":" + x]], d.atome[id["2:" + k + ":" + y]]); hbMin = Math.min(hbMin, l); hbMax = Math.max(hbMax, l); }
+    }
+  }
+  console.log(`Hybrid: O3'-P ${linkMin.toFixed(2)}–${linkMax.toFixed(2)} Å, H-Brücken ${hbMin.toFixed(2)}–${hbMax.toFixed(2)} Å`);
+  pruefe(nah(linkMin, 1.6, 0.05) && nah(linkMax, 1.6, 0.05), "Hybrid O3'-P-Abstand");
+  pruefe(hbMin > 2.4 && hbMax < 3.4, "Hybrid H-Brücken-Abstände");
+}
 console.log(fehler ? fehler + " Fehler" : "OK.");
 process.exit(fehler ? 1 : 0);

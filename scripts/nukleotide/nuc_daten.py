@@ -121,6 +121,16 @@ def helixdaten():
         H.FORM[form] = {"theta": theta, "h": h, "Rb": Rb, "Ob": Ob, "vorlage": H.gemeinsames_geruest(kand, rna)}
         H.lage_anpassen(form, *lehrbuch[form])
         F = H.FORM[form]
+        if form == "RNA":
+            # Thymin in der A-Form-Geometrie (für DNA-Matrize in einem DNA-RNA-Hybrid): Uracil plus Methylgruppe an C5
+            atome = F["vorlage"]["U"]
+            pos = {n: np.array(p) for n, p in atome.items()}
+            ring = (pos["C4"] + pos["C6"]) / 2
+            ri = pos["C5"] - ring
+            ri /= np.linalg.norm(ri)
+            t = dict(atome)
+            t["C7"] = pos["C5"] + 1.50 * ri
+            F["vorlage"]["T"] = t
         vorl = {}
         for b, atome in F["vorlage"].items():
             namen = list(atome)
