@@ -45,11 +45,14 @@ M2 dna-rna.html, Teil 1: Bausteine
 - [ ] Auf echtem Touchgerät und mit Screenreader testen (bisher nur Headless-Chromium)
 
 M3 dna-rna.html, Teil 2: Basenpaarung
-- [ ] Ziehen und Ablegen (auch per Tastatur), Gegenstrang antiparallel, 5'/3'-Beschriftung
-- [ ] 5'-Phosphat und 3'-OH in eigenen Farben
-- [ ] Wasserstoffbrücken erscheinen beim Annähern (2 bei A-T, 3 bei G-C), nirgends vorgesagt
-- [ ] Falsche Paare rasten nicht ein
-- [ ] Schalter DNA/RNA (T <-> U)
+- [x] Ziehen und Ablegen (Zeiger; Tastatur: Nukleotid wählen, dann leeres Feld), Gegenstrang antiparallel, 5'/3'-Beschriftung
+- [x] 5'-Phosphat (magenta) und 3'-OH (cyan) an jedem Nukleotid; Verbindung O3'-P halb cyan, halb magenta
+- [x] Wasserstoffbrücken erscheinen beim Annähern (2 bei A-T/U, 3 bei G-C), nirgends vorgesagt
+- [x] Falsche Paare rasten nicht ein (zu wenige Brücken oder überlappende Purine); Test: scripts/nukleotide/test_paare.js
+- [x] Schalter DNA/RNA (T <-> U, 2'-H <-> 2'-OH), Fragen zur Auswertung (Anzahl Brücken, Gegenstrang 5'->3')
+- [ ] Phosphat-/Zucker-Zeichnung der Kacheln ist schematisch: bei der Prüfung auf Fachfehler achten
+- [ ] Schmale Bildschirme: Zeichnung hat Mindestbreite 640 px und scrollt seitlich
+- [ ] Seite öffnet in "Unterschiede finden"; "Erkunden" rechts daneben (Wunsch 18.10.2026) - erledigt
 
 M4 dna-rna.html, Teil 3: 3D des eigenen Moleküls
 - [ ] Helix aus der selbst gebauten Sequenz

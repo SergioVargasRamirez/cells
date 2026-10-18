@@ -200,5 +200,126 @@ const DNA2D = (() => {
     return {svg, atome: A, breite: x1 - x0, hoehe: y1 - y0};
   }
 
-  return {nukleotid, plan, BASE_ATOME, GLYKO};
+  // ---------------------------------------------------------------------------------------------
+  // Kacheln für die Basenpaarung. Ein Nukleotid mit der Base in echter Geometrie, schematischem Zucker,
+  // 5'-Phosphat (P, magenta) und 3'-OH (cyan). Ursprung (0, 0) ist C1'; y zeigt nach oben.
+  // seite "l": Strang 1 (links; 5' oben, 3' unten). seite "r": Gegenstrang (rechts; Base gespiegelt,
+  // 5' unten, 3' oben). Links und rechts zusammen ergeben genau die Lage der Atome im Basenpaar,
+  // sodass die Wasserstoffbrücken-Partner (Spender/Empfänger) gegenüberliegen.
+  const HB_STELLEN = {   // Wasserstoffbrücken-Spender und -Empfänger an der Watson-Crick-Kante
+    A: {don: ["N6"], akz: ["N1"]}, G: {don: ["N1", "N2"], akz: ["O6"]},
+    C: {don: ["N4"], akz: ["N3", "O2"]}, T: {don: ["N3"], akz: ["O2", "O4"]}, U: {don: ["N3"], akz: ["O2", "O4"]},
+  };
+
+  function kachel(b, f, seite, opt){
+    opt = opt || {};
+    const P = PALETTE.get, rechts = seite === "r", pl = plan(b, f), A = {}, ink = "currentColor";
+    const c1 = pl.pos["C1'"], sp = rechts ? -1 : 1, R = 0.8507;
+    for (const n of BASE_ATOME[b]) A[n] = [sp * (pl.pos[n][0] - c1[0]) / SK, (pl.pos[n][1] - c1[1]) / SK];
+    A["C1'"] = [0, 0];
+    const N = A[GLYKO[b]], beta = Math.atan2(N[1], N[0]) * 180 / Math.PI;
+    if (!rechts){            // Ring unten links, C3' unten (3'-Ende unten), C4' links, 5'-Kette nach oben
+      const ctr = dir(0, 0, -R, beta);
+      A["C2'"] = dir(ctr[0], ctr[1], R, beta - 72); A["C3'"] = dir(ctr[0], ctr[1], R, beta - 144);
+      A["C4'"] = dir(ctr[0], ctr[1], R, beta - 216); A["O4'"] = dir(ctr[0], ctr[1], R, beta - 288);
+      A["X2"] = dir(A["C2'"][0], A["C2'"][1], 0.9, beta - 72);
+      A["O3'"] = dir(A["C3'"][0], A["C3'"][1], 1, beta - 144);
+      A["C5'"] = dir(A["C4'"][0], A["C4'"][1], 1, beta - 216);
+      A["O5'"] = dir(A["C5'"][0], A["C5'"][1], 1, 100); A["P"] = dir(A["O5'"][0], A["O5'"][1], 1, 85);
+    } else {                 // Ring rechts von C1', C3' oben (3'-Ende oben), C4' unten, 5'-Kette nach unten
+      const ctr = [R, 0];
+      A["C2'"] = dir(ctr[0], ctr[1], R, 108); A["C3'"] = dir(ctr[0], ctr[1], R, 36);
+      A["C4'"] = dir(ctr[0], ctr[1], R, -36); A["O4'"] = dir(ctr[0], ctr[1], R, -108);
+      A["X2"] = dir(A["C2'"][0], A["C2'"][1], 0.9, 108);
+      A["O3'"] = dir(A["C3'"][0], A["C3'"][1], 1, 75);
+      A["C5'"] = dir(A["C4'"][0], A["C4'"][1], 1, -60);
+      A["O5'"] = dir(A["C5'"][0], A["C5'"][1], 1, -90); A["P"] = dir(A["O5'"][0], A["O5'"][1], 1, -90);
+    }
+    const farbe = {base: P(b), p5: P("p5"), oh3: P("oh3")};
+    const S = [], T = [], Z = [];
+    const xy = q => q[0].toFixed(3) + "," + (-q[1]).toFixed(3);
+    const line = (a, c, col, w) => S.push(`<line x1="${a[0].toFixed(3)}" y1="${(-a[1]).toFixed(3)}" x2="${c[0].toFixed(3)}" y2="${(-c[1]).toFixed(3)}" stroke="${col}" stroke-width="${w || 0.07}" stroke-linecap="round"/>`);
+    const kurz = (a, c, ta, tc) => {
+      const dx = c[0] - a[0], dy = c[1] - a[1], L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+      return [[a[0] + (ta ? 0.3 : 0) * ux, a[1] + (ta ? 0.3 : 0) * uy], [c[0] - (tc ? 0.3 : 0) * ux, c[1] - (tc ? 0.3 : 0) * uy]];
+    };
+    const doppel = (a, c, ring) => {
+      const dx = c[0] - a[0], dy = c[1] - a[1], L = Math.hypot(dx, dy);
+      let nx = -dy / L, ny = dx / L;
+      if (ring){
+        const m = [(a[0] + c[0]) / 2, (a[1] + c[1]) / 2];
+        if (nx * (ring[0] - m[0]) + ny * (ring[1] - m[1]) < 0){ nx = -nx; ny = -ny; }
+        return [[a[0] + nx * 0.17 + dx * 0.12, a[1] + ny * 0.17 + dy * 0.12], [c[0] + nx * 0.17 - dx * 0.12, c[1] + ny * 0.17 - dy * 0.12]];
+      }
+      return [[a[0] + nx * 0.07, a[1] + ny * 0.07], [c[0] + nx * 0.07, c[1] + ny * 0.07]];
+    };
+    const label = (n, text, col, extra) => {
+      const [x, y] = A[n], w = 0.34 * text.replace(/[\d⁻]/g, "").length + (/[\d⁻]/.test(text) ? 0.2 : 0) + 0.12;
+      // Bei der rechten Kachel stehen mehrbuchstabige Beschriftungen nach links, damit sie nicht ins Paar ragen
+      const links = rechts && text.length > 1 && !/^O⁻?$/.test(text);
+      Z.push(`<rect x="${(links ? x - w + 0.28 : x - 0.28).toFixed(3)}" y="${(-y - 0.3).toFixed(3)}" width="${w.toFixed(3)}" height="0.6" rx="0.22" fill="var(--surface)"/>`);
+      T.push(`<text x="${(links ? x + 0.17 : x - 0.17).toFixed(3)}" y="${(-y).toFixed(3)}" text-anchor="${links ? "end" : "start"}" dominant-baseline="central" font-size="0.5" font-weight="600" fill="${col}"${extra || ""}>${fmt(text)}</text>`);
+    };
+    // Hintergrundfläche der Base
+    Z.push(`<polygon points="${hull(BASE_ATOME[b].map(n => A[n])).map(xy).join(" ")}" fill="${farbe.base}" fill-opacity="0.3" stroke="${farbe.base}" stroke-opacity="0.3" stroke-width="0.85" stroke-linejoin="round"/>`);
+    const sechser = ["N1", "C2", "N3", "C4", "C5", "C6"].map(m => A[m]);
+    const mitte = [sechser.reduce((q, p) => q + p[0], 0) / 6, sechser.reduce((q, p) => q + p[1], 0) / 6];
+    const BL = BESCHRIFTUNG[b], istDoppelt = (a, c) => DOPPELT[b].some(([x, y]) => (x === a && y === c) || (x === c && y === a));
+    const imRing = new Set(["N1", "C2", "N3", "C4", "C5", "C6", "N7", "C8", "N9"]), fuenf = ["C4", "C5", "N7", "C8", "N9"];
+    for (const [a, c] of pl.bind){
+      if (a === "C1'" || c === "C1'"){ const [p, q] = kurz(A["C1'"], A[GLYKO[b]], false, BL[GLYKO[b]]); line(p, q, ink); continue; }
+      const [p, q] = kurz(A[a], A[c], BL[a], BL[c]);
+      line(p, q, ink);
+      if (istDoppelt(a, c)){
+        const ringB = imRing.has(a) && imRing.has(c);
+        const z5 = ringB && fuenf.includes(a) && fuenf.includes(c) && !(["C4", "C5"].includes(a) && ["C4", "C5"].includes(c));
+        const zentrum = z5 ? [fuenf.reduce((q, n) => q + A[n][0], 0) / 5, fuenf.reduce((q, n) => q + A[n][1], 0) / 5] : mitte;
+        const [p2, q2] = doppel(p, q, ringB ? zentrum : null);
+        line(p2, q2, ink);
+      }
+    }
+    for (const n of BASE_ATOME[b]) if (BL[n]) label(n, BL[n], ink);
+    // Zucker (schematisch), 2'-Substituent klein
+    for (const [a, c] of [["C1'", "C2'"], ["C2'", "C3'"], ["C3'", "C4'"], ["C4'", "O4'"], ["O4'", "C1'"]]){
+      const [p, q] = kurz(A[a], A[c], a === "O4'", c === "O4'"); line(p, q, P("zucker"), 0.08);
+    }
+    label("O4'", "O", ink);
+    { const [p, q] = kurz(A["C2'"], A["X2"], false, true); line(p, q, P("zucker"), 0.08); label("X2", f === "RNA" ? "OH" : "H", P("oh2"), ' font-weight="700"'); }
+    // 3'-OH (cyan) und 5'-Phosphat (magenta)
+    const frei3 = opt.frei3 !== false;
+    { const [p, q] = kurz(A["C3'"], A["O3'"], false, true); line(p, q, farbe.oh3, 0.12);
+      if (frei3) label("O3'", "OH", farbe.oh3, ' font-weight="700"');
+      else S.push(`<circle cx="${A["O3'"][0].toFixed(3)}" cy="${(-A["O3'"][1]).toFixed(3)}" r="0.15" fill="${farbe.oh3}"/>`); }
+    { const [p, q] = kurz(A["C4'"], A["C5'"], false, false); line(p, q, P("zucker"), 0.08); }
+    { const [p, q] = kurz(A["C5'"], A["O5'"], false, true); line(p, q, P("zucker"), 0.08); label("O5'", "O", farbe.p5); }
+    { const [p, q] = kurz(A["O5'"], A["P"], true, true); line(p, q, farbe.p5, 0.12); }
+    S.push(`<circle cx="${A["P"][0].toFixed(3)}" cy="${(-A["P"][1]).toFixed(3)}" r="0.36" fill="${farbe.p5}"/>`);
+    T.push(`<text x="${A["P"][0].toFixed(3)}" y="${(-A["P"][1]).toFixed(3)}" text-anchor="middle" dominant-baseline="central" font-size="0.46" font-weight="800" fill="#fff">P</text>`);
+    const st = HB_STELLEN[b];
+    return {svg: Z.join("") + S.join("") + T.join(""), atome: A, mitte, don: st.don, akz: st.akz, base: b, seite};
+  }
+
+  // Wasserstoffbrücken zwischen einer linken und einer rechten Kachel (beide in derselben Zeichenebene).
+  // posL und posR sind die Orte der C1'-Atome. Eine Brücke zählt, wenn Spender und Empfänger zwischen
+  // 2,4 und 3,3 Å auseinanderliegen. Rückgabe: {liste: [{von, nach, laenge}], klirr: kleinster Abstand
+  // zweier Basenatome in Å}. Unter 2,3 Å überlappen die Basen (zum Beispiel zwei Purine): keine Paarung.
+  const HB_MIN = 2.4, HB_MAX = 3.3, KLIRR = 2.3;
+  function bruecken(links, posL, rechts, posR){
+    const liste = [], ort = (t, n, o) => [t.atome[n][0] + o[0], t.atome[n][1] + o[1]];
+    const test = (a, b) => {
+      const p = ort(links, a, posL), q = ort(rechts, b, posR), d = Math.hypot(p[0] - q[0], p[1] - q[1]) * SK;
+      if (d >= HB_MIN && d <= HB_MAX) liste.push({von: p, nach: q, laenge: d, a, b});
+    };
+    for (const a of links.don) for (const b of rechts.akz) test(a, b);
+    for (const a of links.akz) for (const b of rechts.don) test(a, b);
+    let klirr = 99;
+    for (const a of BASE_ATOME[links.base]) for (const b of BASE_ATOME[rechts.base]){
+      const p = ort(links, a, posL), q = ort(rechts, b, posR);
+      klirr = Math.min(klirr, Math.hypot(p[0] - q[0], p[1] - q[1]) * SK);
+    }
+    return {liste, klirr, passt: klirr >= KLIRR && liste.length >= 2};
+  }
+
+  return {nukleotid, kachel, bruecken, plan, BASE_ATOME, GLYKO, SK};
+
 })();
