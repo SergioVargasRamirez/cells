@@ -166,6 +166,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,canvas:focus-visi
 .zelle{display:flex;flex-direction:column;gap:2px}
 button.eintrag{display:flex;justify-content:space-between;align-items:center;gap:4px;height:25px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--muted);padding:0 5px;font:inherit;cursor:pointer;text-align:left}
 button.eintrag .cd{font-family:ui-monospace,"SF Mono",Consolas,monospace;font-weight:700;letter-spacing:.04em}
+button.eintrag:not(.da){background:color-mix(in srgb, var(--muted) 14%, var(--surface));border-style:dashed;opacity:.62}
 button.eintrag.da{color:var(--ink);font-weight:700}
 button.eintrag.jetzt{outline:3px solid var(--accent);outline-offset:1px}
 button.eintrag.gleich{box-shadow:0 0 0 2px var(--accent)}
