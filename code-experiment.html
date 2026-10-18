@@ -301,7 +301,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
   <main>
     <section class="schritt" id="s-versuch">
       <h2>Versuch und Auswertung</h2>
-      <p>Im Reagenzglas steckt ein zellfreies System aus Ribosomen, tRNAs, Enzymen und Aminosäuren, aber ohne eigene mRNA. Gib eine künstliche mRNA hinein. Das System übersetzt sie in allen drei Leserahmen, und du siehst, welche Aminosäuren in welcher Reihenfolge entstehen. Daraus kannst du ableiten, welche Codons für welche Aminosäure stehen. Nicht jede mRNA lässt sich herstellen, und die Tabelle hat nur acht der zwanzig Aminosäuren.</p>
+      <p>Im Reagenzglas steckt ein zellfreies System aus Ribosomen, tRNAs, Enzymen und Aminosäuren, aber ohne eigene mRNA. Gib eine künstliche mRNA hinein. Das System übersetzt sie in allen drei Leserahmen, und du siehst, welche Aminosäuren entstehen. Daraus kannst du ableiten, welche Codons für welche Aminosäure stehen. Nicht jede mRNA lässt sich herstellen, und die Tabelle hat nur acht der zwanzig Aminosäuren.</p>
       <div class="cx">
         <div>
           <div class="karte">
@@ -337,7 +337,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
           </div>
           <div class="karte">
             <h3>Protokoll</h3>
-            <div class="logwrap"><table class="logtab" id="logtab"><thead><tr><th>Nr.</th><th>mRNA</th><th>Polypeptid</th></tr></thead><tbody></tbody></table></div>
+            <div class="logwrap"><table class="logtab" id="logtab"><thead><tr><th>Nr.</th><th>mRNA</th><th>Aminosäuren</th></tr></thead><tbody></tbody></table></div>
             <p class="klein" id="loginfo">Noch kein Versuch.</p>
           </div>
         </div>
@@ -363,7 +363,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       <li>Die Tabelle zeigt acht der zwanzig Aminosäuren und 26 ihrer Codons. Der Rest des genetischen Codes ist weggelassen. Arginin hat in Wirklichkeit sechs Codons; AGA und AGG fehlen hier, damit jede Aminosäure mit vier Plätzen auskommt. Mit einer eigenen mRNA kannst du AGA oder AGG trotzdem ausprobieren: Die Kammer zeigt dann Arg.</li>
       <li>Die Versuche folgen den historischen Experimenten (Nirenberg und Matthaei 1961: Poly-U ergibt Polyphenylalanin; Khorana in den 1960er Jahren: sich wiederholende Sequenzen mit zwei, drei oder vier Nucleotiden), sind aber vereinfacht. Die Ergebnisse stammen aus dem heute bekannten Code, nicht aus Messungen. In den echten Versuchen war die Zuordnung zudem mühsamer und brauchte weitere Methoden, zum Beispiel die Bindung von Triplets an Ribosomen.</li>
       <li>Aminosäuren außerhalb der acht gewählten erscheinen als „?“. Poly-G ist grundsätzlich nicht herstellbar, weil es sich zu Vierersträngen zusammenlagert.</li>
-      <li>Das zellfreie System kann an jeder Stelle der Wiederholung beginnen, ohne Startcodon: Jeder Leserahmen liefert ein eigenes Polypeptid (gleiche Produkte zählen einmal). Das geht im Reagenzglas bei hoher Magnesiumkonzentration; in der Zelle beginnt die Translation am Startcodon AUG und ist durch die Stopp-Codons begrenzt. Hier ist die Zahl der gezeigten Aminosäuren auf die ersten 24 Nucleotide begrenzt.</li>
+      <li>Das zellfreie System kann an jeder Stelle der Wiederholung beginnen, ohne Startcodon: Alle Leserahmen tragen bei, und angezeigt wird die Liste der entstandenen Aminosäuren (mit Häufigkeit), nicht die Reihenfolge in einer Kette. Das geht im Reagenzglas bei hoher Magnesiumkonzentration; in der Zelle beginnt die Translation am Startcodon AUG und ist durch die Stopp-Codons begrenzt. Hier ist die Zahl der gezeigten Aminosäuren auf die ersten 24 Nucleotide begrenzt.</li>
     </ul>
   </details>
 </div>
@@ -561,36 +561,35 @@ function bewerte(c){   // was die Kammer für ein Codon liefert
   if (c === "AGA" || c === "AGG") return {aa: "Arg", hinweis: true};
   return {aa: "?"};
 }
-// Ein Ribosom kann an jeder Stelle der Wiederholung einsteigen: Jeder Leserahmen liefert ein eigenes Polypeptid.
-// Rahmen, die nur um eine Verschiebung innerhalb desselben Codon-Kreises voneinander abweichen, liefern dasselbe Produkt und zählen einmal.
-function produkte(a){
-  const u = a.einheit, n = u.length / ggt(u.length, 3), m = u.repeat(12), out = [], gesehen = new Set();
-  for (let f = 0; f < 3; f++){
-    const kreis = Array.from({length: n}, (_, k) => m.slice(f + 3 * k, f + 3 * k + 3));
-    const key = kreis.map((_, r) => kreis.slice(r).concat(kreis.slice(0, r)).join("")).sort()[0];
-    if (gesehen.has(key)) continue; gesehen.add(key);
-    const ue = G.uebersetze(a.mrna, f); out.push({codons: ue.codons, reaktion: ue.codons.map(bewerte)});
-  }
-  return out;
+// Ein Ribosom kann an jeder Stelle der Wiederholung einsteigen, daher kommen alle Codons vor, die sich im Kreis der Wiederholung ergeben.
+// Das Ergebnis ist die Liste der entstandenen Aminosäuren (mit Häufigkeit), nicht die Reihenfolge in einer Kette.
+function ergebnisse(a){
+  const u = a.einheit, m = u.repeat(12), n = u.length / ggt(u.length, 3), codons = [];
+  for (let f = 0; f < 3; f++) for (let k = 0; k < n; k++){ const c = m.slice(f + 3 * k, f + 3 * k + 3); if (!codons.includes(c)) codons.push(c); }
+  const liste = {};
+  codons.forEach(c => { const r = bewerte(c); (liste[r.aa] = liste[r.aa] || {aa: r.aa, n: 0, hinweis: !!r.hinweis}).n++; });
+  const reihe = Object.values(liste).sort((x, y) => (x.aa === "?") - (y.aa === "?") || x.aa.localeCompare(y.aa));
+  return {codons, reihe};
+}
+function aaListe(reihe, neu){
+  const box = document.createElement("div"); box.className = "peptid";
+  reihe.forEach((r, i) => { const c = aaChip(r.aa, neu); if (neu) c.style.animationDelay = (i * 0.12) + "s"; if (r.n > 1) c.textContent += " × " + r.n; box.appendChild(c); });
+  return box;
 }
 function los(){
   const a = S.aktuell; if (!a || S.laeuft) return;
   S.laeuft = true; $("los").disabled = true; $("glas").classList.add("laeuft");
-  const pr = produkte(a);
+  const erg = ergebnisse(a);
   const dauer = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches ? 100 : 1100;
   $("ergebnis").innerHTML = '<p class="klein">Die Reaktion läuft …</p>';
   setTimeout(() => {
     S.laeuft = false; $("glas").classList.remove("laeuft"); $("los").disabled = false;
-    pr.forEach(q => q.reaktion.forEach((r, i) => { if (r.pool && !S.entdeckt.includes(q.codons[i])) S.entdeckt.push(q.codons[i]); }));
-    S.log.unshift({nr: S.log.length + 1, name: a.name, mrna: a.mrna, produkte: pr.map(q => q.reaktion.map(r => r.aa)), typ: a.typ});
+    erg.codons.forEach(c => { if (bewerte(c).pool && !S.entdeckt.includes(c)) S.entdeckt.push(c); });
+    S.log.unshift({nr: S.log.length + 1, name: a.name, reihe: erg.reihe});
     const res = $("ergebnis"); res.textContent = "";
-    const t = document.createElement("div"); t.className = "klein"; t.textContent = pr.length > 1 ? "Polypeptide (" + pr.length + " verschiedene entstehen):" : "Polypeptid:"; res.appendChild(t);
-    pr.forEach(q => {
-      const pep = document.createElement("div"); pep.className = "peptid";
-      q.reaktion.forEach((r, i) => { const c = aaChip(r.aa, true); c.style.animationDelay = (i * 0.12) + "s"; pep.appendChild(c); });
-      const m = document.createElement("span"); m.textContent = "…"; pep.appendChild(m); res.appendChild(pep);
-    });
-    if (pr.some(q => q.reaktion.some(r => r.hinweis))){ const n = document.createElement("p"); n.className = "klein"; n.textContent = "AGA und AGG sind weitere Codons für Arg; in der Tabelle ist dafür kein Platz."; res.appendChild(n); }
+    const t = document.createElement("div"); t.className = "klein"; t.textContent = "Entstandene Aminosäuren:"; res.appendChild(t);
+    res.appendChild(aaListe(erg.reihe, true));
+    if (erg.reihe.some(r => r.hinweis)){ const n = document.createElement("p"); n.className = "klein"; n.textContent = "AGA und AGG sind weitere Codons für Arg; in der Tabelle ist dafür kein Platz."; res.appendChild(n); }
     renderLog(); renderVorrat(); status();
   }, dauer);
 }
@@ -601,11 +600,7 @@ function renderLog(){
     const tr = document.createElement("tr");
     const kurz = e.name;
     tr.innerHTML = `<td>${e.nr}</td><td class="mono">${kurz.replace(/[ACGU]+/, m => buchstaben(m))}</td><td></td>`;
-    const td = tr.lastChild;
-    e.produkte.forEach(aas => {
-      const z = document.createElement("div"); z.style.cssText = "display:flex;flex-wrap:wrap;gap:3px;margin-bottom:3px";
-      aas.slice(0, 8).forEach(x => z.appendChild(aaChip(x))); z.appendChild(document.createTextNode("…")); td.appendChild(z);
-    });
+    tr.lastChild.appendChild(aaListe(e.reihe, false));
     tb.appendChild(tr);
   });
   $("loginfo").textContent = S.log.length ? "" : "Noch kein Versuch.";
@@ -708,7 +703,7 @@ $("pruefen").addEventListener("click", () => {
   S.geprueft = true; renderTabelle();
   const z = zaehle(), f = $("fortschritt"), rest = S.entdeckt.filter(c => !platziert().has(c)).length;
   if (!z.gesetzt){ f.textContent = "Ziehe zuerst Codons in die Tabelle."; return; }
-  if (z.falsch) f.textContent = z.falsch + " von " + z.gesetzt + " Codons stehen in der falschen Zeile (rot). Vergleiche noch einmal die Polypeptide im Protokoll: Welche Aminosäure gehört zu welchem Triplet?";
+  if (z.falsch) f.textContent = z.falsch + " von " + z.gesetzt + " Codons stehen in der falschen Zeile (rot). Vergleiche noch einmal die Aminosäuren im Protokoll: Welche Aminosäure gehört zu welchem Triplet?";
   else if (rest) f.textContent = "Alle " + z.ok + " gesetzten Codons stimmen. Im Vorrat warten noch Codons.";
   else if (z.ok < GESAMT) f.textContent = "Alle " + z.ok + " gesetzten Codons stimmen. Es gibt aber noch weitere Codons, die die vorgegebenen mRNAs nicht liefern: Baue eigene mRNAs und probiere es aus.";
   else f.innerHTML = "Geschafft: Alle " + GESAMT + " Codons stehen richtig in der Tabelle. Dieser kleine Teil des Codes zeigt schon die Regeln: Mehrere Codons können für dieselbe Aminosäure stehen, und die dritte Base ist oft unwichtig. Weiter geht es mit dem <a href=\"codon-generator.html\">Codon-Generator</a>.";
