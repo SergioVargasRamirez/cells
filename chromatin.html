@@ -353,9 +353,9 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 
     <section class="schritt" id="s-gene">
       <h2>Zugänglichkeit und Genaktivität</h2>
-      <p>Alle Zellen eines Körpers haben dieselbe DNA, und doch bilden sie ganz verschiedene Proteine. Der Unterschied liegt darin, welche Gene frei liegen. Tippe auf ein Gen, um sein Chromatin umzubauen (ein Remodellierungskomplex verschiebt die Nucleosomen, und der Promotor wird frei oder verdeckt). Danach läuft der Zeitraffer eines Tages. Du kannst auch mitten im Lauf umschalten (mit „Pause“ anhalten, Gen antippen, „Zeitraffer fortsetzen“): Nach dem Schließen sinken mRNA und Protein nur allmählich, jedes Gen in seinem eigenen Tempo, denn beide werden mit der für das Gen typischen Halbwertszeit abgebaut.</p>
+      <p>Alle Zellen eines Körpers haben dieselbe DNA, und doch bilden sie ganz verschiedene Proteine. Sogar dieselbe Leberzelle braucht nach dem Essen andere Enzyme als nach langem Fasten. Der Unterschied liegt darin, welche Gene frei liegen. Tippe auf ein Gen, um sein Chromatin umzubauen (ein Remodellierungskomplex verschiebt die Nucleosomen, und der Promotor wird frei oder verdeckt). Danach läuft der Zeitraffer eines Tages. Du kannst auch mitten im Lauf umschalten (mit „Pause“ anhalten, Gen antippen, „Zeitraffer fortsetzen“): Nach dem Schließen sinken mRNA und Protein nur allmählich, jedes Gen in seinem eigenen Tempo, denn beide werden mit der für das Gen typischen Halbwertszeit abgebaut.</p>
       <div class="steuerzeile">
-        <span class="etikett" id="l-zell">Zelltyp</span>
+        <span class="etikett" id="l-zell">Situation der Leberzelle</span>
         <div class="seg" role="radiogroup" aria-labelledby="l-zell" id="sg-zell"></div>
       </div>
       <p class="klein" id="aufgabe" style="margin:2px 0 8px"></p>
@@ -1104,33 +1104,36 @@ function nucText(){
 const GENE = [
   {id: "haus", name: "Haushaltsgen (zum Beispiel GAPDH)", kurz: "Haushaltsgen", tm: 3, tp: 8},
   {id: "alb", name: "Albumin-Gen", kurz: "Albumin", tm: 4, tp: 12},
-  {id: "ins", name: "Insulin-Gen", kurz: "Insulin", tm: 3, tp: 5},
-  {id: "glo", name: "Globin-Gen", kurz: "Globin", tm: 7, tp: 9}
+  {id: "gck", name: "Glucokinase-Gen (GCK)", kurz: "Glucokinase", tm: 1.5, tp: 6},
+  {id: "pck", name: "PEPCK-Gen (PCK1)", kurz: "PEPCK", tm: 1, tp: 4}
 ];   // tm, tp: Halbwertszeit von mRNA und Protein in Stunden. Modellwerte im Zeitraffer (Größenordnung, nicht gemessen), so gewählt, dass ein voll aktives Gen nach 24 h über 60 % des Höchstwerts erreicht
-const ZELLEN = [
-  {id: "leber", name: "Leberzelle", braucht: ["haus", "alb"], text: "Eine Leberzelle (Hepatocyt) soll Albumin bilden, das wichtigste Protein des Blutplasmas, und braucht außerdem das Haushaltsgen."},
-  {id: "beta", name: "Beta-Zelle der Bauchspeicheldrüse", braucht: ["haus", "ins"], text: "Eine Beta-Zelle soll Insulin bilden, das den Blutzucker senkt, und braucht außerdem das Haushaltsgen."},
-  {id: "ery", name: "Vorläufer roter Blutkörperchen", braucht: ["haus", "glo"], text: "Ein Vorläufer roter Blutkörperchen soll Globin für das Hämoglobin bilden und braucht außerdem das Haushaltsgen."}
+// Dieselbe Leberzelle in zwei Situationen. vor: Chromatinmuster VOR der Situation (die Zelle ist daran angepasst, mRNA und Protein im Gleichgewicht)
+const SITU = [
+  {id: "satt", name: "Nach dem Essen", vor: {haus: true, alb: true, gck: false, pck: true}, braucht: ["haus", "alb", "gck"], text: "Eine Leberzelle (Hepatocyt) nach einer Mahlzeit: Der Blutzucker steigt, Insulin ist hoch. Die Zelle war vorher nüchtern und bildet noch PEPCK, ein Enzym zum Neubilden von Glucose, aber keine Glucokinase, die Glucose aufnimmt und verwertet. Albumin und das Haushaltsgen braucht sie weiter."},
+  {id: "hunger", name: "Nach langem Fasten", vor: {haus: true, alb: true, gck: true, pck: false}, braucht: ["haus", "alb", "pck"], text: "Eine Leberzelle (Hepatocyt) nach vielen Stunden ohne Essen: Der Blutzucker sinkt, Glucagon steigt. Die Zelle war vorher satt und bildet noch Glucokinase, aber kein PEPCK. Jetzt muss sie Glucose neu bilden, sonst würde sie diese gleich wieder verbrauchen. Albumin und das Haushaltsgen braucht sie weiter."}
 ];
-const M = {zell: "leber", start: {haus: true, alb: false, ins: false, glo: false}, ereig: {haus: [], alb: [], ins: [], glo: []}, t: 0, anim: 0, laeuft: false};
+const M = {sit: "satt", vor: {...SITU[0].vor}, start: {...SITU[0].vor}, ereig: {haus: [], alb: [], gck: [], pck: []}, t: 0, anim: 0, laeuft: false};
 // Zustand des Chromatins: Ausgangslage bei t = 0 plus Schaltzeitpunkte [t, offen]; so bleibt der Verlauf davor erhalten
 const zust = (id, t = M.t) => { let o = M.start[id]; for (const [te, z] of M.ereig[id]) if (te <= t + 1e-9) o = z; return o; };
 function simuliere(id, T = 24, dt = 0.05){
   const g = GENE.find(x => x.id === id), dm = Math.LN2 / g.tm, dp = Math.LN2 / g.tp, tl = 4, st = tl / dm / dp;   // Normierung: voll aktives Gen (k = 1) im Gleichgewicht = 1
-  let m = 0, p = 0; const out = [];
+  const k0 = M.vor[id] ? 1 : 0.03; let m = k0 / dm, p = k0 * st; const out = [];   // Start: Gleichgewicht des Zustands vor der Situation
   for (let t = 0; t <= T + 1e-9; t += dt){ const k = zust(id, t) ? 1 : 0.03; out.push([t, m * dm, p / st]); m += (k - dm * m) * dt; p += (tl * m - dp * p) * dt; }
   return out;
 }
 function zeitKnopf(){ $("zeit").textContent = M.laeuft ? "Pause" : (M.t > 1e-9 && M.t < 24 - 1e-9 ? "Zeitraffer fortsetzen" : "Zeitraffer starten (24 Stunden)"); }
+function zuruecksetzen(){   // neuer Versuch: Ausgangsmuster der Situation, Zeit 0
+  cancelAnimationFrame(M.anim); M.laeuft = false; GENE.forEach(g => { M.start[g.id] = M.vor[g.id]; M.ereig[g.id] = []; });
+  M.t = 0; $("t").value = 0; $("t-o").textContent = "0 h"; $("bilanz").hidden = true;
+}
 function schalte(id){
+  if (M.t >= 24 - 1e-9) zuruecksetzen();
   const neu = !zust(id);
-  if (M.t >= 24 - 1e-9){   // nach dem Lauf: neuer Versuch, die Endzustände sind die Ausgangslage
-    GENE.forEach(g => { M.start[g.id] = zust(g.id, 24); M.ereig[g.id] = []; });
-    M.t = 0; $("t").value = 0; $("t-o").textContent = "0 h"; $("bilanz").hidden = true; M.start[id] = neu;
-  } else if (M.t <= 1e-9){ M.start[id] = neu; M.ereig[id] = []; }
+  if (M.t <= 1e-9){ M.start[id] = neu; M.ereig[id] = []; }   // vor dem Start: Muster ab Beginn der Situation
   else { GENE.forEach(g => { M.ereig[g.id] = M.ereig[g.id].filter(e => e[0] < M.t - 1e-9); }); M.ereig[id].push([M.t, neu]); }   // ab jetzt umgeschaltet; was später kam, entfällt
   karten(); zeichneDiagr(); zeitKnopf();
 }
+function laden(){ const z = SITU.find(x => x.id === M.sit); M.vor = {...z.vor}; zuruecksetzen(); zellen(); karten(); zeichneDiagr(); zeitKnopf(); }
 function karten(){ GENE.forEach(g => { const b = document.querySelector(`.genkarte[data-id=${g.id}]`); if (!b || b.classList.contains("offen") !== zust(g.id)) zeichneGen(g.id, true); }); }
 function genkarten(){
   const box = $("genkarten"); box.textContent = "";
@@ -1169,25 +1172,25 @@ function zeichneDiagr(){
     const upto = sim.filter(q => q[0] <= M.t + 1e-9);
     const pl = (idx, farbe, dash) => el("polyline", {points: upto.map(q => sx(q[0]) + "," + sy(q[idx])).join(" "), fill: "none", stroke: farbe, "stroke-width": 2.5, "stroke-dasharray": dash || ""}, svg);
     pl(1, PALETTE.get("rg_ac")); pl(2, PALETTE.get("rg_akz"), "6 3");
-    const last = upto[upto.length - 1]; if (last) el("line", {x1: sx(last[0]), y1: Y0 - H, x2: sx(last[0]), y2: Y0, stroke: "currentColor", "stroke-opacity": .3}, svg);
+    const last = upto[upto.length - 1]; if (last){ el("circle", {cx: sx(last[0]), cy: sy(last[1]), r: 3, fill: PALETTE.get("rg_ac")}, svg); el("circle", {cx: sx(last[0]), cy: sy(last[2]), r: 3, fill: PALETTE.get("rg_akz")}, svg); } if (last) el("line", {x1: sx(last[0]), y1: Y0 - H, x2: sx(last[0]), y2: Y0, stroke: "currentColor", "stroke-opacity": .3}, svg);
   });
   const leg = document.createElement("div"); leg.className = "legende"; leg.style.gridColumn = "1 / -1";
   leg.innerHTML = `<span><i style="background:${PALETTE.get("rg_ac")}"></i>mRNA (durchgezogen)</span><span><i style="background:${PALETTE.get("rg_akz")}"></i>Protein (gestrichelt)</span><span>Grau hinterlegt: Chromatin geschlossen</span><span>Beide relativ zum Höchstwert eines voll aktiven Gens</span>`;
   box.appendChild(leg);
 }
 function bilanz(){
-  const z = ZELLEN.find(x => x.id === M.zell), box = $("bilanz"); box.hidden = false;
+  const z = SITU.find(x => x.id === M.sit), box = $("bilanz"); box.hidden = false;
   const prot = {}; GENE.forEach(g => { prot[g.id] = simuliere(g.id).slice(-1)[0][2]; });
   const fehlt = z.braucht.filter(id => prot[id] < 0.5), zuviel = GENE.filter(g => !z.braucht.includes(g.id) && prot[g.id] >= 0.3);
   let h = "<h3>Bilanz nach 24 Stunden</h3><ul style=\"margin:0;padding-left:1.2em\">" + GENE.map(g => `<li>${g.kurz}: ${prot[g.id] < 0.1 ? "kaum Protein" : "Protein bei " + fmt(prot[g.id] * 100) + " % des Höchstwerts"}</li>`).join("") + "</ul>";
-  if (!fehlt.length && !zuviel.length) h += `<p style="margin:8px 0 0" class="gut">Die Zelle bildet genau die Proteine, die ein(e) ${z.name} braucht. Gleiche DNA, aber ein anderes Muster offener Gene macht aus einer Stammzelle verschiedene Zelltypen.</p>`;
-  else { if (fehlt.length) h += `<p style="margin:8px 0 0">Es fehlt noch: ${fehlt.map(id => GENE.find(g => g.id === id).kurz).join(", ")}.</p>`; if (zuviel.length) h += `<p style="margin:8px 0 0">Die Zelle bildet auch ${zuviel.map(g => g.kurz).join(", ")}, das sie nicht braucht.</p>`; }
+  if (!fehlt.length && !zuviel.length) h += `<p style="margin:8px 0 0" class="gut">Die Zelle hat sich auf die Situation „${z.name}“ eingestellt: Sie bildet die Proteine, die sie jetzt braucht, und die nicht mehr gebrauchten sind weitgehend abgebaut. Gleiche Zelle, gleiche DNA, aber ein anderes Muster offener Gene.</p>`;
+  else { if (fehlt.length) h += `<p style="margin:8px 0 0">Es fehlt noch: ${fehlt.map(id => GENE.find(g => g.id === id).kurz).join(", ")}.</p>`; if (zuviel.length) h += `<p style="margin:8px 0 0">Noch zu viel Protein da, das die Zelle jetzt nicht braucht: ${zuviel.map(g => g.kurz).join(", ")}. Je früher das Gen geschlossen wird, desto weniger bleibt übrig.</p>`; }
   box.innerHTML = h;
 }
 function zeitraffer(){
   cancelAnimationFrame(M.anim);
   if (M.laeuft){ M.laeuft = false; zeitKnopf(); return; }   // Pause: jetzt kann man Gene umschalten
-  if (!(M.t > 1e-9 && M.t < 24 - 1e-9)){ GENE.forEach(g => { M.start[g.id] = zust(g.id); M.ereig[g.id] = []; }); M.t = 0; }   // neuer Lauf mit den angezeigten Zuständen
+  if (M.t >= 24 - 1e-9) zuruecksetzen();   // nach dem Ende: neuer Versuch ab dem Ausgangsmuster
   $("bilanz").hidden = true; M.laeuft = true;
   const reduziert = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches, dauer = reduziert ? 1 : 8000, t0 = performance.now() - M.t / 24 * dauer;
   const f = now => { const k = kl((now - t0) / dauer, 0, 1); M.t = k * 24; $("t").value = M.t; $("t-o").textContent = fmt(M.t, 1) + " h"; zeichneDiagr(); if (k < 1) M.anim = requestAnimationFrame(f); else { M.laeuft = false; zeitKnopf(); bilanz(); } };
@@ -1261,10 +1264,10 @@ $("stufe").addEventListener("input", e => leiter(+e.target.value));
 $("abw").addEventListener("input", e => { S3.abw = +e.target.value; $("abw-o").textContent = S3.abw + " bp"; zeichne3(false); });
 function zellen(){
   const box = $("sg-zell"); box.textContent = "";
-  ZELLEN.forEach((z, i) => { const b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "radio"); b.setAttribute("aria-checked", String(z.id === M.zell)); b.dataset.wert = z.id; b.textContent = z.name; box.appendChild(b); });
-  $("aufgabe").textContent = ZELLEN.find(z => z.id === M.zell).text;
+  SITU.forEach(z => { const b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "radio"); b.setAttribute("aria-checked", String(z.id === M.sit)); b.dataset.wert = z.id; b.textContent = z.name; box.appendChild(b); });
+  $("aufgabe").textContent = SITU.find(z => z.id === M.sit).text;
 }
-$("sg-zell").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; M.zell = b.dataset.wert; zellen(); $("bilanz").hidden = true; });
+$("sg-zell").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; M.sit = b.dataset.wert; laden(); });
 $("zeit").addEventListener("click", zeitraffer);
 $("t").addEventListener("input", e => { cancelAnimationFrame(M.anim); M.laeuft = false; M.t = +e.target.value; $("t-o").textContent = fmt(M.t, 1) + " h"; karten(); zeichneDiagr(); zeitKnopf(); });
 $("sg-wz").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; $("sg-wz").querySelectorAll("button").forEach(x => x.setAttribute("aria-checked", String(x === b))); X.wz = b.dataset.wert; });
