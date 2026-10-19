@@ -193,6 +193,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,canvas:focus-visi
 .hinweiszeile{min-height:1.6em;font-size:.95rem}
 .leiter svg{max-width:none;min-width:0}
 #leiter{width:100%;height:auto;min-width:0}
+@media (max-width:640px){#s-leiter .lab{grid-template-columns:minmax(0,1fr)!important}}
 /* Chargaff */
 .tubenbild{display:block;width:100%;max-width:700px;margin-inline:auto;height:auto;color:var(--ink)}
 .tubenbild .glasr{fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round}
@@ -907,36 +908,150 @@ const STUFEN = [
   {name: "Metaphase-Chromosom", groesse: "1400 nm Breite", text: "Vor der Zellteilung wird das Chromatin maximal verdichtet. Jedes Chromosom besteht aus zwei identischen Schwesterchromatiden. In diesem Zustand wird kaum noch abgelesen.", faktor: "etwa 10 000-fach"}
 ];
 function leiter(n){
-  const svg = $("leiter"); svg.textContent = ""; const C = "currentColor";
-  const l = (a, b, c, d, w = 2, o = 1) => el("line", {x1: a, y1: b, x2: c, y2: d, stroke: C, "stroke-width": w, "stroke-opacity": o, "stroke-linecap": "round"}, svg);
+  const svg = $("leiter"); svg.textContent = "";
+  const C = "currentColor", dunkel = PALETTE.istDunkel();
+  const sf = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim();
+  const FL = /^#[0-9a-f]{6}$/i.test(sf) ? sf : (dunkel ? "#15211d" : "#ffffff");   // Farbe der Karte: ferne Teile verblassen dorthin
+  const h2r = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const mix = (a, b, t) => { const x = h2r(a), y = h2r(b); return "#" + x.map((v, i) => Math.round(v + (y[i] - v) * t).toString(16).padStart(2, "0")).join(""); };
+  const defs = el("defs", {}, svg), cache = {};
+  const kugel = (hex, f) => {   // Farbverlauf einer beleuchteten Kugel; f: 0 = weit hinten ... 1 = vorn
+    const q = Math.round(kl(f, 0, 1) * 3), key = hex + q;
+    if (!cache[key]){
+      const g = el("radialGradient", {id: "lv" + Object.keys(cache).length, cx: .35, cy: .3, r: .78}, defs);
+      const b = mix(hex, FL, .42 * (1 - q / 3));
+      [[0, mix(b, "#ffffff", .6)], [.45, b], [1, mix(b, "#000000", .42)]].forEach(([o, c]) => el("stop", {offset: o, "stop-color": c}, g));
+      cache[key] = "url(#" + g.id + ")";
+    }
+    return cache[key];
+  };
+  const kreis = (x, y, r, hex, f) => el("circle", {cx: x.toFixed(1), cy: y.toFixed(1), r: r.toFixed(1), fill: kugel(hex, f)}, svg);
+  const sortiere = it => it.sort((a, b) => a.z - b.z).forEach(i => i.f());
+  const l = (a, b, c, d, w = 2, o = 1, col = C) => el("line", {x1: a.toFixed(1), y1: b.toFixed(1), x2: c.toFixed(1), y2: d.toFixed(1), stroke: col, "stroke-width": w, "stroke-opacity": o, "stroke-linecap": "round"}, svg);
   const txt = (x, y, t, s = 12, anch = "middle") => { const e = el("text", {x, y, "text-anchor": anch, "font-size": s, fill: C, "font-family": "var(--sans)", "font-weight": 600}, svg); e.textContent = t; };
+  const klammer = (x, y0, y1, t) => { el("path", {d: `M${x - 4} ${y0}H${x}V${y1}H${x - 4}`, fill: "none", stroke: C, "stroke-width": 1.5, "stroke-opacity": .7, "stroke-linecap": "round", "stroke-linejoin": "round"}, svg); txt(x + 6, (y0 + y1) / 2 + 4, t, 12, "start"); };
+  const legende = (liste, y) => {
+    const w = liste.map(([, t]) => 22 + t.length * 6.6), tot = w.reduce((a, b) => a + b, 0) + (liste.length - 1) * 8; let x = 210 - tot / 2;
+    liste.forEach(([hex, t], i) => { kreis(x + 6, y, 5.5, hex, 1); txt(x + 16, y + 4, t, 11, "start"); x += w[i] + 8; });
+  };
+  let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const zu = PALETTE.get("zucker");
+
   if (n === 1){
-    let d1 = "M20 150", d2 = "M20 150";
-    const pts1 = [], pts2 = []; for (let x = 20; x <= 400; x += 4){ pts1.push(x + "," + (150 + 30 * Math.sin((x - 20) / 24))); pts2.push(x + "," + (150 - 30 * Math.sin((x - 20) / 24))); }
-    el("polyline", {points: pts1.join(" "), fill: "none", stroke: PALETTE.get("A"), "stroke-width": 4}, svg); el("polyline", {points: pts2.join(" "), fill: "none", stroke: PALETTE.get("G"), "stroke-width": 4}, svg);
-    for (let x = 32; x <= 400; x += 37.7){ const y = 30 * Math.sin((x - 20) / 24); l(x, 150 - y, x, 150 + y, 2, .6); }
-    txt(210, 230, "2 nm", 14);
+    // Doppelhelix schräg von der Seite: zwei Zucker-Phosphat-Stränge, Basenpaare als Sprossen, Furchen ungleich breit
+    const ang = -.17, ca = Math.cos(ang), sa = Math.sin(ang), L = 318, R = 29, turns = 3.05, vers = 2.25, cx = 200, cy = 140;
+    const P = (t, ph) => { const s = (t - .5) * L, y = R * Math.cos(ph), z = R * Math.sin(ph); return {x: cx + s * ca - y * sa, y: cy + s * sa + y * ca, z}; };
+    const it = [], K = 230, NB = 32;
+    for (let k = 0; k <= K; k++){ const t = k / K; for (const p0 of [0, vers]){ const p = P(t, 2 * Math.PI * turns * t + p0); it.push({z: p.z, f: () => kreis(p.x, p.y, 4.6 * (1 + p.z / 260), zu, (p.z + R) / (2 * R))}); } }
+    for (let k = 0; k < NB; k++){
+      const t = (k + .5) / NB, ph = 2 * Math.PI * turns * t, a = P(t, ph), b = P(t, ph + vers), m = {x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: (a.z + b.z) / 2};
+      const paar = rnd() < .5 ? ["A", "T"] : ["G", "C"], [c1, c2] = rnd() < .5 ? paar : [paar[1], paar[0]];
+      [[a, c1], [b, c2]].forEach(([p, c]) => it.push({z: (p.z + m.z) / 2, f: () => l(p.x, p.y, m.x, m.y, 5.2, .5 + .5 * (m.z + R) / (2 * R), PALETTE.get(c))}));
+    }
+    sortiere(it);
+    klammer(368, cy + (L / 2) * sa - R - 4, cy + (L / 2) * sa + R + 4, "2 nm");
+    legende([[PALETTE.get("A"), "Adenin"], [PALETTE.get("T"), "Thymin"], [PALETTE.get("G"), "Guanin"], [PALETTE.get("C"), "Cytosin"]], 244);
+    txt(210, 284, "DNA-Doppelhelix: 2 nm Durchmesser", 13);
   } else if (n === 2){
-    el("circle", {cx: 210, cy: 140, r: 52, fill: PALETTE.get("rg_akz"), "fill-opacity": .25, stroke: PALETTE.get("rg_akz"), "stroke-width": 3}, svg);
-    for (let k = 0; k < 2; k++){ el("ellipse", {cx: 210, cy: 140, rx: 70 - k * 8, ry: 62 - k * 8, fill: "none", stroke: C, "stroke-width": 4, "stroke-opacity": .7}, svg); }
-    l(30, 220, 140, 175, 3); l(280, 175, 390, 220, 3);
-    txt(210, 145, "Histone", 12); txt(210, 260, "147 bp um acht Histone: 11 nm", 13);
+    // Echte Atomkoordinaten (PDB 1KX5), schräg von der Seite auf die Scheibe: 147 bp DNA, 8 Histone, Schwänze
+    const D = NUC3D.dna, m = [0, 1, 2].map(i => D.reduce((s, p) => s + p[i], 0) / D.length);
+    const sub = p => [p[0] - m[0], p[1] - m[1], p[2] - m[2]], dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+    const nrm = a => { const q = Math.hypot(a[0], a[1], a[2]); return a.map(v => v / q); };
+    let w = [0, 0, 0];   // Achse der Superhelix = Summe der Drehimpulse r × dr
+    for (let i = 0; i < D.length - 1; i++){ const c = cross(sub(D[i]), [D[i + 1][0] - D[i][0], D[i + 1][1] - D[i][1], D[i + 1][2] - D[i][2]]); w = w.map((v, j) => v + c[j]); }
+    w = nrm(w);
+    let u = sub(D[D.length >> 1]); const du = dot(u, w); u = nrm(u.map((v, j) => v - du * w[j])); const v = cross(w, u);
+    const th = .7, cT = Math.cos(th), sT = Math.sin(th), S = 1.75, X0 = 196, Y0 = 130;
+    const pr = p => { const q = sub(p), a = dot(q, u), b = dot(q, v), c = dot(q, w); return {x: X0 + S * a, y: Y0 + S * (b * cT + c * sT), z: -b * sT + c * cT}; };
+    const zs = D.map(q => pr(q).z).concat(NUC3D.histone.flatMap(c => c.reste.map(r => pr(r.ca).z))), zmin = Math.min(...zs), zmax = Math.max(...zs);
+    const sm = D.map((_, i) => { let t = [0, 0, 0], c = 0; for (let j = Math.max(0, i - 4); j <= Math.min(D.length - 1, i + 4); j++){ t = t.map((x, k) => x + D[j][k]); c++; } return t.map(x => x / c); });   // gemittelt über knapp eine Windung: Achse der Doppelhelix
+    const ende = (i0, i1) => { const a = sm[i0], b = sm[i1], d = nrm([a[0] - b[0], a[1] - b[1], a[2] - b[2]]), out = []; for (let k = 1; k <= 16; k++) out.push([a[0] + d[0] * k * 3.4, a[1] + d[1] * k * 3.4, a[2] + d[2] * k * 3.4]); return out; };
+    const bahn = ende(0, 3).reverse().concat(sm, ende(sm.length - 1, sm.length - 4)), dna = [];
+    for (let i = 0; i < bahn.length - 1; i++) for (let k = 0; k < 3; k++) dna.push(pr(bahn[i].map((x, j) => x + (bahn[i + 1][j] - x) * k / 3)));
+    const it = [], hp = [];
+    dna.forEach(p => it.push({z: p.z, f: () => kreis(p.x, p.y, 8.5 * (.92 + .16 * (p.z - zmin) / (zmax - zmin)), zu, (p.z - zmin) / (zmax - zmin))}));
+    NUC3D.histone.forEach(c => {
+      const [a0, a1] = SCHWAENZE[c.histon], col = PALETTE.get(FARBEN[c.histon]), tc = PALETTE.get("rg_cca");
+      for (let i = 0; i < c.reste.length - 1; i++){
+        const r0 = c.reste[i], r1 = c.reste[i + 1];
+        if (r1.nr !== r0.nr + 1) continue;
+        const sw = r0.nr <= a1 || (c.histon === "H2A" && r0.nr > 119), p0 = pr(r0.ca), p1 = pr(r1.ca), z = (p0.z + p1.z) / 2;
+        it.push({z, f: () => { const f = (z - zmin) / (zmax - zmin), cc = mix(sw ? tc : col, FL, .4 * (1 - f)); l(p0.x, p0.y, p1.x, p1.y, sw ? 3.4 : 7.6, 1, mix(cc, "#000000", .5)); l(p0.x, p0.y, p1.x, p1.y, sw ? 2 : 5.6, 1, cc); if (!sw) l(p0.x - 1, p0.y - 1.2, p1.x - 1, p1.y - 1.2, 1.6, .35, "#ffffff"); }});
+      }
+    });
+    sortiere(it);
+    legende([[PALETTE.get("rg_akz"), "H3"], [PALETTE.get("rg_d"), "H4"], [PALETTE.get("rg_ac"), "H2A"], [PALETTE.get("rg_t"), "H2B"], [PALETTE.get("rg_cca"), "Schwänze"], [zu, "DNA"]], 262);
+    txt(210, 287, "147 bp um acht Histone: 11 nm", 13);
   } else if (n === 3){
-    const pts = []; for (let k = 0; k < 8; k++){ const x = 50 + k * 45, y = 140 + (k % 2 ? 36 : -36); pts.push([x, y]); }
-    for (let k = 0; k < 7; k++) l(pts[k][0], pts[k][1], pts[k + 1][0], pts[k + 1][1], 3, .6);
-    pts.forEach(([x, y]) => { el("circle", {cx: x, cy: y, r: 22, fill: PALETTE.get("rg_akz"), "fill-opacity": .3, stroke: PALETTE.get("rg_akz"), "stroke-width": 3}, svg); });
-    txt(210, 240, "Zickzack-Faser: 30 nm", 13);
+    // 30-nm-Faser als Solenoid: Nucleosomen als Scheiben auf einer Schraube, Linker-DNA dazwischen, Linker-Histon H1 orange
+    const ang = -.2, ca = Math.cos(ang), sa = Math.sin(ang), Rf = 40, N = 70, per = 6.2, dx = 4.4, cx = 188, cy = 142, col = PALETTE.get("rg_akz"), h1 = PALETTE.get("rg_cca");
+    const P = (k, r = Rf) => { const ph = k * 2 * Math.PI / per, s = (k - (N - 1) / 2) * dx, y = r * Math.cos(ph), z = r * Math.sin(ph); return {x: cx + s * ca - y * sa, y: cy + s * sa + y * ca, z}; };
+    const it = [];
+    for (let k = 0; k < N; k++){
+      const p = P(k), f = (p.z + Rf) / (2 * Rf), sc = 1 + p.z / 260;
+      if (k < N - 1 && k % 2 === 0){ const q = P(k + 2); it.push({z: (p.z + q.z) / 2 - 6, f: () => l(p.x, p.y, q.x, q.y, 2.8, .45 + .55 * f, mix(zu, FL, .25 * (1 - f)))}); }
+      it.push({z: p.z, f: () => {
+        const g = el("g", {transform: `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) rotate(${(ang * 180 / Math.PI).toFixed(1)})`}, svg);
+        el("ellipse", {rx: (7.5 * sc).toFixed(1), ry: (21 * sc).toFixed(1), fill: kugel(col, f), stroke: mix(col, "#000000", .45), "stroke-width": .8, "stroke-opacity": .6}, g);
+      }});
+      if (k % 2 === 0){ const hp = P(k, Rf - 12); it.push({z: p.z + .5, f: () => kreis(hp.x, hp.y - 10 * sc, 3.2 * sc, h1, f)}); }
+    }
+    sortiere(it);
+    klammer(362, cy + (N / 2) * dx * sa - Rf - 24, cy + (N / 2) * dx * sa + Rf + 24, "30 nm");
+    legende([[col, "Nucleosom"], [zu, "Linker-DNA"], [h1, "Histon H1"]], 258);
+    txt(200, 284, "Zickzack-Faser: 30 nm", 13);
   } else if (n === 4){
-    for (let k = 0; k < 9; k++){ const w = (k / 9) * 2 * Math.PI, r = 100; const x = 210 + 20 * Math.cos(w), y = 140 + 20 * Math.sin(w); el("path", {d: `M${x} ${y} C ${210 + r * 1.6 * Math.cos(w - 0.4)} ${140 + r * 1.2 * Math.sin(w - 0.4)}, ${210 + r * 1.6 * Math.cos(w + 0.4)} ${140 + r * 1.2 * Math.sin(w + 0.4)}, ${x + 6} ${y + 6}`, fill: "none", stroke: C, "stroke-width": 3, "stroke-opacity": .65}, svg); }
-    el("circle", {cx: 210, cy: 140, r: 20, fill: PALETTE.get("rg_ac"), "fill-opacity": .4, stroke: PALETTE.get("rg_ac"), "stroke-width": 3}, svg);
-    txt(210, 140 + 4, "Gerüst", 10); txt(210, 285, "Schleifen am Proteingerüst: 300 nm", 13);
+    // Schleifen aus Chromatinfaser (Perlenschnur) an einem Proteingerüst
+    const col = PALETTE.get("rg_akz"), gerue = PALETTE.get("rg_ac"), M = 6, loops = [];
+    for (const side of [-1, 1]) for (let i = 0; i < M; i++){
+      const y = 54 + i * 29 + (side > 0 ? 14 : 0), Wd = 66 + rnd() * 44, H = 20 + rnd() * 12, d = 20 + rnd() * 6;
+      loops.push({back: rnd() < .45, d: `M210 ${y.toFixed(1)}C${(210 + side * Wd * 1.35).toFixed(1)} ${(y - H).toFixed(1)} ${(210 + side * Wd * 1.35).toFixed(1)} ${(y + d + H).toFixed(1)} 210 ${(y + d).toFixed(1)}`});
+    }
+    const schleife = (p, back) => {
+      const c = back ? mix(col, FL, .35) : col;
+      const o = {fill: "none", "stroke-linecap": "round"};
+      el("path", {...o, d: p.d, stroke: mix(c, "#000000", .45), "stroke-width": back ? 8 : 9.5}, svg);
+      el("path", {...o, d: p.d, stroke: c, "stroke-width": back ? 6.5 : 8}, svg);
+      el("path", {...o, d: p.d, stroke: mix(c, "#ffffff", .55), "stroke-width": 3.6, "stroke-dasharray": "0.1 7.4", "stroke-opacity": back ? .6 : .9}, svg);
+    };
+    loops.filter(p => p.back).forEach(p => schleife(p, true));
+    const lg = el("linearGradient", {id: "lvrod", x1: 0, x2: 1, y1: 0, y2: 0}, defs);
+    [[0, mix(gerue, "#000000", .35)], [.35, mix(gerue, "#ffffff", .45)], [1, mix(gerue, "#000000", .25)]].forEach(([o, c]) => el("stop", {offset: o, "stop-color": c}, lg));
+    el("rect", {x: 203, y: 44, width: 14, height: 226, rx: 7, fill: "url(#lvrod)", stroke: mix(gerue, "#000000", .4), "stroke-width": .8}, svg);
+    for (let y = 58; y < 262; y += 18) l(204.5, y, 215.5, y, 1, .22, "#000000");
+    loops.filter(p => !p.back).forEach(p => schleife(p, false));
+    txt(210, 32, "Proteingerüst", 12);
+    txt(210, 296, "Schleifen am Proteingerüst: 300 nm", 13);
   } else {
-    for (const sx of [-1, 1]){ el("path", {d: `M${210 + sx * 8} 40 C ${210 + sx * 34} 70, ${210 + sx * 34} 120, ${210 + sx * 8} 150 C ${210 + sx * 34} 180, ${210 + sx * 34} 230, ${210 + sx * 8} 260`, fill: "none", stroke: PALETTE.get("rg_d"), "stroke-width": 26, "stroke-linecap": "round", "stroke-opacity": .75}, svg); }
-    for (let y = 70; y < 250; y += 22){ for (const sx of [-1, 1]) l(210 + sx * (8 + 2) - 12, y, 210 + sx * 40, y, 3, .18); }
-    el("circle", {cx: 210, cy: 150, r: 8, fill: PALETTE.get("rg_cca"), stroke: "var(--surface)", "stroke-width": 2}, svg); txt(300, 155, "Centromer", 11, "start");
-    txt(210, 292, "Metaphase-Chromosom: 1400 nm", 13);
+    // Metaphase-Chromosom: zwei Schwesterchromatiden mit Einschnürung am Zentromer, Querstreifen, Kinetochoren
+    const base = PALETTE.get("rg_d"), kin = PALETTE.get("rg_cca"), cx = 205, y0 = 34, Ly = 232, tc = .4, Wh = 21, MM = 76;
+    const g = (t, a) => Math.exp(-(((t - tc) / a) ** 2));
+    const cap = t => { const e = .09; return t < e ? Math.sqrt(1 - ((e - t) / e) ** 2) : t > 1 - e ? Math.sqrt(1 - ((t - (1 - e)) / e) ** 2) : 1; };
+    const off = t => 22 - 6 * g(t, .08) + 3 * Math.sin(Math.PI * t), hw = t => Wh * cap(t) * (1 - .38 * g(t, .07));
+    const band = Array.from({length: MM}, () => 0), nb = Math.ceil(MM / 4);
+    for (let j = 0; j < nb; j++){ const a = rnd() < .5 ? 0 : .12 + rnd() * .12; for (let i = 0; i < 4; i++) band[j * 4 + i] = a; }
+    const lanes = [[-1, -.5, mix(base, "#000000", .14)], [-.5, -.1, mix(base, "#ffffff", .3)], [-.1, .3, mix(base, "#ffffff", .08)], [.3, .7, base], [.7, 1, mix(base, "#000000", .32)]];
+    const chromatid = sx => {
+      const S = (i, q) => { const t = i / MM, xc = cx + sx * off(t), yc = y0 + t * Ly, h = hw(t) * q * sx; return [xc + h, yc]; };
+      for (let i = 0; i < MM; i++){
+        lanes.forEach(([qa, qb, c]) => {
+          const a = S(i, qa), b = S(i, qb), b2 = S(i + 1, qb), a2 = S(i + 1, qa);
+          el("polygon", {points: [a, b, b2, a2].map(q => q[0].toFixed(1) + "," + q[1].toFixed(1)).join(" "), fill: mix(c, "#000000", band[i]), stroke: mix(c, "#000000", band[i]), "stroke-width": .5, "stroke-linejoin": "round"}, svg);
+        });
+      }
+      const rim = []; for (let i = 0; i <= MM; i++) rim.push(S(i, -1)); for (let i = MM; i >= 0; i--) rim.push(S(i, 1));
+      el("polygon", {points: rim.map(q => q[0].toFixed(1) + "," + q[1].toFixed(1)).join(" "), fill: "none", stroke: mix(base, "#000000", .55), "stroke-width": 1.3, "stroke-linejoin": "round"}, svg);
+    };
+    chromatid(-1); chromatid(1);
+    const yk = y0 + tc * Ly, xk = off(tc) + hw(tc) + 2.5;
+    for (const sx of [-1, 1]) el("ellipse", {cx: cx + sx * xk, cy: yk, rx: 4, ry: 11, fill: kugel(kin, 1), stroke: mix(kin, "#000000", .45), "stroke-width": .8}, svg);
+    l(cx + xk + 6, yk, cx + xk + 36, yk, 1.2, .6); txt(cx + xk + 40, yk + 4, "Zentromer", 11, "start");
+    txt(cx + xk + 40, yk + 18, "mit Kinetochoren", 11, "start");
+    txt(210, 296, "Metaphase-Chromosom: 1400 nm", 13);
   }
   const s = STUFEN[n - 1];
+  svg.setAttribute("aria-label", "Schematische Zeichnung: " + s.name);
   $("stufentext").innerHTML = "<h3>" + n + " · " + s.name + "</h3><p style=\"margin:0 0 8px\"><b>" + s.groesse + "</b> · Verkürzung der DNA: <b>" + s.faktor + "</b></p><p style=\"margin:0\">" + s.text + "</p>";
   $("stufe-o").textContent = n + " / 5";
 }
