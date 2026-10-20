@@ -115,6 +115,15 @@ button:focus-visible,input:focus-visible,summary:focus-visible,.stein:focus-visi
 .keingl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;color:var(--muted)}
 .zustimmung{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);cursor:pointer;margin:8px 0}
 .zustimmung input{margin-top:4px;width:18px;height:18px;accent-color:var(--accent);flex:none}
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;line-height:1.25}
+.switch input{appearance:none;-webkit-appearance:none;width:44px;height:25px;border-radius:13px;background:var(--line);position:relative;margin:0;cursor:pointer;transition:background .2s;flex:none}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.35);transition:transform .2s}
+.switch input:checked{background:var(--accent)}
+.switch input:checked::after{transform:translateX(19px)}
+.switch input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.strukturschalter{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin:4px 0}
+.strukturschalter .rechts{margin-left:auto;display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}
+@media (prefers-reduced-motion: reduce){.switch input,.switch input::after{transition:none}}
 .peptidzeile{font:800 1.05rem ui-monospace,Consolas,monospace;letter-spacing:.12em;word-break:break-all}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{font:inherit;font-size:.95rem;border:0;border-left:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;cursor:pointer}
@@ -280,8 +289,12 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
           <div id="vorhersageStatus" class="klein" aria-live="polite"></div>
           <div id="strukturBox" hidden>
             <div class="dreid"><canvas class="gl" tabindex="0" id="gl3" aria-label="3D-Modell des vorhergesagten Peptids. Ziehen oder Pfeiltasten drehen."></canvas><canvas class="ov" id="ov3" aria-hidden="true"></canvas></div>
-            <div class="steuer klein" role="group" aria-label="Färbung">
-              <span class="seg" role="radiogroup" aria-label="Färbung"><button type="button" role="radio" aria-checked="true" data-modus="element">Elemente</button><button type="button" role="radio" aria-checked="false" data-modus="plddt">Sicherheit (pLDDT)</button></span>
+            <div class="strukturschalter" role="group" aria-label="Darstellung">
+              <span class="seg" role="radiogroup" aria-label="Darstellung"><button type="button" role="radio" aria-checked="true" data-modus="cartoon">Cartoon</button><button type="button" role="radio" aria-checked="false" data-modus="atome">Kugeln und Stäbe</button></span>
+              <span class="rechts">
+                <label class="switch"><input type="checkbox" id="seitenketten"><span>Seitenketten</span></label>
+                <label class="switch"><input type="checkbox" id="plddtSchalter"><span>Sicherheit (pLDDT)</span></label>
+              </span>
             </div>
             <p id="strukturInfo"></p>
           </div>
@@ -313,7 +326,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       \1\n      <li>Zwei Exons oder zwei Introns lassen sich nicht direkt nebeneinander legen: Ein Baustein, der dort landen würde, bleibt ohne weiteren Hinweis, wo er war. In einem Gen werden Exons immer durch ein Intron getrennt, und zwei aufeinanderfolgende Introns wären ein einziges.</li>
       <li>Die Kappe ist ein 7-Methylguanosin, das über eine ungewöhnliche 5'-5'-Brücke aus drei Phosphaten am ersten Nucleotid hängt. Sie schützt die RNA vor dem Abbau vom 5'-Ende her und wird beim Export aus dem Kern und beim Start der Translation erkannt. In der Zelle fügt das Enzym sie an, sobald die RNA etwa 25 Nucleotide lang ist (also noch während der Transkription); hier geschieht es danach, und das Enzym ist als ein Block gezeichnet. Außerdem wird die Kappe in der Zelle noch an weiteren Stellen verändert (Methylierung).</li>
       <li>Die Translation ist vereinfacht: Das Ribosom ist ein einziger Block. Transfer-RNAs, Initiationsfaktoren und Elongationsfaktoren fehlen; das Ribosom bindet hier direkt an der Kappe. In Eukaryoten sucht die kleine Untereinheit vom 5'-Ende aus nach dem ersten AUG in guter Umgebung (Kozak-Sequenz); hier gilt das erste AUG. Das Ribosom baut hier etwa zwei Aminosäuren pro Sekunde ein, in der Zelle sind es etwa 5 bis 20. Der Poly(A)-Schwanz wird nicht übersetzt, weil das Stopp-Codon davor liegt.</li>
-      <li>Die Strukturvorhersage stammt von ESMFold, einem neuronalen Netz, das aus der Sequenz allein eine Form schätzt. Sie ist keine Messung. Kurze Peptide haben in Wasser oft keine feste Form; die Sicherheit (pLDDT) ist dann niedrig, oder sie täuscht, wenn das Netz ein bekanntes Muster erkennt. Das Bild zeigt alle Atome außer Wasserstoff als Kugeln und Stäbe; Bindungen werden aus den Abständen bestimmt (unter 1,9 Å). Boltz und ähnliche Dienste verlangen einen persönlichen Zugangsschlüssel und sind deshalb nur als Link angegeben.</li>
+      <li>Die Strukturvorhersage stammt von ESMFold, einem neuronalen Netz, das aus der Sequenz allein eine Form schätzt. Sie ist keine Messung. Kurze Peptide haben in Wasser oft keine feste Form; die Sicherheit (pLDDT) ist dann niedrig, oder sie täuscht, wenn das Netz ein bekanntes Muster erkennt. Das Bild zeigt alle Atome außer Wasserstoff als Kugeln und Stäbe; Bindungen werden aus den Abständen bestimmt (unter 1,9 Å). Im Cartoon wird die Sekundärstruktur aus den vorhergesagten Koordinaten berechnet, vereinfacht nach DSSP (Wasserstoffbrücken mit dem Energiekriterium von Kabsch und Sander); bei so kurzen Peptiden sind das oft nur ein paar Reste, und die Grenzen zwischen Faltblatt und Schleife sind unscharf. Boltz und ähnliche Dienste verlangen einen persönlichen Zugangsschlüssel und sind deshalb nur als Link angegeben.</li>
       <li>Das Spleißen ist vereinfacht: Ein Intron wird herausgeschnitten, wenn davor und dahinter ein Exon liegt. Das Spleißosom erkennt Introns in der Zelle an GU am 5'-Ende, AG am 3'-Ende und einer Verzweigungsstelle (ein Adenin) weiter innen; das Intron wird als Schlinge (Lasso) frei. Hier wird nur der Rahmen GU…AG gezeigt, und alle Introns werden nacheinander entfernt. Alternatives Spleißen, bei dem Exons weggelassen werden, kommt nicht vor. Das Stück am 3'-Ende (Terminator) wird hier zusammen mit dem Spleißen abgespalten. In der Zelle erkennt ein Faktorkomplex das Signal AAUAAA, spaltet die RNA etwa 10 bis 30 Nucleotide dahinter, und die Poly(A)-Polymerase hängt dann etwa 200 Adenine an (hier acht). Kappe, Spleißen und Polyadenylierung laufen in der Zelle schon während der Transkription ab und beeinflussen sich gegenseitig; hier folgen sie nacheinander.</li>
       <li>Geschwindigkeit und Dauer sind nicht maßstäblich: Die Polymerase baut in der Zelle etwa 20 bis 80 Nucleotide pro Sekunde ein, die Anlagerung der Faktoren dauert deutlich länger als hier gezeigt.</li>
     </ul>
@@ -810,6 +823,72 @@ const MOL3D = (() => {
   return {create, supported, rotX: rotX3, rotY: rotY3, mul3};
 })();
 /*__/MOL3D__*/
+/*__CARTOON__*/
+// Cartoon-Darstellung einer Proteinkette als Dreiecksnetz (Quelle: template/site/cartoon.js, von build.py in die Seiten
+// kopiert). Eine Spline durch die Cα-Atome wird mit einem Querschnitt umhüllt: Helix und Strang als flaches Band
+// (Strang mit Pfeilspitze), Schleife als runder Schlauch. Die Bänder richten sich nach den Carbonylgruppen (C→O).
+//
+//   const m = CARTOON.bauen({ca, c, o, ss, farbe});   // Listen je Rest; ss: "H", "G", "E" oder "C"; farbe: [r, g, b] je Rest
+//   m → {pos, nor, col}  (Float32Array, je drei Zahlen pro Ecke, für scene.netze in mol3d.js)
+const CARTOON = (() => {
+  "use strict";
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+  const mul = (a, k) => [a[0] * k, a[1] * k, a[2] * k], dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const norm = a => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+  const STIL = {H: {a: 1.15, b: 0.22}, G: {a: 0.9, b: 0.2}, E: {a: 1.0, b: 0.2}, C: {a: 0.3, b: 0.3}};
+  const glatt = k => k * k * (3 - 2 * k);
+  const catmull = (p0, p1, p2, p3, t) => [0, 1, 2].map(i => 0.5 * ((2 * p1[i]) + (-p0[i] + p2[i]) * t + (2 * p0[i] - 5 * p1[i] + 4 * p2[i] - p3[i]) * t * t + (-p0[i] + 3 * p1[i] - 3 * p2[i] + p3[i]) * t * t * t));
+
+  function bauen(o){
+    const n = o.ca.length, S = o.teile || 6, M = o.seiten || 10, ss = o.ss;
+    // Führungsvektoren aus C→O, mit durchgehendem Vorzeichen (sonst springt das Band im Strang) und leicht geglättet
+    let g = [];
+    for (let i = 0; i < n; i++){ let v = norm(sub(o.o[i], o.c[i])); if (i && dot(v, g[i - 1]) < 0) v = mul(v, -1); g.push(v); }
+    g = g.map((v, i) => norm(add(add(mul(g[Math.max(0, i - 1)], 1), mul(v, 2)), g[Math.min(n - 1, i + 1)])));
+    const pts = [], gv = [], aa = [], bb = [], cc = [], seg = [];
+    const P = i => o.ca[Math.max(0, Math.min(n - 1, i))];
+    for (let i = 0; i < n - 1; i++){
+      for (let s = 0; s < S; s++){
+        const t = s / S, e = glatt(t), sa = STIL[ss[i]] || STIL.C, sb = STIL[ss[i + 1]] || STIL.C;
+        pts.push(catmull(P(i - 1), P(i), P(i + 1), P(i + 2), t));
+        gv.push(norm(add(mul(g[i], 1 - t), mul(g[i + 1], t))));
+        let a = sa.a + (sb.a - sa.a) * e, b = sa.b + (sb.b - sa.b) * e;
+        if (ss[i] === "E" && ss[i + 1] !== "E"){ a = 1.75 * (1 - t) + 0.05 * t; b = 0.2 + 0.1 * t; }   // Pfeilspitze am Ende des Strangs
+        aa.push(a); bb.push(b);
+        cc.push(o.farbe[i].map((v, q) => v + (o.farbe[i + 1][q] - v) * e));
+      }
+    }
+    pts.push(o.ca[n - 1]); gv.push(g[n - 1]); const le = STIL[ss[n - 1]] || STIL.C; aa.push(le.a); bb.push(le.b); cc.push(o.farbe[n - 1]);
+    const K = pts.length, ringe = [], normalen = [];
+    for (let k = 0; k < K; k++){
+      const t = norm(sub(pts[Math.min(K - 1, k + 1)], pts[Math.max(0, k - 1)]));
+      let w = sub(gv[k], mul(t, dot(gv[k], t))); w = norm(w); const nr = cross(t, w);
+      const ring = [], nrm = [];
+      for (let j = 0; j < M; j++){
+        const th = 2 * Math.PI * j / M, c = Math.cos(th), s = Math.sin(th);
+        ring.push(add(pts[k], add(mul(w, aa[k] * c), mul(nr, bb[k] * s))));
+        nrm.push(norm(add(mul(w, c / Math.max(aa[k], 0.05)), mul(nr, s / Math.max(bb[k], 0.05)))));
+      }
+      ringe.push(ring); normalen.push({nrm, t});
+    }
+    const nV = (K - 1) * M * 6 + 2 * M * 3, pos = new Float32Array(nV * 3), nor = new Float32Array(nV * 3), col = new Float32Array(nV * 3);
+    let q = 0;
+    const put = (p, nn, c) => { pos[q] = p[0]; pos[q + 1] = p[1]; pos[q + 2] = p[2]; nor[q] = nn[0]; nor[q + 1] = nn[1]; nor[q + 2] = nn[2]; col[q] = c[0]; col[q + 1] = c[1]; col[q + 2] = c[2]; q += 3; };
+    for (let k = 0; k < K - 1; k++) for (let j = 0; j < M; j++){
+      const j2 = (j + 1) % M, A = ringe[k], B = ringe[k + 1], NA = normalen[k].nrm, NB = normalen[k + 1].nrm;
+      put(A[j], NA[j], cc[k]); put(A[j2], NA[j2], cc[k]); put(B[j], NB[j], cc[k + 1]);   // gegen den Uhrzeigersinn von außen gesehen
+      put(A[j2], NA[j2], cc[k]); put(B[j2], NB[j2], cc[k + 1]); put(B[j], NB[j], cc[k + 1]);
+    }
+    for (const [k, vz] of [[0, -1], [K - 1, 1]]) for (let j = 0; j < M; j++){
+      const j2 = (j + 1) % M, nn = mul(normalen[k].t, vz), R = ringe[k];
+      if (vz < 0){ put(pts[k], nn, cc[k]); put(R[j], nn, cc[k]); put(R[j2], nn, cc[k]); } else { put(pts[k], nn, cc[k]); put(R[j2], nn, cc[k]); put(R[j], nn, cc[k]); }
+    }
+    return {pos, nor, col, ringe: K};
+  }
+  return {bauen};
+})();
+/*__/CARTOON__*/
 /*__GEN__*/
 // Die Bausteine eines Gens, die Regel, was die RNA-Polymerase abschreibt, und das Spleißen
 // (Quelle: template/site/gen.js, wird von build.py in die Seiten kopiert; Test: scripts/transkription/test_gen.js).
@@ -1715,11 +1794,12 @@ function uebersetzFertig(){
 
 /* ---------- Strukturvorhersage (nur nach ausdrücklicher Zustimmung) ---------- */
 const ESM_URL = "https://api.esmatlas.com/foldSequence/v1/pdb/";
-let pdbAtome = null, strukturAnsicht = null, strukturModus = "element";
+let pdbAtome = null, strukturAnsicht = null, strukturModus = "cartoon";
 const vst = t => { $("vorhersageStatus").textContent = t; };
 function vorhersageZuruecksetzen(){
   $("zustimmung").checked = false; $("vorhersage").disabled = true; $("strukturBox").hidden = true; vst(""); pdbAtome = null;
-  document.querySelectorAll("#struktur .seg button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.modus === "element"))); strukturModus = "element";
+  document.querySelectorAll("#struktur .seg button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.modus === "cartoon"))); strukturModus = "cartoon";
+  $("seitenketten").checked = false; $("plddtSchalter").checked = false;
 }
 $("zustimmung").addEventListener("change", () => { $("vorhersage").disabled = !$("zustimmung").checked; });
 $("kopieren").addEventListener("click", async () => {
@@ -1732,6 +1812,7 @@ document.querySelectorAll("#struktur .seg button").forEach(b => b.addEventListen
   document.querySelectorAll("#struktur .seg button").forEach(x => x.setAttribute("aria-checked", String(x === b)));
   if (pdbAtome) zeigeStruktur();
 }));
+["seitenketten", "plddtSchalter"].forEach(id => $(id).addEventListener("change", () => { if (pdbAtome) zeigeStruktur(); }));
 async function vorhersagen(){
   const seq = R.tl && R.tl.peptid; if (!seq || !$("zustimmung").checked) return;
   $("vorhersage").disabled = true; vst("Die Sequenz wird gesendet, die Vorhersage kann bis zu einer Minute dauern …");
@@ -1756,30 +1837,87 @@ function lesePdb(text){
   }
   return atome;
 }
+// Sekundärstruktur aus den Koordinaten, vereinfacht nach DSSP (Kabsch und Sander 1983): Das H am Amid-N sitzt 1,0 Å entfernt in Richtung der
+// Verlängerung von O=C des Vorgängers; eine Brücke C=O···H–N zählt bei einer Energie unter −0,5 kcal/mol. Helix: zwei aufeinanderfolgende
+// 4er-Windungen (3er: 3-10-Helix); Faltblatt: Reste in β-Brücken, die an einen weiteren Rest in Brücken grenzen; alles andere Schleife.
+function rueckgrat(at){
+  const res = {};
+  at.forEach(a => { (res[a.nr] = res[a.nr] || {aa: a.aa})[a.name] = a.p; });
+  return Object.keys(res).map(Number).sort((x, y) => x - y).map(k => res[k]).filter(r => r.N && r.CA && r.C && r.O);
+}
+function sekundaerstruktur(r){
+  const n = r.length, d = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+  const hb = Array.from({length: n}, () => Array(n).fill(false));           // hb[o][k]: C=O von o zu H–N von k
+  for (let k = 1; k < n; k++){
+    if (r[k].aa === "PRO") continue;
+    const v = [0, 1, 2].map(x => r[k - 1].C[x] - r[k - 1].O[x]), l = Math.hypot(...v), H = r[k].N.map((c, x) => c + v[x] / l);
+    for (let o = 0; o < n; o++){
+      if (Math.abs(o - k) < 3 || d(r[o].O, r[k].N) > 5) continue;
+      const E = 27.888 * (1 / d(r[o].O, r[k].N) + 1 / d(r[o].C, H) - 1 / d(r[o].O, H) - 1 / d(r[o].C, r[k].N));
+      if (E < -0.5) hb[o][k] = true;
+    }
+  }
+  const h = (a, b) => a >= 0 && b >= 0 && a < n && b < n && hb[a][b];
+  const ss = Array(n).fill("C"), bruecke = Array(n).fill(false);
+  for (const [lang, buchstabe] of [[3, "G"], [4, "H"]]){
+    for (let i = 1; i < n; i++) if (h(i - 1, i - 1 + lang) && h(i, i + lang)) for (let k = i; k < Math.min(n, i + lang); k++) if (buchstabe === "H" || ss[k] === "C") ss[k] = buchstabe;
+  }
+  for (let i = 0; i < n; i++) for (let j = i + 3; j < n; j++){
+    const parallel = (h(i - 1, j) && h(j, i + 1)) || (h(j - 1, i) && h(i, j + 1));
+    const anti = (h(i, j) && h(j, i)) || (h(i - 1, j + 1) && h(j - 1, i + 1));
+    if (parallel || anti) bruecke[i] = bruecke[j] = true;
+  }
+  for (let i = 0; i < n; i++) if (bruecke[i] && (bruecke[i - 1] || bruecke[i + 1]) && ss[i] === "C") ss[i] = "E";
+  return ss;
+}
 function zeigeStruktur(){
   const at = pdbAtome, box = $("strukturBox");
   if (!MOL3D.supported()){ if (!box.querySelector(".keingl")) box.querySelector(".dreid").insertAdjacentHTML("beforeend", '<div class="keingl">Das 3D-Bild braucht WebGL, das in diesem Browser nicht verfügbar ist.</div>'); return; }
-  const mitte = [0, 1, 2].map(k => at.reduce((s, a) => s + a.p[k], 0) / at.length);
+  const cartoon = strukturModus === "cartoon", mitSeiten = $("seitenketten").checked, nachSicherheit = $("plddtSchalter").checked;
+  const mitte = [0, 1, 2].map(k => at.reduce((s, a) => s + a.p[k], 0) / at.length), ver = v => v.map((c, k) => c - mitte[k]);
   const proRest = {}; at.forEach(a => { (proRest[a.nr] = proRest[a.nr] || []).push(a.b); });
   const rest = nr => proRest[nr].reduce((x, y) => x + y, 0) / proRest[nr].length;
   const band = v => v > 0.9 ? [0.0, 0.33, 0.84] : v > 0.7 ? [0.4, 0.8, 0.95] : v > 0.5 ? [1, 0.86, 0.08] : [1, 0.49, 0.27];   // Farben der Sicherheit wie bei AlphaFold
   const ELEM = {C: "el_C", N: "el_N", O: "el_O", H: "el_H", P: "el_P"};
-  const atomeS = at.map(a => ({p: a.p.map((v, k) => v - mitte[k]), c: strukturModus === "plddt" ? band(rest(a.nr)) : ELEM[a.el] ? PALETTE.rgb(ELEM[a.el]) : [0.9, 0.78, 0.2], r: a.el === "H" ? 0.2 : 0.3}));
+  const KLASSE = {}; Object.values(GENCODE.AS).forEach(v => { KLASSE[v.kurz.toUpperCase()] = v.klasse; });
+  const RUECKGRAT = new Set(["N", "CA", "C", "O"]);
+  // Welche Atome gezeichnet werden: Kugeln und Stäbe zeigen das Rückgrat (und mit Seitenketten alles); der Cartoon zeigt nur die Seitenketten,
+  // dazu unsichtbare Punkte für N und Cα, damit die Stäbe der Seitenketten (und der Ring des Prolins) ansetzen
+  const wahl = [];
+  at.forEach((a, i) => { if (cartoon ? (a.name === "CA" || a.name === "N" || (mitSeiten && !RUECKGRAT.has(a.name))) : (mitSeiten || RUECKGRAT.has(a.name))) wahl.push(i); });
+  const neuIndex = new Map(wahl.map((i, k) => [i, k]));
+  const farbeAtom = a => {
+    if (nachSicherheit) return band(rest(a.nr));
+    if (a.el === "C" && !RUECKGRAT.has(a.name) && KLASSE[a.aa]) return PALETTE.rgb("aa_" + KLASSE[a.aa]);     // Kohlenstoff der Seitenketten nach Art des Restes
+    return ELEM[a.el] ? PALETTE.rgb(ELEM[a.el]) : [0.9, 0.78, 0.2];
+  };
+  const atomeS = wahl.map(i => { const a = at[i], unsichtbar = cartoon && RUECKGRAT.has(a.name); return {p: ver(a.p), c: farbeAtom(a), r: unsichtbar ? 0.01 : a.el === "H" ? 0.2 : 0.3}; });
   const bindungen = [];
-  for (let i = 0; i < at.length; i++) for (let j = i + 1; j < at.length; j++){
-    const d = Math.hypot(at[i].p[0] - at[j].p[0], at[i].p[1] - at[j].p[1], at[i].p[2] - at[j].p[2]);
-    if (d < 1.9) bindungen.push({a: i, b: j, r: 0.1, c: [0.55, 0.6, 0.6]});
+  for (let x = 0; x < wahl.length; x++) for (let y = x + 1; y < wahl.length; y++){
+    const A = at[wahl[x]], B = at[wahl[y]];
+    if (cartoon && RUECKGRAT.has(A.name) && RUECKGRAT.has(B.name)) continue;            // im Cartoon trägt das Band das Rückgrat
+    if (Math.hypot(A.p[0] - B.p[0], A.p[1] - B.p[1], A.p[2] - B.p[2]) < 1.9) bindungen.push({a: x, b: y, r: 0.1, c: [0.55, 0.6, 0.6]});
+  }
+  let netze = [], ssText = "";
+  if (cartoon){
+    const rk = rueckgrat(at), ss = sekundaerstruktur(rk), fb = {H: "ss_helix", G: "ss_g", E: "ss_strang", C: "ss_schleife"};
+    const nrs = Object.keys(proRest).map(Number).sort((x, y) => x - y);
+    const farbe = rk.map((r, k) => nachSicherheit ? band(rest(nrs[k])) : PALETTE.rgb(fb[ss[k]]));
+    netze = [CARTOON.bauen({ca: rk.map(r => ver(r.CA)), c: rk.map(r => ver(r.C)), o: rk.map(r => ver(r.O)), ss, farbe})];
+    const zahl = x => ss.filter(y => y === x).length;
+    ssText = " Der Cartoon zeigt die Kette als Band; die Zuordnung der Sekundärstruktur ist aus den vorhergesagten Koordinaten berechnet (Wasserstoffbrücken wie bei DSSP): " + zahl("E") + " Reste im Faltblatt" + (nachSicherheit ? "" : " (gelb)") + ", " + (zahl("H") + zahl("G")) + " in Helices" + (nachSicherheit ? "" : " (rot)") + ", " + zahl("C") + " in Schleifen" + (nachSicherheit ? "." : " (grau).");
   }
   const ein = drei => { const x = Object.values(GENCODE.AS).find(v => v.kurz.toUpperCase() === drei); return x ? x.e : "?"; };
-  const marken = at.map((a, i) => ({a, i})).filter(x => x.a.name === "CA").map(x => ({p: atomeS[x.i].p, text: ein(x.a.aa) + x.a.nr, color: "#ffffff", bg: "#2a3b35"}));
+  const marken = at.map((a, i) => ({a, i})).filter(x => x.a.name === "CA").map(x => ({p: ver(x.a.p), text: ein(x.a.aa) + x.a.nr, color: "#ffffff", bg: "#2a3b35"}));
   if (!strukturAnsicht){
-    strukturAnsicht = MOL3D.create($("gl3"), $("ov3"), {zoom: 1.5});
+    strukturAnsicht = MOL3D.create($("gl3"), $("ov3"), {zoom: 1.3});
     strukturAnsicht.setRotation(MOL3D.mul3(MOL3D.rotX(-0.4), MOL3D.rotY(0.5)), true);
   }
-  strukturAnsicht.setScene({atome: atomeS, bindungen}); strukturAnsicht.setLabels(marken);
+  strukturAnsicht.setScene({atome: atomeS, bindungen, netze}); strukturAnsicht.setLabels(marken);      // die Ansicht passt sich der Auswahl an, Drehung und Zoom bleiben
   const cas = at.filter(a => a.name === "CA"), mittel = Math.round(100 * cas.reduce((x, a) => x + a.b, 0) / cas.length);
   const urteil = mittel >= 90 ? "sehr hoch" : mittel >= 70 ? "hoch" : mittel >= 50 ? "niedrig" : "sehr niedrig";
-  $("strukturInfo").textContent = "Mittlere Sicherheit der Vorhersage (pLDDT): " + mittel + " von 100, also " + urteil + ". Ab 70 gilt eine Vorhersage als brauchbar; bei so kurzen Peptiden ist sie oft unsicher, und kurze Peptide liegen in Wasser meist in vielen Formen vor. Das Bild zeigt eine einzige Form. Die Vorhersage kommt von ESMFold (Lin et al. 2023) und ist keine Messung."
+  $("strukturInfo").textContent = "Mittlere Sicherheit der Vorhersage (pLDDT): " + mittel + " von 100, also " + urteil + ". Ab 70 gilt eine Vorhersage als brauchbar; bei so kurzen Peptiden ist sie oft unsicher, und kurze Peptide liegen in Wasser meist in vielen Formen vor. Das Bild zeigt eine einzige Form. Die Vorhersage kommt von ESMFold (Lin et al. 2023) und ist keine Messung." + ssText
+    + (nachSicherheit ? " Färbung nach Sicherheit: dunkelblau über 90, hellblau 70 bis 90, gelb 50 bis 70, orange unter 50." : mitSeiten ? " Kohlenstoffe der Seitenketten sind nach der Art des Restes gefärbt (wasserabweisend, polar, sauer, basisch)." : "")
     + (R.tl && R.tl.peptid === gen.peptid ? " Zum Vergleich: Experimentell ist " + gen.peptidName + " eine β-Haarnadel." : "");
 }
 
