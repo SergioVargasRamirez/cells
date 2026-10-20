@@ -11,19 +11,19 @@
   --accent:#13795b; --accent-ink:#ffffff; --hl:#fff3d6;
   --serif:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
   --sans:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --c-prom:#1f8f86; --c-utr5:#c77d0a; --c-cds:#3d6fd6; --c-utr3:#b24c8a; --c-term:#d1495b; --c-tf:#8e5bb5;
+  --c-prom:#1f8f86; --c-exon:#3d6fd6; --c-intron:#8d9aa0; --c-term:#d1495b; --c-tf:#8e5bb5;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
     --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
-    --c-prom:#4fcfc2; --c-utr5:#e0a84a; --c-cds:#7da2ff; --c-utr3:#e58ac0; --c-term:#ff7d8d; --c-tf:#c79af0;
+    --c-prom:#4fcfc2; --c-exon:#7da2ff; --c-intron:#9fb0b8; --c-term:#ff7d8d; --c-tf:#c79af0;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
   --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
-  --c-prom:#4fcfc2; --c-utr5:#e0a84a; --c-cds:#7da2ff; --c-utr3:#e58ac0; --c-term:#ff7d8d; --c-tf:#c79af0;
+  --c-prom:#4fcfc2; --c-exon:#7da2ff; --c-intron:#9fb0b8; --c-term:#ff7d8d; --c-tf:#c79af0;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -59,8 +59,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,.stein:focus-visi
 .stein .titel{font-size:13px;font-weight:700;fill:currentColor}
 .stein.sel .koerper,.stein:focus-visible .koerper{stroke:var(--accent);stroke-width:4}
 .stein:focus-visible{outline:none}
-.stein[data-key=prom]{--c:var(--c-prom)}.stein[data-key=utr5]{--c:var(--c-utr5)}.stein[data-key=cds]{--c:var(--c-cds)}
-.stein[data-key=utr3]{--c:var(--c-utr3)}.stein[data-key=term]{--c:var(--c-term)}
+.stein[data-key=prom]{--c:var(--c-prom)}.stein[data-key=exon]{--c:var(--c-exon)}.stein[data-key=intron]{--c:var(--c-intron)}.stein[data-key=term]{--c:var(--c-term)}
 .platz,.heim{cursor:pointer}
 .platz .rahmen,.heim .rahmen{fill:transparent;stroke:var(--line);stroke-width:2;stroke-dasharray:6 5}
 .platz:focus-visible{outline:none}
@@ -92,6 +91,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,.stein:focus-visi
 .rnateil{display:inline-flex;flex-direction:column;gap:2px}
 .rnateil small{font-size:.75rem;font-weight:700;color:var(--muted)}
 .rnateil code{font:800 1rem/1.2 ui-monospace,Consolas,monospace;letter-spacing:.06em;padding:2px 6px;border-bottom:4px solid var(--c);background:var(--surface2);border-radius:4px 4px 0 0}
+.rnateil .balken{display:block;width:44px;border-radius:3px;background:var(--c);margin:0 0 4px}
 .rnaende{font-weight:800;color:var(--muted);align-self:flex-end;padding-bottom:4px}
 .gut{color:var(--accent);font-weight:700}
 .karte ul{margin:6px 0 0;padding-left:1.2em}
@@ -202,7 +202,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 <div class="page">
   <header>
     <h1>Ein Gen zusammensetzen</h1>
-    <p class="lede">Damit eine Zelle ein Gen ablesen kann, braucht die DNA mehr als die Information für das Protein: Sie braucht weitere Abschnitte, und jeder muss an der richtigen Stelle liegen. Setze die fünf Bausteine zu einem Gen zusammen. Sobald alle Plätze belegt sind, macht sich die RNA-Polymerase auf den Weg. Was sie abschreibt, hängt davon ab, wie du die Bausteine angeordnet hast.</p>
+    <p class="lede">Damit eine Zelle ein Gen ablesen kann, braucht die DNA mehr als die Information für das Protein: Sie braucht weitere Abschnitte, und jeder muss an der richtigen Stelle liegen. Setze die sieben Bausteine zu einem Gen zusammen. Sobald alle Plätze belegt sind, macht sich die RNA-Polymerase auf den Weg. Was sie abschreibt, hängt davon ab, wie du die Bausteine angeordnet hast.</p>
   </header>
 
   <main>
@@ -215,7 +215,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <button class="btn" type="button" id="nochmal" disabled title="Die Transkription mit dieser Anordnung noch einmal ablaufen lassen">Noch einmal</button>
         <label class="regler">Tempo <input type="range" id="tempo" min="0.5" max="3" step="0.5" value="1" aria-label="Tempo der Animation"></label>
       </div>
-      <div class="buehne"><svg id="buehne" viewBox="0 0 960 330" role="group" aria-label="Fünf Bausteine und fünf Plätze auf der DNA; darunter läuft die Transkription ab"></svg></div>
+      <div class="buehne"><svg id="buehne" viewBox="0 0 960 330" role="group" aria-label="Sieben Bausteine und sieben Plätze auf der DNA; darunter läuft die Transkription ab"></svg></div>
       <ol class="phasen" id="phasen" aria-label="Phasen der Transkription">
         <li data-p="1"><span class="nr">1</span>Initiation</li>
         <li data-p="2"><span class="nr">2</span>Elongation</li>
@@ -225,16 +225,17 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       <div class="legende" aria-label="Legende">
         <span><i style="background:var(--c-tf)"></i>Transkriptionsfaktoren</span>
         <span><i style="background:var(--accent)"></i>RNA-Polymerase</span>
-        <span><i style="background:linear-gradient(90deg,#2f5bea,#009e73,#dcae1c)"></i>Basen (wie auf den anderen Seiten)</span>
+        <span><i style="background:var(--c-exon)"></i>Exon</span>
+        <span><i style="background:var(--c-intron)"></i>Intron</span>
+        <span><i style="background:linear-gradient(90deg,#2f5bea,#009e73,#dcae1c)"></i>Basen im Promotor</span>
       </div>
       <div class="karte" id="ergebnis" hidden></div>
       <div class="karte" id="erklaerung" hidden>
         <h3>Wozu die Bausteine dienen</h3>
         <ul>
-          <li><b>Promotor:</b> Hier erkennen Transkriptionsfaktoren die TATA-Box und binden, danach lagert sich die RNA-Polymerase an. Der Promotor liegt vor dem Gen und legt fest, wo und in welche Richtung abgeschrieben wird. Er selbst wird nicht abgeschrieben.</li>
-          <li><b>5'-UTR:</b> Wird mit abgeschrieben, aber nicht in Protein übersetzt. Am Ende liegt die Erkennungsstelle (Kozak-Sequenz) für das Ribosom, kurz vor dem Start-Codon.</li>
-          <li><b>Codierender Bereich:</b> Vom Start-Codon AUG bis zum Stopp-Codon UGA, hier Met-Gly-Glu: der Bauplan des Proteins.</li>
-          <li><b>3'-UTR:</b> Wird abgeschrieben, aber nicht übersetzt. Sie enthält das Signal AAUAAA, an dem die RNA später gespalten und mit dem Poly(A)-Schwanz versehen wird (siehe „Vom Transkript zur mRNA“).</li>
+          <li><b>Promotor:</b> Hier erkennen Transkriptionsfaktoren die TATA-Box und binden, danach lagert sich die RNA-Polymerase an. Er liegt vor dem Gen und legt fest, wo und in welche Richtung abgeschrieben wird. Er selbst wird nicht abgeschrieben.</li>
+          <li><b>Exon:</b> Abschnitt, der später in der reifen mRNA bleibt. Er enthält den codierenden Bereich und an den Enden die nicht übersetzten Bereiche (UTR). Das erste Exon beginnt direkt hinter dem Promotor, das letzte endet vor dem Terminator.</li>
+          <li><b>Intron:</b> Liegt zwischen zwei Exons. Es wird mit abgeschrieben, aber nicht in Protein übersetzt, und erst nach der Transkription herausgeschnitten (Spleißen, siehe „Vom Transkript zur mRNA“).</li>
           <li><b>Terminator:</b> Das Signal zum Aufhören. Die Polymerase schreibt es ab, löst sich danach von der DNA und lässt die RNA los.</li>
         </ul>
       </div>
@@ -245,12 +246,12 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
   <details>
     <summary>Modell und Grenzen</summary>
     <ul>
-      <li>Das Gen ist erfunden und winzig: fünf Abschnitte zu je zwölf Basenpaaren, das Protein hat drei Aminosäuren. Ein menschliches Gen ist im Mittel um die 30 000 Basenpaare lang und hat dazu meist Introns, die hier fehlen (siehe „Vom Transkript zur mRNA“).</li>
+      <li>Das Gen ist erfunden und winzig: Exons und Introns sind schematisch gleich lang und ohne Sequenz gezeichnet, nur der Promotor zeigt Basen. Die drei Exons sind austauschbar, ebenso die beiden Introns. Echte Exons sind im Mittel etwa 150 Basenpaare lang, Introns oft viel länger. Ein menschliches Gen ist im Mittel um die 30 000 Basenpaare lang und hat dazu meist Introns, die hier fehlen (siehe „Vom Transkript zur mRNA“).</li>
       <li>Der Promotor besteht in der Zelle aus mehreren Elementen, die TATA-Box liegt etwa 25 bis 30 Basenpaare vor dem Startpunkt, und nicht jeder Promotor hat eine. Hier steht sie kurz vor dem Startpunkt, und die Transkriptionsfaktoren sind zu einer Form zusammengefasst. Tatsächlich sind es viele Proteine (unter anderem TBP und die Faktoren TFIIA bis TFIIH), die sich nacheinander anlagern. Die Polymerase ist größer als gezeichnet und umschließt etwa 35 Basenpaare.</li>
       <li>Enhancer, die Gene aus großer Entfernung verstärken, und der Zustand des Chromatins (siehe „DNA-Verpackung“) fehlen. Ohne sie wird in der Zelle nur selten abgeschrieben.</li>
       <li>Die Polymerase liest den unteren Strang (Matrize) von 3' nach 5' und baut die RNA in 5'→3'-Richtung auf. Die RNA ist deshalb im Aufbau gleich dem oberen Strang, mit U statt T. In der Zelle bleibt die RNA nur etwa neun Basen lang am Matrizenstrang; hier ist es genauso, sie löst sich schon während der Synthese ab.</li>
       <li>Die Richtung ist festgelegt: Die Polymerase läuft immer von links nach rechts. In der Zelle liegen Gene auf beiden Strängen, die Polymerase richtet sich nach der Ausrichtung des Promotors.</li>
-      <li>Das Ende ist vereinfacht. Der Terminator hier ist eine Haarnadel-Sequenz wie bei Bakterien; ihr U-reicher Abschnitt fehlt. Bei Eukaryoten, die RNA-Polymerase II nutzen, wird die RNA zuerst hinter dem Signal AAUAAA gespalten, und die Polymerase wird erst weiter hinten abgelöst. Dass der Terminator hier immer mit abgeschrieben wird und die Polymerase dann sofort abfällt, ist eine Vereinfachung. Der Poly(A)-Schwanz und die Kappe werden hier nicht angefügt.</li>
+      <li>Das Ende ist vereinfacht. Der Terminator ist nur als Block gezeichnet, nach dem die Polymerase abfällt; bei Bakterien ist es eine Haarnadel in der RNA mit einem U-reichen Abschnitt dahinter. Bei Eukaryoten, die RNA-Polymerase II nutzen, wird die RNA zuerst hinter dem Signal AAUAAA gespalten, und die Polymerase wird erst weiter hinten abgelöst. Dass der Terminator hier immer mit abgeschrieben wird und die Polymerase dann sofort abfällt, ist eine Vereinfachung. Der Poly(A)-Schwanz und die Kappe werden hier nicht angefügt, die Introns bleiben im Transkript.</li>
       <li>Geschwindigkeit und Dauer sind nicht maßstäblich: Die Polymerase baut in der Zelle etwa 20 bis 80 Nucleotide pro Sekunde ein, die Anlagerung der Faktoren dauert deutlich länger als hier gezeigt.</li>
     </ul>
   </details>
@@ -302,40 +303,49 @@ const PALETTE = (() => {
 // Die Bausteine eines Gens und die Regel, was die RNA-Polymerase abschreibt
 // (Quelle: template/site/gen.js, wird von build.py in die Seiten kopiert; Test: scripts/transkription/test_gen.js).
 //
-//   GEN.BAUSTEINE   fünf Abschnitte à 12 Basenpaare (Sequenz = Gegenstrang, 5'→3', so wie die RNA lautet, mit T statt U)
-//   GEN.analysiere(platz)   platz[s] = Nummer des Bausteins auf Platz s (0 bis 4, von links nach rechts)
+//   GEN.BAUSTEINE   sieben Abschnitte zu je 8 Einheiten: Promotor (mit Sequenz), drei Exons, zwei Introns, Terminator
+//                   (Exons und Introns sind schematisch, ohne Sequenz; gleiche Typen sind austauschbar)
+//   GEN.SOLL        Typen in der Reihenfolge eines Gens: Promotor, Exon, Intron, Exon, Intron, Exon, Terminator
+//   GEN.analysiere(platz)   platz[s] = Nummer des Bausteins auf Platz s (von links nach rechts)
 //                           → {p, t, von, bis, teile, stopp, ok}
 //        p      Platz des Promotors
-//        von    erste abgeschriebene Base (Index auf der ganzen Strecke), die Polymerase startet hinter dem Promotor
-//        bis    Index hinter der letzten abgeschriebenen Base: bis zum Ende des Terminators, sonst bis zum Ende der DNA
+//        von    erste abgeschriebene Einheit (Index auf der ganzen Strecke), die Polymerase startet hinter dem Promotor
+//        bis    Index hinter der letzten abgeschriebenen Einheit: bis zum Ende des Terminators, sonst bis zum Ende der DNA
 //        teile  Nummern der abgeschriebenen Bausteine in der Reihenfolge des Transkripts
 //        stopp  true, wenn hinter dem Promotor ein Terminator liegt
-//        ok     true, wenn das Transkript genau 5'-UTR, codierender Bereich, 3'-UTR und Terminator enthält
-//   GEN.rna(platz, pl)   die abgeschriebene RNA als Text (A, C, G, U)
+//        ok     true, wenn das Transkript genau Exon, Intron, Exon, Intron, Exon und Terminator enthält
+//   GEN.vorrat(zufall)   Reihenfolge der Bausteine im Vorrat (Stelle → Nummer), zufällig; an keiner Stelle liegt ein
+//                        Baustein, dessen Typ an dieser Stelle auch im fertigen Gen stünde
 const GEN = (() => {
   "use strict";
-  const PROM = 0, UTR5 = 1, CDS = 2, UTR3 = 3, TERM = 4, N = 5, L = 12;
+  const L = 8;
   const BAUSTEINE = [
-    {key: "prom", name: "Promotor", seq: "GGCTATAAAAGG", tata: [3, 8]},       // TATA-Box (TATAAA) an den Stellen 3 bis 8
-    {key: "utr5", name: "5'-UTR", seq: "CAGAGCGCCACC"},                      // endet mit der Kozak-Sequenz GCCACC
-    {key: "cds", name: "Codierender Bereich", seq: "ATGGGCGAATGA"},          // ATG GGC GAA TGA = Met-Gly-Glu-Stopp
-    {key: "utr3", name: "3'-UTR", seq: "CCAATAAAGGCT"},                      // enthält das Polyadenylierungssignal AATAAA
-    {key: "term", name: "Terminator", seq: "GCCCAAAAGGGC"},                  // GCCC und GGGC bilden in der RNA eine Haarnadel
+    {key: "prom", name: "Promotor", seq: "CTATAAAA", tata: [1, 6]},     // TATA-Box (TATAAA) an den Stellen 1 bis 6
+    {key: "exon", name: "Exon"}, {key: "exon", name: "Exon"}, {key: "exon", name: "Exon"},
+    {key: "intron", name: "Intron"}, {key: "intron", name: "Intron"},
+    {key: "term", name: "Terminator"},
   ];
-  const sollTeile = [UTR5, CDS, UTR3, TERM];
+  const N = BAUSTEINE.length, PROM = 0, TERM = N - 1;
+  const SOLL = ["prom", "exon", "intron", "exon", "intron", "exon", "term"];
+  const typ = id => BAUSTEINE[id].key;
 
   function analysiere(platz){
     const p = platz.indexOf(PROM), t = platz.indexOf(TERM);
     const stopp = t > p;
     const letzter = stopp ? t : N - 1;
     const teile = platz.slice(p + 1, letzter + 1);
+    const soll = SOLL.slice(1);
     return {p, t, von: (p + 1) * L, bis: (letzter + 1) * L, teile, stopp,
-            ok: teile.length === sollTeile.length && teile.every((x, i) => x === sollTeile[i])};
+            ok: teile.length === soll.length && teile.every((x, i) => typ(x) === soll[i])};
   }
-  function rna(platz, pl){
-    return platz.slice(pl.p + 1, pl.t > pl.p ? pl.t + 1 : N).map(id => BAUSTEINE[id].seq).join("").replace(/T/g, "U");
+  function vorrat(zufall){
+    const a = BAUSTEINE.map((b, i) => i);
+    for (;;){
+      for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(zufall() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+      if (a.every((id, k) => typ(id) !== SOLL[k])) return a.slice();
+    }
   }
-  return {BAUSTEINE, N, L, PROM, UTR5, CDS, UTR3, TERM, analysiere, rna};
+  return {BAUSTEINE, N, L, PROM, TERM, SOLL, typ, analysiere, vorrat};
 })();
 /*__/GEN__*/
 </script>
@@ -352,7 +362,7 @@ const KOMP = {A: "T", T: "A", G: "C", C: "G"};
 
 const {BAUSTEINE: BAU, N, L} = GEN;
 // Maße der Zeichnung (Einheiten des viewBox)
-const BW = 14, PW = L * BW, PITCH = PW + 6, X0 = 48;
+const BW = 15, PW = L * BW, PITCH = PW + 6, X0 = 42;
 const TRAY_Y = 28, TRACK_Y = 150, PH = 72, TOP_Y = 26, BOT_Y = 50, CH = 16;
 const DTOP = -9, DBOT = 11;                          // so weit rücken die Stränge in der Blase auseinander
 const HYB_Y = TRACK_Y + BOT_Y + DBOT + CH + 9;       // RNA im Hybrid mit der Matrize
@@ -370,10 +380,8 @@ const platzBelegung = () => { const p = Array(N).fill(null); Z.wo.forEach((s, id
 const voll = () => Z.wo.every(s => s >= 0);
 
 function mischen(){
-  const a = [0, 1, 2, 3, 4];
-  do { for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } }
-  while (a.every((x, i) => x === i));
-  Z.heim = a; Z.wo = Array(N).fill(-1); Z.sel = null;
+  const v = GEN.vorrat(Math.random);      // v[Stelle] = Baustein
+  Z.heim = BAU.map((b, id) => v.indexOf(id)); Z.wo = Array(N).fill(-1); Z.sel = null;
 }
 
 /* ---------- Zeichnung aufbauen ---------- */
@@ -411,6 +419,19 @@ function zelle(parent, x, y, buchstabe, klasse){
 function setze(z, b){ z.b = b; z.t.textContent = b; faerbe(z); }
 function faerbe(z){ if (!z.b) return; const f = PALETTE.get(z.b); z.r.setAttribute("fill", f); z.t.setAttribute("fill", lumi(f) > 0.6 ? "#111" : "#fff"); }
 
+// Schematischer Abschnitt ohne Sequenz: Exon und Terminator als dicker Balken, Intron als dünne Linie
+const HOEHE = {exon: 12, intron: 4, term: 12};
+function balken(parent, x, y, typ){
+  const g = el("g", {transform: `translate(${x} ${y})`}, parent);
+  const r = el("rect", {x: 0, width: BW, rx: 2}, g);
+  formBalken({g, r}, typ);
+  return {g, r, b: ""};
+}
+function formBalken(z, typ){
+  const h = HOEHE[typ];
+  z.r.setAttribute("y", (CH - h) / 2); z.r.setAttribute("height", h); z.r.style.fill = `var(--c-${typ})`;
+}
+
 const steine = [];
 BAU.forEach((b, id) => {
   const g = el("g", {class: "stein", "data-id": id, "data-key": b.key, tabindex: 0, role: "button"}, ebeneSteine);
@@ -418,8 +439,8 @@ BAU.forEach((b, id) => {
   el("text", {class: "titel", x: 8, y: 17}, g).textContent = b.name;
   const oben = [], unten = [], ticks = [];
   for (let i = 0; i < L; i++){
-    oben.push(zelle(g, i * BW, TOP_Y, b.seq[i]));
-    unten.push(zelle(g, i * BW, BOT_Y, KOMP[b.seq[i]]));
+    oben.push(b.seq ? zelle(g, i * BW, TOP_Y, b.seq[i]) : balken(g, i * BW, TOP_Y, b.key));
+    unten.push(b.seq ? zelle(g, i * BW, BOT_Y, KOMP[b.seq[i]]) : balken(g, i * BW, BOT_Y, b.key));
     ticks.push(el("line", {class: "tick", x1: i * BW + BW / 2, x2: i * BW + BW / 2, y1: TOP_Y + CH + 2, y2: BOT_Y - 2}, g));
   }
   g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); klickStein(id); } });
@@ -538,7 +559,7 @@ for (let g = 0; g < N * L; g++){
   rnaTicks.push(t);
 }
 for (let g = 0; g < N * L; g++){
-  const z = zelle(ebeneAnim, 0, 0, "U", "rna-zelle"); z.g.style.display = "none"; rnaZellen.push(z);
+  const z = balken(ebeneAnim, 0, 0, "exon"); z.g.style.display = "none"; rnaZellen.push(z);
 }
 const faktoren = el("g", {class: "faktoren", opacity: 0}, ebeneOben);
 el("rect", {class: "form", rx: 14}, faktoren); el("text", {"text-anchor": "middle"}, faktoren).textContent = "TF";
@@ -593,8 +614,7 @@ function start(){
   R.belegung = bel; R.plan = pl; R.ende = pl.bis > pl.von ? pl.bis : pl.von + 8;
   R.pos = pl.von; R.phase = "tf"; R.t = 0; R.letzte = performance.now();
   // RNA-Zellen vorbereiten
-  const rna = GEN.rna(bel, pl);
-  for (let k = 0; k < rna.length; k++){ const z = rnaZellen[pl.von + k]; setze(z, rna[k]); z.g.style.display = "none"; }
+  for (let g = pl.von; g < pl.bis; g++){ const z = rnaZellen[g]; formBalken(z, BAU[bel[Math.floor(g / L)]].key); z.g.style.display = "none"; }
   $("ergebnis").hidden = true; $("erklaerung").hidden = true;
   status(TEXTE.tf); chips(1);
   rafId = requestAnimationFrame(bild);
@@ -678,7 +698,7 @@ function zeichne(){
 
 /* ---------- Ergebnis ---------- */
 function fertig(){
-  const pl = R.plan, bel = R.belegung, rna = GEN.rna(bel, pl);
+  const pl = R.plan, bel = R.belegung, rna = pl.teile;
   if (rna.length){
     rna5.setAttribute("x", xc(pl.von) - BW / 2 - 4); rna5.textContent = "RNA 5'";
     rna3.setAttribute("x", xc(pl.bis - 1) + BW / 2 + 4); rna3.textContent = "3'";
@@ -693,21 +713,22 @@ function fertig(){
     const e5 = document.createElement("span"); e5.className = "rnaende"; e5.textContent = "5'"; zeile.appendChild(e5);
     pl.teile.forEach(id => {
       const t = document.createElement("span"); t.className = "rnateil"; t.style.setProperty("--c", `var(--c-${BAU[id].key})`);
-      const k = document.createElement("small"); k.textContent = BAU[id].name; const c = document.createElement("code"); c.textContent = BAU[id].seq.replace(/T/g, "U");
+      const k = document.createElement("small"); k.textContent = BAU[id].name; const c = document.createElement("i"); c.className = "balken"; c.style.height = HOEHE[BAU[id].key] / 2 + "px";
       t.append(k, c); zeile.appendChild(t);
     });
     const e3 = document.createElement("span"); e3.className = "rnaende"; e3.textContent = "3'"; zeile.appendChild(e3);
     box.appendChild(zeile);
   }
   const ul = document.createElement("ul"), li = t => { const x = document.createElement("li"); x.textContent = t; ul.appendChild(x); };
-  const fehlt = [1, 2, 3].filter(id => !pl.teile.includes(id)).map(id => BAU[id].name);
+  const fehlt = [];      // nicht abgeschriebene Bausteine (ohne Promotor), nach Typ gezählt
+  BAU.forEach((b, id) => { if (id !== GEN.PROM && !pl.teile.includes(id)){ const e = fehlt.find(f => f.name === b.name); if (e) e.n++; else fehlt.push({name: b.name, n: 1}); } });
   if (pl.ok){
     const p = document.createElement("p"); p.className = "gut";
-    p.textContent = "Geschafft: Die Polymerase hat das ganze Gen abgeschrieben und am Terminator losgelassen. Diese RNA enthält die 5'-UTR, den codierenden Bereich und die 3'-UTR. Es ist die unreife RNA (pre-mRNA) des Gens.";
+    p.textContent = "Geschafft: Die Polymerase hat das ganze Gen abgeschrieben und am Terminator losgelassen. Die RNA enthält alle drei Exons und beide Introns. Es ist die unreife RNA (pre-mRNA) des Gens; die Introns werden erst danach herausgeschnitten.";
     box.appendChild(p);
   } else {
-    if (fehlt.length) li("Nicht abgeschrieben wurde: " + fehlt.join(", ") + ".");
-    if (!fehlt.length) li("Alle drei Abschnitte des Gens sind im Transkript, aber nicht so, wie sie in einem Gen aufeinanderfolgen.");
+    if (fehlt.length) li("Nicht abgeschrieben wurde: " + fehlt.map(f => f.name + (f.n > 1 ? " (" + f.n + "×)" : "")).join(", ") + ".");
+    if (!fehlt.length) li("Alle Abschnitte hinter dem Promotor sind im Transkript, aber nicht so, wie sie in einem Gen aufeinanderfolgen.");
     if (!pl.stopp && rna.length) li("Die Polymerase ist bis zum Ende der DNA gelaufen.");
     const p = document.createElement("p");
     p.textContent = (rna.length ? "Das ist nicht das vollständige Transkript dieses Gens. " : "") + "Ordne die Bausteine anders an, dann beginnt die Transkription von neuem.";
