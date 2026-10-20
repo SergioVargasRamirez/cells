@@ -124,6 +124,15 @@ button:focus-visible,input:focus-visible,summary:focus-visible,.stein:focus-visi
 .strukturschalter{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin:4px 0}
 .strukturschalter .rechts{margin-left:auto;display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}
 @media (prefers-reduced-motion: reduce){.switch input,.switch input::after{transition:none}}
+.pille{cursor:pointer}
+.pille .koerper{fill:var(--accent)}
+.pille text{font-size:12px;font-weight:800;fill:var(--accent-ink)}
+.pille .halo{fill:none;stroke:var(--accent);animation:pillePuls 1.3s ease-out infinite}
+.pille.gesehen .halo{animation:none;stroke-opacity:0}
+.pille:focus-visible{outline:none}
+.pille:focus-visible .koerper{stroke:var(--ink);stroke-width:3}
+@keyframes pillePuls{0%{stroke-opacity:.8;stroke-width:0}100%{stroke-opacity:0;stroke-width:12}}
+@media (prefers-reduced-motion: reduce){.pille .halo{animation:none;stroke-opacity:.45;stroke-width:4}}
 .peptidzeile{font:800 1.05rem ui-monospace,Consolas,monospace;letter-spacing:.12em;word-break:break-all}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{font:inherit;font-size:.95rem;border:0;border-left:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;cursor:pointer}
@@ -1071,7 +1080,7 @@ const svg = $("buehne");
 const ebeneHinten = el("g", {}, svg), ebeneSteine = el("g", {}, svg), ebeneAnim = el("g", {}, svg), ebeneOben = el("g", {}, svg);
 let Z = {heim: [], wo: [], sel: null}, TL = [];   // heim[id]: Stelle im Vorrat, wo[id]: Platz auf der DNA oder -1
 let steine = [], plaetze = [], heime = [], rnaZellen = [], rnaTicks = [], offen = new Float32Array(0);
-let faktoren, poly, spleissG, paG, paZellen = [], ribosom, codonRahmen, kette, kappeG, kpG, rna5, rna3;
+let faktoren, poly, spleissG, paG, paZellen = [], ribosom, codonRahmen, kette, kappeG, kpG, pille, rna5, rna3;
 const PEP_Y = RNA_Y + 66, CW = 24;         // Zeile des Peptids, Breite einer Aminosäure
 const NPA = 8;       // Länge des Poly(A)-Schwanzes im Modell
 const R = {kappe: false, capX: 0, tl: null, mZellen: [], rechts: null, phase: "leer", t: 0, plan: null, pos: 0, open: 0, rel: 0, pa: 0, py: 0, tf: 0, tfUp: 0, ende: 0, belegung: null, letzte: 0, sp: null};
@@ -1161,6 +1170,11 @@ function aufbauen(){
   ribosom = el("g", {class: "ribosom", opacity: 0}, ebeneOben);
   el("rect", {class: "form", rx: 16}, ribosom); el("text", {"text-anchor": "middle"}, ribosom).textContent = "Ribosom";
   codonRahmen = el("rect", {class: "codonrahmen", opacity: 0, rx: 4}, ebeneOben);
+  pille = el("g", {class: "pille", tabindex: 0, role: "button", "aria-label": "Zur Strukturvorhersage springen", style: "display:none"}, ebeneOben);   // Hinweis rechts vom Peptid
+  el("rect", {class: "halo", width: 104, height: 24, rx: 12}, pille); el("rect", {class: "koerper", width: 104, height: 24, rx: 12}, pille);
+  el("text", {x: 52, y: 16.5, "text-anchor": "middle"}, pille).textContent = "3D-Struktur ↓";
+  pille.addEventListener("click", springeZurStruktur);
+  pille.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); springeZurStruktur(); } });
   kappeG = el("g", {opacity: 0}, ebeneAnim);      // die Kappe: 7-Methylguanosin am 5'-Ende
   el("rect", {width: 34, height: CH + 2, rx: 9, fill: "#6d4c9f"}, kappeG);
   el("text", {x: 17, y: 13.5, "text-anchor": "middle", fill: "#ffffff", style: "font:800 11px var(--sans)"}, kappeG).textContent = "m⁷G";
@@ -1316,6 +1330,7 @@ function abbrechen(){
   faktoren.setAttribute("opacity", 0); poly.setAttribute("opacity", 0); spleissG.setAttribute("opacity", 0);
   $("kappe").disabled = true; $("spleissen").disabled = true; $("polya").disabled = true; $("uebersetzen").disabled = true;
   kappeG.setAttribute("opacity", 0); kpG.setAttribute("opacity", 0);
+  pille.style.display = "none"; pille.classList.remove("gesehen");
   kette.replaceChildren(); ribosom.setAttribute("opacity", 0); codonRahmen.setAttribute("opacity", 0); svg.setAttribute("viewBox", "0 0 960 330");
   $("peptid").hidden = true; vorhersageZuruecksetzen();
   paZellen.forEach(z => { z.g.style.display = "none"; z.g.setAttribute("opacity", 1); }); paG.setAttribute("opacity", 0);
@@ -1786,13 +1801,22 @@ function uebersetzFertig(){
     else box.appendChild(absatz("Das ist nicht das Peptid, für das dieses Gen codiert. Ändere die Anordnung der Bausteine und versuche es noch einmal.", "klein"));
     status(richtig ? "Fertig: Aus dem Gen ist ein Peptid geworden." + (tr.aa.length >= 10 ? " Darunter kannst du seine Struktur vorhersagen lassen." : "") : "Fertig: Es ist ein Peptid entstanden, aber nicht das des Gens.");
     L_.peptid = tr.kurz;
-    if (tr.kurz.length >= 10){ $("seqLaenge").textContent = tr.kurz.length; $("struktur").hidden = false; }
+    if (tr.kurz.length >= 10){
+      $("seqLaenge").textContent = tr.kurz.length; $("struktur").hidden = false;
+      pille.setAttribute("transform", `translate(${L_.x0 + tr.codons.length * (CW + 3) + 14} ${PEP_Y})`); pille.style.display = "";
+    }
     else box.appendChild(absatz("Für eine Strukturvorhersage braucht es mindestens 10 Aminosäuren; dieses Peptid hat " + tr.kurz.length + ".", "klein"));
   }
   $("peptid").hidden = false;
 }
 
 /* ---------- Strukturvorhersage (nur nach ausdrücklicher Zustimmung) ---------- */
+function springeZurStruktur(){
+  pille.classList.add("gesehen");
+  const ruhig = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  $("peptid").scrollIntoView({behavior: ruhig ? "auto" : "smooth", block: "start"});
+  const z = $("zustimmung"); if (z && !$("struktur").hidden) z.focus({preventScroll: true});
+}
 const ESM_URL = "https://api.esmatlas.com/foldSequence/v1/pdb/";
 let pdbAtome = null, strukturAnsicht = null, strukturModus = "cartoon";
 const vst = t => { $("vorhersageStatus").textContent = t; };
