@@ -193,6 +193,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,canvas:focus-visi
 .hinweiszeile{min-height:1.6em;font-size:.95rem}
 .leiter svg{max-width:none;min-width:0}
 #leiter{width:100%;height:auto;min-width:0}
+@media (max-width:640px){#s-leiter .lab{grid-template-columns:minmax(0,1fr)!important}}
 /* Chargaff */
 .tubenbild{display:block;width:100%;max-width:700px;margin-inline:auto;height:auto;color:var(--ink)}
 .tubenbild .glasr{fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round}
@@ -236,7 +237,7 @@ details li{margin-bottom:6px}
 .sidenav-list a:hover{background:color-mix(in srgb,var(--accent) 13%,transparent)}
 .sidenav-list a[aria-current="page"]{background:var(--accent);color:var(--accent-fg,var(--accent-ink));font-weight:600}
 .sidenav a:focus-visible,.sidenav button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.sidenav-list a.sidenav-coffee{display:inline-flex;align-items:center;gap:7px;margin:8px 10px 0;padding:6px 12px;border:1px solid rgba(245,158,11,.5);background:rgba(245,158,11,.12);color:#b45309;font-weight:600;font-size:.9rem}
+.sidenav-list a.sidenav-coffee{display:inline-flex;align-items:center;gap:7px;margin:18px 10px 0;padding:6px 12px;border:1px solid rgba(245,158,11,.5);background:rgba(245,158,11,.12);color:#b45309;font-weight:600;font-size:.9rem}
 .sidenav-list a.sidenav-coffee:hover{background:rgba(245,158,11,.24)}
 .sidenav-coffee svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sidenav-list a.sidenav-coffee{color:#fbbf24}}
@@ -269,7 +270,6 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
     <button class="sidenav-toggle" type="button" aria-expanded="false" aria-controls="sidenav-list">Menü</button>
   </div>
   <div class="sidenav-list" id="sidenav-list">
-    <a class="sidenav-coffee" href="https://buymeacoffee.com/sergiovargasramirez" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2v2M14 2v2M6 2v2M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/></svg>Kaffee spendieren</a>
     <p class="sidenav-group">Nukleinsäuren</p>
     <a href="dna-rna.html">DNA und RNA</a>
     <a href="basenpaarung.html">Basenpaarung</a>
@@ -294,6 +294,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
     <a href="impressum.html">Impressum</a>
     <a href="datenschutz.html">Datenschutz</a>
     <p class="sidenav-legal">© 2026 Dr. Sergio Vargas · <a href="impressum.html#lizenz">CC BY-NC-SA 4.0</a></p>
+    <a class="sidenav-coffee" href="https://buymeacoffee.com/sergiovargasramirez" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2v2M14 2v2M6 2v2M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/></svg>Kaffee spendieren</a>
   </div>
 </nav>
 <script>
@@ -353,9 +354,9 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 
     <section class="schritt" id="s-gene">
       <h2>Zugänglichkeit und Genaktivität</h2>
-      <p>Alle Zellen eines Körpers haben dieselbe DNA, und doch bilden sie ganz verschiedene Proteine. Der Unterschied liegt darin, welche Gene frei liegen. Tippe auf ein Gen, um sein Chromatin umzubauen (ein Remodellierungskomplex verschiebt die Nucleosomen, und der Promotor wird frei oder verdeckt). Danach läuft der Zeitraffer eines Tages.</p>
+      <p>Alle Zellen eines Körpers haben dieselbe DNA, und doch bilden sie ganz verschiedene Proteine. Sogar dieselbe Leberzelle braucht nach dem Essen andere Enzyme als nach langem Fasten. Der Unterschied liegt darin, welche Gene frei liegen. Tippe auf ein Gen, um sein Chromatin umzubauen (ein Remodellierungskomplex verschiebt die Nucleosomen, und der Promotor wird frei oder verdeckt). Danach läuft der Zeitraffer eines Tages. Du kannst auch mitten im Lauf umschalten (mit „Pause“ anhalten, Gen antippen, „Zeitraffer fortsetzen“): Nach dem Schließen sinken mRNA und Protein nur allmählich, jedes Gen in seinem eigenen Tempo, denn beide werden mit der für das Gen typischen Halbwertszeit abgebaut.</p>
       <div class="steuerzeile">
-        <span class="etikett" id="l-zell">Zelltyp</span>
+        <span class="etikett" id="l-zell">Situation der Leberzelle</span>
         <div class="seg" role="radiogroup" aria-labelledby="l-zell" id="sg-zell"></div>
       </div>
       <p class="klein" id="aufgabe" style="margin:2px 0 8px"></p>
@@ -908,36 +909,150 @@ const STUFEN = [
   {name: "Metaphase-Chromosom", groesse: "1400 nm Breite", text: "Vor der Zellteilung wird das Chromatin maximal verdichtet. Jedes Chromosom besteht aus zwei identischen Schwesterchromatiden. In diesem Zustand wird kaum noch abgelesen.", faktor: "etwa 10 000-fach"}
 ];
 function leiter(n){
-  const svg = $("leiter"); svg.textContent = ""; const C = "currentColor";
-  const l = (a, b, c, d, w = 2, o = 1) => el("line", {x1: a, y1: b, x2: c, y2: d, stroke: C, "stroke-width": w, "stroke-opacity": o, "stroke-linecap": "round"}, svg);
+  const svg = $("leiter"); svg.textContent = "";
+  const C = "currentColor", dunkel = PALETTE.istDunkel();
+  const sf = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim();
+  const FL = /^#[0-9a-f]{6}$/i.test(sf) ? sf : (dunkel ? "#15211d" : "#ffffff");   // Farbe der Karte: ferne Teile verblassen dorthin
+  const h2r = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const mix = (a, b, t) => { const x = h2r(a), y = h2r(b); return "#" + x.map((v, i) => Math.round(v + (y[i] - v) * t).toString(16).padStart(2, "0")).join(""); };
+  const defs = el("defs", {}, svg), cache = {};
+  const kugel = (hex, f) => {   // Farbverlauf einer beleuchteten Kugel; f: 0 = weit hinten ... 1 = vorn
+    const q = Math.round(kl(f, 0, 1) * 3), key = hex + q;
+    if (!cache[key]){
+      const g = el("radialGradient", {id: "lv" + Object.keys(cache).length, cx: .35, cy: .3, r: .78}, defs);
+      const b = mix(hex, FL, .42 * (1 - q / 3));
+      [[0, mix(b, "#ffffff", .6)], [.45, b], [1, mix(b, "#000000", .42)]].forEach(([o, c]) => el("stop", {offset: o, "stop-color": c}, g));
+      cache[key] = "url(#" + g.id + ")";
+    }
+    return cache[key];
+  };
+  const kreis = (x, y, r, hex, f) => el("circle", {cx: x.toFixed(1), cy: y.toFixed(1), r: r.toFixed(1), fill: kugel(hex, f)}, svg);
+  const sortiere = it => it.sort((a, b) => a.z - b.z).forEach(i => i.f());
+  const l = (a, b, c, d, w = 2, o = 1, col = C) => el("line", {x1: a.toFixed(1), y1: b.toFixed(1), x2: c.toFixed(1), y2: d.toFixed(1), stroke: col, "stroke-width": w, "stroke-opacity": o, "stroke-linecap": "round"}, svg);
   const txt = (x, y, t, s = 12, anch = "middle") => { const e = el("text", {x, y, "text-anchor": anch, "font-size": s, fill: C, "font-family": "var(--sans)", "font-weight": 600}, svg); e.textContent = t; };
+  const klammer = (x, y0, y1, t) => { el("path", {d: `M${x - 4} ${y0}H${x}V${y1}H${x - 4}`, fill: "none", stroke: C, "stroke-width": 1.5, "stroke-opacity": .7, "stroke-linecap": "round", "stroke-linejoin": "round"}, svg); txt(x + 6, (y0 + y1) / 2 + 4, t, 12, "start"); };
+  const legende = (liste, y) => {
+    const w = liste.map(([, t]) => 22 + t.length * 6.6), tot = w.reduce((a, b) => a + b, 0) + (liste.length - 1) * 8; let x = 210 - tot / 2;
+    liste.forEach(([hex, t], i) => { kreis(x + 6, y, 5.5, hex, 1); txt(x + 16, y + 4, t, 11, "start"); x += w[i] + 8; });
+  };
+  let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const zu = PALETTE.get("zucker");
+
   if (n === 1){
-    let d1 = "M20 150", d2 = "M20 150";
-    const pts1 = [], pts2 = []; for (let x = 20; x <= 400; x += 4){ pts1.push(x + "," + (150 + 30 * Math.sin((x - 20) / 24))); pts2.push(x + "," + (150 - 30 * Math.sin((x - 20) / 24))); }
-    el("polyline", {points: pts1.join(" "), fill: "none", stroke: PALETTE.get("A"), "stroke-width": 4}, svg); el("polyline", {points: pts2.join(" "), fill: "none", stroke: PALETTE.get("G"), "stroke-width": 4}, svg);
-    for (let x = 32; x <= 400; x += 37.7){ const y = 30 * Math.sin((x - 20) / 24); l(x, 150 - y, x, 150 + y, 2, .6); }
-    txt(210, 230, "2 nm", 14);
+    // Doppelhelix schräg von der Seite: zwei Zucker-Phosphat-Stränge, Basenpaare als Sprossen, Furchen ungleich breit
+    const ang = -.17, ca = Math.cos(ang), sa = Math.sin(ang), L = 318, R = 29, turns = 3.05, vers = 2.25, cx = 200, cy = 140;
+    const P = (t, ph) => { const s = (t - .5) * L, y = R * Math.cos(ph), z = R * Math.sin(ph); return {x: cx + s * ca - y * sa, y: cy + s * sa + y * ca, z}; };
+    const it = [], K = 230, NB = 32;
+    for (let k = 0; k <= K; k++){ const t = k / K; for (const p0 of [0, vers]){ const p = P(t, 2 * Math.PI * turns * t + p0); it.push({z: p.z, f: () => kreis(p.x, p.y, 4.6 * (1 + p.z / 260), zu, (p.z + R) / (2 * R))}); } }
+    for (let k = 0; k < NB; k++){
+      const t = (k + .5) / NB, ph = 2 * Math.PI * turns * t, a = P(t, ph), b = P(t, ph + vers), m = {x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: (a.z + b.z) / 2};
+      const paar = rnd() < .5 ? ["A", "T"] : ["G", "C"], [c1, c2] = rnd() < .5 ? paar : [paar[1], paar[0]];
+      [[a, c1], [b, c2]].forEach(([p, c]) => it.push({z: (p.z + m.z) / 2, f: () => l(p.x, p.y, m.x, m.y, 5.2, .5 + .5 * (m.z + R) / (2 * R), PALETTE.get(c))}));
+    }
+    sortiere(it);
+    klammer(368, cy + (L / 2) * sa - R - 4, cy + (L / 2) * sa + R + 4, "2 nm");
+    legende([[PALETTE.get("A"), "Adenin"], [PALETTE.get("T"), "Thymin"], [PALETTE.get("G"), "Guanin"], [PALETTE.get("C"), "Cytosin"]], 244);
+    txt(210, 284, "DNA-Doppelhelix: 2 nm Durchmesser", 13);
   } else if (n === 2){
-    el("circle", {cx: 210, cy: 140, r: 52, fill: PALETTE.get("rg_akz"), "fill-opacity": .25, stroke: PALETTE.get("rg_akz"), "stroke-width": 3}, svg);
-    for (let k = 0; k < 2; k++){ el("ellipse", {cx: 210, cy: 140, rx: 70 - k * 8, ry: 62 - k * 8, fill: "none", stroke: C, "stroke-width": 4, "stroke-opacity": .7}, svg); }
-    l(30, 220, 140, 175, 3); l(280, 175, 390, 220, 3);
-    txt(210, 145, "Histone", 12); txt(210, 260, "147 bp um acht Histone: 11 nm", 13);
+    // Echte Atomkoordinaten (PDB 1KX5), schräg von der Seite auf die Scheibe: 147 bp DNA, 8 Histone, Schwänze
+    const D = NUC3D.dna, m = [0, 1, 2].map(i => D.reduce((s, p) => s + p[i], 0) / D.length);
+    const sub = p => [p[0] - m[0], p[1] - m[1], p[2] - m[2]], dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+    const nrm = a => { const q = Math.hypot(a[0], a[1], a[2]); return a.map(v => v / q); };
+    let w = [0, 0, 0];   // Achse der Superhelix = Summe der Drehimpulse r × dr
+    for (let i = 0; i < D.length - 1; i++){ const c = cross(sub(D[i]), [D[i + 1][0] - D[i][0], D[i + 1][1] - D[i][1], D[i + 1][2] - D[i][2]]); w = w.map((v, j) => v + c[j]); }
+    w = nrm(w);
+    let u = sub(D[D.length >> 1]); const du = dot(u, w); u = nrm(u.map((v, j) => v - du * w[j])); const v = cross(w, u);
+    const th = .7, cT = Math.cos(th), sT = Math.sin(th), S = 1.75, X0 = 196, Y0 = 130;
+    const pr = p => { const q = sub(p), a = dot(q, u), b = dot(q, v), c = dot(q, w); return {x: X0 + S * a, y: Y0 + S * (b * cT + c * sT), z: -b * sT + c * cT}; };
+    const zs = D.map(q => pr(q).z).concat(NUC3D.histone.flatMap(c => c.reste.map(r => pr(r.ca).z))), zmin = Math.min(...zs), zmax = Math.max(...zs);
+    const sm = D.map((_, i) => { let t = [0, 0, 0], c = 0; for (let j = Math.max(0, i - 4); j <= Math.min(D.length - 1, i + 4); j++){ t = t.map((x, k) => x + D[j][k]); c++; } return t.map(x => x / c); });   // gemittelt über knapp eine Windung: Achse der Doppelhelix
+    const ende = (i0, i1) => { const a = sm[i0], b = sm[i1], d = nrm([a[0] - b[0], a[1] - b[1], a[2] - b[2]]), out = []; for (let k = 1; k <= 16; k++) out.push([a[0] + d[0] * k * 3.4, a[1] + d[1] * k * 3.4, a[2] + d[2] * k * 3.4]); return out; };
+    const bahn = ende(0, 3).reverse().concat(sm, ende(sm.length - 1, sm.length - 4)), dna = [];
+    for (let i = 0; i < bahn.length - 1; i++) for (let k = 0; k < 3; k++) dna.push(pr(bahn[i].map((x, j) => x + (bahn[i + 1][j] - x) * k / 3)));
+    const it = [], hp = [];
+    dna.forEach(p => it.push({z: p.z, f: () => kreis(p.x, p.y, 8.5 * (.92 + .16 * (p.z - zmin) / (zmax - zmin)), zu, (p.z - zmin) / (zmax - zmin))}));
+    NUC3D.histone.forEach(c => {
+      const [a0, a1] = SCHWAENZE[c.histon], col = PALETTE.get(FARBEN[c.histon]), tc = PALETTE.get("rg_cca");
+      for (let i = 0; i < c.reste.length - 1; i++){
+        const r0 = c.reste[i], r1 = c.reste[i + 1];
+        if (r1.nr !== r0.nr + 1) continue;
+        const sw = r0.nr <= a1 || (c.histon === "H2A" && r0.nr > 119), p0 = pr(r0.ca), p1 = pr(r1.ca), z = (p0.z + p1.z) / 2;
+        it.push({z, f: () => { const f = (z - zmin) / (zmax - zmin), cc = mix(sw ? tc : col, FL, .4 * (1 - f)); l(p0.x, p0.y, p1.x, p1.y, sw ? 3.4 : 7.6, 1, mix(cc, "#000000", .5)); l(p0.x, p0.y, p1.x, p1.y, sw ? 2 : 5.6, 1, cc); if (!sw) l(p0.x - 1, p0.y - 1.2, p1.x - 1, p1.y - 1.2, 1.6, .35, "#ffffff"); }});
+      }
+    });
+    sortiere(it);
+    legende([[PALETTE.get("rg_akz"), "H3"], [PALETTE.get("rg_d"), "H4"], [PALETTE.get("rg_ac"), "H2A"], [PALETTE.get("rg_t"), "H2B"], [PALETTE.get("rg_cca"), "Schwänze"], [zu, "DNA"]], 262);
+    txt(210, 287, "147 bp um acht Histone: 11 nm", 13);
   } else if (n === 3){
-    const pts = []; for (let k = 0; k < 8; k++){ const x = 50 + k * 45, y = 140 + (k % 2 ? 36 : -36); pts.push([x, y]); }
-    for (let k = 0; k < 7; k++) l(pts[k][0], pts[k][1], pts[k + 1][0], pts[k + 1][1], 3, .6);
-    pts.forEach(([x, y]) => { el("circle", {cx: x, cy: y, r: 22, fill: PALETTE.get("rg_akz"), "fill-opacity": .3, stroke: PALETTE.get("rg_akz"), "stroke-width": 3}, svg); });
-    txt(210, 240, "Zickzack-Faser: 30 nm", 13);
+    // 30-nm-Faser als Solenoid: Nucleosomen als Scheiben auf einer Schraube, Linker-DNA dazwischen, Linker-Histon H1 orange
+    const ang = -.2, ca = Math.cos(ang), sa = Math.sin(ang), Rf = 40, N = 70, per = 6.2, dx = 4.4, cx = 188, cy = 142, col = PALETTE.get("rg_akz"), h1 = PALETTE.get("rg_cca");
+    const P = (k, r = Rf) => { const ph = k * 2 * Math.PI / per, s = (k - (N - 1) / 2) * dx, y = r * Math.cos(ph), z = r * Math.sin(ph); return {x: cx + s * ca - y * sa, y: cy + s * sa + y * ca, z}; };
+    const it = [];
+    for (let k = 0; k < N; k++){
+      const p = P(k), f = (p.z + Rf) / (2 * Rf), sc = 1 + p.z / 260;
+      if (k < N - 1 && k % 2 === 0){ const q = P(k + 2); it.push({z: (p.z + q.z) / 2 - 6, f: () => l(p.x, p.y, q.x, q.y, 2.8, .45 + .55 * f, mix(zu, FL, .25 * (1 - f)))}); }
+      it.push({z: p.z, f: () => {
+        const g = el("g", {transform: `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) rotate(${(ang * 180 / Math.PI).toFixed(1)})`}, svg);
+        el("ellipse", {rx: (7.5 * sc).toFixed(1), ry: (21 * sc).toFixed(1), fill: kugel(col, f), stroke: mix(col, "#000000", .45), "stroke-width": .8, "stroke-opacity": .6}, g);
+      }});
+      if (k % 2 === 0){ const hp = P(k, Rf - 12); it.push({z: p.z + .5, f: () => kreis(hp.x, hp.y - 10 * sc, 3.2 * sc, h1, f)}); }
+    }
+    sortiere(it);
+    klammer(362, cy + (N / 2) * dx * sa - Rf - 24, cy + (N / 2) * dx * sa + Rf + 24, "30 nm");
+    legende([[col, "Nucleosom"], [zu, "Linker-DNA"], [h1, "Histon H1"]], 258);
+    txt(200, 284, "Zickzack-Faser: 30 nm", 13);
   } else if (n === 4){
-    for (let k = 0; k < 9; k++){ const w = (k / 9) * 2 * Math.PI, r = 100; const x = 210 + 20 * Math.cos(w), y = 140 + 20 * Math.sin(w); el("path", {d: `M${x} ${y} C ${210 + r * 1.6 * Math.cos(w - 0.4)} ${140 + r * 1.2 * Math.sin(w - 0.4)}, ${210 + r * 1.6 * Math.cos(w + 0.4)} ${140 + r * 1.2 * Math.sin(w + 0.4)}, ${x + 6} ${y + 6}`, fill: "none", stroke: C, "stroke-width": 3, "stroke-opacity": .65}, svg); }
-    el("circle", {cx: 210, cy: 140, r: 20, fill: PALETTE.get("rg_ac"), "fill-opacity": .4, stroke: PALETTE.get("rg_ac"), "stroke-width": 3}, svg);
-    txt(210, 140 + 4, "Gerüst", 10); txt(210, 285, "Schleifen am Proteingerüst: 300 nm", 13);
+    // Schleifen aus Chromatinfaser (Perlenschnur) an einem Proteingerüst
+    const col = PALETTE.get("rg_akz"), gerue = PALETTE.get("rg_ac"), M = 6, loops = [];
+    for (const side of [-1, 1]) for (let i = 0; i < M; i++){
+      const y = 54 + i * 29 + (side > 0 ? 14 : 0), Wd = 66 + rnd() * 44, H = 20 + rnd() * 12, d = 20 + rnd() * 6;
+      loops.push({back: rnd() < .45, d: `M210 ${y.toFixed(1)}C${(210 + side * Wd * 1.35).toFixed(1)} ${(y - H).toFixed(1)} ${(210 + side * Wd * 1.35).toFixed(1)} ${(y + d + H).toFixed(1)} 210 ${(y + d).toFixed(1)}`});
+    }
+    const schleife = (p, back) => {
+      const c = back ? mix(col, FL, .35) : col;
+      const o = {fill: "none", "stroke-linecap": "round"};
+      el("path", {...o, d: p.d, stroke: mix(c, "#000000", .45), "stroke-width": back ? 8 : 9.5}, svg);
+      el("path", {...o, d: p.d, stroke: c, "stroke-width": back ? 6.5 : 8}, svg);
+      el("path", {...o, d: p.d, stroke: mix(c, "#ffffff", .55), "stroke-width": 3.6, "stroke-dasharray": "0.1 7.4", "stroke-opacity": back ? .6 : .9}, svg);
+    };
+    loops.filter(p => p.back).forEach(p => schleife(p, true));
+    const lg = el("linearGradient", {id: "lvrod", x1: 0, x2: 1, y1: 0, y2: 0}, defs);
+    [[0, mix(gerue, "#000000", .35)], [.35, mix(gerue, "#ffffff", .45)], [1, mix(gerue, "#000000", .25)]].forEach(([o, c]) => el("stop", {offset: o, "stop-color": c}, lg));
+    el("rect", {x: 203, y: 44, width: 14, height: 226, rx: 7, fill: "url(#lvrod)", stroke: mix(gerue, "#000000", .4), "stroke-width": .8}, svg);
+    for (let y = 58; y < 262; y += 18) l(204.5, y, 215.5, y, 1, .22, "#000000");
+    loops.filter(p => !p.back).forEach(p => schleife(p, false));
+    txt(210, 32, "Proteingerüst", 12);
+    txt(210, 296, "Schleifen am Proteingerüst: 300 nm", 13);
   } else {
-    for (const sx of [-1, 1]){ el("path", {d: `M${210 + sx * 8} 40 C ${210 + sx * 34} 70, ${210 + sx * 34} 120, ${210 + sx * 8} 150 C ${210 + sx * 34} 180, ${210 + sx * 34} 230, ${210 + sx * 8} 260`, fill: "none", stroke: PALETTE.get("rg_d"), "stroke-width": 26, "stroke-linecap": "round", "stroke-opacity": .75}, svg); }
-    for (let y = 70; y < 250; y += 22){ for (const sx of [-1, 1]) l(210 + sx * (8 + 2) - 12, y, 210 + sx * 40, y, 3, .18); }
-    el("circle", {cx: 210, cy: 150, r: 8, fill: PALETTE.get("rg_cca"), stroke: "var(--surface)", "stroke-width": 2}, svg); txt(300, 155, "Centromer", 11, "start");
-    txt(210, 292, "Metaphase-Chromosom: 1400 nm", 13);
+    // Metaphase-Chromosom: zwei Schwesterchromatiden mit Einschnürung am Zentromer, Querstreifen, Kinetochoren
+    const base = PALETTE.get("rg_d"), kin = PALETTE.get("rg_cca"), cx = 205, y0 = 34, Ly = 232, tc = .4, Wh = 21, MM = 76;
+    const g = (t, a) => Math.exp(-(((t - tc) / a) ** 2));
+    const cap = t => { const e = .09; return t < e ? Math.sqrt(1 - ((e - t) / e) ** 2) : t > 1 - e ? Math.sqrt(1 - ((t - (1 - e)) / e) ** 2) : 1; };
+    const off = t => 22 - 6 * g(t, .08) + 3 * Math.sin(Math.PI * t), hw = t => Wh * cap(t) * (1 - .38 * g(t, .07));
+    const band = Array.from({length: MM}, () => 0), nb = Math.ceil(MM / 4);
+    for (let j = 0; j < nb; j++){ const a = rnd() < .5 ? 0 : .12 + rnd() * .12; for (let i = 0; i < 4; i++) band[j * 4 + i] = a; }
+    const lanes = [[-1, -.5, mix(base, "#000000", .14)], [-.5, -.1, mix(base, "#ffffff", .3)], [-.1, .3, mix(base, "#ffffff", .08)], [.3, .7, base], [.7, 1, mix(base, "#000000", .32)]];
+    const chromatid = sx => {
+      const S = (i, q) => { const t = i / MM, xc = cx + sx * off(t), yc = y0 + t * Ly, h = hw(t) * q * sx; return [xc + h, yc]; };
+      for (let i = 0; i < MM; i++){
+        lanes.forEach(([qa, qb, c]) => {
+          const a = S(i, qa), b = S(i, qb), b2 = S(i + 1, qb), a2 = S(i + 1, qa);
+          el("polygon", {points: [a, b, b2, a2].map(q => q[0].toFixed(1) + "," + q[1].toFixed(1)).join(" "), fill: mix(c, "#000000", band[i]), stroke: mix(c, "#000000", band[i]), "stroke-width": .5, "stroke-linejoin": "round"}, svg);
+        });
+      }
+      const rim = []; for (let i = 0; i <= MM; i++) rim.push(S(i, -1)); for (let i = MM; i >= 0; i--) rim.push(S(i, 1));
+      el("polygon", {points: rim.map(q => q[0].toFixed(1) + "," + q[1].toFixed(1)).join(" "), fill: "none", stroke: mix(base, "#000000", .55), "stroke-width": 1.3, "stroke-linejoin": "round"}, svg);
+    };
+    chromatid(-1); chromatid(1);
+    const yk = y0 + tc * Ly, xk = off(tc) + hw(tc) + 2.5;
+    for (const sx of [-1, 1]) el("ellipse", {cx: cx + sx * xk, cy: yk, rx: 4, ry: 11, fill: kugel(kin, 1), stroke: mix(kin, "#000000", .45), "stroke-width": .8}, svg);
+    l(cx + xk + 6, yk, cx + xk + 36, yk, 1.2, .6); txt(cx + xk + 40, yk + 4, "Zentromer", 11, "start");
+    txt(cx + xk + 40, yk + 18, "mit Kinetochoren", 11, "start");
+    txt(210, 296, "Metaphase-Chromosom: 1400 nm", 13);
   }
   const s = STUFEN[n - 1];
+  svg.setAttribute("aria-label", "Schematische Zeichnung: " + s.name);
   $("stufentext").innerHTML = "<h3>" + n + " · " + s.name + "</h3><p style=\"margin:0 0 8px\"><b>" + s.groesse + "</b> · Verkürzung der DNA: <b>" + s.faktor + "</b></p><p style=\"margin:0\">" + s.text + "</p>";
   $("stufe-o").textContent = n + " / 5";
 }
@@ -988,34 +1103,50 @@ function nucText(){
 
 /* ---------- 3. Gene, Zeitraffer ---------- */
 const GENE = [
-  {id: "haus", name: "Haushaltsgen (zum Beispiel GAPDH)", kurz: "Haushaltsgen"},
-  {id: "alb", name: "Albumin-Gen", kurz: "Albumin"},
-  {id: "ins", name: "Insulin-Gen", kurz: "Insulin"},
-  {id: "glo", name: "Globin-Gen", kurz: "Globin"}
+  {id: "haus", name: "Haushaltsgen (zum Beispiel GAPDH)", kurz: "Haushaltsgen", tm: 3, tp: 8},
+  {id: "alb", name: "Albumin-Gen", kurz: "Albumin", tm: 4, tp: 12},
+  {id: "gck", name: "Glucokinase-Gen (GCK)", kurz: "Glucokinase", tm: 1.5, tp: 6},
+  {id: "pck", name: "PEPCK-Gen (PCK1)", kurz: "PEPCK", tm: 1, tp: 4}
+];   // tm, tp: Halbwertszeit von mRNA und Protein in Stunden. Modellwerte im Zeitraffer (Größenordnung, nicht gemessen), so gewählt, dass ein voll aktives Gen nach 24 h über 60 % des Höchstwerts erreicht
+// Dieselbe Leberzelle in zwei Situationen. vor: Chromatinmuster VOR der Situation (die Zelle ist daran angepasst, mRNA und Protein im Gleichgewicht)
+const SITU = [
+  {id: "satt", name: "Nach dem Essen", vor: {haus: true, alb: true, gck: false, pck: true}, braucht: ["haus", "alb", "gck"], text: "Eine Leberzelle (Hepatocyt) nach einer Mahlzeit: Der Blutzucker steigt, Insulin ist hoch. Die Zelle war vorher nüchtern und bildet noch PEPCK, ein Enzym zum Neubilden von Glucose, aber keine Glucokinase, die Glucose aufnimmt und verwertet. Albumin und das Haushaltsgen braucht sie weiter."},
+  {id: "hunger", name: "Nach langem Fasten", vor: {haus: true, alb: true, gck: true, pck: false}, braucht: ["haus", "alb", "pck"], text: "Eine Leberzelle (Hepatocyt) nach vielen Stunden ohne Essen: Der Blutzucker sinkt, Glucagon steigt. Die Zelle war vorher satt und bildet noch Glucokinase, aber kein PEPCK. Jetzt muss sie Glucose neu bilden, sonst würde sie diese gleich wieder verbrauchen. Albumin und das Haushaltsgen braucht sie weiter."}
 ];
-const ZELLEN = [
-  {id: "leber", name: "Leberzelle", braucht: ["haus", "alb"], text: "Eine Leberzelle (Hepatocyt) soll Albumin bilden, das wichtigste Protein des Blutplasmas, und braucht außerdem das Haushaltsgen."},
-  {id: "beta", name: "Beta-Zelle der Bauchspeicheldrüse", braucht: ["haus", "ins"], text: "Eine Beta-Zelle soll Insulin bilden, das den Blutzucker senkt, und braucht außerdem das Haushaltsgen."},
-  {id: "ery", name: "Vorläufer roter Blutkörperchen", braucht: ["haus", "glo"], text: "Ein Vorläufer roter Blutkörperchen soll Globin für das Hämoglobin bilden und braucht außerdem das Haushaltsgen."}
-];
-const M = {zell: "leber", offen: {haus: true, alb: false, ins: false, glo: false}, t: 0, anim: 0};
-function simuliere(offen, T = 24, dt = 0.05){
-  const k = offen ? 1 : 0.03, dm = 0.35, tl = 4, dp = 0.07, st = 1 / dm * tl / dp;   // Normierung: voll aktives Gen (k = 1) im Gleichgewicht = 1
-  let m = 0, p = 0; const out = [];
-  for (let t = 0; t <= T + 1e-9; t += dt){ out.push([t, m / (1 / dm), p / st]); m += (k - dm * m) * dt; p += (tl * m - dp * p) * dt; }
+const M = {sit: "satt", vor: {...SITU[0].vor}, start: {...SITU[0].vor}, ereig: {haus: [], alb: [], gck: [], pck: []}, t: 0, anim: 0, laeuft: false};
+// Zustand des Chromatins: Ausgangslage bei t = 0 plus Schaltzeitpunkte [t, offen]; so bleibt der Verlauf davor erhalten
+const zust = (id, t = M.t) => { let o = M.start[id]; for (const [te, z] of M.ereig[id]) if (te <= t + 1e-9) o = z; return o; };
+function simuliere(id, T = 24, dt = 0.05){
+  const g = GENE.find(x => x.id === id), dm = Math.LN2 / g.tm, dp = Math.LN2 / g.tp, tl = 4, st = tl / dm / dp;   // Normierung: voll aktives Gen (k = 1) im Gleichgewicht = 1
+  const k0 = M.vor[id] ? 1 : 0.03; let m = k0 / dm, p = k0 * st; const out = [];   // Start: Gleichgewicht des Zustands vor der Situation
+  for (let t = 0; t <= T + 1e-9; t += dt){ const k = zust(id, t) ? 1 : 0.03; out.push([t, m * dm, p / st]); m += (k - dm * m) * dt; p += (tl * m - dp * p) * dt; }
   return out;
 }
+function zeitKnopf(){ $("zeit").textContent = M.laeuft ? "Pause" : (M.t > 1e-9 && M.t < 24 - 1e-9 ? "Zeitraffer fortsetzen" : "Zeitraffer starten (24 Stunden)"); }
+function zuruecksetzen(){   // neuer Versuch: Ausgangsmuster der Situation, Zeit 0
+  cancelAnimationFrame(M.anim); M.laeuft = false; GENE.forEach(g => { M.start[g.id] = M.vor[g.id]; M.ereig[g.id] = []; });
+  M.t = 0; $("t").value = 0; $("t-o").textContent = "0 h"; $("bilanz").hidden = true;
+}
+function schalte(id){
+  if (M.t >= 24 - 1e-9) zuruecksetzen();
+  const neu = !zust(id);
+  if (M.t <= 1e-9){ M.start[id] = neu; M.ereig[id] = []; }   // vor dem Start: Muster ab Beginn der Situation
+  else { GENE.forEach(g => { M.ereig[g.id] = M.ereig[g.id].filter(e => e[0] < M.t - 1e-9); }); M.ereig[id].push([M.t, neu]); }   // ab jetzt umgeschaltet; was später kam, entfällt
+  karten(); zeichneDiagr(); zeitKnopf();
+}
+function laden(){ const z = SITU.find(x => x.id === M.sit); M.vor = {...z.vor}; zuruecksetzen(); zellen(); karten(); zeichneDiagr(); zeitKnopf(); }
+function karten(){ GENE.forEach(g => { const b = document.querySelector(`.genkarte[data-id=${g.id}]`); if (!b || b.classList.contains("offen") !== zust(g.id)) zeichneGen(g.id, true); }); }
 function genkarten(){
   const box = $("genkarten"); box.textContent = "";
   GENE.forEach(g => {
     const b = document.createElement("button"); b.type = "button"; b.className = "genkarte"; b.dataset.id = g.id;
     b.innerHTML = `<span class="gname">${g.name}</span><svg viewBox="0 0 460 90" aria-hidden="true"></svg><span class="gstatus"></span>`;
-    b.addEventListener("click", () => { M.offen[g.id] = !M.offen[g.id]; zeichneGen(g.id, true); zeichneDiagr(); });
+    b.addEventListener("click", () => schalte(g.id));
     box.appendChild(b); zeichneGen(g.id, false);
   });
 }
 function zeichneGen(id, anim){
-  const b = document.querySelector(`.genkarte[data-id=${id}]`), svg = b.querySelector("svg"), offen = M.offen[id]; svg.textContent = "";
+  const b = document.querySelector(`.genkarte[data-id=${id}]`), svg = b.querySelector("svg"), offen = zust(id); svg.textContent = "";
   el("line", {x1: 10, y1: 62, x2: 450, y2: 62, stroke: "currentColor", "stroke-width": 3, "stroke-opacity": .6}, svg);
   el("rect", {x: 60, y: 54, width: 40, height: 16, rx: 3, fill: PALETTE.get("rg_cca")}, svg); const pt = el("text", {x: 80, y: 85, "text-anchor": "middle", "font-size": 10, fill: "currentColor", "font-family": "var(--sans)"}, svg); pt.textContent = "Promotor";
   el("path", {d: "M120 54h200v-8l26 16-26 16v-8h-200z", fill: PALETTE.get("rg_ac"), "fill-opacity": .5, stroke: PALETTE.get("rg_ac")}, svg);
@@ -1030,35 +1161,41 @@ function zeichneGen(id, anim){
 function zeichneDiagr(){
   const box = $("diagr"); box.textContent = "";
   GENE.forEach((g, gi) => {
-    const sim = simuliere(M.offen[g.id]), svg = el("svg", {viewBox: "0 0 220 150", class: "kleindg", role: "img", "aria-label": "Verlauf von mRNA und Protein für " + g.kurz}); box.appendChild(svg);
+    const sim = simuliere(g.id), svg = el("svg", {viewBox: "0 0 220 150", class: "kleindg", role: "img", "aria-label": "Verlauf von mRNA und Protein für " + g.kurz}); box.appendChild(svg);
     const X0 = 30, Y0 = 120, W = 175, H = 90, sx = t => X0 + t / 24 * W, sy = v => Y0 - v * H;
-    const tt = el("text", {x: X0, y: 14, "font-size": 12, "font-weight": 700, fill: "currentColor", "font-family": "var(--sans)"}, svg); tt.textContent = g.kurz;
+    const tt = el("text", {x: X0, y: 11, "font-size": 12, "font-weight": 700, fill: "currentColor", "font-family": "var(--sans)"}, svg); tt.textContent = g.kurz;
+    const ut = el("text", {x: X0, y: 24, "font-size": 8.5, fill: "currentColor", "fill-opacity": .7, "font-family": "var(--sans)"}, svg); ut.textContent = "Halbwertszeit mRNA " + g.tm + " h, Protein " + g.tp + " h";
+    const zeiten = [0, ...M.ereig[g.id].map(e => e[0]), 24];   // Abschnitte mit geschlossenem Chromatin grau hinterlegen (bis zur aktuellen Zeit)
+    for (let i = 0; i < zeiten.length - 1; i++){ const von = zeiten[i], bis = Math.min(zeiten[i + 1], M.t); if (!(i === 0 ? M.start[g.id] : M.ereig[g.id][i - 1][1]) && bis > von) el("rect", {x: sx(von), y: Y0 - H, width: sx(bis) - sx(von), height: H, fill: "currentColor", "fill-opacity": .09}, svg); }
     el("rect", {x: X0, y: Y0 - H, width: W, height: H, fill: "none", stroke: "currentColor", "stroke-opacity": .4}, svg);
     for (let t = 0; t <= 24; t += 6){ const l = el("text", {x: sx(t), y: Y0 + 12, "text-anchor": "middle", "font-size": 9, fill: "currentColor", "font-family": "var(--sans)"}, svg); l.textContent = t; }
     const lx = el("text", {x: X0 + W / 2, y: 144, "text-anchor": "middle", "font-size": 9, fill: "currentColor", "font-family": "var(--sans)"}, svg); lx.textContent = "Zeit in Stunden";
     const upto = sim.filter(q => q[0] <= M.t + 1e-9);
     const pl = (idx, farbe, dash) => el("polyline", {points: upto.map(q => sx(q[0]) + "," + sy(q[idx])).join(" "), fill: "none", stroke: farbe, "stroke-width": 2.5, "stroke-dasharray": dash || ""}, svg);
     pl(1, PALETTE.get("rg_ac")); pl(2, PALETTE.get("rg_akz"), "6 3");
-    const last = upto[upto.length - 1]; if (last) el("line", {x1: sx(last[0]), y1: Y0 - H, x2: sx(last[0]), y2: Y0, stroke: "currentColor", "stroke-opacity": .3}, svg);
+    const last = upto[upto.length - 1]; if (last){ el("circle", {cx: sx(last[0]), cy: sy(last[1]), r: 3, fill: PALETTE.get("rg_ac")}, svg); el("circle", {cx: sx(last[0]), cy: sy(last[2]), r: 3, fill: PALETTE.get("rg_akz")}, svg); } if (last) el("line", {x1: sx(last[0]), y1: Y0 - H, x2: sx(last[0]), y2: Y0, stroke: "currentColor", "stroke-opacity": .3}, svg);
   });
   const leg = document.createElement("div"); leg.className = "legende"; leg.style.gridColumn = "1 / -1";
-  leg.innerHTML = `<span><i style="background:${PALETTE.get("rg_ac")}"></i>mRNA (durchgezogen)</span><span><i style="background:${PALETTE.get("rg_akz")}"></i>Protein (gestrichelt)</span><span>Beide relativ zum Höchstwert eines voll aktiven Gens</span>`;
+  leg.innerHTML = `<span><i style="background:${PALETTE.get("rg_ac")}"></i>mRNA (durchgezogen)</span><span><i style="background:${PALETTE.get("rg_akz")}"></i>Protein (gestrichelt)</span><span>Grau hinterlegt: Chromatin geschlossen</span><span>Beide relativ zum Höchstwert eines voll aktiven Gens</span>`;
   box.appendChild(leg);
 }
 function bilanz(){
-  const z = ZELLEN.find(x => x.id === M.zell), box = $("bilanz"); box.hidden = false;
-  const prot = {}; GENE.forEach(g => { prot[g.id] = simuliere(M.offen[g.id]).slice(-1)[0][2]; });
+  const z = SITU.find(x => x.id === M.sit), box = $("bilanz"); box.hidden = false;
+  const prot = {}; GENE.forEach(g => { prot[g.id] = simuliere(g.id).slice(-1)[0][2]; });
   const fehlt = z.braucht.filter(id => prot[id] < 0.5), zuviel = GENE.filter(g => !z.braucht.includes(g.id) && prot[g.id] >= 0.3);
   let h = "<h3>Bilanz nach 24 Stunden</h3><ul style=\"margin:0;padding-left:1.2em\">" + GENE.map(g => `<li>${g.kurz}: ${prot[g.id] < 0.1 ? "kaum Protein" : "Protein bei " + fmt(prot[g.id] * 100) + " % des Höchstwerts"}</li>`).join("") + "</ul>";
-  if (!fehlt.length && !zuviel.length) h += `<p style="margin:8px 0 0" class="gut">Die Zelle bildet genau die Proteine, die ein(e) ${z.name} braucht. Gleiche DNA, aber ein anderes Muster offener Gene macht aus einer Stammzelle verschiedene Zelltypen.</p>`;
-  else { if (fehlt.length) h += `<p style="margin:8px 0 0">Es fehlt noch: ${fehlt.map(id => GENE.find(g => g.id === id).kurz).join(", ")}.</p>`; if (zuviel.length) h += `<p style="margin:8px 0 0">Die Zelle bildet auch ${zuviel.map(g => g.kurz).join(", ")}, das sie nicht braucht.</p>`; }
+  if (!fehlt.length && !zuviel.length) h += `<p style="margin:8px 0 0" class="gut">Die Zelle hat sich auf die Situation „${z.name}“ eingestellt: Sie bildet die Proteine, die sie jetzt braucht, und die nicht mehr gebrauchten sind weitgehend abgebaut. Gleiche Zelle, gleiche DNA, aber ein anderes Muster offener Gene.</p>`;
+  else { if (fehlt.length) h += `<p style="margin:8px 0 0">Es fehlt noch: ${fehlt.map(id => GENE.find(g => g.id === id).kurz).join(", ")}.</p>`; if (zuviel.length) h += `<p style="margin:8px 0 0">Noch zu viel Protein da, das die Zelle jetzt nicht braucht: ${zuviel.map(g => g.kurz).join(", ")}. Je früher das Gen geschlossen wird, desto weniger bleibt übrig.</p>`; }
   box.innerHTML = h;
 }
 function zeitraffer(){
-  cancelAnimationFrame(M.anim); M.t = 0; $("bilanz").hidden = true;
-  const reduziert = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches, t0 = performance.now(), dauer = reduziert ? 1 : 8000;
-  const f = now => { const k = kl((now - t0) / dauer, 0, 1); M.t = k * 24; $("t").value = M.t; $("t-o").textContent = fmt(M.t, 1) + " h"; zeichneDiagr(); if (k < 1) M.anim = requestAnimationFrame(f); else bilanz(); };
-  M.anim = requestAnimationFrame(f);
+  cancelAnimationFrame(M.anim);
+  if (M.laeuft){ M.laeuft = false; zeitKnopf(); return; }   // Pause: jetzt kann man Gene umschalten
+  if (M.t >= 24 - 1e-9) zuruecksetzen();   // nach dem Ende: neuer Versuch ab dem Ausgangsmuster
+  $("bilanz").hidden = true; M.laeuft = true;
+  const reduziert = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches, dauer = reduziert ? 1 : 8000, t0 = performance.now() - M.t / 24 * dauer;
+  const f = now => { const k = kl((now - t0) / dauer, 0, 1); M.t = k * 24; $("t").value = M.t; $("t-o").textContent = fmt(M.t, 1) + " h"; zeichneDiagr(); if (k < 1) M.anim = requestAnimationFrame(f); else { M.laeuft = false; zeitKnopf(); bilanz(); } };
+  zeitKnopf(); M.anim = requestAnimationFrame(f);
 }
 
 /* ---------- Expertenmodus ---------- */
@@ -1128,12 +1265,12 @@ $("stufe").addEventListener("input", e => leiter(+e.target.value));
 $("abw").addEventListener("input", e => { S3.abw = +e.target.value; $("abw-o").textContent = S3.abw + " bp"; zeichne3(false); });
 function zellen(){
   const box = $("sg-zell"); box.textContent = "";
-  ZELLEN.forEach((z, i) => { const b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "radio"); b.setAttribute("aria-checked", String(z.id === M.zell)); b.dataset.wert = z.id; b.textContent = z.name; box.appendChild(b); });
-  $("aufgabe").textContent = ZELLEN.find(z => z.id === M.zell).text;
+  SITU.forEach(z => { const b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "radio"); b.setAttribute("aria-checked", String(z.id === M.sit)); b.dataset.wert = z.id; b.textContent = z.name; box.appendChild(b); });
+  $("aufgabe").textContent = SITU.find(z => z.id === M.sit).text;
 }
-$("sg-zell").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; M.zell = b.dataset.wert; zellen(); $("bilanz").hidden = true; });
+$("sg-zell").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; M.sit = b.dataset.wert; laden(); });
 $("zeit").addEventListener("click", zeitraffer);
-$("t").addEventListener("input", e => { cancelAnimationFrame(M.anim); M.t = +e.target.value; $("t-o").textContent = fmt(M.t, 1) + " h"; zeichneDiagr(); });
+$("t").addEventListener("input", e => { cancelAnimationFrame(M.anim); M.laeuft = false; M.t = +e.target.value; $("t-o").textContent = fmt(M.t, 1) + " h"; karten(); zeichneDiagr(); zeitKnopf(); });
 $("sg-wz").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; $("sg-wz").querySelectorAll("button").forEach(x => x.setAttribute("aria-checked", String(x === b))); X.wz = b.dataset.wert; });
 $("h1").addEventListener("change", e => { X.h1 = e.target.checked; zeichneExp(); });
 $("expneu").addEventListener("click", () => { xReset(); zeichneExp(); });
