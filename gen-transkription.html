@@ -11,19 +11,19 @@
   --accent:#13795b; --accent-ink:#ffffff; --hl:#fff3d6;
   --serif:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
   --sans:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --c-prom:#1f8f86; --c-exon:#3d6fd6; --c-intron:#8d9aa0; --c-term:#d1495b; --c-tf:#8e5bb5; --c-sp:#d9730d;
+  --c-prom:#1f8f86; --c-exon:#3d6fd6; --c-intron:#8d9aa0; --c-term:#d1495b; --c-tf:#8e5bb5; --c-sp:#d9730d; --c-ri:#6c5ce7;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
     --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
-    --c-prom:#4fcfc2; --c-exon:#7da2ff; --c-intron:#9fb0b8; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347;
+    --c-prom:#4fcfc2; --c-exon:#7da2ff; --c-intron:#9fb0b8; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347; --c-ri:#a99bff;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
   --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
-  --c-prom:#4fcfc2; --c-exon:#7da2ff; --c-intron:#9fb0b8; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347;
+  --c-prom:#4fcfc2; --c-exon:#7da2ff; --c-intron:#9fb0b8; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347; --c-ri:#a99bff;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -65,7 +65,11 @@ button:focus-visible,input:focus-visible,summary:focus-visible,.stein:focus-visi
 .platz:focus-visible{outline:none}
 .platz:focus-visible .rahmen,.platz.nah .rahmen,.heim.nah .rahmen{stroke:var(--accent);stroke-width:3;stroke-dasharray:none}
 .platz.nah .rahmen,.heim.nah .rahmen{fill:color-mix(in srgb,var(--accent) 10%,transparent)}
-.faktoren,.polymerase,.spleiss{pointer-events:none}
+.faktoren,.polymerase,.spleiss,.ribosom,.codonrahmen,.peptidkette{pointer-events:none}
+.ribosom .form{fill:color-mix(in srgb,var(--c-ri) 22%,transparent);stroke:var(--c-ri);stroke-width:3}
+.ribosom text{font-size:12px;font-weight:800;fill:currentColor}
+.codonrahmen{fill:none;stroke-width:3}
+.pepbuchstabe{font:800 13px ui-monospace,Consolas,monospace}
 .spleiss .form{fill:color-mix(in srgb,var(--c-sp) 22%,transparent);stroke:var(--c-sp);stroke-width:3}
 .spleiss text{font-size:12px;font-weight:800;fill:currentColor}
 .faktoren .form{fill:color-mix(in srgb,var(--c-tf) 24%,transparent);stroke:var(--c-tf);stroke-width:2.5}
@@ -102,6 +106,20 @@ button:focus-visible,input:focus-visible,summary:focus-visible,.stein:focus-visi
 .rnateil code{font:800 1rem/1.2 ui-monospace,Consolas,monospace;letter-spacing:.06em;padding:2px 6px;border-bottom:4px solid var(--c);background:var(--surface2);border-radius:4px 4px 0 0}
 .rnateil .balken{display:block;width:44px;border-radius:3px;background:var(--c);margin:0 0 4px}
 .rnaende{font-weight:800;color:var(--muted);align-self:flex-end;padding-bottom:4px}
+/* Strukturvorhersage */
+.dreid{position:relative;aspect-ratio:4/3;max-height:520px;width:100%;background:var(--surface2);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:10px 0}
+.dreid canvas{position:absolute;inset:0;width:100%;height:100%;display:block;color:var(--ink)}
+.dreid canvas.gl{touch-action:none;cursor:grab}
+.dreid canvas.gl:active{cursor:grabbing}
+.dreid canvas.ov{pointer-events:none}
+.keingl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;color:var(--muted)}
+.zustimmung{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);cursor:pointer;margin:8px 0}
+.zustimmung input{margin-top:4px;width:18px;height:18px;accent-color:var(--accent);flex:none}
+.peptidzeile{font:800 1.05rem ui-monospace,Consolas,monospace;letter-spacing:.12em;word-break:break-all}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-size:.95rem;border:0;border-left:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;cursor:pointer}
+.seg button:first-child{border-left:0}
+.seg button[aria-checked="true"]{background:var(--accent);color:var(--accent-ink);font-weight:700}
 .mrna{font:800 .95rem ui-monospace,Consolas,monospace;letter-spacing:.06em;word-break:break-all}
 .gut{color:var(--accent);font-weight:700}
 .karte ul{margin:6px 0 0;padding-left:1.2em}
@@ -232,6 +250,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <li data-p="3"><span class="nr">3</span>Termination</li>
         <li data-p="4" class="knopf"><button type="button" id="spleissen" disabled title="Nach der Transkription: die Introns herausschneiden"><span class="nr">4</span>Spleißen</button></li>
         <li data-p="5" class="knopf"><button type="button" id="polya" disabled title="Nach dem Spleißen: den Poly(A)-Schwanz anfügen"><span class="nr">5</span>Poly(A)</button></li>
+        <li data-p="6" class="knopf"><button type="button" id="uebersetzen" disabled title="Nach dem Poly(A)-Schwanz: die mRNA im Ribosom in ein Peptid übersetzen"><span class="nr">6</span>Translation</button></li>
       </ol>
       <div class="status" id="status" aria-live="polite">Lege alle Bausteine auf die Plätze der DNA.</div>
       <div class="legende" aria-label="Legende">
@@ -240,10 +259,33 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <span><i style="background:var(--c-exon)"></i>Exon</span>
         <span><i style="background:var(--c-intron)"></i>Intron</span>
         <span><i style="background:var(--c-sp)"></i>Spleißosom, Poly(A)-Polymerase</span>
+        <span><i style="background:var(--c-ri)"></i>Ribosom</span>
         <span><i style="background:linear-gradient(90deg,#2f5bea,#009e73,#dcae1c)"></i>Basen (wie auf den anderen Seiten)</span>
       </div>
       <div class="karte" id="ergebnis" hidden></div>
       <div class="karte" id="spleissErgebnis" hidden></div>
+      <div class="karte" id="peptid" hidden>
+        <h3>Das Peptid</h3>
+        <div id="peptidInhalt"></div>
+        <div id="struktur" hidden>
+          <h3>Struktur vorhersagen</h3>
+          <p>Wie faltet sich das Peptid? Ein Programm für die Strukturvorhersage (ESMFold) schätzt das aus der Aminosäuresequenz. Das Programm läuft nicht auf dieser Seite, sondern bei einem fremden Dienst.</p>
+          <label class="zustimmung"><input type="checkbox" id="zustimmung"><span><b>Einverstanden:</b> Wenn ich auf „Struktur vorhersagen“ klicke, sendet mein Browser die Aminosäuresequenz dieses Peptids (<span id="seqLaenge">0</span> Buchstaben, vom Computer erzeugt, keine persönlichen Daten) an <code>api.esmatlas.com</code> (ESM Metagenomic Atlas, Meta Platforms, USA). Dabei erfährt der Dienst meine IP-Adresse. Weitere Angaben in der <a href="datenschutz.html#strukturvorhersage">Datenschutzerklärung</a>.</span></label>
+          <div class="steuer">
+            <button class="btn" type="button" id="vorhersage" disabled>Struktur vorhersagen (ESMFold)</button>
+            <button class="btn" type="button" id="kopieren">Sequenz kopieren</button>
+          </div>
+          <div id="vorhersageStatus" class="klein" aria-live="polite"></div>
+          <div id="strukturBox" hidden>
+            <div class="dreid"><canvas class="gl" tabindex="0" id="gl3" aria-label="3D-Modell des vorhergesagten Peptids. Ziehen oder Pfeiltasten drehen."></canvas><canvas class="ov" id="ov3" aria-hidden="true"></canvas></div>
+            <div class="steuer klein" role="group" aria-label="Färbung">
+              <span class="seg" role="radiogroup" aria-label="Färbung"><button type="button" role="radio" aria-checked="true" data-modus="element">Elemente</button><button type="button" role="radio" aria-checked="false" data-modus="plddt">Sicherheit (pLDDT)</button></span>
+            </div>
+            <p id="strukturInfo"></p>
+          </div>
+          <p class="klein">Andere Werkzeuge, bei denen du die Sequenz selbst einfügst: <a href="https://esmatlas.com/resources?action=fold" target="_blank" rel="noopener noreferrer">ESM Atlas</a>, <a href="https://alphafoldserver.com" target="_blank" rel="noopener noreferrer">AlphaFold Server</a>, <a href="https://boltz.bio" target="_blank" rel="noopener noreferrer">Boltz</a>.</p>
+        </div>
+      </div>
       <div class="karte" id="erklaerung" hidden>
         <h3>Wozu die Bausteine dienen</h3>
         <ul>
@@ -260,12 +302,14 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
   <details>
     <summary>Modell und Grenzen</summary>
     <ul>
-      <li>Das Gen ist erfunden und winzig und wird bei jedem „Neuen Gen“ zufällig erzeugt: zwei bis vier Exons mit vier bis sieben Basen, dazwischen Introns mit sieben bis elf Basen (GU am Anfang, AG am Ende, dazwischen zufällige Basen), die Sequenzen der Exons sind zufällig und codieren für nichts Bestimmtes. In Wirklichkeit sind Exons im Mittel etwa 150 Basenpaare lang, Introns oft mehrere Tausend; die Längenunterschiede sind hier viel kleiner, damit alles auf den Bildschirm passt. Exons gleichen Typs sind austauschbar: Das Gen ist das, was du baust, wichtig ist nur, dass Exons und Introns abwechseln.</li>
+      <li>Das Gen ist erfunden und wird bei jedem „Neuen Gen“ zufällig erzeugt: zwei bis vier Exons, dazwischen Introns mit sieben bis zehn Basen (GU am Anfang, AG am Ende, dazwischen zufällige Basen). Die Exons ergeben zusammen die mRNA eines der Miniproteine Chignolin oder Trpzip2 (beide künstlich entworfene Peptide, die sich zu einer β-Haarnadel falten), dazu Start- und Stopp-Codon und je ein bis zwei Basen nicht übersetzter Bereich; gleichwertige Codons sind zufällig gewählt. Es ist also kein natürliches Gen. Die Exons sind nummeriert, weil ihre Reihenfolge das Peptid festlegt; die Introns sind austauschbar, weil sie herausgeschnitten werden. Echte Exons sind im Mittel etwa 150 Basenpaare lang, Introns oft mehrere Tausend; hier sind die Unterschiede viel kleiner, damit alles auf den Bildschirm passt.</li>
       <li>Der Promotor besteht in der Zelle aus mehreren Elementen, die TATA-Box liegt etwa 25 bis 30 Basenpaare vor dem Startpunkt, und nicht jeder Promotor hat eine. Hier steht sie kurz vor dem Startpunkt, und die Transkriptionsfaktoren sind zu einer Form zusammengefasst. Tatsächlich sind es viele Proteine (unter anderem TBP und die Faktoren TFIIA bis TFIIH), die sich nacheinander anlagern. Die Polymerase ist größer als gezeichnet und umschließt etwa 35 Basenpaare.</li>
       <li>Enhancer, die Gene aus großer Entfernung verstärken, und der Zustand des Chromatins (siehe „DNA-Verpackung“) fehlen. Ohne sie wird in der Zelle nur selten abgeschrieben.</li>
       <li>Die Polymerase liest den unteren Strang (Matrize) von 3' nach 5' und baut die RNA in 5'→3'-Richtung auf. Die RNA ist deshalb im Aufbau gleich dem oberen Strang, mit U statt T. In der Zelle bleibt die RNA nur etwa neun Basen lang am Matrizenstrang; hier ist es genauso, sie löst sich schon während der Synthese ab.</li>
       <li>Die Richtung ist festgelegt: Die Polymerase läuft immer von links nach rechts. In der Zelle liegen Gene auf beiden Strängen, die Polymerase richtet sich nach der Ausrichtung des Promotors.</li>
       \1\n      <li>Zwei Exons oder zwei Introns lassen sich nicht direkt nebeneinander legen: Ein Baustein, der dort landen würde, bleibt ohne weiteren Hinweis, wo er war. In einem Gen werden Exons immer durch ein Intron getrennt, und zwei aufeinanderfolgende Introns wären ein einziges.</li>
+      <li>Die Translation ist vereinfacht: Das Ribosom ist ein einziger Block. Transfer-RNAs, Initiationsfaktoren und Elongationsfaktoren fehlen, ebenso die Kappe, die in der Zelle für den Start gebraucht wird. In Eukaryoten sucht die kleine Untereinheit vom 5'-Ende aus nach dem ersten AUG in guter Umgebung (Kozak-Sequenz); hier gilt das erste AUG. Das Ribosom baut hier etwa zwei Aminosäuren pro Sekunde ein, in der Zelle sind es etwa 5 bis 20. Der Poly(A)-Schwanz wird nicht übersetzt, weil das Stopp-Codon davor liegt.</li>
+      <li>Die Strukturvorhersage stammt von ESMFold, einem neuronalen Netz, das aus der Sequenz allein eine Form schätzt. Sie ist keine Messung. Kurze Peptide haben in Wasser oft keine feste Form; die Sicherheit (pLDDT) ist dann niedrig, oder sie täuscht, wenn das Netz ein bekanntes Muster erkennt. Das Bild zeigt alle Atome außer Wasserstoff als Kugeln und Stäbe; Bindungen werden aus den Abständen bestimmt (unter 1,9 Å). Boltz und ähnliche Dienste verlangen einen persönlichen Zugangsschlüssel und sind deshalb nur als Link angegeben.</li>
       <li>Das Spleißen ist vereinfacht: Ein Intron wird herausgeschnitten, wenn davor und dahinter ein Exon liegt. Das Spleißosom erkennt Introns in der Zelle an GU am 5'-Ende, AG am 3'-Ende und einer Verzweigungsstelle (ein Adenin) weiter innen; das Intron wird als Schlinge (Lasso) frei. Hier wird nur der Rahmen GU…AG gezeigt, und alle Introns werden nacheinander entfernt. Alternatives Spleißen, bei dem Exons weggelassen werden, kommt nicht vor. Das Stück am 3'-Ende (Terminator) wird hier zusammen mit dem Spleißen abgespalten. In der Zelle erkennt ein Faktorkomplex das Signal AAUAAA, spaltet die RNA etwa 10 bis 30 Nucleotide dahinter, und die Poly(A)-Polymerase hängt dann etwa 200 Adenine an (hier acht). Die 5'-Kappe (7-Methylguanosin) fehlt in diesem Modell; Kappe, Spleißen und Polyadenylierung laufen in der Zelle schon während der Transkription ab.</li>
       <li>Geschwindigkeit und Dauer sind nicht maßstäblich: Die Polymerase baut in der Zelle etwa 20 bis 80 Nucleotide pro Sekunde ein, die Anlagerung der Faktoren dauert deutlich länger als hier gezeigt.</li>
     </ul>
@@ -314,17 +358,468 @@ const PALETTE = (() => {
   return {hell, dunkel, get, rgb, istDunkel};
 })();
 /*__/PALETTE__*/
+/*__CODE__*/
+// Der Standard-Code der Translation (Quelle: template/site/code.js, von build.py in die Seiten kopiert).
+// Codons als RNA (ACGU). Tabelle 1 der NCBI-Genetic-Codes (universeller Code).
+//
+//   GENCODE.AS            Aminosäuren: kurz (Ala), name, einbuchstabig, klasse
+//   GENCODE.TABELLE       Codon → "Ala" … oder "Stopp"
+//   GENCODE.uebersetze(rna, start)   → {aa: [...], codons: [...], stopp: bool}   (ab Position start, 0-basiert)
+//   GENCODE.TEILCODE      die acht Aminosäuren der Übung "Der Code im Reagenzglas" mit ihren Codons
+const GENCODE = (() => {
+  "use strict";
+  const REIHE = "UCAG";
+  // Reihenfolge der Codons: erste Base am langsamsten, jeweils U, C, A, G
+  const KETTE = "FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG";
+  const EIN = {A: "Ala", R: "Arg", N: "Asn", D: "Asp", C: "Cys", Q: "Gln", E: "Glu", G: "Gly", H: "His", I: "Ile", L: "Leu", K: "Lys", M: "Met", F: "Phe", P: "Pro", S: "Ser", T: "Thr", W: "Trp", Y: "Tyr", V: "Val"};
+  const NAME = {Ala: "Alanin", Arg: "Arginin", Asn: "Asparagin", Asp: "Asparaginsäure", Cys: "Cystein", Gln: "Glutamin", Glu: "Glutaminsäure", Gly: "Glycin", His: "Histidin", Ile: "Isoleucin",
+                Leu: "Leucin", Lys: "Lysin", Met: "Methionin", Phe: "Phenylalanin", Pro: "Prolin", Ser: "Serin", Thr: "Threonin", Trp: "Tryptophan", Tyr: "Tyrosin", Val: "Valin"};
+  // Eigenschaft der Seitenkette (grobe Einteilung für Farben)
+  const KLASSE = {Ala: "unpolar", Val: "unpolar", Leu: "unpolar", Ile: "unpolar", Met: "unpolar", Phe: "unpolar", Trp: "unpolar",
+                  Ser: "polar", Thr: "polar", Cys: "polar", Tyr: "polar", Asn: "polar", Gln: "polar",
+                  Asp: "sauer", Glu: "sauer", Lys: "basisch", Arg: "basisch", His: "basisch", Gly: "sonder", Pro: "sonder"};
+  const KLASSEN = {unpolar: "unpolar (wasserabweisend)", polar: "polar, ungeladen", sauer: "sauer (negativ geladen)", basisch: "basisch (positiv geladen)", sonder: "Sonderfall"};
+  const AS = {};
+  for (const [e, k] of Object.entries(EIN)) AS[k] = {kurz: k, e, name: NAME[k], klasse: KLASSE[k]};
+  const TABELLE = {}, CODONS = [];
+  for (let i = 0; i < 64; i++){
+    const c = REIHE[i >> 4] + REIHE[(i >> 2) & 3] + REIHE[i & 3];
+    TABELLE[c] = KETTE[i] === "*" ? "Stopp" : EIN[KETTE[i]];
+    CODONS.push(c);
+  }
+  // Acht Aminosäuren für die Übung mit Reagenzglas und Tabelle; Arg hat alle sechs Codons
+  const TEILCODE = [
+    {aa: "Phe", codons: ["UUU", "UUC"]},
+    {aa: "His", codons: ["CAU", "CAC"]},
+    {aa: "Lys", codons: ["AAA", "AAG"]},
+    {aa: "Pro", codons: ["CCU", "CCC", "CCA", "CCG"]},
+    {aa: "Ala", codons: ["GCU", "GCC", "GCA", "GCG"]},
+    {aa: "Thr", codons: ["ACU", "ACC", "ACA", "ACG"]},
+    {aa: "Arg", codons: ["CGU", "CGC", "CGA", "CGG", "AGA", "AGG"]},
+    {aa: "Gly", codons: ["GGU", "GGC", "GGA", "GGG"]},
+  ];
+  // Translation ab Position start (0-basiert), Codon für Codon, bis zum Stopp oder zum Ende der Sequenz
+  function uebersetze(rna, start){
+    const aa = [], codons = [];
+    let stopp = false;
+    for (let i = start || 0; i + 3 <= rna.length; i += 3){
+      const c = rna.slice(i, i + 3), a = TABELLE[c];
+      codons.push(c);
+      if (a === "Stopp"){ stopp = true; aa.push("Stopp"); break; }
+      aa.push(a);
+    }
+    return {aa, codons, stopp};
+  }
+  // Versuche mit sich wiederholenden mRNAs (Einheit n-mal), wie in den klassischen Experimenten mit zellfreiem Extrakt
+  const IMTEIL = new Set(TEILCODE.flatMap(t => t.codons));
+  const ggt = (a, b) => b ? ggt(b, a % b) : a;
+  // Ein Leserahmen (1, 2 oder 3 = Start bei diesem Nukleotid) ist verfügbar, wenn alle seine Codons zum Teilcode gehören
+  function rahmen(einheit){
+    const n = einheit.length / ggt(einheit.length, 3), m = einheit.repeat(8);
+    return [0, 1, 2].map(f => {
+      const codons = [];
+      for (let k = 0; k < n; k++) codons.push(m.slice(f + 3 * k, f + 3 * k + 3));
+      return {start: f + 1, codons, verfuegbar: codons.every(c => IMTEIL.has(c))};
+    });
+  }
+  const VERSUCHE = ["U", "C", "A", "UUC", "CG", "CA", "CGC", "CCA", "CGG", "ACG", "AAG", "GGA", "CCU", "GCU", "ACU", "CAU", "CGU", "GGU", "CGGG", "CGCA"];
+  // Expertenmodus (ganzer Code): zusätzliche Versuche, damit alle 64 Codons erreichbar sind (die Reihenfolge verrät nichts)
+  const VERSUCHE_VOLL = VERSUCHE.concat(["UC", "AUG", "UA", "CAA", "CAG", "UUGA", "UUAG", "UAUG", "UUAA"]);
+  // Zeilen des ganzen Codes, alphabetisch nach Name (Stopp zuletzt); jede Zeile hat Platz für alle Codons
+  const VOLLCODE = Object.keys(AS).sort((a, b) => AS[a].name.localeCompare(AS[b].name, "de")).map(aa => ({aa, codons: CODONS.filter(c => TABELLE[c] === aa)}))
+    .concat([{aa: "Stopp", codons: CODONS.filter(c => TABELLE[c] === "Stopp")}]);
+  const NICHT_HERSTELLBAR = [   // nur im vereinfachten Code; im Expertenmodus ist nur Poly-G nicht herstellbar
+    {einheit: "G", grund: "Poly-G faltet sich zu Vierersträngen und lässt sich nicht herstellen."},
+    {einheit: "UC", grund: "Dieser Versuch liefert Aminosäuren, die nicht zu den acht dieser Übung gehören."},
+    {einheit: "AUG", grund: "Dieser Versuch liefert Aminosäuren und ein Stopp-Signal außerhalb dieser Übung."},
+  ];
+  return {AS, TABELLE, CODONS, REIHE, KLASSEN, TEILCODE, VOLLCODE, IMTEIL, uebersetze, rahmen, VERSUCHE, VERSUCHE_VOLL, NICHT_HERSTELLBAR};
+})();
+/*__/CODE__*/
+/*__MOL3D__*/
+// Kleine 3D-Ansicht für Moleküle (WebGL): Kugeln, Stäbe, gestrichelte Bindungen, Drehen/Zoomen,
+// Achsenpfeile, Beschriftungen, Schnittebene, Auswahl per Maus. Quelle: template/site/mol3d.js,
+// wird von build.py in die Seiten kopiert. Einheiten: Ångström, Farben als [r, g, b] von 0 bis 1.
+//
+//   const v = MOL3D.create(canvas, overlayCanvas, {onHover(i), onPick(i)});
+//   v.setScene({atome: [{p:[x,y,z], c:[r,g,b], r:0.3}], bindungen: [{a, b, r:0.1, c:[r,g,b], strich:true}]});
+//   Zusätzlich: scene.netze = [{pos, nor, col}] (Float32Array) für fertige Dreiecksnetze.
+//   Zusätzlich: scene.flaechen = [{p: [[x,y,z], …] (konvexes Vieleck), c: [r,g,b], rand: [r,g,b]}], scene.flaechenAlpha (Standard 0,38):
+//   durchscheinende Flächen, zum Beispiel für eine Ebene.
+//   v.setClip({n:[0,0,1], d:5, min:2})   // zeigt nur, was min <= dot(n, p) <= d erfüllt (min ist optional); null schaltet aus
+//   v.setLabels([{p:[x,y,z], text:"5'", color:"#fff", bg:"#000"}, {a:[..], b:[..], text:"3,4 Å", linie:true}])
+//   v.setAchsen(true); v.setRotation(R); v.animateTo(R, 600); v.resetView();
+const MOL3D = (() => {
+  "use strict";
+  const M4 = {
+    id(){ const o = new Float32Array(16); o[0] = o[5] = o[10] = o[15] = 1; return o; },
+    mul(a, b){ const o = new Float32Array(16); for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++){ let s = 0; for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k]; o[c * 4 + r] = s; } return o; },
+    persp(fov, asp, n, f){ const t = 1 / Math.tan(fov / 2), o = new Float32Array(16); o[0] = t / asp; o[5] = t; o[10] = (f + n) / (n - f); o[11] = -1; o[14] = 2 * f * n / (n - f); return o; },
+    trans(x, y, z){ const o = M4.id(); o[12] = x; o[13] = y; o[14] = z; return o; },
+    fromR(R){ const o = M4.id(); for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) o[j * 4 + i] = R[i][j]; return o; },
+  };
+  const I3 = () => [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+  const mul3 = (A, B) => A.map(r => [0, 1, 2].map(j => r[0] * B[0][j] + r[1] * B[1][j] + r[2] * B[2][j]));
+  const rotX3 = a => { const c = Math.cos(a), s = Math.sin(a); return [[1, 0, 0], [0, c, -s], [0, s, c]]; };
+  const rotY3 = a => { const c = Math.cos(a), s = Math.sin(a); return [[c, 0, s], [0, 1, 0], [-s, 0, c]]; };
+  const orthonorm = R => {   // gegen Rundungsfehler beim vielen Drehen
+    let a = R[0], b = R[1];
+    const n = v => { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; };
+    a = n(a); b = n([b[0] - (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) * a[0], b[1] - (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) * a[1], b[2] - (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) * a[2]]);
+    return [a, b, [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]];
+  };
+
+  function supported(){
+    try { return !!document.createElement("canvas").getContext("webgl"); } catch (e){ return false; }
+  }
+
+  // ---- Vorlagen: Kugel (Dreiecksliste, Einheitsradius) und Zylinder (Länge 1 entlang z, Radius 1) ----
+  const SPHERE = (() => {
+    const nLat = 9, nLon = 14, v = [];
+    const pt = (i, j) => { const th = Math.PI * i / nLat, ph = 2 * Math.PI * j / nLon; return [Math.sin(th) * Math.cos(ph), Math.sin(th) * Math.sin(ph), Math.cos(th)]; };
+    for (let i = 0; i < nLat; i++) for (let j = 0; j < nLon; j++){
+      const a = pt(i, j), b = pt(i + 1, j), c = pt(i + 1, j + 1), d = pt(i, j + 1);
+      if (i > 0) v.push(a, b, d);
+      if (i < nLat - 1) v.push(d, b, c);
+    }
+    return v;
+  })();
+  const SPHERE_LOW = (() => {   // gröbere Kugel für große Moleküle
+    const nLat = 5, nLon = 8, v = [];
+    const pt = (i, j) => { const th = Math.PI * i / nLat, ph = 2 * Math.PI * j / nLon; return [Math.sin(th) * Math.cos(ph), Math.sin(th) * Math.sin(ph), Math.cos(th)]; };
+    for (let i = 0; i < nLat; i++) for (let j = 0; j < nLon; j++){
+      const a = pt(i, j), b = pt(i + 1, j), c = pt(i + 1, j + 1), d = pt(i, j + 1);
+      if (i > 0) v.push(a, b, d);
+      if (i < nLat - 1) v.push(d, b, c);
+    }
+    return v;
+  })();
+  const CYL = (() => {
+    const n = 10, v = [];
+    for (let j = 0; j < n; j++){
+      const a0 = 2 * Math.PI * j / n, a1 = 2 * Math.PI * (j + 1) / n;
+      const p = (a, z) => [Math.cos(a), Math.sin(a), z, Math.cos(a), Math.sin(a), 0];
+      const A = p(a0, 0), B = p(a1, 0), C = p(a1, 1), D = p(a0, 1);
+      v.push(A, B, D, D, B, C);
+    }
+    return v;
+  })();
+
+  const VS = `
+    attribute vec3 aPos; attribute vec3 aNor; attribute vec3 aCol;
+    uniform mat4 uMVP; uniform mat4 uRot;
+    varying vec3 vNor; varying vec3 vCol; varying vec3 vWorld;
+    void main(){ gl_Position = uMVP * vec4(aPos, 1.0); vNor = (uRot * vec4(aNor, 0.0)).xyz; vCol = aCol; vWorld = aPos; }`;
+  const FS = `
+    precision mediump float;
+    varying vec3 vNor; varying vec3 vCol; varying vec3 vWorld;
+    uniform vec4 uClip; uniform float uClipMin; uniform float uAlpha;
+    void main(){
+      if (uClip.w < 1.0e5 && (dot(uClip.xyz, vWorld) > uClip.w || dot(uClip.xyz, vWorld) < uClipMin)) discard;
+      vec3 n = normalize(vNor);
+      if (!gl_FrontFacing) n = -n;
+      vec3 L = normalize(vec3(0.4, 0.55, 0.75));
+      float d = max(dot(n, L), 0.0), sp = pow(max(dot(n, normalize(L + vec3(0.0, 0.0, 1.0))), 0.0), 40.0);
+      vec3 c = vCol * (0.38 + 0.72 * d) + vec3(0.28) * sp;
+      if (!gl_FrontFacing) c *= 0.7;
+      gl_FragColor = vec4(c, uAlpha);
+    }`;
+
+  function create(canvas, overlay, opts){
+    opts = opts || {};
+    const gl = canvas.getContext("webgl", {antialias: true, alpha: true, premultipliedAlpha: false});
+    if (!gl) throw new Error("kein WebGL");
+    const octx = overlay.getContext("2d");
+    const prog = gl.createProgram();
+    for (const [type, src] of [[gl.VERTEX_SHADER, VS], [gl.FRAGMENT_SHADER, FS]]){
+      const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+      gl.attachShader(prog, s);
+    }
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+    const loc = {aPos: gl.getAttribLocation(prog, "aPos"), aNor: gl.getAttribLocation(prog, "aNor"), aCol: gl.getAttribLocation(prog, "aCol"),
+                 uMVP: gl.getUniformLocation(prog, "uMVP"), uRot: gl.getUniformLocation(prog, "uRot"), uClip: gl.getUniformLocation(prog, "uClip"), uClipMin: gl.getUniformLocation(prog, "uClipMin"), uAlpha: gl.getUniformLocation(prog, "uAlpha")};
+    const bufs = {pos: gl.createBuffer(), nor: gl.createBuffer(), col: gl.createBuffer(), n: 0};
+    const flb = {pos: gl.createBuffer(), nor: gl.createBuffer(), col: gl.createBuffer(), n: 0};   // durchscheinende Flächen
+
+    const HOME_ZOOM = opts.zoom || 1;
+    const S = {scene: {atome: [], bindungen: []}, R: I3(), R0: I3(), zoom: HOME_ZOOM, center: [0, 0, 0], radius: 5, clip: null,
+               labels: [], achsen: true, screen: [], dirty: true, anim: null, w: 0, h: 0, dpr: 1, hover: -1};
+    const FOV = (opts.fov || 28) * Math.PI / 180;
+
+    function build(){
+      const {atome, bindungen} = S.scene;
+      const dashes = [];
+      for (const b of bindungen){
+        if (!b.strich) continue;
+        const A = atome[b.a].p, B = atome[b.b].p, L = Math.hypot(B[0] - A[0], B[1] - A[1], B[2] - A[2]), seg = 0.16, gap = 0.12;
+        for (let t = 0; t + seg <= L + 1e-6; t += seg + gap) dashes.push([b, t / L, (t + seg) / L]);
+      }
+      const solid = bindungen.filter(b => !b.strich);
+      const SP = atome.length > 700 ? SPHERE_LOW : SPHERE;
+      const flaechen = S.scene.flaechen || [];
+      const kanten = flaechen.reduce((n, f) => n + (f.rand ? f.p.length : 0), 0);
+      const netze = S.scene.netze || [];   // fertige Dreiecksnetze {pos, nor, col} (flache Float32Arrays), zum Beispiel ein Cartoon
+      const netzV = netze.reduce((n, m) => n + m.pos.length / 3, 0);
+      const nV = atome.length * SP.length + solid.length * 2 * CYL.length + dashes.length * CYL.length + kanten * CYL.length + netzV;
+      const pos = new Float32Array(nV * 3), nor = new Float32Array(nV * 3), col = new Float32Array(nV * 3);
+      let o = 0;
+      const put = (px, py, pz, nx, ny, nz, c) => { pos[o] = px; pos[o + 1] = py; pos[o + 2] = pz; nor[o] = nx; nor[o + 1] = ny; nor[o + 2] = nz; col[o] = c[0]; col[o + 1] = c[1]; col[o + 2] = c[2]; o += 3; };
+      for (const a of atome){
+        const r = a.r || 0.3;
+        for (const v of SP) put(a.p[0] + r * v[0], a.p[1] + r * v[1], a.p[2] + r * v[2], v[0], v[1], v[2], a.c);
+      }
+      const cyl = (A, B, r, c) => {
+        const dx = B[0] - A[0], dy = B[1] - A[1], dz = B[2] - A[2], L = Math.hypot(dx, dy, dz);
+        if (L < 1e-6) return;
+        const w = [dx / L, dy / L, dz / L], t = Math.abs(w[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
+        let u = [w[1] * t[2] - w[2] * t[1], w[2] * t[0] - w[0] * t[2], w[0] * t[1] - w[1] * t[0]];
+        const lu = Math.hypot(...u); u = [u[0] / lu, u[1] / lu, u[2] / lu];
+        const v2 = [w[1] * u[2] - w[2] * u[1], w[2] * u[0] - w[0] * u[2], w[0] * u[1] - w[1] * u[0]];
+        for (const q of CYL){
+          const x = q[0] * r, y = q[1] * r, z = q[2] * L;
+          put(A[0] + u[0] * x + v2[0] * y + w[0] * z, A[1] + u[1] * x + v2[1] * y + w[1] * z, A[2] + u[2] * x + v2[2] * y + w[2] * z,
+              u[0] * q[3] + v2[0] * q[4], u[1] * q[3] + v2[1] * q[4], u[2] * q[3] + v2[2] * q[4], c);
+        }
+      };
+      for (const b of solid){
+        const A = atome[b.a].p, B = atome[b.b].p, M = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2, (A[2] + B[2]) / 2], r = b.r || 0.11;
+        cyl(A, M, r, b.c || atome[b.a].c); cyl(M, B, r, b.c || atome[b.b].c);
+      }
+      for (const [b, t0, t1] of dashes){
+        const A = atome[b.a].p, B = atome[b.b].p, at = t => [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t];
+        cyl(at(t0), at(t1), b.r || 0.07, b.c || [0.5, 0.5, 0.5]);
+      }
+      for (const f of flaechen) if (f.rand) for (let i = 0; i < f.p.length; i++) cyl(f.p[i], f.p[(i + 1) % f.p.length], f.randR || 0.035, f.rand);
+      for (const m of netze){ pos.set(m.pos, o); nor.set(m.nor, o); col.set(m.col, o); o += m.pos.length; }
+      for (const [k, arr] of [["pos", pos], ["nor", nor], ["col", col]]){ gl.bindBuffer(gl.ARRAY_BUFFER, bufs[k]); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW); }
+      bufs.n = nV;
+      // Flächen (konvexe Vielecke) als Dreiecksfächer
+      let nf = 0; for (const f of flaechen) nf += (f.p.length - 2) * 3;
+      const fp = new Float32Array(nf * 3), fn = new Float32Array(nf * 3), fc = new Float32Array(nf * 3); let q = 0;
+      for (const f of flaechen){
+        const a = f.p[0], b = f.p[1], c = f.p[2];
+        const u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], v = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+        let n = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]]; const l = Math.hypot(...n) || 1; n = [n[0] / l, n[1] / l, n[2] / l];
+        for (let k = 1; k < f.p.length - 1; k++) for (const P of [f.p[0], f.p[k], f.p[k + 1]]){
+          fp[q] = P[0]; fp[q + 1] = P[1]; fp[q + 2] = P[2]; fn[q] = n[0]; fn[q + 1] = n[1]; fn[q + 2] = n[2]; fc[q] = f.c[0]; fc[q + 1] = f.c[1]; fc[q + 2] = f.c[2]; q += 3;
+        }
+      }
+      for (const [k, arr] of [["pos", fp], ["nor", fn], ["col", fc]]){ gl.bindBuffer(gl.ARRAY_BUFFER, flb[k]); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW); }
+      flb.n = nf;
+    }
+
+    function fit(){
+      const a = S.scene.atome;
+      if (!a.length){ S.center = [0, 0, 0]; S.radius = 5; return; }
+      const c = [0, 0, 0];
+      for (const x of a) for (let i = 0; i < 3; i++) c[i] += x.p[i] / a.length;
+      let r = 0;
+      for (const x of a) r = Math.max(r, Math.hypot(x.p[0] - c[0], x.p[1] - c[1], x.p[2] - c[2]) + (x.r || 0.3));
+      S.center = c; S.radius = r;
+    }
+
+    function resize(){
+      const dpr = Math.min(window.devicePixelRatio || 1, 2), w = canvas.clientWidth, h = canvas.clientHeight;
+      if (w === S.w && h === S.h && dpr === S.dpr) return;
+      S.w = w; S.h = h; S.dpr = dpr;
+      for (const c of [canvas, overlay]){ c.width = Math.max(1, Math.round(w * dpr)); c.height = Math.max(1, Math.round(h * dpr)); }
+    }
+
+    function matrices(){
+      const asp = S.w / Math.max(1, S.h), dist = S.radius / Math.sin(Math.min(FOV / 2, FOV * asp / 2)) * 1.08 / S.zoom;
+      const rot = M4.fromR(S.R);
+      const mv = M4.mul(M4.trans(0, 0, -dist), M4.mul(rot, M4.trans(-S.center[0], -S.center[1], -S.center[2])));
+      return {mvp: M4.mul(M4.persp(FOV, asp, Math.max(0.5, dist - S.radius * 1.5), dist + S.radius * 1.5), mv), rot, dist};
+    }
+
+    function project(p, mvp){
+      const x = mvp[0] * p[0] + mvp[4] * p[1] + mvp[8] * p[2] + mvp[12], y = mvp[1] * p[0] + mvp[5] * p[1] + mvp[9] * p[2] + mvp[13];
+      const w = mvp[3] * p[0] + mvp[7] * p[1] + mvp[11] * p[2] + mvp[15], z = mvp[2] * p[0] + mvp[6] * p[1] + mvp[10] * p[2] + mvp[14];
+      return [(x / w * 0.5 + 0.5) * S.w, (0.5 - y / w * 0.5) * S.h, z / w];
+    }
+
+    function draw(){
+      S.dirty = false;
+      resize();
+      const {mvp, rot} = matrices();
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.enable(gl.DEPTH_TEST);
+      gl.useProgram(prog);
+      for (const [name, key] of [["aPos", "pos"], ["aNor", "nor"], ["aCol", "col"]]){
+        gl.bindBuffer(gl.ARRAY_BUFFER, bufs[key]); gl.enableVertexAttribArray(loc[name]); gl.vertexAttribPointer(loc[name], 3, gl.FLOAT, false, 0, 0);
+      }
+      gl.uniformMatrix4fv(loc.uMVP, false, mvp); gl.uniformMatrix4fv(loc.uRot, false, rot);
+      const c = S.clip; gl.uniform4f(loc.uClip, c ? c.n[0] : 0, c ? c.n[1] : 0, c ? c.n[2] : 0, c ? c.d : 1e6);
+      gl.uniform1f(loc.uClipMin, c && c.min !== undefined ? c.min : -1e6);
+      gl.uniform1f(loc.uAlpha, 1);
+      gl.drawArrays(gl.TRIANGLES, 0, bufs.n);
+      if (flb.n){   // durchscheinende Flächen zuletzt, ohne Tiefenschreiben
+        for (const [name, key] of [["aPos", "pos"], ["aNor", "nor"], ["aCol", "col"]]){ gl.bindBuffer(gl.ARRAY_BUFFER, flb[key]); gl.vertexAttribPointer(loc[name], 3, gl.FLOAT, false, 0, 0); }
+        gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); gl.depthMask(false);
+        gl.uniform1f(loc.uAlpha, S.scene.flaechenAlpha || 0.38);
+        gl.drawArrays(gl.TRIANGLES, 0, flb.n);
+        gl.depthMask(true); gl.disable(gl.BLEND);
+      }
+      S.screen = S.scene.atome.map(a => project(a.p, mvp));
+      overlayDraw(mvp);
+    }
+
+    const abgeschnitten = p => { const c = S.clip; if (!c) return false; const v = c.n[0] * p[0] + c.n[1] * p[1] + c.n[2] * p[2]; return v > c.d || (c.min !== undefined && v < c.min); };
+    function overlayDraw(mvp){
+      const dpr = S.dpr, g = octx;
+      g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, S.w, S.h);
+      const css = getComputedStyle(canvas), ink = css.color;
+      g.font = "600 13px 'Source Sans 3', system-ui, sans-serif"; g.textBaseline = "middle"; g.textAlign = "center";
+      for (const L of S.labels){
+        if (L.linie ? (abgeschnitten(L.a) || abgeschnitten(L.b)) : abgeschnitten(L.p)) continue;
+        if (L.linie){
+          const a = project(L.a, mvp), b = project(L.b, mvp);
+          g.strokeStyle = L.color || ink; g.lineWidth = 1.5; g.setLineDash([5, 4]);
+          g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); g.setLineDash([]);
+          for (const e of [a, b]){ g.beginPath(); g.moveTo(e[0] + (a[0] === e[0] ? 0 : 0), e[1]); g.arc(e[0], e[1], 2.5, 0, 6.3); g.fillStyle = L.color || ink; g.fill(); }
+          if (L.text) tag(g, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, L.text, L);
+        } else {
+          const q = project(L.p, mvp);
+          tag(g, q[0] + (L.dx || 0), q[1] + (L.dy || 0), L.text, L);
+        }
+      }
+      if (S.achsen) axes(g);
+      if (S.hover >= 0 && S.screen[S.hover]){
+        const q = S.screen[S.hover], a = S.scene.atome[S.hover];
+        if (a.tip) tag(g, q[0], q[1] - 18, a.tip, {bg: css.getPropertyValue("--surface") || "#fff", color: ink, border: ink});
+      }
+    }
+    function tag(g, x, y, text, L){
+      const w = g.measureText(text).width + 12, h = 20;
+      g.fillStyle = L.bg || "rgba(255,255,255,.85)"; g.strokeStyle = L.border || L.color || "rgba(0,0,0,.35)"; g.lineWidth = 1;
+      g.beginPath(); g.roundRect ? g.roundRect(x - w / 2, y - h / 2, w, h, 6) : g.rect(x - w / 2, y - h / 2, w, h); g.fill(); g.stroke();
+      g.fillStyle = L.color || "#000"; g.fillText(text, x, y + 0.5);
+    }
+    function axes(g){   // Achsenpfeile unten links; Länge ~ 34 px
+      const ox = 62, oy = S.h - 54, len = 34, R = S.R;
+      const A = [["x", [1, 0, 0], "#d93636"], ["y", [0, 1, 0], "#2e9d44"], ["z", [0, 0, 1], "#2f6bd9"]]
+        .map(([n, v, c]) => {
+          const x = R[0][0] * v[0] + R[0][1] * v[1] + R[0][2] * v[2], y = R[1][0] * v[0] + R[1][1] * v[1] + R[1][2] * v[2], z = R[2][0] * v[0] + R[2][1] * v[1] + R[2][2] * v[2];
+          return {n, c, x, y: -y, z};
+        }).sort((a, b) => a.z - b.z);
+      g.lineWidth = 2.5; g.lineCap = "round"; g.textAlign = "center";
+      for (const a of A){
+        const ex = ox + a.x * len, ey = oy + a.y * len, d = Math.hypot(a.x, a.y);
+        g.strokeStyle = a.c; g.fillStyle = a.c; g.beginPath(); g.moveTo(ox, oy); g.lineTo(ex, ey); g.stroke();
+        if (d > 0.18){
+          const ang = Math.atan2(a.y, a.x);
+          g.beginPath(); g.moveTo(ex, ey); g.lineTo(ex - 8 * Math.cos(ang - 0.4), ey - 8 * Math.sin(ang - 0.4)); g.lineTo(ex - 8 * Math.cos(ang + 0.4), ey - 8 * Math.sin(ang + 0.4)); g.closePath(); g.fill();
+        }
+        g.font = "700 13px 'Source Sans 3', system-ui, sans-serif"; g.fillText(a.n, ox + a.x * (len + 11), oy + a.y * (len + 11));
+      }
+    }
+
+    function request(){ S.dirty = true; if (!S.raf) S.raf = requestAnimationFrame(tick); }
+    function tick(t){
+      S.raf = 0;
+      if (S.anim){
+        const k = Math.min(1, (t - S.anim.t0) / S.anim.ms), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+        S.R = orthonorm(S.anim.from.map((r, i) => r.map((v, j) => v + (S.anim.to[i][j] - v) * e)));
+        if (k >= 1) S.anim = null; else S.dirty = true;
+      }
+      if (S.dirty){ draw(); if (S.anim) S.raf = requestAnimationFrame(tick); }
+    }
+
+    // ---- Eingaben ----
+    const gedreht = () => { if (opts.onRotate) opts.onRotate(S.R.map(r => r.slice())); };
+    const ptrs = new Map();
+    let moved = 0, pinch = 0;
+    canvas.style.touchAction = "none";
+    canvas.addEventListener("pointerdown", e => { canvas.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, [e.clientX, e.clientY]); moved = 0; S.anim = null; if (ptrs.size === 2) pinch = 0; });
+    canvas.addEventListener("pointermove", e => {
+      const prev = ptrs.get(e.pointerId);
+      if (!prev){ hover(e); return; }
+      const dx = e.clientX - prev[0], dy = e.clientY - prev[1];
+      ptrs.set(e.pointerId, [e.clientX, e.clientY]);
+      moved += Math.abs(dx) + Math.abs(dy);
+      if (ptrs.size === 1){ S.R = orthonorm(mul3(mul3(rotX3(dy * 0.01), rotY3(dx * 0.01)), S.R)); gedreht(); request(); }
+      else if (ptrs.size === 2){
+        const [a, b] = [...ptrs.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]);
+        if (pinch) S.zoom = Math.min(8, Math.max(0.3, S.zoom * d / pinch));
+        pinch = d; request();
+      }
+    });
+    const up = e => {
+      const was = ptrs.has(e.pointerId); ptrs.delete(e.pointerId); pinch = 0;
+      if (was && e.type === "pointerup" && moved < 5 && ptrs.size === 0 && opts.onPick){
+        const i = nearest(e); if (i >= 0) opts.onPick(i);
+      }
+    };
+    canvas.addEventListener("pointerup", up); canvas.addEventListener("pointercancel", up);
+    canvas.addEventListener("pointerleave", () => { if (S.hover >= 0){ S.hover = -1; if (opts.onHover) opts.onHover(-1); request(); } });
+    canvas.addEventListener("wheel", e => { e.preventDefault(); S.zoom = Math.min(8, Math.max(0.3, S.zoom * Math.exp(-e.deltaY * 0.0012))); request(); }, {passive: false});
+    canvas.addEventListener("keydown", e => {
+      const k = e.key, s = 0.12;
+      if (k === "ArrowLeft") S.R = orthonorm(mul3(rotY3(-s), S.R));
+      else if (k === "ArrowRight") S.R = orthonorm(mul3(rotY3(s), S.R));
+      else if (k === "ArrowUp") S.R = orthonorm(mul3(rotX3(-s), S.R));
+      else if (k === "ArrowDown") S.R = orthonorm(mul3(rotX3(s), S.R));
+      else if (k === "+" || k === "=") S.zoom = Math.min(8, S.zoom * 1.15);
+      else if (k === "-") S.zoom = Math.max(0.3, S.zoom / 1.15);
+      else if (k === "0"){ S.R = S.R0.map(r => r.slice()); S.zoom = HOME_ZOOM; gedreht(); }
+      else return;
+      e.preventDefault(); gedreht(); request();
+    });
+    function nearest(e){
+      const r = canvas.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      let best = -1, bd = 1e9;
+      S.screen.forEach((q, i) => {
+        const a = S.scene.atome[i]; if (a.stumm) return;
+        if (S.clip && S.clip.n[0] * a.p[0] + S.clip.n[1] * a.p[1] + S.clip.n[2] * a.p[2] > S.clip.d) return;
+        const d = Math.hypot(q[0] - x, q[1] - y) - 0 + q[2] * 3;
+        if (Math.hypot(q[0] - x, q[1] - y) < 16 && d < bd){ bd = d; best = i; }
+      });
+      return best;
+    }
+    function hover(e){
+      if (!opts.onHover && !S.scene.atome.some(a => a.tip)) return;
+      const i = nearest(e);
+      if (i !== S.hover){ S.hover = i; if (opts.onHover) opts.onHover(i); canvas.style.cursor = i >= 0 ? "pointer" : ""; request(); }
+    }
+    if (window.ResizeObserver) new ResizeObserver(() => request()).observe(canvas);
+
+    return {
+      setScene(scene, o){ S.scene = scene; build(); if (!o || !o.keepView){ fit(); } S.hover = -1; request(); },
+      setClip(c){ S.clip = c; request(); },
+      setLabels(l){ S.labels = l || []; request(); },
+      setAchsen(on){ S.achsen = on; request(); },
+      setRotation(R, home){ S.R = orthonorm(R); if (home) S.R0 = S.R.map(r => r.slice()); S.anim = null; request(); },
+      getRotation(){ return S.R.map(r => r.slice()); },
+      animateTo(R, ms){
+        if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches){ S.R = orthonorm(R); request(); return; }
+        S.anim = {from: S.R.map(r => r.slice()), to: R, t0: performance.now(), ms: ms || 600}; request();
+      },
+      setZoom(z){ S.zoom = z; request(); },
+      resetView(){ S.R = S.R0.map(r => r.slice()); S.zoom = HOME_ZOOM; request(); },
+      project(p){ return project(p, matrices().mvp); },
+      redraw: request,
+    };
+  }
+  return {create, supported, rotX: rotX3, rotY: rotY3, mul3};
+})();
+/*__/MOL3D__*/
 /*__GEN__*/
 // Die Bausteine eines Gens, die Regel, was die RNA-Polymerase abschreibt, und das Spleißen
 // (Quelle: template/site/gen.js, wird von build.py in die Seiten kopiert; Test: scripts/transkription/test_gen.js).
 //
+//   Benötigt GENCODE (template/site/code.js) für die Codon-Tabelle.
 //   GEN.erzeuge(zufall, k)   ein zufälliges Gen mit k Exons (2 bis 4, sonst zufällig) und k-1 Introns:
-//                            {k, n, bausteine, soll}; die Bausteine stehen in der Reihenfolge des Gens:
-//                            Promotor, Exon, Intron, …, Exon, Terminator; jeder Baustein hat key, name und eine
-//                            Sequenz (Gegenstrang, 5'→3', so wie die RNA lautet, mit T statt U).
-//                            Promotor: TATAAA; Terminator: Poly-U (TTTTTT); Exons 4 bis 7 Basen, Introns 7 bis 11 Basen lang
-//                            (Introns beginnen mit GU und enden mit AG; als DNA GT … AG). Introns sind länger als Exons wie in
-//                            Wirklichkeit, aber viel kürzer, damit alles auf den Bildschirm passt.
+//                            {k, n, bausteine, soll, peptid, peptidName, peptidText, mrna}; die Bausteine stehen in der
+//                            Reihenfolge des Gens: Promotor, Exon 1, Intron, Exon 2, …, Terminator; jeder Baustein hat key, name
+//                            und eine Sequenz (Gegenstrang, 5'→3', so wie die RNA lautet, mit T statt U).
+//                            Promotor: TATAAA; Terminator: Poly-U (TTTTTT); Introns: GU … AG (als DNA GT … AG), 7 bis 10 Basen.
+//                            Die Exons ergeben zusammen die mRNA: 1 bis 2 Basen 5'-UTR, AUG, die Codons eines Miniproteins
+//                            (Chignolin oder Trpzip2, zufällige synonyme Codons), Stopp-Codon, 1 bis 2 Basen 3'-UTR. Sie wird
+//                            in k Stücke von mindestens 4 Basen zerlegt (die Schnitte liegen auch mitten in Codons).
+//                            peptid: die Aminosäuren (Einbuchstaben-Code) mit dem Met vom Startcodon, mrna: die gespleißte mRNA.
 //   GEN.analysiere(gen, platz)   platz[s] = Nummer des Bausteins auf Platz s (von links nach rechts)
 //                            → {p, t, vonPlatz, bisPlatz, teile, stopp, ok}
 //        p      Platz des Promotors
@@ -332,13 +827,17 @@ const PALETTE = (() => {
 //        bisPlatz   Platz hinter dem letzten abgeschriebenen: bis zum Terminator (mit), sonst bis zum Ende der DNA
 //        teile  Nummern der abgeschriebenen Bausteine in der Reihenfolge des Transkripts
 //        stopp  true, wenn hinter dem Promotor ein Terminator liegt
-//        ok     true, wenn die Typen des Transkripts Exon, Intron, …, Exon, Terminator folgen (die Exons sind untereinander
-//               austauschbar, ebenso die Introns: das Gen ist das, was gebaut wurde)
+//        ok     true, wenn die Typen des Transkripts Exon, Intron, …, Exon, Terminator folgen und die Exons in der Reihenfolge
+//               ihrer Nummern liegen (die Introns sind untereinander austauschbar: sie werden herausgeschnitten)
 //   GEN.vorrat(gen, zufall)  Reihenfolge der Bausteine im Vorrat (Stelle → Nummer), zufällig; an keiner Stelle liegt ein
 //                            Baustein, dessen Typ an dieser Stelle auch im fertigen Gen stünde
 //   GEN.erlaubt(gen, platz)  false, wenn auf der DNA zwei Exons oder zwei Introns direkt nebeneinander lägen (das gibt es in einem
 //                            Gen nicht: Exons trennt immer ein Intron); platz[s] = Nummer oder null (leerer Platz)
 //   GEN.rna(gen, teile)      die Sequenz der genannten Bausteine als RNA (A, C, G, U)
+//   GEN.uebersetze(rna)      Translation ab dem ersten AUG bis zum Stopp-Codon (oder zum Ende der RNA):
+//                            {start, aa (Dreibuchstaben-Namen), kurz (Einbuchstaben-Code), stopp, codons}; start -1 ohne AUG
+//   GEN.breite(gen, nutzbar, abstand)   größte Breite einer Base (Einheiten), so dass die volle Reihe aller Bausteine in
+//                            die Breite nutzbar passt (abstand zwischen den Bausteinen)
 //   GEN.spleisse(gen, teile) was das Spleißen aus dem Transkript macht: {entfernt, abgespalten, rest}
 //        entfernt     Nummern der Introns, die auf beiden Seiten ein Exon haben und herausgeschnitten werden
 //        abgespalten  Nummer des Terminators am 3'-Ende (wird abgespalten) oder null
@@ -346,27 +845,54 @@ const PALETTE = (() => {
 const GEN = (() => {
   "use strict";
   const PROM = 0, BASEN = "ACGT";
+  // Miniproteine, die sich in Wasser von selbst falten (Aminosäuren ohne das Met vom Startcodon)
+  const PEPTIDE = [
+    {name: "Chignolin", seq: "GYDPETGTWG", text: "ein künstlich entworfenes Miniprotein aus zehn Aminosäuren, das sich zu einer β-Haarnadel faltet (Honda et al. 2004)"},
+    {name: "Trpzip2", seq: "SWTWENGKWTWK", text: "ein künstliches Miniprotein aus zwölf Aminosäuren, ein „Tryptophan-Reißverschluss“, der sich zu einer β-Haarnadel faltet (Cochran et al. 2001)"},
+  ];
+  let codonsVon = null;
+  function codonsFuer(e){            // alle DNA-Codons einer Aminosäure (Einbuchstaben-Code, "*" = Stopp)
+    if (!codonsVon){
+      codonsVon = {};
+      GENCODE.CODONS.forEach(c => { const n = GENCODE.TABELLE[c], k = n === "Stopp" ? "*" : GENCODE.AS[n].e; (codonsVon[k] = codonsVon[k] || []).push(c.replace(/U/g, "T")); });
+    }
+    return codonsVon[e];
+  }
   function erzeuge(zufall, k){
     k = k || 2 + Math.floor(zufall() * 3);
     const zahl = (a, b) => a + Math.floor(zufall() * (b - a + 1));
+    const waehle = a => a[Math.floor(zufall() * a.length)];
     const folge = n => Array.from({length: n}, () => BASEN[Math.floor(zufall() * 4)]).join("");
-    const exon = () => { let s; do s = folge(zahl(4, 7)); while (s === "TTTTTT" || s === "TATAAA"); return s; };
-    const b = [{key: "prom", name: "Promotor", seq: "TATAAA", tata: [0, 5]}];
-    for (let i = 0; i < k; i++){
-      b.push({key: "exon", name: "Exon", seq: exon()});
-      if (i < k - 1) b.push({key: "intron", name: "Intron", seq: "GT" + folge(zahl(3, 7)) + "AG"});
+    const pep = k === 4 ? PEPTIDE[0] : waehle(PEPTIDE);       // bei vier Exons das kürzere, damit alles auf den Bildschirm passt
+    let mrna, exons;
+    for (;;){
+      const orf = "ATG" + [...pep.seq].map(e => waehle(codonsFuer(e))).join("") + waehle(codonsFuer("*"));
+      mrna = folge(zahl(1, 2)) + orf + folge(zahl(1, 2));
+      const laengen = Array(k).fill(4), gewicht = Array.from({length: k}, () => 0.3 + zufall());
+      for (let i = mrna.length - 4 * k; i > 0; i--){        // der Rest wird zufällig verteilt
+        let r = zufall() * gewicht.reduce((x, y) => x + y, 0), j = 0;
+        while (j < k - 1 && r >= gewicht[j]){ r -= gewicht[j]; j++; }
+        laengen[j]++;
+      }
+      let x = 0; exons = laengen.map(n => { const t = mrna.slice(x, x + n); x += n; return t; });
+      if (!exons.some(t => t === "TTTTTT" || t === "TATAAA")) break;   // nicht mit Terminator oder TATA-Box verwechselbar
     }
+    const b = [{key: "prom", name: "Promotor", seq: "TATAAA", tata: [0, 5]}];
+    exons.forEach((t, i) => {
+      b.push({key: "exon", name: "Exon " + (i + 1), seq: t});
+      if (i < k - 1) b.push({key: "intron", name: "Intron", seq: "GT" + folge(zahl(3, 6)) + "AG"});
+    });
     b.push({key: "term", name: "Terminator", seq: "TTTTTT"});
-    return {k, n: b.length, bausteine: b, soll: b.map(x => x.key)};
+    return {k, n: b.length, bausteine: b, soll: b.map(x => x.key), peptid: "M" + pep.seq, peptidName: pep.name, peptidText: pep.text, mrna: mrna.replace(/T/g, "U")};
   }
   function analysiere(gen, platz){
     const n = gen.n, p = platz.indexOf(PROM), t = platz.indexOf(n - 1);
     const stopp = t > p;
     const letzter = stopp ? t : n - 1;
     const teile = platz.slice(p + 1, letzter + 1);
-    const soll = gen.soll.slice(1);
+    const soll = gen.soll.slice(1), exons = teile.filter(id => gen.bausteine[id].key === "exon");
     return {p, t, vonPlatz: p + 1, bisPlatz: letzter + 1, teile, stopp,
-            ok: teile.length === soll.length && teile.every((x, i) => gen.bausteine[x].key === soll[i])};
+            ok: teile.length === soll.length && teile.every((x, i) => gen.bausteine[x].key === soll[i]) && exons.every((id, i) => i === 0 || id > exons[i - 1])};
   }
   function vorrat(gen, zufall){
     const a = gen.bausteine.map((b, i) => i);
@@ -384,6 +910,22 @@ const GEN = (() => {
     }
     return true;
   }
+  function uebersetze(rna){
+    const start = rna.indexOf("AUG"), aa = [], codons = [];
+    let stopp = false;
+    if (start < 0) return {start, aa, kurz: "", stopp, codons};
+    for (let i = start; i + 3 <= rna.length; i += 3){
+      const c = rna.slice(i, i + 3), a = GENCODE.TABELLE[c];
+      codons.push(c);
+      if (a === "Stopp"){ stopp = true; break; }
+      aa.push(a);
+    }
+    return {start, aa, kurz: aa.map(a => GENCODE.AS[a].e).join(""), stopp, codons};
+  }
+  function breite(gen, nutzbar, abstand){
+    const summe = gen.bausteine.reduce((x, b) => x + b.seq.length, 0);
+    return Math.floor((nutzbar - (gen.n - 1) * abstand) / summe);
+  }
   const rna = (gen, teile) => teile.map(id => gen.bausteine[id].seq).join("").replace(/T/g, "U");
   function spleisse(gen, teile){
     const typ = id => gen.bausteine[id].key, entfernt = [], rest = [];
@@ -395,7 +937,7 @@ const GEN = (() => {
     });
     return {entfernt, abgespalten, rest};
   }
-  return {PROM, erzeuge, analysiere, vorrat, erlaubt, rna, spleisse};
+  return {PROM, PEPTIDE, erzeuge, analysiere, vorrat, erlaubt, rna, spleisse, uebersetze, breite};
 })();
 /*__/GEN__*/
 </script>
@@ -428,10 +970,12 @@ let K = null;                       // Lage jeder Base beim Ablauf (Platz, Stell
 const xc = g => K.xs[clamp(g, 0, NBT - 1)] + (g < 0 ? g * BW : g > NBT - 1 ? (g - NBT + 1) * BW : 0);   // Mitte der Base g auf der Strecke
 const xcf = p => { const i = Math.floor(p), f = p - i; return xc(i) + (xc(i + 1) - xc(i)) * f; };
 // Die Bausteine liegen ohne Lücken hintereinander (bis auf einen kleinen Abstand), jeder in seiner Länge; ein leerer Platz ist so breit wie ein mittlerer Baustein
+// Wird die Reihe in einem unvollständigen Zustand breiter als die Bühne (viele lange Bausteine, dazu leere Plätze mittlerer Breite), schrumpft sie etwas (sc).
 function layout(){
-  const bel = platzBelegung(); let x = X0; const lay = [];
-  for (let s = 0; s < N; s++){ const w = (bel[s] === null ? MITTEL : BAU[bel[s]].seq.length) * BW; lay.push({x, w, id: bel[s]}); x += w + GAP; }
-  return lay;
+  const bel = platzBelegung(), wu = bel.map(id => (id === null ? MITTEL : BAU[id].seq.length) * BW);
+  const sc = Math.min(1, (960 - 2 * X0) / (wu.reduce((a, b) => a + b, 0) + (N - 1) * GAP));
+  let x = X0;
+  return wu.map((w, s) => { const e = {x, w: w * sc, wu: w, sc, id: bel[s]}; x += (w + GAP) * sc; return e; });
 }
 function festlegen(lay){
   const xs = [], slotOf = [], idx = [], g0 = [];
@@ -444,9 +988,10 @@ const svg = $("buehne");
 const ebeneHinten = el("g", {}, svg), ebeneSteine = el("g", {}, svg), ebeneAnim = el("g", {}, svg), ebeneOben = el("g", {}, svg);
 let Z = {heim: [], wo: [], sel: null}, TL = [];   // heim[id]: Stelle im Vorrat, wo[id]: Platz auf der DNA oder -1
 let steine = [], plaetze = [], heime = [], rnaZellen = [], rnaTicks = [], offen = new Float32Array(0);
-let faktoren, poly, spleissG, paG, paZellen = [], rna5, rna3;
+let faktoren, poly, spleissG, paG, paZellen = [], ribosom, codonRahmen, kette, rna5, rna3;
+const PEP_Y = RNA_Y + 66, CW = 24;         // Zeile des Peptids, Breite einer Aminosäure
 const NPA = 8;       // Länge des Poly(A)-Schwanzes im Modell
-const R = {phase: "leer", t: 0, plan: null, pos: 0, open: 0, rel: 0, pa: 0, py: 0, tf: 0, tfUp: 0, ende: 0, belegung: null, letzte: 0, sp: null};
+const R = {tl: null, mZellen: [], rechts: null, phase: "leer", t: 0, plan: null, pos: 0, open: 0, rel: 0, pa: 0, py: 0, tf: 0, tfUp: 0, ende: 0, belegung: null, letzte: 0, sp: null};
 let wartend = null, rafId = 0;
 
 const platzBelegung = () => { const p = Array(N).fill(null); Z.wo.forEach((s, id) => { if (s >= 0) p[s] = id; }); return p; };
@@ -469,10 +1014,8 @@ function faerbe(z){ if (!z.b) return; const f = PALETTE.get(z.b); z.r.setAttribu
 function aufbauen(){
   stoppe();
   gen = GEN.erzeuge(Math.random); BAU = gen.bausteine; N = gen.n; K = null;
-  const lens = BAU.map(b => b.seq.length);
-  NBT = lens.reduce((x, y) => x + y, 0); MITTEL = NBT / N;
-  const mehr = lens.reduce((x, y) => x + Math.max(0, y - MITTEL), 0);      // so viel breiter kann die Reihe im ungünstigsten Fall werden
-  BW = clamp(Math.floor((960 - 2 * X0 - (N - 1) * GAP) / (NBT + mehr)), 9, 15);
+  NBT = BAU.reduce((x, b) => x + b.seq.length, 0); MITTEL = NBT / N;
+  BW = clamp(GEN.breite(gen, 960 - 2 * X0, GAP), 9, 15);       // so breit, dass die volle Reihe passt
   const v = GEN.vorrat(gen, Math.random);        // v[Stelle] = Baustein
   Z = {heim: BAU.map((b, id) => v.indexOf(id)), wo: Array(N).fill(-1), sel: null};
   TL = []; { let x = X0; v.forEach(id => { const w = BAU[id].seq.length * BW; TL.push({x, w}); x += w + GAP; }); }
@@ -532,6 +1075,11 @@ function aufbauen(){
   for (let i = 0; i < NPA; i++){ const z = zelle(ebeneAnim, 0, 0, "A", "rna-zelle"); z.g.style.display = "none"; paZellen.push(z); }
   paG = el("g", {class: "spleiss", opacity: 0}, ebeneOben);
   el("rect", {class: "form", rx: 12}, paG); el("text", {"text-anchor": "middle"}, paG).textContent = "Poly(A)-Polymerase";
+  ribosom = el("g", {class: "ribosom", opacity: 0}, ebeneOben);
+  el("rect", {class: "form", rx: 16}, ribosom); el("text", {"text-anchor": "middle"}, ribosom).textContent = "Ribosom";
+  codonRahmen = el("rect", {class: "codonrahmen", opacity: 0, rx: 4}, ebeneOben);
+  kette = el("g", {class: "peptidkette"}, ebeneAnim);
+  svg.setAttribute("viewBox", "0 0 960 330");
 
   ruhelage(); zeige(); statusLeer();
 }
@@ -539,13 +1087,13 @@ function aufbauen(){
 /* ---------- Anzeige der Anordnung ---------- */
 function platzPos(s){ return [LAY[s].x, TRACK_Y]; }
 function heimPos(h){ return [TL[h].x, TRAY_Y]; }
-function setzeTransform(g, x, y){ g.style.transform = `translate(${x}px, ${y}px)`; }
+function setzeTransform(g, x, y, sc){ g.style.transform = `translate(${x}px, ${y}px) scale(${sc || 1})`; }
 function zeige(){
   LAY = layout();
-  plaetze.forEach((p, s) => { p.setAttribute("transform", `translate(${LAY[s].x} ${TRACK_Y})`); p.firstChild.setAttribute("width", LAY[s].w); });
+  plaetze.forEach((p, s) => { p.setAttribute("transform", `translate(${LAY[s].x} ${TRACK_Y}) scale(${LAY[s].sc})`); p.firstChild.setAttribute("width", LAY[s].wu); });
   steine.forEach((st, id) => {
     const [x, y] = Z.wo[id] >= 0 ? platzPos(Z.wo[id]) : heimPos(Z.heim[id]);
-    setzeTransform(st.g, x, y);
+    setzeTransform(st.g, x, y, Z.wo[id] >= 0 ? LAY[Z.wo[id]].sc : 1);
     st.g.classList.toggle("sel", Z.sel === id);
     st.g.setAttribute("aria-pressed", Z.sel === id ? "true" : "false");
     st.g.setAttribute("aria-label", BAU[id].name + " " + u(BAU[id].seq) + (Z.wo[id] >= 0 ? ", liegt auf Platz " + (Z.wo[id] + 1) : ", im Vorrat"));
@@ -642,6 +1190,7 @@ $("aufnehmen").addEventListener("click", klickVorrat);
 $("nochmal").addEventListener("click", () => { if (voll()) start(); });
 $("spleissen").addEventListener("click", spleissStart);
 $("polya").addEventListener("click", polyaStart);
+$("uebersetzen").addEventListener("click", uebersetzStart);
 
 /* ---------- Ablauf der Transkription ---------- */
 const TEXTE = {
@@ -654,22 +1203,30 @@ const TEXTE = {
   rel: "Termination: Die Polymerase löst sich von der DNA und lässt die RNA los.",
   spl: "Spleißen: Das Spleißosom erkennt am Anfang eines Introns GU und am Ende AG, schneidet das Intron als Schlinge heraus und verbindet die beiden Exons.",
   spl3: "Spleißen: Das Stück am 3'-Ende hinter dem letzten Exon wird abgespalten.",
+  tl0: "Translation: Die fertige mRNA liegt im Zytoplasma. Die Exons sind jetzt ohne Lücken verbunden.",
+  tl1: "Translation: Das Ribosom bindet am 5'-Ende der mRNA und wandert, bis es das erste AUG (Startcodon) findet.",
+  tl2: "Translation: Das Ribosom liest die mRNA Codon für Codon (je drei Basen). Zu jedem Codon passt eine Aminosäure, sie wird an die wachsende Kette gehängt.",
+  tl3: "Translation: Am Stopp-Codon löst sich das Ribosom, das Peptid ist fertig.",
+  tl4: "Die mRNA endet, ohne dass ein Stopp-Codon kam. Das Ribosom löst sich.",
+  tl5: "Das Ribosom hat die ganze mRNA abgesucht und kein Startcodon (AUG) gefunden.",
   pa: "Poly(A)-Schwanz: Die Poly(A)-Polymerase hängt am 3'-Ende nacheinander Adenin-Nucleotide an (hier acht, in der Zelle etwa 200). Der Schwanz schützt die mRNA vor Abbau und hilft beim Export aus dem Kern und bei der Translation."
 };
 const status = t => { $("status").textContent = t; };
-const statusLeer = () => { status(voll() ? TEXTE.voll : TEXTE.leer); chips(0); $("ergebnis").hidden = true; $("spleissErgebnis").hidden = true; $("erklaerung").hidden = true; $("spleissen").disabled = true; $("polya").disabled = true; };
+const statusLeer = () => { status(voll() ? TEXTE.voll : TEXTE.leer); chips(0); $("ergebnis").hidden = true; $("spleissErgebnis").hidden = true; $("erklaerung").hidden = true; $("spleissen").disabled = true; $("polya").disabled = true; $("uebersetzen").disabled = true; $("peptid").hidden = true; };
 function chips(n){ document.querySelectorAll("#phasen li").forEach(li => { const p = +li.dataset.p; li.classList.toggle("aktiv", p === n); li.classList.toggle("fertig", p < n); }); }
 
 function stoppe(){
   clearTimeout(wartend); wartend = null; cancelAnimationFrame(rafId); rafId = 0;
-  R.phase = "leer"; R.open = R.rel = R.pa = R.py = R.tf = R.tfUp = 0; R.plan = null; R.sp = null;
+  R.phase = "leer"; R.open = R.rel = R.pa = R.py = R.tf = R.tfUp = 0; R.plan = null; R.sp = null; R.tl = null;
 }
 function abbrechen(){
   stoppe();
   rnaZellen.forEach(z => { z.g.style.display = "none"; z.g.setAttribute("opacity", 1); }); rnaTicks.forEach(t => t.setAttribute("opacity", 0));
   rna5.textContent = rna3.textContent = "";
   faktoren.setAttribute("opacity", 0); poly.setAttribute("opacity", 0); spleissG.setAttribute("opacity", 0);
-  $("spleissen").disabled = true; $("polya").disabled = true;
+  $("spleissen").disabled = true; $("polya").disabled = true; $("uebersetzen").disabled = true;
+  kette.replaceChildren(); ribosom.setAttribute("opacity", 0); codonRahmen.setAttribute("opacity", 0); svg.setAttribute("viewBox", "0 0 960 330");
+  $("peptid").hidden = true; vorhersageZuruecksetzen();
   paZellen.forEach(z => { z.g.style.display = "none"; z.g.setAttribute("opacity", 1); }); paG.setAttribute("opacity", 0);
   ruhelage();
 }
@@ -723,7 +1280,7 @@ function start(){
 }
 
 const REDUZIERT = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches ? 3 : 1;
-const T = {tf: 900, pol: 1100, start: 700, halt: 900, rel: 1000, spl: 2400, spl3: 1100, pa: 2000}, RATE = 8;   // Dauer in Millisekunden bei Tempo 1, Basen je Sekunde
+const T = {tf: 900, pol: 1100, start: 700, halt: 900, rel: 1000, spl: 2400, spl3: 1100, pa: 2000, pack: 700, codon: 600, rib: 700}, RATE = 8;   // Dauer in Millisekunden bei Tempo 1, Basen je Sekunde
 function naechste(phase, text, chip){ R.phase = phase; R.t = 0; if (text) status(text); if (chip) chips(chip); }
 
 function bild(now){
@@ -764,12 +1321,16 @@ function bild(now){
     case "pa":
       if (R.t >= T.pa) R.phase = "pa-fertig";
       break;
+    case "tl":
+      uebersetzSchritt();
+      break;
   }
-  if (R.phase === "spl") zeichneSpleissen(); else if (R.phase === "pa") zeichnePolyA();
-  else if (R.phase !== "spl-fertig" && R.phase !== "pa-fertig") zeichne();
+  if (R.phase === "spl") zeichneSpleissen(); else if (R.phase === "pa") zeichnePolyA(); else if (R.phase === "tl") zeichneTl();
+  else if (!["spl-fertig", "pa-fertig", "tl-fertig"].includes(R.phase)) zeichne();
   if (R.phase === "fertig"){ fertig(); return; }
   if (R.phase === "spl-fertig"){ spleissFertig(); return; }
   if (R.phase === "pa-fertig"){ polyaFertig(); return; }
+  if (R.phase === "tl-fertig"){ uebersetzFertig(); return; }
   rafId = requestAnimationFrame(bild);
 }
 
@@ -923,11 +1484,12 @@ function spleissFertig(){
   // Endlage: die übrigen Abschnitte rücken zusammen, Introns und Terminator-Stück sind weg
   R.phase = "spl-fertig"; S.j = S.liste.length; S.cl = 1; R.t = 0;
   zeichneSpleissen();
-  let rechts = null;
+  let rechts = null; R.mZellen = [];
   for (let g = pl.von; g < pl.bis; g++){
     const z = rnaZellen[g], id = bel[K.slotOf[g]];
     if (S.liste.some(e => e.id === id) || id === S.abg){ z.g.style.display = "none"; continue; }
     const m = z.g.getAttribute("transform").match(/translate\(([-\d.]+) /); rechts = +m[1] + BW;
+    R.mZellen.push({z, x: +m[1]});
   }
   if (rechts !== null) rna3.setAttribute("x", rechts + 4);
   R.rechts = rechts;
@@ -989,7 +1551,7 @@ function polyaFertig(){
   paZellen.forEach(z => { z.g.style.display = ""; z.g.setAttribute("opacity", 1); });
   paG.setAttribute("opacity", 0);
   rna3.setAttribute("x", R.rechts + 3 + NPA * BW + 4);
-  chips(6);
+  chips(6); $("uebersetzen").disabled = false;
   const ok = pl.ok && S.rest.every(id => BAU[id].key === "exon");
   const box = $("spleissErgebnis"); box.replaceChildren();
   const h = document.createElement("h3"); h.textContent = ok ? "Die reife mRNA" : "Nach dem Spleißen und Poly(A)"; box.appendChild(h);
@@ -997,12 +1559,183 @@ function polyaFertig(){
   box.appendChild(teileZeile(S.rest, NPA));
   if (ok){
     box.appendChild(absatz("Geschafft: Aus dem Gen ist über Transkription, Spleißen und Poly(A)-Schwanz eine reife mRNA geworden. Die Kappe am 5'-Ende fehlt in diesem Modell.", "gut"));
-    status("Fertig: Die reife mRNA ist bereit für den Export aus dem Zellkern.");
+    status("Fertig: Die reife mRNA ist bereit für den Export aus dem Zellkern. Klicke auf „6 Translation“, um sie im Ribosom zu übersetzen.");
   } else {
     box.appendChild(absatz("Der Schwanz sitzt am Ende, aber das Ergebnis ist nicht die vollständige mRNA dieses Gens. Ändere die Anordnung der Bausteine und versuche es noch einmal."));
-    status("Fertig: Der Poly(A)-Schwanz ist angefügt; das Ergebnis ist nicht die vollständige mRNA.");
+    status("Fertig: Der Poly(A)-Schwanz ist angefügt; das Ergebnis ist nicht die vollständige mRNA. Mit „6 Translation“ kannst du sie trotzdem übersetzen.");
   }
   box.hidden = false;
+}
+
+/* ---------- Translation (Schritt 6) ---------- */
+function uebersetzStart(){
+  if (R.phase !== "pa-fertig" || !R.mZellen.length) return;
+  const S = R.sp, mrna = GEN.rna(gen, S.rest), tr = GEN.uebersetze(mrna), x0 = R.mZellen[0].x;
+  R.tl = {mrna, tr, n: R.mZellen.length, x0, stufe: "pack", c: 0, dauer: 0, felder: []};
+  kette.replaceChildren();
+  el("text", {class: "rna-name", x: x0 - 8, y: PEP_Y + 17, "text-anchor": "end"}, kette).textContent = "Peptid";
+  tr.codons.forEach(c => {      // je Codon ein Feld; bei einem Stopp-Codon ist das letzte Feld das Stopp-Zeichen
+    const g = el("g", {opacity: 0}, kette), r = el("rect", {width: CW, height: 24, rx: 6}, g);
+    const t = el("text", {class: "pepbuchstabe", x: CW / 2, y: 17, "text-anchor": "middle"}, g);
+    const a = GENCODE.TABELLE[c];
+    if (a === "Stopp"){ r.setAttribute("fill", "#555"); t.setAttribute("fill", "#fff"); t.textContent = "■"; }
+    else { const f = PALETTE.get("aa_" + GENCODE.AS[a].klasse); r.setAttribute("fill", f); t.setAttribute("fill", lumi(f) > 0.6 ? "#111" : "#fff"); t.textContent = GENCODE.AS[a].e; }
+    R.tl.felder.push(g);
+  });
+  svg.setAttribute("viewBox", "0 0 960 " + (PEP_Y + 44));
+  $("uebersetzen").disabled = true; chips(6);
+  R.phase = "tl"; R.t = 0; R.letzte = performance.now();
+  status(TEXTE.tl0);
+  rafId = requestAnimationFrame(bild);
+}
+function uebersetzSchritt(){
+  const L_ = R.tl, tr = L_.tr;
+  if (L_.stufe === "pack"){
+    if (R.t >= T.pack){ L_.stufe = "scan"; R.t = 0; L_.dauer = ((tr.start >= 0 ? tr.start : L_.n) + 4.5) * 100; status(TEXTE.tl1); }   // 10 Basen je Sekunde
+  } else if (L_.stufe === "scan"){
+    if (R.t >= L_.dauer){
+      R.t = 0;
+      if (tr.start >= 0){ L_.stufe = "elong"; L_.c = 0; status(TEXTE.tl2); } else { L_.stufe = "ende"; status(TEXTE.tl5); }
+    }
+  } else if (L_.stufe === "elong"){
+    if (R.t >= T.codon){
+      R.t = 0; L_.c++;
+      if (L_.c >= tr.codons.length){ L_.c = tr.codons.length - 1; L_.stufe = "ende"; status(tr.stopp ? TEXTE.tl3 : TEXTE.tl4); }
+    }
+  } else if (L_.stufe === "ende"){
+    if (R.t >= T.rib) R.phase = "tl-fertig";
+  }
+}
+function zeichneTl(){
+  const L_ = R.tl, tr = L_.tr, n = L_.n, x0 = L_.x0;
+  const pp = L_.stufe === "pack" ? glatt(R.t / T.pack) : 1;
+  R.mZellen.forEach((m, i) => m.z.g.setAttribute("transform", `translate(${lerp(m.x, x0 + i * BW, pp)} ${RNA_Y})`));
+  paZellen.forEach((z, j) => z.g.setAttribute("transform", `translate(${lerp(R.rechts + 3 + j * BW, x0 + (n + j) * BW, pp)} ${RNA_Y})`));
+  if (L_.stufe === "pack") return;
+  // Lage des Ribosoms (Mitte, in Basen ab dem Anfang der mRNA)
+  let ri, op = 1;
+  if (L_.stufe === "scan"){ const ziel = tr.start >= 0 ? tr.start + 1.5 : n; ri = -3 + (ziel + 3) * clamp(R.t / L_.dauer, 0, 1); op = clamp(R.t / 300, 0, 1); }
+  else {
+    const c = L_.c, a = tr.start + 1.5;
+    ri = tr.start < 0 ? n : L_.stufe === "elong" && c > 0 ? a + 3 * (c - 1) + 3 * glatt(R.t / (0.45 * T.codon)) : a + 3 * c;
+    if (L_.stufe === "ende") op = 1 - glatt(R.t / T.rib);
+  }
+  const cx = x0 + ri * BW, br = 6.8 * BW;
+  const rr = ribosom.firstChild, rt = ribosom.lastChild;
+  rr.setAttribute("x", cx - br / 2); rr.setAttribute("width", br); rr.setAttribute("y", RNA_Y - 28); rr.setAttribute("height", CH + 56);
+  rt.setAttribute("x", cx); rt.setAttribute("y", RNA_Y - 12);
+  ribosom.setAttribute("opacity", op);
+  // Codon-Rahmen und Aminosäuren
+  if (tr.start >= 0 && (L_.stufe === "elong" || L_.stufe === "ende")){
+    const c = L_.c, cod = tr.codons[c];
+    codonRahmen.setAttribute("x", x0 + (tr.start + 3 * c) * BW - 1); codonRahmen.setAttribute("width", 3 * BW + 2);
+    codonRahmen.setAttribute("y", RNA_Y - 3); codonRahmen.setAttribute("height", CH + 6);
+    codonRahmen.style.stroke = cod === "AUG" ? "var(--accent)" : GENCODE.TABELLE[cod] === "Stopp" ? "var(--c-term)" : "var(--ink)";
+    codonRahmen.setAttribute("opacity", L_.stufe === "ende" ? op : 1);
+    tr.codons.forEach((_, i) => {
+      const q = i < c ? 1 : i > c ? 0 : (L_.stufe === "ende" ? 1 : clamp((R.t / T.codon - 0.35) / 0.5, 0, 1)), e = glatt(q), g = L_.felder[i];
+      g.setAttribute("opacity", Math.min(1, q * 3));
+      g.setAttribute("transform", `translate(${lerp(cx - CW / 2, x0 + i * (CW + 3), e)} ${lerp(RNA_Y + CH + 6, PEP_Y, e)})`);
+    });
+  } else codonRahmen.setAttribute("opacity", 0);
+}
+function uebersetzFertig(){
+  const L_ = R.tl, tr = L_.tr;
+  R.phase = "tl-fertig"; ribosom.setAttribute("opacity", 0); codonRahmen.setAttribute("opacity", 0);
+  tr.codons.forEach((_, i) => { const g = L_.felder[i]; g.setAttribute("opacity", 1); g.setAttribute("transform", `translate(${L_.x0 + i * (CW + 3)} ${PEP_Y})`); });
+  chips(7);
+  const box = $("peptidInhalt"); box.replaceChildren();
+  $("struktur").hidden = true;
+  if (tr.start < 0){
+    box.appendChild(absatz("Das Ribosom hat in der mRNA kein Startcodon (AUG) gefunden. Es entsteht kein Peptid. Ändere die Anordnung der Bausteine und versuche es noch einmal."));
+    status("Fertig: Es ist kein Peptid entstanden.");
+  } else {
+    const z = document.createElement("div"); z.className = "peptidzeile"; z.textContent = tr.kurz;
+    box.append(absatz("Das Ribosom hat ab dem ersten AUG übersetzt (Einbuchstaben-Code, vom Amino- zum Carboxylende):"), z);
+    box.appendChild(absatz(tr.aa.join("-") + (tr.stopp ? " · Stopp" : ""), "klein"));
+    const ul = document.createElement("ul"), li = t => { const x = document.createElement("li"); x.textContent = t; ul.appendChild(x); };
+    li("Länge: " + tr.aa.length + " Aminosäuren.");
+    li(tr.stopp ? "Die Translation endete am Stopp-Codon " + tr.codons[tr.codons.length - 1] + "." : "Die mRNA endete, bevor ein Stopp-Codon kam.");
+    box.appendChild(ul);
+    const richtig = tr.kurz === gen.peptid;
+    if (richtig) box.appendChild(absatz("Geschafft: Das ist " + gen.peptidName + ", " + gen.peptidText + ". Die Exons ergaben nach dem Spleißen genau die Sequenz, die dieses Peptid braucht.", "gut"));
+    else box.appendChild(absatz("Das ist nicht das Peptid, für das dieses Gen codiert. Ändere die Anordnung der Bausteine und versuche es noch einmal.", "klein"));
+    status(richtig ? "Fertig: Aus dem Gen ist ein Peptid geworden." + (tr.aa.length >= 10 ? " Darunter kannst du seine Struktur vorhersagen lassen." : "") : "Fertig: Es ist ein Peptid entstanden, aber nicht das des Gens.");
+    L_.peptid = tr.kurz;
+    if (tr.kurz.length >= 10){ $("seqLaenge").textContent = tr.kurz.length; $("struktur").hidden = false; }
+    else box.appendChild(absatz("Für eine Strukturvorhersage braucht es mindestens 10 Aminosäuren; dieses Peptid hat " + tr.kurz.length + ".", "klein"));
+  }
+  $("peptid").hidden = false;
+}
+
+/* ---------- Strukturvorhersage (nur nach ausdrücklicher Zustimmung) ---------- */
+const ESM_URL = "https://api.esmatlas.com/foldSequence/v1/pdb/";
+let pdbAtome = null, strukturAnsicht = null, strukturModus = "element";
+const vst = t => { $("vorhersageStatus").textContent = t; };
+function vorhersageZuruecksetzen(){
+  $("zustimmung").checked = false; $("vorhersage").disabled = true; $("strukturBox").hidden = true; vst(""); pdbAtome = null;
+  document.querySelectorAll("#struktur .seg button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.modus === "element"))); strukturModus = "element";
+}
+$("zustimmung").addEventListener("change", () => { $("vorhersage").disabled = !$("zustimmung").checked; });
+$("kopieren").addEventListener("click", async () => {
+  const seq = R.tl && R.tl.peptid; if (!seq) return;
+  try { await navigator.clipboard.writeText(seq); vst("Sequenz kopiert: " + seq); } catch (e) { vst("Kopieren nicht möglich. Die Sequenz lautet: " + seq); }
+});
+$("vorhersage").addEventListener("click", vorhersagen);
+document.querySelectorAll("#struktur .seg button").forEach(b => b.addEventListener("click", () => {
+  strukturModus = b.dataset.modus;
+  document.querySelectorAll("#struktur .seg button").forEach(x => x.setAttribute("aria-checked", String(x === b)));
+  if (pdbAtome) zeigeStruktur();
+}));
+async function vorhersagen(){
+  const seq = R.tl && R.tl.peptid; if (!seq || !$("zustimmung").checked) return;
+  $("vorhersage").disabled = true; vst("Die Sequenz wird gesendet, die Vorhersage kann bis zu einer Minute dauern …");
+  const ac = new AbortController(), zeit = setTimeout(() => ac.abort(), 90000);
+  try {
+    const antwort = await fetch(ESM_URL, {method: "POST", headers: {"Content-Type": "text/plain"}, body: seq, signal: ac.signal});
+    if (!antwort.ok) throw new Error("Antwort " + antwort.status);
+    const atome = lesePdb(await antwort.text());
+    if (atome.length < 10) throw new Error("keine Atome in der Antwort");
+    pdbAtome = atome; vst("Die Vorhersage ist da."); $("strukturBox").hidden = false; zeigeStruktur();
+  } catch (e){
+    vst("Die Vorhersage ist nicht gelungen (" + (e.name === "AbortError" ? "Zeitüberschreitung" : e instanceof TypeError ? "Netzwerkfehler" : e.message) + "). Der Dienst ist vielleicht nicht erreichbar oder ausgelastet. Du kannst die Sequenz kopieren und in eines der Werkzeuge unten einfügen.");
+  } finally { clearTimeout(zeit); $("vorhersage").disabled = !$("zustimmung").checked; }
+}
+function lesePdb(text){
+  const atome = [];
+  for (const z of text.split("\n")){
+    if (!z.startsWith("ATOM")) continue;
+    const a = {name: z.slice(12, 16).trim(), aa: z.slice(17, 20).trim(), nr: parseInt(z.slice(22, 26)), p: [parseFloat(z.slice(30, 38)), parseFloat(z.slice(38, 46)), parseFloat(z.slice(46, 54))], b: parseFloat(z.slice(60, 66))};
+    a.el = (z.slice(76, 78).trim() || a.name[0]).toUpperCase();
+    if (a.p.every(isFinite)) atome.push(a);
+  }
+  return atome;
+}
+function zeigeStruktur(){
+  const at = pdbAtome, box = $("strukturBox");
+  if (!MOL3D.supported()){ if (!box.querySelector(".keingl")) box.querySelector(".dreid").insertAdjacentHTML("beforeend", '<div class="keingl">Das 3D-Bild braucht WebGL, das in diesem Browser nicht verfügbar ist.</div>'); return; }
+  const mitte = [0, 1, 2].map(k => at.reduce((s, a) => s + a.p[k], 0) / at.length);
+  const proRest = {}; at.forEach(a => { (proRest[a.nr] = proRest[a.nr] || []).push(a.b); });
+  const rest = nr => proRest[nr].reduce((x, y) => x + y, 0) / proRest[nr].length;
+  const band = v => v > 0.9 ? [0.0, 0.33, 0.84] : v > 0.7 ? [0.4, 0.8, 0.95] : v > 0.5 ? [1, 0.86, 0.08] : [1, 0.49, 0.27];   // Farben der Sicherheit wie bei AlphaFold
+  const ELEM = {C: "el_C", N: "el_N", O: "el_O", H: "el_H", P: "el_P"};
+  const atomeS = at.map(a => ({p: a.p.map((v, k) => v - mitte[k]), c: strukturModus === "plddt" ? band(rest(a.nr)) : ELEM[a.el] ? PALETTE.rgb(ELEM[a.el]) : [0.9, 0.78, 0.2], r: a.el === "H" ? 0.2 : 0.3}));
+  const bindungen = [];
+  for (let i = 0; i < at.length; i++) for (let j = i + 1; j < at.length; j++){
+    const d = Math.hypot(at[i].p[0] - at[j].p[0], at[i].p[1] - at[j].p[1], at[i].p[2] - at[j].p[2]);
+    if (d < 1.9) bindungen.push({a: i, b: j, r: 0.1, c: [0.55, 0.6, 0.6]});
+  }
+  const ein = drei => { const x = Object.values(GENCODE.AS).find(v => v.kurz.toUpperCase() === drei); return x ? x.e : "?"; };
+  const marken = at.map((a, i) => ({a, i})).filter(x => x.a.name === "CA").map(x => ({p: atomeS[x.i].p, text: ein(x.a.aa) + x.a.nr, color: "#ffffff", bg: "#2a3b35"}));
+  if (!strukturAnsicht){
+    strukturAnsicht = MOL3D.create($("gl3"), $("ov3"), {zoom: 1.5});
+    strukturAnsicht.setRotation(MOL3D.mul3(MOL3D.rotX(-0.4), MOL3D.rotY(0.5)), true);
+  }
+  strukturAnsicht.setScene({atome: atomeS, bindungen}); strukturAnsicht.setLabels(marken);
+  const cas = at.filter(a => a.name === "CA"), mittel = Math.round(100 * cas.reduce((x, a) => x + a.b, 0) / cas.length);
+  const urteil = mittel >= 90 ? "sehr hoch" : mittel >= 70 ? "hoch" : mittel >= 50 ? "niedrig" : "sehr niedrig";
+  $("strukturInfo").textContent = "Mittlere Sicherheit der Vorhersage (pLDDT): " + mittel + " von 100, also " + urteil + ". Ab 70 gilt eine Vorhersage als brauchbar; bei so kurzen Peptiden ist sie oft unsicher, und kurze Peptide liegen in Wasser meist in vielen Formen vor. Das Bild zeigt eine einzige Form. Die Vorhersage kommt von ESMFold (Lin et al. 2023) und ist keine Messung."
+    + (R.tl && R.tl.peptid === gen.peptid ? " Zum Vergleich: Experimentell ist " + gen.peptidName + " eine β-Haarnadel." : "");
 }
 
 /* ---------- Farben bei Wechsel von hell und dunkel ---------- */

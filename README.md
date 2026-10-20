@@ -3,7 +3,7 @@
 Interaktive Seiten für den Biologie-Unterricht mit den Schwerpunkten Genetik,
 Genomik und Biochemie: Erbgänge und Stammbäume, von der DNA zum Protein,
 Sequenzen vergleichen, Enzyme und Proteine. Jede Seite ist eine einzelne,
-selbstständige HTML-Datei auf GitHub Pages — keine externen Anfragen, auch
+selbstständige HTML-Datei auf GitHub Pages — keine externen Anfragen (eine Ausnahme: die Strukturvorhersage auf `gen-transkription.html`, nur nach ausdrücklicher Zustimmung), auch
 Schriften und Daten (Sequenzen, Strukturen) sind eingebettet.
 
 Online: https://cells.biodatum.io · Schwesterprojekt für die Chemie:
@@ -25,7 +25,7 @@ Online: https://cells.biodatum.io · Schwesterprojekt für die Chemie:
 | `chromatin.html` | DNA-Verpackung und Zugänglichkeit: Verpackungsleiter, Nucleosom in 3D (1KX5), Chromatin umbauen mit Zeitraffer; Expertenmodus mit Histonmodifikationen und Transkriptionsfaktor | von Hand, Daten aus `scripts/chromatin/export_nucleosom.py` |
 | `rna-typen.html` | mRNA, tRNA, rRNA: Kleeblatt und 3D der Hefe-tRNA-Phe (1EHZ), Anticodon und Wackelpaarung (mit Aufgabe), Ribosom-Schema | von Hand, Daten aus `scripts/rna/export_trna.py` |
 | `proteinstruktur.html` | Von der Sequenz zur Faltung: Ubiquitin (1UBQ) in 3D, Primär-, Sekundär- und Tertiärstruktur, Cartoon, Faltung, hydrophober Kern | von Hand, Daten aus `scripts/protein/export_ubq.py` |
-| `gen-transkription.html` | Gen und Transkription: zufälliges Gen aus Promotor (mit TATA-Box), 2 bis 4 Exons und Introns unterschiedlicher Länge (mit Sequenz) und Terminator in die richtige Reihenfolge bringen, Vorrat zufällig gemischt; danach schreibt die RNA-Polymerase ab (Initiation, Elongation, Termination) im vierten Schritt (anklickbar, pulsiert) schneidet das Spleißosom die Introns heraus und im fünften (anklickbar) hängt die Poly(A)-Polymerase den Schwanz an | von Hand, Regeln in `template/site/gen.js`, Test `scripts/transkription` |
+| `gen-transkription.html` | Gen und Transkription: zufälliges Gen (Promotor mit TATA-Box, 2 bis 4 nummerierte Exons und Introns unterschiedlicher Länge, Terminator) in die richtige Reihenfolge bringen; danach laufen Transkription, Spleißen, Poly(A) und Translation (jeweils anklickbar, der nächste Schritt pulsiert) ab; das Peptid (Chignolin oder Trpzip2, mindestens 10 Aminosäuren) lässt sich nach ausdrücklicher Zustimmung per ESMFold-Schnittstelle in 3D vorhersagen | von Hand, Regeln in `template/site/gen.js` (braucht `code.js`), Test `scripts/transkription` |
 | `transkription.html` | Transkription: RNA an einer DNA-Vorlage aufbauen (NTPs, Hybrid-Helix in 3D) | wie `basenpaarung.html` |
 | `quellen.html` | Quellen und Danksagung, Mitmachen (`#mitmachen`) | von Hand |
 | `impressum.html` | Impressum, Haftungsausschluss, Lizenz, Einbetten | von Hand |

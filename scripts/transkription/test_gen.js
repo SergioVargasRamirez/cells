@@ -2,8 +2,9 @@
 // Prüft die erzeugten Gene, geht alle Anordnungen für 2, 3 und 4 Exons durch, prüft Vorrat und Spleißen.
 const fs = require("fs"), path = require("path"), vm = require("vm");
 const ctx = {}; vm.createContext(ctx);
-vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "..", "template", "site", "gen.js"), "utf8") + "\nglobalThis.G = GEN;", ctx);
-const G = ctx.G;
+const site = n => fs.readFileSync(path.join(__dirname, "..", "..", "template", "site", n), "utf8");
+vm.runInContext(site("code.js") + "\n" + site("gen.js") + "\nglobalThis.G = GEN; globalThis.C = GENCODE;", ctx);
+const G = ctx.G, C = ctx.C;
 let fehler = 0;
 const pruefe = (ok, text) => { if (!ok){ fehler++; console.log("FEHLER:", text); } };
 const fak = n => n <= 1 ? 1 : n * fak(n - 1);
@@ -19,10 +20,20 @@ for (let i = 0; i < 2000; i++){
   pruefe(b[g.n - 1].key === "term" && b[g.n - 1].seq === "TTTTTT", "Terminator ist ein Poly-U-Stück");
   pruefe(g.soll.join() === ["prom", ...Array.from({length: g.k}, (_, j) => j < g.k - 1 ? ["exon", "intron"] : ["exon"]).flat(), "term"].join(), "Typenfolge des Gens");
   for (const x of b) pruefe(/^[ACGT]+$/.test(x.seq), x.name + ": nur ACGT");
-  for (const x of b.filter(x => x.key === "intron")){ pruefe(/^GT[ACGT]{3,7}AG$/.test(x.seq) && x.seq.length >= 7 && x.seq.length <= 11, "Intron GU…AG, 7 bis 11 Basen: " + x.seq); längen.intron.add(x.seq.length); }
-  for (const x of b.filter(x => x.key === "exon")){ pruefe(x.seq.length >= 4 && x.seq.length <= 7 && x.seq !== "TTTTTT" && x.seq !== "TATAAA", "Exon 4 bis 7 Basen, nicht mit Terminator oder TATA-Box verwechselbar: " + x.seq); längen.exon.add(x.seq.length); }
+  for (const x of b.filter(x => x.key === "intron")){ pruefe(/^GT[ACGT]{3,6}AG$/.test(x.seq) && x.seq.length >= 7 && x.seq.length <= 10, "Intron GU…AG, 7 bis 10 Basen: " + x.seq); längen.intron.add(x.seq.length); }
+  for (const x of b.filter(x => x.key === "exon")){ pruefe(x.seq.length >= 4 && x.seq !== "TTTTTT" && x.seq !== "TATAAA", "Exon mindestens 4 Basen, nicht mit Terminator oder TATA-Box verwechselbar: " + x.seq); längen.exon.add(x.seq.length); }
+  // Die Exons ergeben zusammen die mRNA mit dem Miniprotein
+  const exons = b.filter(x => x.key === "exon").map(x => x.seq), mrna = exons.join("").replace(/T/g, "U");
+  pruefe(mrna === g.mrna, "Exons ergeben zusammen die mRNA");
+  const tr = G.uebersetze(g.mrna);
+  pruefe(tr.kurz === g.peptid && tr.stopp && tr.aa[0] === "Met", "Translation ergibt das Peptid " + g.peptid + ": " + tr.kurz);
+  pruefe(g.peptid.length >= 11, "Peptid hat mindestens 10 Aminosäuren (plus Met): " + g.peptid.length);
+  pruefe(tr.start >= 1 && tr.start <= 2 && g.mrna.length - (tr.start + 3 * (tr.aa.length + 1)) >= 1 && g.mrna.length - (tr.start + 3 * (tr.aa.length + 1)) <= 2, "UTR vorn und hinten 1 bis 2 Basen");
+  pruefe(!g.mrna.slice(0, tr.start).includes("AUG"), "kein AUG vor dem Startcodon");
+  pruefe(G.breite(g, 872, 6) >= 9, "volle Reihe passt mit Basenbreite >= 9 (k=" + g.k + "): " + G.breite(g, 872, 6));
+  if (g.k === 4) pruefe(g.peptidName === "Chignolin", "bei vier Exons das kürzere Peptid");
 }
-pruefe(längen.exon.size === 4 && längen.intron.size === 5, "Längen sind verschieden: Exons " + [...längen.exon].sort() + ", Introns " + [...längen.intron].sort());
+pruefe(längen.exon.size >= 15 && längen.intron.size === 4, "Längen sind verschieden: Exons " + [...längen.exon].sort((a, b) => a - b) + ", Introns " + [...längen.intron].sort());
 pruefe([2, 3, 4].every(k => verteilung[k] > 400), "Zahl der Exons ist zufällig verteilt: " + JSON.stringify(verteilung));
 
 // Alle Anordnungen für jede Exon-Zahl
@@ -30,7 +41,8 @@ const perm = (a) => a.length <= 1 ? [a] : a.flatMap((x, i) => perm([...a.slice(0
 for (const k of [2, 3, 4]){
   const g = G.erzeuge(Math.random, k), alle = perm(g.bausteine.map((b, i) => i));
   const richtige = alle.filter(a => G.analysiere(g, a).ok);
-  pruefe(richtige.length === fak(k) * fak(k - 1), `k=${k}: ${fak(k) * fak(k - 1)} richtige Anordnungen von ${alle.length}, gefunden ${richtige.length}`);
+  pruefe(richtige.length === fak(k - 1), `k=${k}: ${fak(k - 1)} richtige Anordnungen von ${alle.length} (Exons in der Reihenfolge ihrer Nummern, Introns austauschbar), gefunden ${richtige.length}`);
+  pruefe(richtige.every(a => G.rna(g, G.analysiere(g, a).teile.filter(id => g.bausteine[id].key === "exon")) === g.mrna), `k=${k}: richtige Anordnungen ergeben die mRNA des Gens`);
   pruefe(richtige.every(a => a.map(id => g.bausteine[id].key).join() === g.soll.join()), `k=${k}: richtige Anordnungen haben die Typenfolge des Gens`);
   for (const a of richtige){
     const sp = G.spleisse(g, G.analysiere(g, a).teile);
@@ -69,11 +81,25 @@ pruefe(a([0, 6, 1, 2, 3, 4, 5]).teile.join() === "6" && a([0, 6, 1, 2, 3, 4, 5])
 pruefe(!a([6, 0, 1, 2, 3, 4, 5]).stopp && a([6, 0, 1, 2, 3, 4, 5]).bisPlatz === 7, "Terminator vor dem Promotor: bis zum Ende der DNA");
 pruefe(!a([0, 2, 1, 4, 3, 5, 6]).ok, "Intron direkt hinter dem Promotor ist nicht richtig");
 pruefe(!a([0, 1, 3, 2, 4, 5, 6]).ok, "zwei Exons hintereinander sind nicht richtig");
+pruefe(a([0, 1, 2, 3, 4, 5, 6]).ok && a([0, 1, 4, 3, 2, 5, 6]).ok && !a([0, 3, 2, 1, 4, 5, 6]).ok, "Exons nur in der Reihenfolge ihrer Nummern, Introns vertauschbar");
 const s1 = G.spleisse(g, [2, 1, 3, 4, 5, 6]);   // Intron am Anfang bleibt, Intron 4 zwischen Exons geht
 pruefe(s1.entfernt.join() === "4" && s1.rest.join() === "2,1,3,5" && s1.abgespalten === 6, "Spleißen: Intron am Anfang bleibt, das zwischen Exons geht, Terminator wird abgespalten");
 const s2 = G.spleisse(g, [1, 2, 3, 4]);          // Intron am Ende ohne Exon dahinter bleibt
 pruefe(s2.entfernt.join() === "2" && s2.rest.join() === "1,3,4" && s2.abgespalten === null, "Spleißen: Intron am Ende bleibt");
 pruefe(G.spleisse(g, []).rest.length === 0 && G.rna(g, [0]).length === 6 && G.rna(g, [1]).length === g.bausteine[1].seq.length && !G.rna(g, [0]).includes("T") && G.rna(g, [6]) === "UUUUUU", "RNA mit U");
+
+// Translation
+pruefe(G.uebersetze("GGGAUGUUUUAAGG").kurz === "MF" && G.uebersetze("GGGAUGUUUUAAGG").stopp, "Translation bis zum Stopp");
+pruefe(G.uebersetze("CCCUUUGGG").start === -1 && G.uebersetze("CCCUUUGGG").kurz === "", "ohne AUG kein Peptid");
+pruefe(!G.uebersetze("AUGUUUGG").stopp && G.uebersetze("AUGUUUGG").kurz === "MF", "ohne Stopp bis zum Ende, unvollständiges Codon bleibt weg");
+pruefe(C.TABELLE["AUG"] === "Met", "Codon-Tabelle geladen");
+// Wird die Reihenfolge der Exons vertauscht, ändert sich das Peptid (oder es bricht ab)
+{
+  const gg = G.erzeuge(Math.random, 3), ex = [1, 3, 5], richtig = G.uebersetze(G.rna(gg, [1, 3, 5])).kurz;
+  const anders = G.uebersetze(G.rna(gg, [5, 3, 1])).kurz;
+  pruefe(richtig === gg.peptid, "richtige Reihenfolge der Exons gibt das Peptid");
+  pruefe(anders !== gg.peptid, "umgekehrte Reihenfolge der Exons gibt ein anderes Ergebnis");
+}
 
 // Vorrat
 const gesehen = new Set();
