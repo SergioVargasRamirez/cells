@@ -127,15 +127,16 @@ M3b gen-transkription.html (19.10.2026, Wunsch: Transkription vereinfacht zeigen
 - [x] Erklärung der Bausteine erscheint erst nach dem Erfolg
 - [x] Zwei Exons oder zwei Introns nebeneinander werden still abgewiesen (GEN.erlaubt; Ziehen, Antippen und Tauschen; Status: "Dort lässt sich dieser Baustein nicht ablegen."); beim Aufbau von links nach rechts nie ein Hindernis (Test)
 - [x] Gen codiert ein Miniprotein (Chignolin 10 aa oder Trpzip2 12 aa, plus Met; bei vier Exons nur Chignolin): Exons nummeriert, weil ihre Reihenfolge das Peptid festlegt; Exons 4 bis 34 Basen lang (Rest der mRNA verteilt), Schnitte auch mitten in Codons; Reihe wird nur in unvollständigen Zuständen etwas verkleinert (layout)
-- [x] Schritt 6 Translation: Exons rücken zusammen, Ribosom sucht AUG, liest Codon für Codon, Aminosäuren wachsen als Kette; Ergebnis mit Sequenz und Vergleich mit dem Gen
+- [x] Schritt 7 Translation: Exons rücken zusammen, Ribosom sucht AUG, liest Codon für Codon, Aminosäuren wachsen als Kette; Ergebnis mit Sequenz und Vergleich mit dem Gen
 - [x] Strukturvorhersage: nur nach Ankreuzen und Klick, POST an https://api.esmatlas.com/foldSequence/v1/pdb/ (ESMFold, ohne Schlüssel, CORS offen), Anzeige mit mol3d.js (Kugeln und Stäbe, Elemente oder pLDDT); Fehlerfall (offline) und Kopieren der Sequenz getestet; Datenschutz, Startseite, Quellen, README angepasst
 - [ ] DATENSCHUTZTEXT PRÜFEN (Abschnitt "Strukturvorhersage (nur auf Wunsch)" in datenschutz.html: Rechtsgrundlage, Betreiberangabe Meta, Drittlandübermittlung); entscheiden, ob die Funktion im Unterricht standardmäßig angeboten werden soll
 - [ ] Boltz (boltz.bio) und andere Dienste brauchen einen API-Schlüssel und lassen sich ohne eigenen Server nicht sicher aus einer statischen Seite aufrufen; nur als Link angeboten. Möglich wäre ein eigener Proxy oder "eigenen Schlüssel eingeben" (nur im Speicher)
 - [ ] ESM-Atlas-Schnittstelle ist inoffiziell/öffentlich und kann sich ändern oder abgeschaltet werden: Fehlermeldung und Links sind vorgesehen; ggf. fertige Strukturen für die zwei Peptide mitliefern (dann keine Anfrage nötig)
-- [ ] Translation: tRNA, Initiationsfaktoren und Kappe fehlen; Peptidfarben passen sich nicht an, wenn zwischen hell und dunkel gewechselt wird
-- [x] Schritt 5 Poly(A) (anklickbar nach dem Spleißen, acht A statt etwa 200); der jeweils nächste Schritt pulsiert (CSS-Animation, ohne Bewegung bei reduzierter Bewegung)
-- [ ] 5'-Kappe als weiterer Schritt (7-Methylguanosin am 5'-Ende), falls gewünscht
-- [x] Schritt 4 Spleißen (anklickbar nach der Transkription): Spleißosom, Intron als Schlinge, Exons rücken zusammen, Stück am 3'-Ende wird abgespalten; Ergebnis mit reifer mRNA oder Hinweis, was fehlt
+- [ ] Translation: tRNA und Initiationsfaktoren fehlen; Peptidfarben passen sich nicht an, wenn zwischen hell und dunkel gewechselt wird
+- [x] Schritt 6 Poly(A) (anklickbar nach dem Spleißen, acht A statt etwa 200); der jeweils nächste Schritt pulsiert (CSS-Animation, ohne Bewegung bei reduzierter Bewegung)
+- [x] Schritt 4 Kappe (7-Methylguanosin, vor dem Spleißen wie in der Zelle; Schritte danach um eins verschoben: 5 Spleißen, 6 Poly(A), 7 Translation); Ribosom bindet an der Kappe
+- [ ] Kappe: Methylierungen am ersten und zweiten Nucleotid (Cap 1, Cap 2) und die Verbindung zur Translation (eIF4E) sind nicht gezeigt
+- [x] Schritt 5 Spleißen (anklickbar nach der Kappe): Spleißosom, Intron als Schlinge, Exons rücken zusammen, Stück am 3'-Ende wird abgespalten; Ergebnis mit reifer mRNA oder Hinweis, was fehlt
 - [ ] Introns und Exons sind viel kürzer und weniger verschieden lang als in Wirklichkeit (Platz); ein Regler für realistischere Verhältnisse wäre denkbar
 - [ ] Gegenlesen (Texte, Terminator nach bakteriellem Vorbild, Eukaryoten-Terminierung nur im Modelltext), Touch testen
 - [ ] Ideen: Enhancer als weiterer Baustein (wirkt von jedem Platz), Baustein umdrehbar (Richtung des Promotors), Expertenmodus mit Faktoren (TFIID, TFIIH ...), Verbindung zu rna-prozessierung.html (dasselbe Gen, Introns dort herausschneiden)
