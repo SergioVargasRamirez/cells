@@ -1,51 +1,72 @@
 // Test für template/site/gen.js: Aufruf  node scripts/transkription/test_gen.js
-// Prüft die Bausteine, geht alle 5040 Anordnungen durch und prüft das Mischen des Vorrats.
+// Prüft die erzeugten Gene, geht alle Anordnungen für 2, 3 und 4 Exons durch, prüft Vorrat und Spleißen.
 const fs = require("fs"), path = require("path"), vm = require("vm");
 const ctx = {}; vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "..", "template", "site", "gen.js"), "utf8") + "\nglobalThis.G = GEN;", ctx);
 const G = ctx.G;
 let fehler = 0;
 const pruefe = (ok, text) => { if (!ok){ fehler++; console.log("FEHLER:", text); } };
+const fak = n => n <= 1 ? 1 : n * fak(n - 1);
 
-// Bausteine
-const B = G.BAUSTEINE;
-pruefe(B.length === 7 && G.N === 7, "sieben Bausteine");
-pruefe(B.filter(b => b.key === "exon").length === 3 && B.filter(b => b.key === "intron").length === 2, "drei Exons, zwei Introns");
-pruefe(B[G.PROM].key === "prom" && B[G.TERM].key === "term", "Promotor und Terminator an den bekannten Stellen");
-const prom = B[G.PROM];
-pruefe(/^[ACGT]+$/.test(prom.seq) && prom.seq.length === G.L, "Promotor hat Sequenz mit " + G.L + " Basen");
-pruefe(prom.seq.slice(prom.tata[0], prom.tata[1] + 1) === "TATAAA", "TATA-Box an der angegebenen Stelle");
-for (const b of B) if (b.key !== "prom") pruefe(!b.seq, b.name + " ist schematisch (ohne Sequenz)");
-pruefe(G.SOLL.join() === "prom,exon,intron,exon,intron,exon,term", "Reihenfolge eines Gens");
+// Erzeugte Gene
+const verteilung = {}, längen = {exon: new Set(), intron: new Set()};
+for (let i = 0; i < 2000; i++){
+  const g = G.erzeuge(Math.random);
+  verteilung[g.k] = (verteilung[g.k] || 0) + 1;
+  const b = g.bausteine;
+  pruefe(g.k >= 2 && g.k <= 4 && g.n === 2 * g.k + 1 && b.length === g.n, "Anzahl der Bausteine passt zu k=" + g.k);
+  pruefe(b[0].key === "prom" && b[0].seq === "TATAAA" && b[0].tata.join() === "0,5", "Promotor mit TATA-Box");
+  pruefe(b[g.n - 1].key === "term" && b[g.n - 1].seq === "TTTTTT", "Terminator ist ein Poly-U-Stück");
+  pruefe(g.soll.join() === ["prom", ...Array.from({length: g.k}, (_, j) => j < g.k - 1 ? ["exon", "intron"] : ["exon"]).flat(), "term"].join(), "Typenfolge des Gens");
+  for (const x of b) pruefe(/^[ACGT]+$/.test(x.seq), x.name + ": nur ACGT");
+  for (const x of b.filter(x => x.key === "intron")){ pruefe(/^GT[ACGT]{3,7}AG$/.test(x.seq) && x.seq.length >= 7 && x.seq.length <= 11, "Intron GU…AG, 7 bis 11 Basen: " + x.seq); längen.intron.add(x.seq.length); }
+  for (const x of b.filter(x => x.key === "exon")){ pruefe(x.seq.length >= 4 && x.seq.length <= 7 && x.seq !== "TTTTTT" && x.seq !== "TATAAA", "Exon 4 bis 7 Basen, nicht mit Terminator oder TATA-Box verwechselbar: " + x.seq); längen.exon.add(x.seq.length); }
+}
+pruefe(längen.exon.size === 4 && längen.intron.size === 5, "Längen sind verschieden: Exons " + [...längen.exon].sort() + ", Introns " + [...längen.intron].sort());
+pruefe([2, 3, 4].every(k => verteilung[k] > 400), "Zahl der Exons ist zufällig verteilt: " + JSON.stringify(verteilung));
 
-// Alle Anordnungen
+// Alle Anordnungen für jede Exon-Zahl
 const perm = (a) => a.length <= 1 ? [a] : a.flatMap((x, i) => perm([...a.slice(0, i), ...a.slice(i + 1)]).map(r => [x, ...r]));
-const alle = perm([0, 1, 2, 3, 4, 5, 6]);
-pruefe(alle.length === 5040, "5040 Anordnungen");
-const richtige = alle.filter(a => G.analysiere(a).ok);
-pruefe(richtige.length === 12, "12 richtige Anordnungen (3! Exons mal 2! Introns): " + richtige.length);
-pruefe(richtige.every(a => a.map(G.typ).join() === G.SOLL.join()), "alle richtigen Anordnungen haben die Typenfolge des Gens");
-
-const a = platz => G.analysiere(platz);
-pruefe(a([1, 4, 2, 5, 3, 6, 0]).teile.length === 0 && a([1, 4, 2, 5, 3, 6, 0]).bis === 56, "Promotor ganz hinten: nichts abzuschreiben");
-pruefe(a([1, 0, 4, 2, 5, 3, 6]).teile.join() === "4,2,5,3,6", "Baustein vor dem Promotor wird nicht abgeschrieben");
-pruefe(a([0, 6, 1, 4, 2, 5, 3]).teile.join() === "6" && a([0, 6, 1, 4, 2, 5, 3]).bis === 16, "Terminator direkt hinter dem Promotor: nur der Terminator");
-pruefe(!a([6, 0, 1, 4, 2, 5, 3]).stopp && a([6, 0, 1, 4, 2, 5, 3]).bis === 56 && a([6, 0, 1, 4, 2, 5, 3]).teile.length === 5, "Terminator vor dem Promotor: bis zum Ende der DNA");
-pruefe(!a([0, 4, 1, 5, 2, 3, 6]).ok, "Intron direkt hinter dem Promotor ist nicht richtig");
-pruefe(!a([0, 1, 2, 4, 5, 3, 6]).ok, "zwei Exons hintereinander sind nicht richtig");
-for (const x of alle){
-  const r = a(x);
-  if (r.von !== (r.p + 1) * 8 || r.bis < r.von || r.bis > 56) { pruefe(false, "Grenzen der Anordnung " + x.join("")); break; }
+for (const k of [2, 3, 4]){
+  const g = G.erzeuge(Math.random, k), alle = perm(g.bausteine.map((b, i) => i));
+  const richtige = alle.filter(a => G.analysiere(g, a).ok);
+  pruefe(richtige.length === fak(k) * fak(k - 1), `k=${k}: ${fak(k) * fak(k - 1)} richtige Anordnungen von ${alle.length}, gefunden ${richtige.length}`);
+  pruefe(richtige.every(a => a.map(id => g.bausteine[id].key).join() === g.soll.join()), `k=${k}: richtige Anordnungen haben die Typenfolge des Gens`);
+  for (const a of richtige){
+    const sp = G.spleisse(g, G.analysiere(g, a).teile);
+    if (sp.entfernt.length !== k - 1 || sp.rest.length !== k || !sp.rest.every(id => g.bausteine[id].key === "exon") || sp.abgespalten !== g.n - 1){ pruefe(false, "Spleißen einer richtigen Anordnung"); break; }
+  }
+  for (const a of alle){
+    const r = G.analysiere(g, a);
+    if (r.vonPlatz !== r.p + 1 || r.bisPlatz < r.vonPlatz || r.bisPlatz > g.n) { pruefe(false, "Grenzen der Anordnung " + a.join("")); break; }
+  }
 }
 
-// Vorrat mischen: immer eine Permutation, nie in Gen-Reihenfolge, nie ein Typ an der Stelle, die er im Gen hätte; wirklich zufällig
+// Einzelfälle (k = 3: Bausteine 0 Promotor, 1 Exon, 2 Intron, 3 Exon, 4 Intron, 5 Exon, 6 Terminator)
+const g = G.erzeuge(Math.random, 3), a = p => G.analysiere(g, p);
+pruefe(a([1, 2, 3, 4, 5, 6, 0]).teile.length === 0 && a([1, 2, 3, 4, 5, 6, 0]).bisPlatz === 7, "Promotor ganz hinten: nichts abzuschreiben");
+pruefe(a([1, 0, 2, 3, 4, 5, 6]).teile.join() === "2,3,4,5,6", "Baustein vor dem Promotor wird nicht abgeschrieben");
+pruefe(a([0, 6, 1, 2, 3, 4, 5]).teile.join() === "6" && a([0, 6, 1, 2, 3, 4, 5]).bisPlatz === 2, "Terminator direkt hinter dem Promotor");
+pruefe(!a([6, 0, 1, 2, 3, 4, 5]).stopp && a([6, 0, 1, 2, 3, 4, 5]).bisPlatz === 7, "Terminator vor dem Promotor: bis zum Ende der DNA");
+pruefe(!a([0, 2, 1, 4, 3, 5, 6]).ok, "Intron direkt hinter dem Promotor ist nicht richtig");
+pruefe(!a([0, 1, 3, 2, 4, 5, 6]).ok, "zwei Exons hintereinander sind nicht richtig");
+const s1 = G.spleisse(g, [2, 1, 3, 4, 5, 6]);   // Intron am Anfang bleibt, Intron 4 zwischen Exons geht
+pruefe(s1.entfernt.join() === "4" && s1.rest.join() === "2,1,3,5" && s1.abgespalten === 6, "Spleißen: Intron am Anfang bleibt, das zwischen Exons geht, Terminator wird abgespalten");
+const s2 = G.spleisse(g, [1, 2, 3, 4]);          // Intron am Ende ohne Exon dahinter bleibt
+pruefe(s2.entfernt.join() === "2" && s2.rest.join() === "1,3,4" && s2.abgespalten === null, "Spleißen: Intron am Ende bleibt");
+pruefe(G.spleisse(g, []).rest.length === 0 && G.rna(g, [0]).length === 6 && G.rna(g, [1]).length === g.bausteine[1].seq.length && !G.rna(g, [0]).includes("T") && G.rna(g, [6]) === "UUUUUU", "RNA mit U");
+
+// Vorrat
 const gesehen = new Set();
-for (let i = 0; i < 3000; i++){
-  const v = G.vorrat(Math.random);
-  pruefe(v.slice().sort().join() === "0,1,2,3,4,5,6", "Vorrat enthält jeden Baustein genau einmal");
-  pruefe(v.every((id, k) => G.typ(id) !== G.SOLL[k]), "kein Baustein an einer Stelle, die dem fertigen Gen entspricht: " + v.join(""));
-  gesehen.add(v.join(""));
+for (const k of [2, 3, 4]){
+  const gg = G.erzeuge(Math.random, k);
+  for (let i = 0; i < 1500; i++){
+    const v = G.vorrat(gg, Math.random);
+    pruefe(v.slice().sort((x, y) => x - y).join() === gg.bausteine.map((b, j) => j).join(), "Vorrat enthält jeden Baustein genau einmal");
+    pruefe(v.every((id, s) => gg.bausteine[id].key !== gg.soll[s]), "kein Baustein an einer Stelle, die dem fertigen Gen entspricht: " + v.join(""));
+    gesehen.add(k + ":" + v.join(""));
+  }
 }
-pruefe(gesehen.size > 100, "viele verschiedene Reihenfolgen im Vorrat: " + gesehen.size);
-console.log(fehler ? fehler + " Fehler." : "OK (" + alle.length + " Anordnungen, " + gesehen.size + " Vorräte).");
+pruefe(gesehen.size > 300, "viele verschiedene Reihenfolgen im Vorrat: " + gesehen.size);
+console.log(fehler ? fehler + " Fehler." : "OK (alle Anordnungen für 2, 3 und 4 Exons, " + gesehen.size + " Vorräte).");
 process.exit(fehler ? 1 : 0);

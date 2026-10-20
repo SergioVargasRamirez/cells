@@ -121,10 +121,12 @@ M7 schmelztemperatur.html
 - [ ] Idee: Länge der DNA oder Salzgehalt variieren, Vergleich AT-reiche/GC-reiche Abschnitte
 
 M3b gen-transkription.html (19.10.2026, Wunsch: Transkription vereinfacht zeigen, Gen als Puzzle)
-- [x] Sieben Bausteine (Promotor mit TATA-Box, drei Exons, zwei Introns, Terminator; Exons/Introns schematisch ohne Sequenz) auf sieben Plätze ziehen oder antippen; Vorrat zufällig, an keiner Stelle ein Typ, der dort im Gen stünde
+- [x] Zufälliges Gen (2 bis 4 Exons, Exons 4 bis 7 und Introns 7 bis 11 Basen, Introns GU…AG, alle mit Sequenz; Promotor TATAAA, Terminator Poly-U) auf Plätze ziehen oder antippen; Vorrat zufällig, an keiner Stelle ein Typ, der dort im Gen stünde; Reihe ohne Lücken, leere Plätze so breit wie ein mittlerer Baustein (kein Hinweis auf die Lösung), Basenbreite je Gen gewählt, damit alles passt
 - [x] Sind alle Plätze belegt, läuft die Transkription von selbst: Faktoren an der TATA-Box, Polymerase, Blase, RNA wächst und löst sich ab, Terminator; Tempo-Regler, "Noch einmal"
-- [x] Regel (template/site/gen.js): abgeschrieben wird ab dem Ende des Promotors bis zum Ende des Terminators (ohne Terminator bis zum Ende der DNA); falsche Anordnungen zeigen nur, was abgeschrieben wurde, ohne Hinweis auf die Lösung; nur Anordnungen mit der Typenfolge Promotor, Exon, Intron, Exon, Intron, Exon, Terminator gelten als Gen (12 von 5040) (scripts/transkription/test_gen.js)
+- [x] Regel (template/site/gen.js): abgeschrieben wird ab dem Ende des Promotors bis zum Ende des Terminators (ohne Terminator bis zum Ende der DNA); falsche Anordnungen zeigen nur, was abgeschrieben wurde, ohne Hinweis auf die Lösung; nur Anordnungen mit der Typenfolge Promotor, Exon, Intron, …, Exon, Terminator gelten als Gen (scripts/transkription/test_gen.js)
 - [x] Erklärung der Bausteine erscheint erst nach dem Erfolg
+- [x] Schritt 4 Spleißen (anklickbar nach der Transkription): Spleißosom, Intron als Schlinge, Exons rücken zusammen, Stück am 3'-Ende wird abgespalten; Ergebnis mit reifer mRNA oder Hinweis, was fehlt
+- [ ] Introns und Exons sind viel kürzer und weniger verschieden lang als in Wirklichkeit (Platz); ein Regler für realistischere Verhältnisse wäre denkbar
 - [ ] Gegenlesen (Texte, Terminator nach bakteriellem Vorbild, Eukaryoten-Terminierung nur im Modelltext), Touch testen
 - [ ] Ideen: Enhancer als weiterer Baustein (wirkt von jedem Platz), Baustein umdrehbar (Richtung des Promotors), Expertenmodus mit Faktoren (TFIID, TFIIH ...), Verbindung zu rna-prozessierung.html (dasselbe Gen, Introns dort herausschneiden)
 

@@ -11,19 +11,19 @@
   --accent:#13795b; --accent-ink:#ffffff; --hl:#fff3d6;
   --serif:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
   --sans:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --c-prom:#1f8f86; --c-exon:#3d6fd6; --c-intron:#8d9aa0; --c-term:#d1495b; --c-tf:#8e5bb5;
+  --c-prom:#1f8f86; --c-exon:#3d6fd6; --c-intron:#8d9aa0; --c-term:#d1495b; --c-tf:#8e5bb5; --c-sp:#d9730d;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
     --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
-    --c-prom:#4fcfc2; --c-exon:#7da2ff; --c-intron:#9fb0b8; --c-term:#ff7d8d; --c-tf:#c79af0;
+    --c-prom:#4fcfc2; --c-exon:#7da2ff; --c-intron:#9fb0b8; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
   --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
-  --c-prom:#4fcfc2; --c-exon:#7da2ff; --c-intron:#9fb0b8; --c-term:#ff7d8d; --c-tf:#c79af0;
+  --c-prom:#4fcfc2; --c-exon:#7da2ff; --c-intron:#9fb0b8; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -65,7 +65,9 @@ button:focus-visible,input:focus-visible,summary:focus-visible,.stein:focus-visi
 .platz:focus-visible{outline:none}
 .platz:focus-visible .rahmen,.platz.nah .rahmen,.heim.nah .rahmen{stroke:var(--accent);stroke-width:3;stroke-dasharray:none}
 .platz.nah .rahmen,.heim.nah .rahmen{fill:color-mix(in srgb,var(--accent) 10%,transparent)}
-.faktoren,.polymerase{pointer-events:none}
+.faktoren,.polymerase,.spleiss{pointer-events:none}
+.spleiss .form{fill:color-mix(in srgb,var(--c-sp) 22%,transparent);stroke:var(--c-sp);stroke-width:3}
+.spleiss text{font-size:12px;font-weight:800;fill:currentColor}
 .faktoren .form{fill:color-mix(in srgb,var(--c-tf) 24%,transparent);stroke:var(--c-tf);stroke-width:2.5}
 .faktoren text,.polymerase text{font-size:12px;font-weight:800;fill:currentColor}
 .polymerase .form{fill:color-mix(in srgb,var(--accent) 22%,transparent);stroke:var(--accent);stroke-width:3}
@@ -76,6 +78,11 @@ button:focus-visible,input:focus-visible,summary:focus-visible,.stein:focus-visi
 .phasen{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;padding:0}
 .phasen li{display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 6px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);font-weight:600}
 .phasen .nr{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--surface2);color:var(--muted);font:700 .85em var(--sans)}
+.phasen li.knopf{padding:0}
+.phasen li button{font:inherit;font-weight:600;color:inherit;background:none;border:0;border-radius:999px;display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 6px;cursor:pointer}
+.phasen li button[disabled]{cursor:default}
+.phasen li.aktiv button:not([disabled]){box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+.phasen li button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .phasen li.aktiv{border-color:var(--accent);color:var(--ink)}
 .phasen li.aktiv .nr,.phasen li.fertig .nr{background:var(--accent);color:var(--accent-ink)}
 .phasen li.fertig{color:var(--ink)}
@@ -93,6 +100,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,.stein:focus-visi
 .rnateil code{font:800 1rem/1.2 ui-monospace,Consolas,monospace;letter-spacing:.06em;padding:2px 6px;border-bottom:4px solid var(--c);background:var(--surface2);border-radius:4px 4px 0 0}
 .rnateil .balken{display:block;width:44px;border-radius:3px;background:var(--c);margin:0 0 4px}
 .rnaende{font-weight:800;color:var(--muted);align-self:flex-end;padding-bottom:4px}
+.mrna{font:800 .95rem ui-monospace,Consolas,monospace;letter-spacing:.06em;word-break:break-all}
 .gut{color:var(--accent);font-weight:700}
 .karte ul{margin:6px 0 0;padding-left:1.2em}
 .karte li{margin-bottom:6px}
@@ -202,24 +210,25 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 <div class="page">
   <header>
     <h1>Ein Gen zusammensetzen</h1>
-    <p class="lede">Damit eine Zelle ein Gen ablesen kann, braucht die DNA mehr als die Information für das Protein: Sie braucht weitere Abschnitte, und jeder muss an der richtigen Stelle liegen. Setze die sieben Bausteine zu einem Gen zusammen. Sobald alle Plätze belegt sind, macht sich die RNA-Polymerase auf den Weg. Was sie abschreibt, hängt davon ab, wie du die Bausteine angeordnet hast.</p>
+    <p class="lede">Damit eine Zelle ein Gen ablesen kann, braucht die DNA mehr als die Information für das Protein: Sie braucht weitere Abschnitte, und jeder muss an der richtigen Stelle liegen. Setze die Bausteine zu einem Gen zusammen. Wie viele Exons und Introns es gibt, ist jedes Mal anders. Sobald alle Plätze belegt sind, macht sich die RNA-Polymerase auf den Weg. Was sie abschreibt, hängt davon ab, wie du die Bausteine angeordnet hast.</p>
   </header>
 
   <main>
     <section id="s-gen">
       <p class="klein" style="margin:0 0 8px">Bausteine ziehen oder antippen: Erst den Baustein wählen, dann den Platz auf der DNA. Ein Baustein auf einem besetzten Platz tauscht den Platz mit dem dort liegenden.</p>
       <div class="steuer" role="group" aria-label="Steuerung">
-        <button class="btn" type="button" id="mischen">Neu mischen</button>
+        <button class="btn" type="button" id="mischen" title="Ein neues zufälliges Gen erzeugen: andere Zahl von Exons und Introns, andere Sequenzen, neu gemischter Vorrat">Neues Gen</button>
         <button class="btn" type="button" id="zurueck">Alle zurücklegen</button>
         <button class="btn" type="button" id="aufnehmen" disabled title="Den gewählten Baustein von der DNA in den Vorrat zurücklegen">Auswahl zurücklegen</button>
         <button class="btn" type="button" id="nochmal" disabled title="Die Transkription mit dieser Anordnung noch einmal ablaufen lassen">Noch einmal</button>
         <label class="regler">Tempo <input type="range" id="tempo" min="0.5" max="3" step="0.5" value="1" aria-label="Tempo der Animation"></label>
       </div>
-      <div class="buehne"><svg id="buehne" viewBox="0 0 960 330" role="group" aria-label="Sieben Bausteine und sieben Plätze auf der DNA; darunter läuft die Transkription ab"></svg></div>
+      <div class="buehne"><svg id="buehne" viewBox="0 0 960 330" role="group" aria-label="Die Bausteine eines Gens und ebenso viele Plätze auf der DNA; darunter läuft die Transkription ab"></svg></div>
       <ol class="phasen" id="phasen" aria-label="Phasen der Transkription">
         <li data-p="1"><span class="nr">1</span>Initiation</li>
         <li data-p="2"><span class="nr">2</span>Elongation</li>
         <li data-p="3"><span class="nr">3</span>Termination</li>
+        <li data-p="4" class="knopf"><button type="button" id="spleissen" disabled title="Nach der Transkription: die Introns herausschneiden"><span class="nr">4</span>Spleißen</button></li>
       </ol>
       <div class="status" id="status" aria-live="polite">Lege alle Bausteine auf die Plätze der DNA.</div>
       <div class="legende" aria-label="Legende">
@@ -227,9 +236,11 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <span><i style="background:var(--accent)"></i>RNA-Polymerase</span>
         <span><i style="background:var(--c-exon)"></i>Exon</span>
         <span><i style="background:var(--c-intron)"></i>Intron</span>
-        <span><i style="background:linear-gradient(90deg,#2f5bea,#009e73,#dcae1c)"></i>Basen im Promotor</span>
+        <span><i style="background:var(--c-sp)"></i>Spleißosom</span>
+        <span><i style="background:linear-gradient(90deg,#2f5bea,#009e73,#dcae1c)"></i>Basen (wie auf den anderen Seiten)</span>
       </div>
       <div class="karte" id="ergebnis" hidden></div>
+      <div class="karte" id="spleissErgebnis" hidden></div>
       <div class="karte" id="erklaerung" hidden>
         <h3>Wozu die Bausteine dienen</h3>
         <ul>
@@ -246,12 +257,12 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
   <details>
     <summary>Modell und Grenzen</summary>
     <ul>
-      <li>Das Gen ist erfunden und winzig: Exons und Introns sind schematisch gleich lang und ohne Sequenz gezeichnet, nur der Promotor zeigt Basen. Die drei Exons sind austauschbar, ebenso die beiden Introns. Echte Exons sind im Mittel etwa 150 Basenpaare lang, Introns oft viel länger. Ein menschliches Gen ist im Mittel um die 30 000 Basenpaare lang und hat dazu meist Introns, die hier fehlen (siehe „Vom Transkript zur mRNA“).</li>
+      <li>Das Gen ist erfunden und winzig und wird bei jedem „Neuen Gen“ zufällig erzeugt: zwei bis vier Exons mit vier bis sieben Basen, dazwischen Introns mit sieben bis elf Basen (GU am Anfang, AG am Ende, dazwischen zufällige Basen), die Sequenzen der Exons sind zufällig und codieren für nichts Bestimmtes. In Wirklichkeit sind Exons im Mittel etwa 150 Basenpaare lang, Introns oft mehrere Tausend; die Längenunterschiede sind hier viel kleiner, damit alles auf den Bildschirm passt. Exons gleichen Typs sind austauschbar: Das Gen ist das, was du baust, wichtig ist nur, dass Exons und Introns abwechseln.</li>
       <li>Der Promotor besteht in der Zelle aus mehreren Elementen, die TATA-Box liegt etwa 25 bis 30 Basenpaare vor dem Startpunkt, und nicht jeder Promotor hat eine. Hier steht sie kurz vor dem Startpunkt, und die Transkriptionsfaktoren sind zu einer Form zusammengefasst. Tatsächlich sind es viele Proteine (unter anderem TBP und die Faktoren TFIIA bis TFIIH), die sich nacheinander anlagern. Die Polymerase ist größer als gezeichnet und umschließt etwa 35 Basenpaare.</li>
       <li>Enhancer, die Gene aus großer Entfernung verstärken, und der Zustand des Chromatins (siehe „DNA-Verpackung“) fehlen. Ohne sie wird in der Zelle nur selten abgeschrieben.</li>
       <li>Die Polymerase liest den unteren Strang (Matrize) von 3' nach 5' und baut die RNA in 5'→3'-Richtung auf. Die RNA ist deshalb im Aufbau gleich dem oberen Strang, mit U statt T. In der Zelle bleibt die RNA nur etwa neun Basen lang am Matrizenstrang; hier ist es genauso, sie löst sich schon während der Synthese ab.</li>
       <li>Die Richtung ist festgelegt: Die Polymerase läuft immer von links nach rechts. In der Zelle liegen Gene auf beiden Strängen, die Polymerase richtet sich nach der Ausrichtung des Promotors.</li>
-      <li>Das Ende ist vereinfacht. Der Terminator ist nur als Block gezeichnet, nach dem die Polymerase abfällt; bei Bakterien ist es eine Haarnadel in der RNA mit einem U-reichen Abschnitt dahinter. Bei Eukaryoten, die RNA-Polymerase II nutzen, wird die RNA zuerst hinter dem Signal AAUAAA gespalten, und die Polymerase wird erst weiter hinten abgelöst. Dass der Terminator hier immer mit abgeschrieben wird und die Polymerase dann sofort abfällt, ist eine Vereinfachung. Der Poly(A)-Schwanz und die Kappe werden hier nicht angefügt, die Introns bleiben im Transkript.</li>
+      \1\n      <li>Das Spleißen ist vereinfacht: Ein Intron wird herausgeschnitten, wenn davor und dahinter ein Exon liegt. Das Spleißosom erkennt Introns in der Zelle an GU am 5'-Ende, AG am 3'-Ende und einer Verzweigungsstelle (ein Adenin) weiter innen; das Intron wird als Schlinge (Lasso) frei. Hier wird nur der Rahmen GU…AG gezeigt, und alle Introns werden nacheinander entfernt. Alternatives Spleißen, bei dem Exons weggelassen werden, kommt nicht vor. Das Stück am 3'-Ende (Terminator) wird beim Spleißen mit abgespalten; in der Zelle geschieht die 3'-Spaltung und die Anfügung des Poly(A)-Schwanzes mit eigenen Faktoren.</li>
       <li>Geschwindigkeit und Dauer sind nicht maßstäblich: Die Polymerase baut in der Zelle etwa 20 bis 80 Nucleotide pro Sekunde ein, die Anlagerung der Faktoren dauert deutlich länger als hier gezeigt.</li>
     </ul>
   </details>
@@ -300,52 +311,76 @@ const PALETTE = (() => {
 })();
 /*__/PALETTE__*/
 /*__GEN__*/
-// Die Bausteine eines Gens und die Regel, was die RNA-Polymerase abschreibt
+// Die Bausteine eines Gens, die Regel, was die RNA-Polymerase abschreibt, und das Spleißen
 // (Quelle: template/site/gen.js, wird von build.py in die Seiten kopiert; Test: scripts/transkription/test_gen.js).
 //
-//   GEN.BAUSTEINE   sieben Abschnitte zu je 8 Einheiten: Promotor (mit Sequenz), drei Exons, zwei Introns, Terminator
-//                   (Exons und Introns sind schematisch, ohne Sequenz; gleiche Typen sind austauschbar)
-//   GEN.SOLL        Typen in der Reihenfolge eines Gens: Promotor, Exon, Intron, Exon, Intron, Exon, Terminator
-//   GEN.analysiere(platz)   platz[s] = Nummer des Bausteins auf Platz s (von links nach rechts)
-//                           → {p, t, von, bis, teile, stopp, ok}
+//   GEN.erzeuge(zufall, k)   ein zufälliges Gen mit k Exons (2 bis 4, sonst zufällig) und k-1 Introns:
+//                            {k, n, bausteine, soll}; die Bausteine stehen in der Reihenfolge des Gens:
+//                            Promotor, Exon, Intron, …, Exon, Terminator; jeder Baustein hat key, name und eine
+//                            Sequenz (Gegenstrang, 5'→3', so wie die RNA lautet, mit T statt U).
+//                            Promotor: TATAAA; Terminator: Poly-U (TTTTTT); Exons 4 bis 7 Basen, Introns 7 bis 11 Basen lang
+//                            (Introns beginnen mit GU und enden mit AG; als DNA GT … AG). Introns sind länger als Exons wie in
+//                            Wirklichkeit, aber viel kürzer, damit alles auf den Bildschirm passt.
+//   GEN.analysiere(gen, platz)   platz[s] = Nummer des Bausteins auf Platz s (von links nach rechts)
+//                            → {p, t, vonPlatz, bisPlatz, teile, stopp, ok}
 //        p      Platz des Promotors
-//        von    erste abgeschriebene Einheit (Index auf der ganzen Strecke), die Polymerase startet hinter dem Promotor
-//        bis    Index hinter der letzten abgeschriebenen Einheit: bis zum Ende des Terminators, sonst bis zum Ende der DNA
+//        vonPlatz   erster abgeschriebener Platz: die Polymerase startet hinter dem Promotor
+//        bisPlatz   Platz hinter dem letzten abgeschriebenen: bis zum Terminator (mit), sonst bis zum Ende der DNA
 //        teile  Nummern der abgeschriebenen Bausteine in der Reihenfolge des Transkripts
 //        stopp  true, wenn hinter dem Promotor ein Terminator liegt
-//        ok     true, wenn das Transkript genau Exon, Intron, Exon, Intron, Exon und Terminator enthält
-//   GEN.vorrat(zufall)   Reihenfolge der Bausteine im Vorrat (Stelle → Nummer), zufällig; an keiner Stelle liegt ein
-//                        Baustein, dessen Typ an dieser Stelle auch im fertigen Gen stünde
+//        ok     true, wenn die Typen des Transkripts Exon, Intron, …, Exon, Terminator folgen (die Exons sind untereinander
+//               austauschbar, ebenso die Introns: das Gen ist das, was gebaut wurde)
+//   GEN.vorrat(gen, zufall)  Reihenfolge der Bausteine im Vorrat (Stelle → Nummer), zufällig; an keiner Stelle liegt ein
+//                            Baustein, dessen Typ an dieser Stelle auch im fertigen Gen stünde
+//   GEN.rna(gen, teile)      die Sequenz der genannten Bausteine als RNA (A, C, G, U)
+//   GEN.spleisse(gen, teile) was das Spleißen aus dem Transkript macht: {entfernt, abgespalten, rest}
+//        entfernt     Nummern der Introns, die auf beiden Seiten ein Exon haben und herausgeschnitten werden
+//        abgespalten  Nummer des Terminators am 3'-Ende (wird abgespalten) oder null
+//        rest         Nummern der übrigen Bausteine in der Reihenfolge des Transkripts
 const GEN = (() => {
   "use strict";
-  const L = 8;
-  const BAUSTEINE = [
-    {key: "prom", name: "Promotor", seq: "CTATAAAA", tata: [1, 6]},     // TATA-Box (TATAAA) an den Stellen 1 bis 6
-    {key: "exon", name: "Exon"}, {key: "exon", name: "Exon"}, {key: "exon", name: "Exon"},
-    {key: "intron", name: "Intron"}, {key: "intron", name: "Intron"},
-    {key: "term", name: "Terminator"},
-  ];
-  const N = BAUSTEINE.length, PROM = 0, TERM = N - 1;
-  const SOLL = ["prom", "exon", "intron", "exon", "intron", "exon", "term"];
-  const typ = id => BAUSTEINE[id].key;
-
-  function analysiere(platz){
-    const p = platz.indexOf(PROM), t = platz.indexOf(TERM);
-    const stopp = t > p;
-    const letzter = stopp ? t : N - 1;
-    const teile = platz.slice(p + 1, letzter + 1);
-    const soll = SOLL.slice(1);
-    return {p, t, von: (p + 1) * L, bis: (letzter + 1) * L, teile, stopp,
-            ok: teile.length === soll.length && teile.every((x, i) => typ(x) === soll[i])};
+  const PROM = 0, BASEN = "ACGT";
+  function erzeuge(zufall, k){
+    k = k || 2 + Math.floor(zufall() * 3);
+    const zahl = (a, b) => a + Math.floor(zufall() * (b - a + 1));
+    const folge = n => Array.from({length: n}, () => BASEN[Math.floor(zufall() * 4)]).join("");
+    const exon = () => { let s; do s = folge(zahl(4, 7)); while (s === "TTTTTT" || s === "TATAAA"); return s; };
+    const b = [{key: "prom", name: "Promotor", seq: "TATAAA", tata: [0, 5]}];
+    for (let i = 0; i < k; i++){
+      b.push({key: "exon", name: "Exon", seq: exon()});
+      if (i < k - 1) b.push({key: "intron", name: "Intron", seq: "GT" + folge(zahl(3, 7)) + "AG"});
+    }
+    b.push({key: "term", name: "Terminator", seq: "TTTTTT"});
+    return {k, n: b.length, bausteine: b, soll: b.map(x => x.key)};
   }
-  function vorrat(zufall){
-    const a = BAUSTEINE.map((b, i) => i);
+  function analysiere(gen, platz){
+    const n = gen.n, p = platz.indexOf(PROM), t = platz.indexOf(n - 1);
+    const stopp = t > p;
+    const letzter = stopp ? t : n - 1;
+    const teile = platz.slice(p + 1, letzter + 1);
+    const soll = gen.soll.slice(1);
+    return {p, t, vonPlatz: p + 1, bisPlatz: letzter + 1, teile, stopp,
+            ok: teile.length === soll.length && teile.every((x, i) => gen.bausteine[x].key === soll[i])};
+  }
+  function vorrat(gen, zufall){
+    const a = gen.bausteine.map((b, i) => i);
     for (;;){
       for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(zufall() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-      if (a.every((id, k) => typ(id) !== SOLL[k])) return a.slice();
+      if (a.every((id, s) => gen.bausteine[id].key !== gen.soll[s])) return a.slice();
     }
   }
-  return {BAUSTEINE, N, L, PROM, TERM, SOLL, typ, analysiere, vorrat};
+  const rna = (gen, teile) => teile.map(id => gen.bausteine[id].seq).join("").replace(/T/g, "U");
+  function spleisse(gen, teile){
+    const typ = id => gen.bausteine[id].key, entfernt = [], rest = [];
+    let abgespalten = null;
+    teile.forEach((id, i) => {
+      if (typ(id) === "intron" && i > 0 && i < teile.length - 1 && typ(teile[i - 1]) === "exon" && typ(teile[i + 1]) === "exon") entfernt.push(id);
+      else if (typ(id) === "term" && i === teile.length - 1) abgespalten = id;
+      else rest.push(id);
+    });
+    return {entfernt, abgespalten, rest};
+  }
+  return {PROM, erzeuge, analysiere, vorrat, rna, spleisse};
 })();
 /*__/GEN__*/
 </script>
@@ -358,60 +393,56 @@ const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag)
 const lumi = h => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const glatt = t => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
+const lerp = (a, b, t) => a + (b - a) * t;
 const KOMP = {A: "T", T: "A", G: "C", C: "G"};
+const u = s => s.replace(/T/g, "U");
 
-const {BAUSTEINE: BAU, N, L} = GEN;
-// Maße der Zeichnung (Einheiten des viewBox)
-const BW = 15, PW = L * BW, PITCH = PW + 6, X0 = 42;
+// Maße der Zeichnung (Einheiten des viewBox); die Breite einer Base (BW) hängt vom Gen ab
+const GAP = 6, X0 = 44;
+let BW = 15;
 const TRAY_Y = 28, TRACK_Y = 150, PH = 72, TOP_Y = 26, BOT_Y = 50, CH = 16;
 const DTOP = -9, DBOT = 11;                          // so weit rücken die Stränge in der Blase auseinander
 const HYB_Y = TRACK_Y + BOT_Y + DBOT + CH + 9;       // RNA im Hybrid mit der Matrize
 const RNA_Y = HYB_Y + 62;                            // fertige RNA
 const HYB = 7;                                       // so viele Basen hinter der Polymerase bleibt die RNA an der Matrize
-const xc = g => X0 + Math.floor(g / L) * PITCH + (g % L) * BW + BW / 2;     // Mitte der Base g auf der Strecke
+
+// Das aktuelle Gen (wird bei "Neues Gen" neu erzeugt) und alles, was davon abhängt
+let gen, BAU, N, NBT, MITTEL;       // NBT: Zahl aller Basen, MITTEL: mittlere Länge eines Bausteins
+let LAY = [];                       // Lage der Plätze (x, Breite) je nach Belegung
+let K = null;                       // Lage jeder Base beim Ablauf (Platz, Stelle im Baustein, x)
+const xc = g => K.xs[clamp(g, 0, NBT - 1)] + (g < 0 ? g * BW : g > NBT - 1 ? (g - NBT + 1) * BW : 0);   // Mitte der Base g auf der Strecke
 const xcf = p => { const i = Math.floor(p), f = p - i; return xc(i) + (xc(i + 1) - xc(i)) * f; };
+// Die Bausteine liegen ohne Lücken hintereinander (bis auf einen kleinen Abstand), jeder in seiner Länge; ein leerer Platz ist so breit wie ein mittlerer Baustein
+function layout(){
+  const bel = platzBelegung(); let x = X0; const lay = [];
+  for (let s = 0; s < N; s++){ const w = (bel[s] === null ? MITTEL : BAU[bel[s]].seq.length) * BW; lay.push({x, w, id: bel[s]}); x += w + GAP; }
+  return lay;
+}
+function festlegen(lay){
+  const xs = [], slotOf = [], idx = [], g0 = [];
+  lay.forEach((e, s) => { g0.push(slotOf.length); for (let i = 0; i < BAU[e.id].seq.length; i++){ xs.push(e.x + i * BW + BW / 2); slotOf.push(s); idx.push(i); } });
+  g0.push(slotOf.length);
+  return {xs, slotOf, idx, g0, lay};
+}
 
 const svg = $("buehne");
-const leere = (parent) => parent.replaceChildren();
+const ebeneHinten = el("g", {}, svg), ebeneSteine = el("g", {}, svg), ebeneAnim = el("g", {}, svg), ebeneOben = el("g", {}, svg);
+let Z = {heim: [], wo: [], sel: null}, TL = [];   // heim[id]: Stelle im Vorrat, wo[id]: Platz auf der DNA oder -1
+let steine = [], plaetze = [], heime = [], rnaZellen = [], rnaTicks = [], offen = new Float32Array(0);
+let faktoren, poly, spleissG, rna5, rna3;
+const R = {phase: "leer", t: 0, plan: null, pos: 0, open: 0, rel: 0, pa: 0, py: 0, tf: 0, tfUp: 0, ende: 0, belegung: null, letzte: 0, sp: null};
+let wartend = null, rafId = 0;
 
-/* ---------- Zustand ---------- */
-const Z = {heim: [0, 1, 2, 3, 4], wo: [-1, -1, -1, -1, -1], sel: null};   // heim[id]: Stelle im Vorrat, wo[id]: Platz auf der DNA oder -1
 const platzBelegung = () => { const p = Array(N).fill(null); Z.wo.forEach((s, id) => { if (s >= 0) p[s] = id; }); return p; };
 const voll = () => Z.wo.every(s => s >= 0);
 
-function mischen(){
-  const v = GEN.vorrat(Math.random);      // v[Stelle] = Baustein
-  Z.heim = BAU.map((b, id) => v.indexOf(id)); Z.wo = Array(N).fill(-1); Z.sel = null;
-}
-
 /* ---------- Zeichnung aufbauen ---------- */
-const ebeneHinten = el("g", {}, svg), ebeneSteine = el("g", {}, svg), ebeneAnim = el("g", {}, svg), ebeneOben = el("g", {}, svg);
-el("text", {class: "etik", x: X0, y: 18}, ebeneHinten).textContent = "Bausteine";
-el("text", {class: "etik", x: X0, y: TRACK_Y - 34}, ebeneHinten).textContent = "DNA";
-const ende = (x, y, t, a) => { const e = el("text", {class: "ende", x, y, "text-anchor": a}, ebeneHinten); e.textContent = t; };
-ende(X0 - 8, TRACK_Y + TOP_Y + 13, "5'", "end"); ende(X0 - 8, TRACK_Y + BOT_Y + 13, "3'", "end");
-ende(960 - X0 + 8, TRACK_Y + TOP_Y + 13, "3'", "start"); ende(960 - X0 + 8, TRACK_Y + BOT_Y + 13, "5'", "start");
-const rna5 = el("text", {class: "rna-name", y: RNA_Y + 13, "text-anchor": "end"}, ebeneHinten);     // Beschriftung der fertigen RNA
-const rna3 = el("text", {class: "rna-name", y: RNA_Y + 13, "text-anchor": "start"}, ebeneHinten);
-
-const plaetze = [], heime = [];
-for (let s = 0; s < N; s++){
-  const g = el("g", {class: "platz", tabindex: 0, role: "button", transform: `translate(${X0 + s * PITCH} ${TRACK_Y})`}, ebeneHinten);
-  el("rect", {class: "rahmen", width: PW, height: PH, rx: 8}, g);
-  g.addEventListener("click", () => klickPlatz(s));
-  g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); klickPlatz(s); } });
-  plaetze.push(g);
-  const h = el("g", {class: "heim", transform: `translate(${X0 + s * PITCH} ${TRAY_Y})`}, ebeneHinten);
-  el("rect", {class: "rahmen", width: PW, height: PH, rx: 8}, h);
-  h.addEventListener("click", klickVorrat);
-  heime.push(h);
-}
-
 // Ein Buchstabe als farbiges Kästchen (Farben wie auf den anderen Seiten)
 function zelle(parent, x, y, buchstabe, klasse){
   const g = el("g", {class: klasse || "", transform: `translate(${x} ${y})`}, parent);
   const r = el("rect", {x: 1, y: 0, width: BW - 2, height: CH, rx: 3}, g);
   const t = el("text", {class: "buchstabe", x: BW / 2, y: 12.4, "text-anchor": "middle"}, g);
+  t.style.fontSize = Math.min(12.5, BW * 0.85) + "px";
   const z = {g, r, t, b: ""};
   setze(z, buchstabe);
   return z;
@@ -419,45 +450,85 @@ function zelle(parent, x, y, buchstabe, klasse){
 function setze(z, b){ z.b = b; z.t.textContent = b; faerbe(z); }
 function faerbe(z){ if (!z.b) return; const f = PALETTE.get(z.b); z.r.setAttribute("fill", f); z.t.setAttribute("fill", lumi(f) > 0.6 ? "#111" : "#fff"); }
 
-// Schematischer Abschnitt ohne Sequenz: Exon und Terminator als dicker Balken, Intron als dünne Linie
-const HOEHE = {exon: 12, intron: 4, term: 12};
-function balken(parent, x, y, typ){
-  const g = el("g", {transform: `translate(${x} ${y})`}, parent);
-  const r = el("rect", {x: 0, width: BW, rx: 2}, g);
-  formBalken({g, r}, typ);
-  return {g, r, b: ""};
-}
-function formBalken(z, typ){
-  const h = HOEHE[typ];
-  z.r.setAttribute("y", (CH - h) / 2); z.r.setAttribute("height", h); z.r.style.fill = `var(--c-${typ})`;
-}
+function aufbauen(){
+  stoppe();
+  gen = GEN.erzeuge(Math.random); BAU = gen.bausteine; N = gen.n; K = null;
+  const lens = BAU.map(b => b.seq.length);
+  NBT = lens.reduce((x, y) => x + y, 0); MITTEL = NBT / N;
+  const mehr = lens.reduce((x, y) => x + Math.max(0, y - MITTEL), 0);      // so viel breiter kann die Reihe im ungünstigsten Fall werden
+  BW = clamp(Math.floor((960 - 2 * X0 - (N - 1) * GAP) / (NBT + mehr)), 9, 15);
+  const v = GEN.vorrat(gen, Math.random);        // v[Stelle] = Baustein
+  Z = {heim: BAU.map((b, id) => v.indexOf(id)), wo: Array(N).fill(-1), sel: null};
+  TL = []; { let x = X0; v.forEach(id => { const w = BAU[id].seq.length * BW; TL.push({x, w}); x += w + GAP; }); }
+  [ebeneHinten, ebeneSteine, ebeneAnim, ebeneOben].forEach(e => e.replaceChildren());
+  el("text", {class: "etik", x: X0, y: 18}, ebeneHinten).textContent = "Bausteine";
+  el("text", {class: "etik", x: X0, y: TRACK_Y - 34}, ebeneHinten).textContent = "DNA";
+  const ende = (x, y, t, a) => { el("text", {class: "ende", x, y, "text-anchor": a}, ebeneHinten).textContent = t; };
+  ende(X0 - 8, TRACK_Y + TOP_Y + 13, "5'", "end"); ende(X0 - 8, TRACK_Y + BOT_Y + 13, "3'", "end");
+  ende(960 - X0 + 8, TRACK_Y + TOP_Y + 13, "3'", "start"); ende(960 - X0 + 8, TRACK_Y + BOT_Y + 13, "5'", "start");
+  rna5 = el("text", {class: "rna-name", y: RNA_Y + 13, "text-anchor": "end"}, ebeneHinten);     // Beschriftung der fertigen RNA
+  rna3 = el("text", {class: "rna-name", y: RNA_Y + 13, "text-anchor": "start"}, ebeneHinten);
 
-const steine = [];
-BAU.forEach((b, id) => {
-  const g = el("g", {class: "stein", "data-id": id, "data-key": b.key, tabindex: 0, role: "button"}, ebeneSteine);
-  el("rect", {class: "koerper", width: PW, height: PH, rx: 8}, g);
-  el("text", {class: "titel", x: 8, y: 17}, g).textContent = b.name;
-  const oben = [], unten = [], ticks = [];
-  for (let i = 0; i < L; i++){
-    oben.push(b.seq ? zelle(g, i * BW, TOP_Y, b.seq[i]) : balken(g, i * BW, TOP_Y, b.key));
-    unten.push(b.seq ? zelle(g, i * BW, BOT_Y, KOMP[b.seq[i]]) : balken(g, i * BW, BOT_Y, b.key));
-    ticks.push(el("line", {class: "tick", x1: i * BW + BW / 2, x2: i * BW + BW / 2, y1: TOP_Y + CH + 2, y2: BOT_Y - 2}, g));
+  plaetze = []; heime = [];
+  for (let s = 0; s < N; s++){
+    const g = el("g", {class: "platz", tabindex: 0, role: "button"}, ebeneHinten);
+    el("rect", {class: "rahmen", height: PH, rx: 8}, g);
+    g.addEventListener("click", () => klickPlatz(s));
+    g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); klickPlatz(s); } });
+    plaetze.push(g);
+    const h = el("g", {class: "heim", transform: `translate(${TL[s].x} ${TRAY_Y})`}, ebeneHinten);
+    el("rect", {class: "rahmen", width: TL[s].w, height: PH, rx: 8}, h);
+    h.addEventListener("click", klickVorrat);
+    heime.push(h);
   }
-  g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); klickStein(id); } });
-  steine.push({g, oben, unten, ticks});
-});
+
+  steine = [];
+  BAU.forEach((b, id) => {
+    const g = el("g", {class: "stein", "data-id": id, "data-key": b.key, tabindex: 0, role: "button"}, ebeneSteine);
+    const pw = b.seq.length * BW;
+    el("rect", {class: "koerper", width: pw, height: PH, rx: 8}, g);
+    const titel = el("text", {class: "titel", x: 8, y: 17}, g); titel.textContent = b.name; titel.style.fontSize = clamp((pw - 12) / (b.name.length * 0.56), 9, 13) + "px";
+    const oben = [], unten = [], ticks = [];
+    for (let i = 0; i < b.seq.length; i++){
+      oben.push(zelle(g, i * BW, TOP_Y, b.seq[i]));
+      unten.push(zelle(g, i * BW, BOT_Y, KOMP[b.seq[i]]));
+      ticks.push(el("line", {class: "tick", x1: i * BW + BW / 2, x2: i * BW + BW / 2, y1: TOP_Y + CH + 2, y2: BOT_Y - 2}, g));
+    }
+    g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); klickStein(id); } });
+    steine.push({g, oben, unten, ticks});
+  });
+
+  // Zusatzebene: RNA, Faktoren, Polymerase, Spleißosom
+  rnaTicks = []; rnaZellen = []; offen = new Float32Array(NBT);
+  for (let g = 0; g < NBT; g++) rnaTicks.push(el("line", {class: "tick", x1: 0, x2: 0, y1: 0, y2: 0, opacity: 0}, ebeneAnim));
+  for (let g = 0; g < NBT; g++){
+    const z = zelle(ebeneAnim, 0, 0, "U", "rna-zelle"); z.g.style.display = "none";
+    z.band = el("rect", {x: 1, y: CH + 1, width: BW - 2, height: 3, rx: 1.5}, z.g);
+    rnaZellen.push(z);
+  }
+  faktoren = el("g", {class: "faktoren", opacity: 0}, ebeneOben);
+  el("rect", {class: "form", rx: 14}, faktoren); el("text", {"text-anchor": "middle"}, faktoren).textContent = "TF";
+  poly = el("g", {class: "polymerase", opacity: 0}, ebeneOben);
+  el("rect", {class: "form", rx: 30}, poly); el("text", {"text-anchor": "middle"}, poly).textContent = "RNA-Polymerase";
+  spleissG = el("g", {class: "spleiss", opacity: 0}, ebeneOben);
+  el("rect", {class: "form", rx: 12}, spleissG); el("text", {"text-anchor": "middle"}, spleissG).textContent = "Spleißosom";
+
+  ruhelage(); zeige(); statusLeer();
+}
 
 /* ---------- Anzeige der Anordnung ---------- */
-function platzPos(s){ return [X0 + s * PITCH, TRACK_Y]; }
-function heimPos(h){ return [X0 + h * PITCH, TRAY_Y]; }
+function platzPos(s){ return [LAY[s].x, TRACK_Y]; }
+function heimPos(h){ return [TL[h].x, TRAY_Y]; }
 function setzeTransform(g, x, y){ g.style.transform = `translate(${x}px, ${y}px)`; }
 function zeige(){
+  LAY = layout();
+  plaetze.forEach((p, s) => { p.setAttribute("transform", `translate(${LAY[s].x} ${TRACK_Y})`); p.firstChild.setAttribute("width", LAY[s].w); });
   steine.forEach((st, id) => {
     const [x, y] = Z.wo[id] >= 0 ? platzPos(Z.wo[id]) : heimPos(Z.heim[id]);
     setzeTransform(st.g, x, y);
     st.g.classList.toggle("sel", Z.sel === id);
     st.g.setAttribute("aria-pressed", Z.sel === id ? "true" : "false");
-    st.g.setAttribute("aria-label", BAU[id].name + (Z.wo[id] >= 0 ? ", liegt auf Platz " + (Z.wo[id] + 1) : ", im Vorrat"));
+    st.g.setAttribute("aria-label", BAU[id].name + " " + u(BAU[id].seq) + (Z.wo[id] >= 0 ? ", liegt auf Platz " + (Z.wo[id] + 1) : ", im Vorrat"));
   });
   const belegt = platzBelegung();
   plaetze.forEach((p, s) => {
@@ -512,8 +583,9 @@ svg.addEventListener("pointermove", e => {
   }
   const p = svgPunkt(e), x = p.x - zug.dx, y = p.y - zug.dy;
   setzeTransform(zug.g, x, y);
-  const cx = x + PW / 2, cy = y + PH / 2;
-  zug.ziel = cy > (TRAY_Y + PH + TRACK_Y) / 2 ? clamp(Math.round((cx - X0 - PW / 2) / PITCH), 0, N - 1) : -1;
+  const cx = x + BAU[zug.id].seq.length * BW / 2, cy = y + PH / 2;
+  let ziel = 0; LAY.forEach((e, s) => { if (Math.abs(cx - (e.x + e.w / 2)) < Math.abs(cx - (LAY[ziel].x + LAY[ziel].w / 2))) ziel = s; });
+  zug.ziel = cy > (TRAY_Y + PH + TRACK_Y) / 2 ? ziel : -1;
   plaetze.forEach((pl, s) => pl.classList.toggle("nah", zug.ziel === s));
   heime.forEach(h => h.classList.toggle("nah", zug.ziel === -1));
 });
@@ -531,11 +603,11 @@ const zugEnde = (e, abgebrochen) => {
 };
 svg.addEventListener("pointerup", e => zugEnde(e, false));
 svg.addEventListener("pointercancel", e => zugEnde(e, true));
-// Klick auf den Vorrat oder einen leeren Platz mit gewähltem Baustein ist oben bei den Plätzen geregelt
-$("mischen").addEventListener("click", () => { mischen(); aenderung(); });
+$("mischen").addEventListener("click", aufbauen);
 $("zurueck").addEventListener("click", () => { Z.wo = Array(N).fill(-1); aenderung(); });
 $("aufnehmen").addEventListener("click", klickVorrat);
 $("nochmal").addEventListener("click", () => { if (voll()) start(); });
+$("spleissen").addEventListener("click", spleissStart);
 
 /* ---------- Ablauf der Transkription ---------- */
 const TEXTE = {
@@ -545,42 +617,31 @@ const TEXTE = {
   pol: "Initiation: Die RNA-Polymerase lagert sich an, die Doppelhelix öffnet sich.",
   start: "Initiation: Die Faktoren lösen sich, die Polymerase kann losgehen.",
   elong: "Elongation: Die RNA-Polymerase liest den unteren Strang (Matrize) von 3' nach 5' und baut die RNA von 5' nach 3' auf. Hinter ihr schließt sich die DNA wieder.",
-  halt: "Termination: Die Polymerase hat das Ende erreicht.",
-  rel: "Termination: Die Polymerase löst sich von der DNA und lässt die RNA los."
+  rel: "Termination: Die Polymerase löst sich von der DNA und lässt die RNA los.",
+  spl: "Spleißen: Das Spleißosom erkennt am Anfang eines Introns GU und am Ende AG, schneidet das Intron als Schlinge heraus und verbindet die beiden Exons.",
+  spl3: "Spleißen: Das Stück am 3'-Ende hinter dem letzten Exon wird abgespalten."
 };
 const status = t => { $("status").textContent = t; };
-const statusLeer = () => { status(voll() ? TEXTE.voll : TEXTE.leer); chips(0); $("ergebnis").hidden = true; $("erklaerung").hidden = true; };
+const statusLeer = () => { status(voll() ? TEXTE.voll : TEXTE.leer); chips(0); $("ergebnis").hidden = true; $("spleissErgebnis").hidden = true; $("erklaerung").hidden = true; $("spleissen").disabled = true; };
 function chips(n){ document.querySelectorAll("#phasen li").forEach(li => { const p = +li.dataset.p; li.classList.toggle("aktiv", p === n); li.classList.toggle("fertig", p < n); }); }
 
-// Zusatzebene: Faktoren, Polymerase, RNA
-const rnaZellen = [], rnaTicks = [], offen = new Float32Array(N * L);
-for (let g = 0; g < N * L; g++){
-  const t = el("line", {class: "tick", x1: 0, x2: 0, y1: 0, y2: 0, opacity: 0}, ebeneAnim);
-  rnaTicks.push(t);
-}
-for (let g = 0; g < N * L; g++){
-  const z = balken(ebeneAnim, 0, 0, "exon"); z.g.style.display = "none"; rnaZellen.push(z);
-}
-const faktoren = el("g", {class: "faktoren", opacity: 0}, ebeneOben);
-el("rect", {class: "form", rx: 14}, faktoren); el("text", {"text-anchor": "middle"}, faktoren).textContent = "TF";
-const poly = el("g", {class: "polymerase", opacity: 0}, ebeneOben);
-el("rect", {class: "form", rx: 30}, poly); el("text", {"text-anchor": "middle"}, poly).textContent = "RNA-Polymerase";
-
-const R = {phase: "leer", t: 0, plan: null, pos: 0, open: 0, rel: 0, pa: 0, py: 0, tf: 0, tfUp: 0, ende: 0, belegung: null, letzte: 0};
-let wartend = null, rafId = 0;
-
-function abbrechen(){
+function stoppe(){
   clearTimeout(wartend); wartend = null; cancelAnimationFrame(rafId); rafId = 0;
-  R.phase = "leer"; R.open = R.rel = R.pa = R.py = R.tf = R.tfUp = 0; R.plan = null;
-  rnaZellen.forEach(z => { z.g.style.display = "none"; }); rnaTicks.forEach(t => t.setAttribute("opacity", 0));
+  R.phase = "leer"; R.open = R.rel = R.pa = R.py = R.tf = R.tfUp = 0; R.plan = null; R.sp = null;
+}
+function abbrechen(){
+  stoppe();
+  rnaZellen.forEach(z => { z.g.style.display = "none"; z.g.setAttribute("opacity", 1); }); rnaTicks.forEach(t => t.setAttribute("opacity", 0));
   rna5.textContent = rna3.textContent = "";
-  faktoren.setAttribute("opacity", 0); poly.setAttribute("opacity", 0);
+  faktoren.setAttribute("opacity", 0); poly.setAttribute("opacity", 0); spleissG.setAttribute("opacity", 0);
+  $("spleissen").disabled = true;
   ruhelage();
 }
 
 function zeichneBasen(){
   // Die Stränge rücken in der Transkriptionsblase auseinander.
-  for (let g = 0; g < N * L; g++){
+  if (!K) return;
+  for (let g = 0; g < NBT; g++){
     let w = 0;
     if (R.plan){
       const a = g + 1 - (R.pos - HYB), b = R.pos + 1.5 - g;
@@ -588,7 +649,7 @@ function zeichneBasen(){
     }
     if (Math.abs(w - offen[g]) < 0.002) continue;
     offen[g] = w;
-    const s = Math.floor(g / L), id = R.belegung ? R.belegung[s] : null, i = g % L;
+    const id = R.belegung ? R.belegung[K.slotOf[g]] : null, i = K && K.idx[g];
     if (id === null || id === undefined) continue;
     const st = steine[id];
     st.oben[i].g.setAttribute("transform", `translate(${i * BW} ${TOP_Y + DTOP * w})`);
@@ -596,9 +657,9 @@ function zeichneBasen(){
     st.ticks[i].setAttribute("opacity", 1 - w);
   }
 }
-// Die Stränge aller Bausteine in die Ruhelage (auch bei Bausteinen, die gerade nicht auf der DNA liegen)
+// Die Stränge aller Bausteine in die Ruhelage
 function ruhelage(){
-  steine.forEach(st => { for (let i = 0; i < L; i++){
+  steine.forEach(st => { for (let i = 0; i < st.oben.length; i++){
     st.oben[i].g.setAttribute("transform", `translate(${i * BW} ${TOP_Y})`);
     st.unten[i].g.setAttribute("transform", `translate(${i * BW} ${BOT_Y})`);
     st.ticks[i].setAttribute("opacity", 1);
@@ -609,19 +670,24 @@ function ruhelage(){
 function start(){
   clearTimeout(wartend); wartend = null;
   if (!voll()) return;
-  abbrechen(); ruhelage();
-  const bel = platzBelegung(), pl = GEN.analysiere(bel);
+  abbrechen();
+  const bel = platzBelegung(), pl = GEN.analysiere(gen, bel);
+  K = festlegen(layout()); pl.von = K.g0[pl.vonPlatz]; pl.bis = K.g0[pl.bisPlatz];
   R.belegung = bel; R.plan = pl; R.ende = pl.bis > pl.von ? pl.bis : pl.von + 8;
   R.pos = pl.von; R.phase = "tf"; R.t = 0; R.letzte = performance.now();
-  // RNA-Zellen vorbereiten
-  for (let g = pl.von; g < pl.bis; g++){ const z = rnaZellen[g]; formBalken(z, BAU[bel[Math.floor(g / L)]].key); z.g.style.display = "none"; }
-  $("ergebnis").hidden = true; $("erklaerung").hidden = true;
+  // RNA-Zellen vorbereiten: Buchstabe aus der Sequenz, Farbband nach Typ des Abschnitts
+  const rna = GEN.rna(gen, pl.teile);
+  for (let k = 0; k < rna.length; k++){
+    const z = rnaZellen[pl.von + k]; setze(z, rna[k]); z.g.style.display = "none";
+    z.band.style.fill = `var(--c-${BAU[bel[K.slotOf[pl.von + k]]].key})`;
+  }
+  $("ergebnis").hidden = true; $("spleissErgebnis").hidden = true; $("erklaerung").hidden = true;
   status(TEXTE.tf); chips(1);
   rafId = requestAnimationFrame(bild);
 }
 
 const REDUZIERT = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches ? 3 : 1;
-const T = {tf: 900, pol: 1100, start: 700, halt: 900, rel: 1000}, RATE = 8;   // Dauer in Millisekunden bei Tempo 1, Basen je Sekunde
+const T = {tf: 900, pol: 1100, start: 700, halt: 900, rel: 1000, spl: 2400, spl3: 1100}, RATE = 8;   // Dauer in Millisekunden bei Tempo 1, Basen je Sekunde
 function naechste(phase, text, chip){ R.phase = phase; R.t = 0; if (text) status(text); if (chip) chips(chip); }
 
 function bild(now){
@@ -656,9 +722,13 @@ function bild(now){
       R.rel = glatt(R.t / T.rel); R.open = 1 - R.rel; R.pa = 1 - clamp((R.rel - 0.3) / 0.7, 0, 1); R.py = -50 * R.rel;
       if (R.t >= T.rel){ R.phase = "fertig"; R.pa = 0; R.open = 0; }
       break;
+    case "spl":
+      spleissSchritt();
+      break;
   }
-  zeichne();
-  if (R.phase === "fertig"){ chips(4); fertig(); return; }
+  if (R.phase === "spl") zeichneSpleissen(); else zeichne();
+  if (R.phase === "fertig"){ fertig(); return; }
+  if (R.phase === "spl-fertig"){ spleissFertig(); return; }
   rafId = requestAnimationFrame(bild);
 }
 
@@ -666,7 +736,7 @@ function zeichne(){
   const pl = R.plan; if (!pl) return;
   zeichneBasen();
   // Transkriptionsfaktoren an der TATA-Box
-  const tata = BAU[GEN.PROM].tata, gp = pl.p * L;
+  const tata = BAU[GEN.PROM].tata, gp = K.g0[pl.p];
   const fx0 = xc(gp + tata[0]) - BW / 2 - 4, fx1 = xc(gp + tata[1]) + BW / 2 + 4;
   const fr = faktoren.firstChild, ft = faktoren.lastChild;
   fr.setAttribute("x", fx0); fr.setAttribute("width", fx1 - fx0); fr.setAttribute("y", TRACK_Y - 8); fr.setAttribute("height", PH + 16);
@@ -696,48 +766,152 @@ function zeichne(){
   }
 }
 
-/* ---------- Ergebnis ---------- */
+/* ---------- Ergebnis der Transkription ---------- */
+// Zeile aus Abschnitten (Name, Sequenz als RNA, Farbband nach Typ)
+function teileZeile(ids){
+  const zeile = document.createElement("div"); zeile.className = "rnazeile";
+  const e5 = document.createElement("span"); e5.className = "rnaende"; e5.textContent = "5'"; zeile.appendChild(e5);
+  ids.forEach(id => {
+    const t = document.createElement("span"); t.className = "rnateil"; t.style.setProperty("--c", `var(--c-${BAU[id].key})`);
+    const k = document.createElement("small"); k.textContent = BAU[id].name; const c = document.createElement("code"); c.textContent = u(BAU[id].seq);
+    t.append(k, c); zeile.appendChild(t);
+  });
+  const e3 = document.createElement("span"); e3.className = "rnaende"; e3.textContent = "3'"; zeile.appendChild(e3);
+  return zeile;
+}
+const absatz = (text, klasse) => { const p = document.createElement("p"); p.textContent = text; if (klasse) p.className = klasse; return p; };
+const nenne = ids => { const f = []; ids.forEach(id => { const e = f.find(x => x.name === BAU[id].name); if (e) e.n++; else f.push({name: BAU[id].name, n: 1}); }); return f.map(x => x.name + (x.n > 1 ? " (" + x.n + "×)" : "")).join(", "); };
+
 function fertig(){
-  const pl = R.plan, bel = R.belegung, rna = pl.teile;
-  if (rna.length){
+  const pl = R.plan, bel = R.belegung, teile = pl.teile;
+  if (teile.length){
     rna5.setAttribute("x", xc(pl.von) - BW / 2 - 4); rna5.textContent = "RNA 5'";
     rna3.setAttribute("x", xc(pl.bis - 1) + BW / 2 + 4); rna3.textContent = "3'";
   }
   const box = $("ergebnis"); box.replaceChildren();
-  const h = document.createElement("h3"); h.textContent = "Ergebnis"; box.appendChild(h);
-  const p1 = document.createElement("p");
-  if (!rna.length){ p1.textContent = "Es ist keine RNA entstanden."; box.appendChild(p1); }
-  else {
-    p1.textContent = "Die Polymerase hat diese RNA gebaut (5' → 3'):"; box.appendChild(p1);
-    const zeile = document.createElement("div"); zeile.className = "rnazeile";
-    const e5 = document.createElement("span"); e5.className = "rnaende"; e5.textContent = "5'"; zeile.appendChild(e5);
-    pl.teile.forEach(id => {
-      const t = document.createElement("span"); t.className = "rnateil"; t.style.setProperty("--c", `var(--c-${BAU[id].key})`);
-      const k = document.createElement("small"); k.textContent = BAU[id].name; const c = document.createElement("i"); c.className = "balken"; c.style.height = HOEHE[BAU[id].key] / 2 + "px";
-      t.append(k, c); zeile.appendChild(t);
-    });
-    const e3 = document.createElement("span"); e3.className = "rnaende"; e3.textContent = "3'"; zeile.appendChild(e3);
-    box.appendChild(zeile);
-  }
+  const h = document.createElement("h3"); h.textContent = "Ergebnis der Transkription"; box.appendChild(h);
+  if (!teile.length) box.appendChild(absatz("Es ist keine RNA entstanden."));
+  else { box.appendChild(absatz("Die Polymerase hat diese RNA gebaut (5' → 3'):")); box.appendChild(teileZeile(teile)); }
   const ul = document.createElement("ul"), li = t => { const x = document.createElement("li"); x.textContent = t; ul.appendChild(x); };
-  const fehlt = [];      // nicht abgeschriebene Bausteine (ohne Promotor), nach Typ gezählt
-  BAU.forEach((b, id) => { if (id !== GEN.PROM && !pl.teile.includes(id)){ const e = fehlt.find(f => f.name === b.name); if (e) e.n++; else fehlt.push({name: b.name, n: 1}); } });
+  const fehlt = BAU.map((b, id) => id).filter(id => id !== GEN.PROM && !teile.includes(id));
   if (pl.ok){
-    const p = document.createElement("p"); p.className = "gut";
-    p.textContent = "Geschafft: Die Polymerase hat das ganze Gen abgeschrieben und am Terminator losgelassen. Die RNA enthält alle drei Exons und beide Introns. Es ist die unreife RNA (pre-mRNA) des Gens; die Introns werden erst danach herausgeschnitten.";
-    box.appendChild(p);
+    box.appendChild(absatz("Geschafft: Die Polymerase hat das ganze Gen abgeschrieben und am Terminator losgelassen. Die RNA enthält alle Exons und alle Introns. Es ist die unreife RNA (pre-mRNA) des Gens.", "gut"));
   } else {
-    if (fehlt.length) li("Nicht abgeschrieben wurde: " + fehlt.map(f => f.name + (f.n > 1 ? " (" + f.n + "×)" : "")).join(", ") + ".");
-    if (!fehlt.length) li("Alle Abschnitte hinter dem Promotor sind im Transkript, aber nicht so, wie sie in einem Gen aufeinanderfolgen.");
-    if (!pl.stopp && rna.length) li("Die Polymerase ist bis zum Ende der DNA gelaufen.");
-    const p = document.createElement("p");
-    p.textContent = (rna.length ? "Das ist nicht das vollständige Transkript dieses Gens. " : "") + "Ordne die Bausteine anders an, dann beginnt die Transkription von neuem.";
-    box.appendChild(p);
+    if (fehlt.length) li("Nicht abgeschrieben wurde: " + nenne(fehlt) + ".");
+    else li("Alle Abschnitte hinter dem Promotor sind im Transkript, aber nicht so, wie sie in einem Gen aufeinanderfolgen.");
+    if (!pl.stopp && teile.length) li("Die Polymerase ist bis zum Ende der DNA gelaufen.");
+    box.appendChild(absatz((teile.length ? "Das ist nicht das vollständige Transkript dieses Gens. " : "") + "Ordne die Bausteine anders an, dann beginnt die Transkription von neuem."));
     if (ul.children.length) box.appendChild(ul);
   }
   box.hidden = false;
   $("erklaerung").hidden = !pl.ok;
-  status(pl.ok ? "Fertig: Das Gen wurde vollständig abgeschrieben." : rna.length ? "Fertig: Es ist eine RNA entstanden." : "Fertig: Es ist keine RNA entstanden.");
+  chips(teile.length ? 4 : 3.5);
+  $("spleissen").disabled = !teile.length;
+  status(pl.ok ? "Fertig: Das Gen wurde vollständig abgeschrieben. Klicke auf „4 Spleißen“, um die Introns herauszuschneiden."
+    : teile.length ? "Fertig: Es ist eine RNA entstanden. Mit „4 Spleißen“ kannst du sie weiter bearbeiten." : "Fertig: Es ist keine RNA entstanden.");
+}
+
+/* ---------- Spleißen (Schritt 4) ---------- */
+function spleissStart(){
+  const pl = R.plan; if (!pl || R.phase !== "fertig" || !pl.teile.length) return;
+  const sp = GEN.spleisse(gen, pl.teile), bel = R.belegung;
+  const liste = sp.entfernt.map(id => ({id, slot: bel.indexOf(id), len: BAU[id].seq.length, breite: BAU[id].seq.length * BW + GAP})).sort((a, b) => a.slot - b.slot);
+  R.sp = {liste, abg: sp.abgespalten, rest: sp.rest, j: 0, cl: 0};
+  $("spleissen").disabled = true; chips(4);
+  R.letzte = performance.now(); R.t = 0;
+  if (!liste.length && sp.abgespalten === null){ R.phase = "spl-fertig"; spleissFertig(); return; }
+  R.phase = "spl";
+  status(liste.length ? TEXTE.spl : TEXTE.spl3);
+  rafId = requestAnimationFrame(bild);
+}
+// Fortschritt des j-ten Introns: Spleißosom, Schlinge, Herausfallen, Zusammenrücken
+function fortschritt(j){
+  const S = R.sp;
+  if (j < S.j) return {sp: 0, schlinge: 1, fall: 1, rueck: 1};
+  if (j > S.j || R.phase !== "spl") return {sp: 0, schlinge: 0, fall: 0, rueck: 0};
+  const x = R.t / T.spl;
+  return {sp: glatt(x / 0.2) * (1 - glatt((x - 0.6) / 0.2)), schlinge: glatt((x - 0.2) / 0.35), fall: glatt((x - 0.6) / 0.4), rueck: glatt((x - 0.6) / 0.4)};
+}
+function spleissSchritt(){
+  const S = R.sp;
+  if (S.j < S.liste.length){
+    if (R.t >= T.spl){ S.j++; R.t = 0; }
+  } else {
+    if (S.abg !== null && S.cl === 0 && R.t === 0) status(TEXTE.spl3);
+    S.cl = S.abg === null ? 1 : glatt(R.t / T.spl3);
+    if (S.abg === null || R.t >= T.spl3){ S.cl = 1; R.phase = "spl-fertig"; }
+  }
+}
+function zeichneSpleissen(){
+  const S = R.sp, pl = R.plan, bel = R.belegung; if (!S) return;
+  if (S.j >= S.liste.length && S.abg !== null && R.t < 1) status(TEXTE.spl3);
+  const pr = S.liste.map((e, j) => fortschritt(j));
+  let spX = null;
+  for (let g = pl.von; g < pl.bis; g++){
+    const s = K.slotOf[g], i = K.idx[g], id = bel[s], z = rnaZellen[g];
+    let verschiebung = 0;
+    S.liste.forEach((e, j) => { if (e.slot < s) verschiebung += e.breite * pr[j].rueck; });
+    let x = xc(g) - BW / 2 - verschiebung, y = RNA_Y, op = 1;
+    const j = S.liste.findIndex(e => e.slot === s);
+    if (j >= 0){                                   // dieses Intron wird zur Schlinge und fällt weg
+      const p = pr[j], len = S.liste[j].len, cx = K.lay[s].x + K.lay[s].w / 2 - verschiebung, w = 2 * Math.PI * (i + 0.5) / len - Math.PI / 2;
+      const r = Math.max(24, len * (BW + 3) / (2 * Math.PI));
+      x = lerp(x, cx + r * Math.cos(w) - BW / 2, p.schlinge);
+      y = lerp(y, RNA_Y - 18 - r + r * Math.sin(w), p.schlinge) + 100 * p.fall;
+      op = 1 - p.fall;
+      if (p.sp > 0 && i === 0) spX = {cx, w: K.lay[s].w, a: p.sp};
+    } else if (id === S.abg){ y = RNA_Y + 100 * S.cl; op = 1 - S.cl; }
+    z.g.setAttribute("transform", `translate(${x} ${y})`); z.g.setAttribute("opacity", op);
+  }
+  // Spleißosom über dem Intron
+  if (spX){
+    const r = spleissG.firstChild, t = spleissG.lastChild;
+    r.setAttribute("x", spX.cx - spX.w / 2 - 6); r.setAttribute("width", spX.w + 12); r.setAttribute("y", RNA_Y - 22); r.setAttribute("height", CH + 44);
+    t.setAttribute("x", spX.cx); t.setAttribute("y", RNA_Y + CH + 36);
+    spleissG.setAttribute("opacity", spX.a);
+  } else spleissG.setAttribute("opacity", 0);
+}
+function spleissFertig(){
+  const S = R.sp, pl = R.plan, bel = R.belegung;
+  // Endlage: die übrigen Abschnitte rücken zusammen, Introns und Terminator-Stück sind weg
+  R.phase = "spl-fertig"; S.j = S.liste.length; S.cl = 1; R.t = 0;
+  zeichneSpleissen();
+  let rechts = null;
+  for (let g = pl.von; g < pl.bis; g++){
+    const z = rnaZellen[g], id = bel[K.slotOf[g]];
+    if (S.liste.some(e => e.id === id) || id === S.abg){ z.g.style.display = "none"; continue; }
+    const m = z.g.getAttribute("transform").match(/translate\(([-\d.]+) /); rechts = +m[1] + BW;
+  }
+  if (rechts !== null) rna3.setAttribute("x", rechts + 4);
+  spleissG.setAttribute("opacity", 0);
+  chips(5);
+  const box = $("spleissErgebnis"); box.replaceChildren();
+  const h = document.createElement("h3"); h.textContent = "Nach dem Spleißen"; box.appendChild(h);
+  const ok = pl.ok && S.rest.every(id => BAU[id].key === "exon");
+  const exons = S.rest.filter(id => BAU[id].key === "exon"), introns = S.rest.filter(id => BAU[id].key === "intron");
+  if (!S.rest.length) box.appendChild(absatz("Es ist nichts übrig geblieben."));
+  else {
+    box.appendChild(absatz(ok ? "Die reife mRNA (5' → 3'):" : "Das Transkript sieht jetzt so aus (5' → 3'):"));
+    box.appendChild(teileZeile(S.rest));
+    if (ok){
+      const p = document.createElement("p"); p.className = "gut";
+      p.textContent = "Geschafft: Alle Introns sind herausgeschnitten, die " + exons.length + " Exons sind verbunden. Das ist die reife mRNA (die Kappe und der Poly(A)-Schwanz fehlen hier). Sie lautet: ";
+      const c = document.createElement("code"); c.className = "mrna"; c.textContent = u(exons.map(id => BAU[id].seq).join("")); p.appendChild(c);
+      box.appendChild(p);
+      status("Fertig: Aus der pre-mRNA ist die reife mRNA geworden.");
+    }
+  }
+  if (!ok){
+    const ul = document.createElement("ul"), li = t => { const x = document.createElement("li"); x.textContent = t; ul.appendChild(x); };
+    if (S.liste.length) li("Herausgeschnitten wurde: " + nenne(S.liste.map(e => e.id)) + ".");
+    else li("Das Spleißosom hat kein Intron gefunden, das auf beiden Seiten ein Exon hat.");
+    if (introns.length) li("Im Ergebnis blieb stehen: " + nenne(introns) + ".");
+    li("Das Ergebnis enthält " + exons.length + " von " + gen.k + " Exons.");
+    box.appendChild(absatz("Das ist noch keine vollständige reife mRNA. Ändere die Anordnung der Bausteine und versuche es noch einmal."));
+    box.appendChild(ul);
+    status("Fertig: Das Ergebnis ist keine vollständige reife mRNA.");
+  }
+  box.hidden = false;
 }
 
 /* ---------- Farben bei Wechsel von hell und dunkel ---------- */
@@ -749,7 +923,7 @@ if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListen
 new MutationObserver(alleFarben).observe(document.documentElement, {attributes: true, attributeFilter: ["data-theme"]});
 
 /* ---------- Start ---------- */
-mischen(); ruhelage(); zeige(); statusLeer();
+aufbauen();
 })();
 </script>
 </body>
