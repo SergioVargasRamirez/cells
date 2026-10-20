@@ -81,7 +81,9 @@ button:focus-visible,input:focus-visible,summary:focus-visible,.stein:focus-visi
 .phasen li.knopf{padding:0}
 .phasen li button{font:inherit;font-weight:600;color:inherit;background:none;border:0;border-radius:999px;display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 6px;cursor:pointer}
 .phasen li button[disabled]{cursor:default}
-.phasen li.aktiv button:not([disabled]){box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+.phasen li.aktiv button:not([disabled]){background:color-mix(in srgb,var(--accent) 14%,transparent);animation:puls 1.3s ease-out infinite}
+@keyframes puls{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 60%,transparent)}70%,100%{box-shadow:0 0 0 9px color-mix(in srgb,var(--accent) 0%,transparent)}}
+@media (prefers-reduced-motion: reduce){.phasen li.aktiv button:not([disabled]){animation:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 35%,transparent)}}
 .phasen li button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .phasen li.aktiv{border-color:var(--accent);color:var(--ink)}
 .phasen li.aktiv .nr,.phasen li.fertig .nr{background:var(--accent);color:var(--accent-ink)}
@@ -229,6 +231,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <li data-p="2"><span class="nr">2</span>Elongation</li>
         <li data-p="3"><span class="nr">3</span>Termination</li>
         <li data-p="4" class="knopf"><button type="button" id="spleissen" disabled title="Nach der Transkription: die Introns herausschneiden"><span class="nr">4</span>Spleißen</button></li>
+        <li data-p="5" class="knopf"><button type="button" id="polya" disabled title="Nach dem Spleißen: den Poly(A)-Schwanz anfügen"><span class="nr">5</span>Poly(A)</button></li>
       </ol>
       <div class="status" id="status" aria-live="polite">Lege alle Bausteine auf die Plätze der DNA.</div>
       <div class="legende" aria-label="Legende">
@@ -236,7 +239,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <span><i style="background:var(--accent)"></i>RNA-Polymerase</span>
         <span><i style="background:var(--c-exon)"></i>Exon</span>
         <span><i style="background:var(--c-intron)"></i>Intron</span>
-        <span><i style="background:var(--c-sp)"></i>Spleißosom</span>
+        <span><i style="background:var(--c-sp)"></i>Spleißosom, Poly(A)-Polymerase</span>
         <span><i style="background:linear-gradient(90deg,#2f5bea,#009e73,#dcae1c)"></i>Basen (wie auf den anderen Seiten)</span>
       </div>
       <div class="karte" id="ergebnis" hidden></div>
@@ -263,7 +266,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       <li>Die Polymerase liest den unteren Strang (Matrize) von 3' nach 5' und baut die RNA in 5'→3'-Richtung auf. Die RNA ist deshalb im Aufbau gleich dem oberen Strang, mit U statt T. In der Zelle bleibt die RNA nur etwa neun Basen lang am Matrizenstrang; hier ist es genauso, sie löst sich schon während der Synthese ab.</li>
       <li>Die Richtung ist festgelegt: Die Polymerase läuft immer von links nach rechts. In der Zelle liegen Gene auf beiden Strängen, die Polymerase richtet sich nach der Ausrichtung des Promotors.</li>
       \1\n      <li>Zwei Exons oder zwei Introns lassen sich nicht direkt nebeneinander legen: Ein Baustein, der dort landen würde, bleibt ohne weiteren Hinweis, wo er war. In einem Gen werden Exons immer durch ein Intron getrennt, und zwei aufeinanderfolgende Introns wären ein einziges.</li>
-      <li>Das Spleißen ist vereinfacht: Ein Intron wird herausgeschnitten, wenn davor und dahinter ein Exon liegt. Das Spleißosom erkennt Introns in der Zelle an GU am 5'-Ende, AG am 3'-Ende und einer Verzweigungsstelle (ein Adenin) weiter innen; das Intron wird als Schlinge (Lasso) frei. Hier wird nur der Rahmen GU…AG gezeigt, und alle Introns werden nacheinander entfernt. Alternatives Spleißen, bei dem Exons weggelassen werden, kommt nicht vor. Das Stück am 3'-Ende (Terminator) wird beim Spleißen mit abgespalten; in der Zelle geschieht die 3'-Spaltung und die Anfügung des Poly(A)-Schwanzes mit eigenen Faktoren.</li>
+      <li>Das Spleißen ist vereinfacht: Ein Intron wird herausgeschnitten, wenn davor und dahinter ein Exon liegt. Das Spleißosom erkennt Introns in der Zelle an GU am 5'-Ende, AG am 3'-Ende und einer Verzweigungsstelle (ein Adenin) weiter innen; das Intron wird als Schlinge (Lasso) frei. Hier wird nur der Rahmen GU…AG gezeigt, und alle Introns werden nacheinander entfernt. Alternatives Spleißen, bei dem Exons weggelassen werden, kommt nicht vor. Das Stück am 3'-Ende (Terminator) wird hier zusammen mit dem Spleißen abgespalten. In der Zelle erkennt ein Faktorkomplex das Signal AAUAAA, spaltet die RNA etwa 10 bis 30 Nucleotide dahinter, und die Poly(A)-Polymerase hängt dann etwa 200 Adenine an (hier acht). Die 5'-Kappe (7-Methylguanosin) fehlt in diesem Modell; Kappe, Spleißen und Polyadenylierung laufen in der Zelle schon während der Transkription ab.</li>
       <li>Geschwindigkeit und Dauer sind nicht maßstäblich: Die Polymerase baut in der Zelle etwa 20 bis 80 Nucleotide pro Sekunde ein, die Anlagerung der Faktoren dauert deutlich länger als hier gezeigt.</li>
     </ul>
   </details>
@@ -441,7 +444,8 @@ const svg = $("buehne");
 const ebeneHinten = el("g", {}, svg), ebeneSteine = el("g", {}, svg), ebeneAnim = el("g", {}, svg), ebeneOben = el("g", {}, svg);
 let Z = {heim: [], wo: [], sel: null}, TL = [];   // heim[id]: Stelle im Vorrat, wo[id]: Platz auf der DNA oder -1
 let steine = [], plaetze = [], heime = [], rnaZellen = [], rnaTicks = [], offen = new Float32Array(0);
-let faktoren, poly, spleissG, rna5, rna3;
+let faktoren, poly, spleissG, paG, paZellen = [], rna5, rna3;
+const NPA = 8;       // Länge des Poly(A)-Schwanzes im Modell
 const R = {phase: "leer", t: 0, plan: null, pos: 0, open: 0, rel: 0, pa: 0, py: 0, tf: 0, tfUp: 0, ende: 0, belegung: null, letzte: 0, sp: null};
 let wartend = null, rafId = 0;
 
@@ -524,6 +528,10 @@ function aufbauen(){
   el("rect", {class: "form", rx: 30}, poly); el("text", {"text-anchor": "middle"}, poly).textContent = "RNA-Polymerase";
   spleissG = el("g", {class: "spleiss", opacity: 0}, ebeneOben);
   el("rect", {class: "form", rx: 12}, spleissG); el("text", {"text-anchor": "middle"}, spleissG).textContent = "Spleißosom";
+  paZellen = [];
+  for (let i = 0; i < NPA; i++){ const z = zelle(ebeneAnim, 0, 0, "A", "rna-zelle"); z.g.style.display = "none"; paZellen.push(z); }
+  paG = el("g", {class: "spleiss", opacity: 0}, ebeneOben);
+  el("rect", {class: "form", rx: 12}, paG); el("text", {"text-anchor": "middle"}, paG).textContent = "Poly(A)-Polymerase";
 
   ruhelage(); zeige(); statusLeer();
 }
@@ -633,6 +641,7 @@ $("zurueck").addEventListener("click", () => { Z.wo = Array(N).fill(-1); aenderu
 $("aufnehmen").addEventListener("click", klickVorrat);
 $("nochmal").addEventListener("click", () => { if (voll()) start(); });
 $("spleissen").addEventListener("click", spleissStart);
+$("polya").addEventListener("click", polyaStart);
 
 /* ---------- Ablauf der Transkription ---------- */
 const TEXTE = {
@@ -644,10 +653,11 @@ const TEXTE = {
   elong: "Elongation: Die RNA-Polymerase liest den unteren Strang (Matrize) von 3' nach 5' und baut die RNA von 5' nach 3' auf. Hinter ihr schließt sich die DNA wieder.",
   rel: "Termination: Die Polymerase löst sich von der DNA und lässt die RNA los.",
   spl: "Spleißen: Das Spleißosom erkennt am Anfang eines Introns GU und am Ende AG, schneidet das Intron als Schlinge heraus und verbindet die beiden Exons.",
-  spl3: "Spleißen: Das Stück am 3'-Ende hinter dem letzten Exon wird abgespalten."
+  spl3: "Spleißen: Das Stück am 3'-Ende hinter dem letzten Exon wird abgespalten.",
+  pa: "Poly(A)-Schwanz: Die Poly(A)-Polymerase hängt am 3'-Ende nacheinander Adenin-Nucleotide an (hier acht, in der Zelle etwa 200). Der Schwanz schützt die mRNA vor Abbau und hilft beim Export aus dem Kern und bei der Translation."
 };
 const status = t => { $("status").textContent = t; };
-const statusLeer = () => { status(voll() ? TEXTE.voll : TEXTE.leer); chips(0); $("ergebnis").hidden = true; $("spleissErgebnis").hidden = true; $("erklaerung").hidden = true; $("spleissen").disabled = true; };
+const statusLeer = () => { status(voll() ? TEXTE.voll : TEXTE.leer); chips(0); $("ergebnis").hidden = true; $("spleissErgebnis").hidden = true; $("erklaerung").hidden = true; $("spleissen").disabled = true; $("polya").disabled = true; };
 function chips(n){ document.querySelectorAll("#phasen li").forEach(li => { const p = +li.dataset.p; li.classList.toggle("aktiv", p === n); li.classList.toggle("fertig", p < n); }); }
 
 function stoppe(){
@@ -659,7 +669,8 @@ function abbrechen(){
   rnaZellen.forEach(z => { z.g.style.display = "none"; z.g.setAttribute("opacity", 1); }); rnaTicks.forEach(t => t.setAttribute("opacity", 0));
   rna5.textContent = rna3.textContent = "";
   faktoren.setAttribute("opacity", 0); poly.setAttribute("opacity", 0); spleissG.setAttribute("opacity", 0);
-  $("spleissen").disabled = true;
+  $("spleissen").disabled = true; $("polya").disabled = true;
+  paZellen.forEach(z => { z.g.style.display = "none"; z.g.setAttribute("opacity", 1); }); paG.setAttribute("opacity", 0);
   ruhelage();
 }
 
@@ -712,7 +723,7 @@ function start(){
 }
 
 const REDUZIERT = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches ? 3 : 1;
-const T = {tf: 900, pol: 1100, start: 700, halt: 900, rel: 1000, spl: 2400, spl3: 1100}, RATE = 8;   // Dauer in Millisekunden bei Tempo 1, Basen je Sekunde
+const T = {tf: 900, pol: 1100, start: 700, halt: 900, rel: 1000, spl: 2400, spl3: 1100, pa: 2000}, RATE = 8;   // Dauer in Millisekunden bei Tempo 1, Basen je Sekunde
 function naechste(phase, text, chip){ R.phase = phase; R.t = 0; if (text) status(text); if (chip) chips(chip); }
 
 function bild(now){
@@ -750,10 +761,15 @@ function bild(now){
     case "spl":
       spleissSchritt();
       break;
+    case "pa":
+      if (R.t >= T.pa) R.phase = "pa-fertig";
+      break;
   }
-  if (R.phase === "spl") zeichneSpleissen(); else zeichne();
+  if (R.phase === "spl") zeichneSpleissen(); else if (R.phase === "pa") zeichnePolyA();
+  else if (R.phase !== "spl-fertig" && R.phase !== "pa-fertig") zeichne();
   if (R.phase === "fertig"){ fertig(); return; }
   if (R.phase === "spl-fertig"){ spleissFertig(); return; }
+  if (R.phase === "pa-fertig"){ polyaFertig(); return; }
   rafId = requestAnimationFrame(bild);
 }
 
@@ -793,7 +809,7 @@ function zeichne(){
 
 /* ---------- Ergebnis der Transkription ---------- */
 // Zeile aus Abschnitten (Name, Sequenz als RNA, Farbband nach Typ)
-function teileZeile(ids){
+function teileZeile(ids, schwanz){
   const zeile = document.createElement("div"); zeile.className = "rnazeile";
   const e5 = document.createElement("span"); e5.className = "rnaende"; e5.textContent = "5'"; zeile.appendChild(e5);
   ids.forEach(id => {
@@ -801,6 +817,11 @@ function teileZeile(ids){
     const k = document.createElement("small"); k.textContent = BAU[id].name; const c = document.createElement("code"); c.textContent = u(BAU[id].seq);
     t.append(k, c); zeile.appendChild(t);
   });
+  if (schwanz){
+    const t = document.createElement("span"); t.className = "rnateil"; t.style.setProperty("--c", "var(--muted)");
+    const k = document.createElement("small"); k.textContent = "Poly(A)"; const c = document.createElement("code"); c.textContent = "A".repeat(schwanz);
+    t.append(k, c); zeile.appendChild(t);
+  }
   const e3 = document.createElement("span"); e3.className = "rnaende"; e3.textContent = "3'"; zeile.appendChild(e3);
   return zeile;
 }
@@ -860,16 +881,17 @@ function fortschritt(j){
 function spleissSchritt(){
   const S = R.sp;
   if (S.j < S.liste.length){
-    if (R.t >= T.spl){ S.j++; R.t = 0; }
+    if (R.t >= T.spl){
+      S.j++; R.t = 0;
+      if (S.j >= S.liste.length){ if (S.abg !== null) status(TEXTE.spl3); else R.phase = "spl-fertig"; }
+    }
   } else {
-    if (S.abg !== null && S.cl === 0 && R.t === 0) status(TEXTE.spl3);
-    S.cl = S.abg === null ? 1 : glatt(R.t / T.spl3);
-    if (S.abg === null || R.t >= T.spl3){ S.cl = 1; R.phase = "spl-fertig"; }
+    S.cl = glatt(R.t / T.spl3);
+    if (R.t >= T.spl3) R.phase = "spl-fertig";
   }
 }
 function zeichneSpleissen(){
   const S = R.sp, pl = R.plan, bel = R.belegung; if (!S) return;
-  if (S.j >= S.liste.length && S.abg !== null && R.t < 1) status(TEXTE.spl3);
   const pr = S.liste.map((e, j) => fortschritt(j));
   let spX = null;
   for (let g = pl.von; g < pl.bis; g++){
@@ -908,22 +930,24 @@ function spleissFertig(){
     const m = z.g.getAttribute("transform").match(/translate\(([-\d.]+) /); rechts = +m[1] + BW;
   }
   if (rechts !== null) rna3.setAttribute("x", rechts + 4);
+  R.rechts = rechts;
   spleissG.setAttribute("opacity", 0);
-  chips(5);
+  const mitSchwanz = S.rest.length > 0 && S.abg !== null;      // Poly(A) setzt ein gespaltenes 3'-Ende voraus
+  chips(mitSchwanz ? 5 : 5.5); $("polya").disabled = !mitSchwanz;
   const box = $("spleissErgebnis"); box.replaceChildren();
   const h = document.createElement("h3"); h.textContent = "Nach dem Spleißen"; box.appendChild(h);
   const ok = pl.ok && S.rest.every(id => BAU[id].key === "exon");
   const exons = S.rest.filter(id => BAU[id].key === "exon"), introns = S.rest.filter(id => BAU[id].key === "intron");
   if (!S.rest.length) box.appendChild(absatz("Es ist nichts übrig geblieben."));
   else {
-    box.appendChild(absatz(ok ? "Die reife mRNA (5' → 3'):" : "Das Transkript sieht jetzt so aus (5' → 3'):"));
+    box.appendChild(absatz(ok ? "Die gespleißte mRNA (5' → 3'):" : "Das Transkript sieht jetzt so aus (5' → 3'):"));
     box.appendChild(teileZeile(S.rest));
     if (ok){
       const p = document.createElement("p"); p.className = "gut";
-      p.textContent = "Geschafft: Alle Introns sind herausgeschnitten, die " + exons.length + " Exons sind verbunden. Das ist die reife mRNA (die Kappe und der Poly(A)-Schwanz fehlen hier). Sie lautet: ";
+      p.textContent = "Geschafft: Alle Introns sind herausgeschnitten, die " + exons.length + " Exons sind verbunden. Die gespleißte mRNA lautet: ";
       const c = document.createElement("code"); c.className = "mrna"; c.textContent = u(exons.map(id => BAU[id].seq).join("")); p.appendChild(c);
       box.appendChild(p);
-      status("Fertig: Aus der pre-mRNA ist die reife mRNA geworden.");
+      status("Fertig: Aus der pre-mRNA ist die gespleißte mRNA geworden." + (mitSchwanz ? " Klicke auf „5 Poly(A)“, um den Schwanz anzufügen." : ""));
     }
   }
   if (!ok){
@@ -932,9 +956,51 @@ function spleissFertig(){
     else li("Das Spleißosom hat kein Intron gefunden, das auf beiden Seiten ein Exon hat.");
     if (introns.length) li("Im Ergebnis blieb stehen: " + nenne(introns) + ".");
     li("Das Ergebnis enthält " + exons.length + " von " + gen.k + " Exons.");
-    box.appendChild(absatz("Das ist noch keine vollständige reife mRNA. Ändere die Anordnung der Bausteine und versuche es noch einmal."));
+    box.appendChild(absatz("Das ist noch keine vollständige mRNA. Ändere die Anordnung der Bausteine und versuche es noch einmal."));
     box.appendChild(ul);
-    status("Fertig: Das Ergebnis ist keine vollständige reife mRNA.");
+    status("Fertig: Das Ergebnis ist keine vollständige mRNA." + (mitSchwanz ? " Der Poly(A)-Schwanz lässt sich trotzdem anfügen." : ""));
+  }
+  box.hidden = false;
+}
+
+/* ---------- Poly(A)-Schwanz (Schritt 5) ---------- */
+function polyaStart(){
+  if (R.phase !== "spl-fertig" || R.rechts === null || R.rechts === undefined) return;
+  $("polya").disabled = true; chips(5);
+  R.phase = "pa"; R.t = 0; R.letzte = performance.now();
+  status(TEXTE.pa);
+  rafId = requestAnimationFrame(bild);
+}
+function zeichnePolyA(){
+  const x = R.t / T.pa, n = glatt(x) * NPA;
+  paZellen.forEach((z, i) => {
+    const a = clamp(n - i, 0, 1);
+    z.g.style.display = a > 0 ? "" : "none";
+    z.g.setAttribute("transform", `translate(${R.rechts + 3 + i * BW} ${RNA_Y - 12 * (1 - a)})`); z.g.setAttribute("opacity", a);
+  });
+  const r = paG.firstChild, t = paG.lastChild, breite = NPA * BW + 20;
+  r.setAttribute("x", R.rechts - 4); r.setAttribute("width", breite); r.setAttribute("y", RNA_Y - 22); r.setAttribute("height", CH + 44);
+  t.setAttribute("x", R.rechts - 4 + breite / 2); t.setAttribute("y", RNA_Y + CH + 36);
+  paG.setAttribute("opacity", glatt(x / 0.1) * (1 - glatt((x - 0.85) / 0.15)));
+}
+function polyaFertig(){
+  const S = R.sp, pl = R.plan;
+  R.phase = "pa-fertig"; R.t = T.pa; zeichnePolyA();
+  paZellen.forEach(z => { z.g.style.display = ""; z.g.setAttribute("opacity", 1); });
+  paG.setAttribute("opacity", 0);
+  rna3.setAttribute("x", R.rechts + 3 + NPA * BW + 4);
+  chips(6);
+  const ok = pl.ok && S.rest.every(id => BAU[id].key === "exon");
+  const box = $("spleissErgebnis"); box.replaceChildren();
+  const h = document.createElement("h3"); h.textContent = ok ? "Die reife mRNA" : "Nach dem Spleißen und Poly(A)"; box.appendChild(h);
+  box.appendChild(absatz(ok ? "So verlässt die mRNA den Zellkern (5' → 3', ohne Kappe):" : "Das Ergebnis (5' → 3'):"));
+  box.appendChild(teileZeile(S.rest, NPA));
+  if (ok){
+    box.appendChild(absatz("Geschafft: Aus dem Gen ist über Transkription, Spleißen und Poly(A)-Schwanz eine reife mRNA geworden. Die Kappe am 5'-Ende fehlt in diesem Modell.", "gut"));
+    status("Fertig: Die reife mRNA ist bereit für den Export aus dem Zellkern.");
+  } else {
+    box.appendChild(absatz("Der Schwanz sitzt am Ende, aber das Ergebnis ist nicht die vollständige mRNA dieses Gens. Ändere die Anordnung der Bausteine und versuche es noch einmal."));
+    status("Fertig: Der Poly(A)-Schwanz ist angefügt; das Ergebnis ist nicht die vollständige mRNA.");
   }
   box.hidden = false;
 }
@@ -942,7 +1008,7 @@ function spleissFertig(){
 /* ---------- Farben bei Wechsel von hell und dunkel ---------- */
 function alleFarben(){
   steine.forEach(st => { st.oben.forEach(faerbe); st.unten.forEach(faerbe); });
-  rnaZellen.forEach(faerbe);
+  rnaZellen.forEach(faerbe); paZellen.forEach(faerbe);
 }
 if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", alleFarben);
 new MutationObserver(alleFarben).observe(document.documentElement, {attributes: true, attributeFilter: ["data-theme"]});
