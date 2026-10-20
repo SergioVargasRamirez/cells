@@ -42,6 +42,25 @@ for (const k of [2, 3, 4]){
   }
 }
 
+// Nebeneinander: zwei Exons oder zwei Introns sind nicht erlaubt, leere Plätze trennen
+for (const k of [2, 3, 4]){
+  const g = G.erzeuge(Math.random, k), alle = perm(g.bausteine.map((b, i) => i));
+  const typ = id => g.bausteine[id].key;
+  const erlaubt = alle.filter(a => G.erlaubt(g, a));
+  pruefe(alle.filter(a => G.analysiere(g, a).ok).every(a => G.erlaubt(g, a)), `k=${k}: jede richtige Anordnung ist erlaubt`);
+  pruefe(erlaubt.every(a => a.every((id, s) => s === 0 || !(typ(id) === typ(a[s - 1]) && (typ(id) === "exon" || typ(id) === "intron")))), `k=${k}: erlaubte Anordnungen haben nie zwei gleiche Typen (Exon, Intron) nebeneinander`);
+  pruefe(erlaubt.length > 0 && erlaubt.length < alle.length, `k=${k}: ${erlaubt.length} von ${alle.length} Anordnungen sind erlaubt`);
+  const leer = Array(g.n).fill(null);
+  pruefe(G.erlaubt(g, leer), "leere DNA ist erlaubt");
+  const ex = g.bausteine.map((b, i) => i).filter(i => typ(i) === "exon");
+  const zwei = leer.slice(); zwei[0] = ex[0]; zwei[1] = ex[1];
+  const getrennt = leer.slice(); getrennt[0] = ex[0]; getrennt[2] = ex[1];
+  pruefe(!G.erlaubt(g, zwei) && G.erlaubt(g, getrennt), `k=${k}: zwei Exons nebeneinander nicht, mit Lücke schon`);
+  // Man kann aus jedem erlaubten Zustand eine richtige Anordnung erreichen (Bausteine lassen sich auch wieder wegnehmen); hier: jeder richtige Aufbau von links nach rechts bleibt erlaubt
+  const ok = alle.find(a => G.analysiere(g, a).ok);
+  for (let m = 0; m <= g.n; m++) pruefe(G.erlaubt(g, ok.map((id, s) => s < m ? id : null)), `k=${k}: Aufbau von links nach rechts bleibt erlaubt (${m} gelegt)`);
+}
+
 // Einzelfälle (k = 3: Bausteine 0 Promotor, 1 Exon, 2 Intron, 3 Exon, 4 Intron, 5 Exon, 6 Terminator)
 const g = G.erzeuge(Math.random, 3), a = p => G.analysiere(g, p);
 pruefe(a([1, 2, 3, 4, 5, 6, 0]).teile.length === 0 && a([1, 2, 3, 4, 5, 6, 0]).bisPlatz === 7, "Promotor ganz hinten: nichts abzuschreiben");

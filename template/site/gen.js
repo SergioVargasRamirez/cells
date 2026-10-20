@@ -19,6 +19,8 @@
 //               austauschbar, ebenso die Introns: das Gen ist das, was gebaut wurde)
 //   GEN.vorrat(gen, zufall)  Reihenfolge der Bausteine im Vorrat (Stelle → Nummer), zufällig; an keiner Stelle liegt ein
 //                            Baustein, dessen Typ an dieser Stelle auch im fertigen Gen stünde
+//   GEN.erlaubt(gen, platz)  false, wenn auf der DNA zwei Exons oder zwei Introns direkt nebeneinander lägen (das gibt es in einem
+//                            Gen nicht: Exons trennt immer ein Intron); platz[s] = Nummer oder null (leerer Platz)
 //   GEN.rna(gen, teile)      die Sequenz der genannten Bausteine als RNA (A, C, G, U)
 //   GEN.spleisse(gen, teile) was das Spleißen aus dem Transkript macht: {entfernt, abgespalten, rest}
 //        entfernt     Nummern der Introns, die auf beiden Seiten ein Exon haben und herausgeschnitten werden
@@ -56,6 +58,15 @@ const GEN = (() => {
       if (a.every((id, s) => gen.bausteine[id].key !== gen.soll[s])) return a.slice();
     }
   }
+  function erlaubt(gen, platz){
+    for (let s = 0; s < platz.length - 1; s++){
+      const a = platz[s], b = platz[s + 1];
+      if (a === null || b === null) continue;
+      const t = gen.bausteine[a].key;
+      if ((t === "exon" || t === "intron") && gen.bausteine[b].key === t) return false;
+    }
+    return true;
+  }
   const rna = (gen, teile) => teile.map(id => gen.bausteine[id].seq).join("").replace(/T/g, "U");
   function spleisse(gen, teile){
     const typ = id => gen.bausteine[id].key, entfernt = [], rest = [];
@@ -67,5 +78,5 @@ const GEN = (() => {
     });
     return {entfernt, abgespalten, rest};
   }
-  return {PROM, erzeuge, analysiere, vorrat, rna, spleisse};
+  return {PROM, erzeuge, analysiere, vorrat, erlaubt, rna, spleisse};
 })();

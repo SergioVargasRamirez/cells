@@ -262,7 +262,8 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       <li>Enhancer, die Gene aus großer Entfernung verstärken, und der Zustand des Chromatins (siehe „DNA-Verpackung“) fehlen. Ohne sie wird in der Zelle nur selten abgeschrieben.</li>
       <li>Die Polymerase liest den unteren Strang (Matrize) von 3' nach 5' und baut die RNA in 5'→3'-Richtung auf. Die RNA ist deshalb im Aufbau gleich dem oberen Strang, mit U statt T. In der Zelle bleibt die RNA nur etwa neun Basen lang am Matrizenstrang; hier ist es genauso, sie löst sich schon während der Synthese ab.</li>
       <li>Die Richtung ist festgelegt: Die Polymerase läuft immer von links nach rechts. In der Zelle liegen Gene auf beiden Strängen, die Polymerase richtet sich nach der Ausrichtung des Promotors.</li>
-      \1\n      <li>Das Spleißen ist vereinfacht: Ein Intron wird herausgeschnitten, wenn davor und dahinter ein Exon liegt. Das Spleißosom erkennt Introns in der Zelle an GU am 5'-Ende, AG am 3'-Ende und einer Verzweigungsstelle (ein Adenin) weiter innen; das Intron wird als Schlinge (Lasso) frei. Hier wird nur der Rahmen GU…AG gezeigt, und alle Introns werden nacheinander entfernt. Alternatives Spleißen, bei dem Exons weggelassen werden, kommt nicht vor. Das Stück am 3'-Ende (Terminator) wird beim Spleißen mit abgespalten; in der Zelle geschieht die 3'-Spaltung und die Anfügung des Poly(A)-Schwanzes mit eigenen Faktoren.</li>
+      \1\n      <li>Zwei Exons oder zwei Introns lassen sich nicht direkt nebeneinander legen: Ein Baustein, der dort landen würde, bleibt ohne weiteren Hinweis, wo er war. In einem Gen werden Exons immer durch ein Intron getrennt, und zwei aufeinanderfolgende Introns wären ein einziges.</li>
+      <li>Das Spleißen ist vereinfacht: Ein Intron wird herausgeschnitten, wenn davor und dahinter ein Exon liegt. Das Spleißosom erkennt Introns in der Zelle an GU am 5'-Ende, AG am 3'-Ende und einer Verzweigungsstelle (ein Adenin) weiter innen; das Intron wird als Schlinge (Lasso) frei. Hier wird nur der Rahmen GU…AG gezeigt, und alle Introns werden nacheinander entfernt. Alternatives Spleißen, bei dem Exons weggelassen werden, kommt nicht vor. Das Stück am 3'-Ende (Terminator) wird beim Spleißen mit abgespalten; in der Zelle geschieht die 3'-Spaltung und die Anfügung des Poly(A)-Schwanzes mit eigenen Faktoren.</li>
       <li>Geschwindigkeit und Dauer sind nicht maßstäblich: Die Polymerase baut in der Zelle etwa 20 bis 80 Nucleotide pro Sekunde ein, die Anlagerung der Faktoren dauert deutlich länger als hier gezeigt.</li>
     </ul>
   </details>
@@ -332,6 +333,8 @@ const PALETTE = (() => {
 //               austauschbar, ebenso die Introns: das Gen ist das, was gebaut wurde)
 //   GEN.vorrat(gen, zufall)  Reihenfolge der Bausteine im Vorrat (Stelle → Nummer), zufällig; an keiner Stelle liegt ein
 //                            Baustein, dessen Typ an dieser Stelle auch im fertigen Gen stünde
+//   GEN.erlaubt(gen, platz)  false, wenn auf der DNA zwei Exons oder zwei Introns direkt nebeneinander lägen (das gibt es in einem
+//                            Gen nicht: Exons trennt immer ein Intron); platz[s] = Nummer oder null (leerer Platz)
 //   GEN.rna(gen, teile)      die Sequenz der genannten Bausteine als RNA (A, C, G, U)
 //   GEN.spleisse(gen, teile) was das Spleißen aus dem Transkript macht: {entfernt, abgespalten, rest}
 //        entfernt     Nummern der Introns, die auf beiden Seiten ein Exon haben und herausgeschnitten werden
@@ -369,6 +372,15 @@ const GEN = (() => {
       if (a.every((id, s) => gen.bausteine[id].key !== gen.soll[s])) return a.slice();
     }
   }
+  function erlaubt(gen, platz){
+    for (let s = 0; s < platz.length - 1; s++){
+      const a = platz[s], b = platz[s + 1];
+      if (a === null || b === null) continue;
+      const t = gen.bausteine[a].key;
+      if ((t === "exon" || t === "intron") && gen.bausteine[b].key === t) return false;
+    }
+    return true;
+  }
   const rna = (gen, teile) => teile.map(id => gen.bausteine[id].seq).join("").replace(/T/g, "U");
   function spleisse(gen, teile){
     const typ = id => gen.bausteine[id].key, entfernt = [], rest = [];
@@ -380,7 +392,7 @@ const GEN = (() => {
     });
     return {entfernt, abgespalten, rest};
   }
-  return {PROM, erzeuge, analysiere, vorrat, rna, spleisse};
+  return {PROM, erzeuge, analysiere, vorrat, erlaubt, rna, spleisse};
 })();
 /*__/GEN__*/
 </script>
@@ -542,11 +554,20 @@ function zeige(){
 }
 
 /* ---------- Bausteine bewegen ---------- */
+// Eine Anordnung ist nur erlaubt, wenn nirgends zwei Exons oder zwei Introns nebeneinander liegen (ohne Erklärung: der Baustein bleibt, wo er war)
+function erlaubtWo(wo){
+  const bel = Array(N).fill(null); wo.forEach((s, id) => { if (s >= 0) bel[s] = id; });
+  return GEN.erlaubt(gen, bel);
+}
+function abweisen(){ status("Dort lässt sich dieser Baustein nicht ablegen."); }
 function verschiebe(id, s){          // Baustein id auf Platz s (-1 = in den Vorrat); ein dort liegender Baustein nimmt den alten Platz
   const alt = Z.wo[id], anderer = s >= 0 ? Z.wo.findIndex(x => x === s) : -1;
   if (alt === s) return false;
-  if (anderer >= 0) Z.wo[anderer] = alt;
-  Z.wo[id] = s;
+  const neu = Z.wo.slice();
+  if (anderer >= 0) neu[anderer] = alt;
+  neu[id] = s;
+  if (!erlaubtWo(neu)){ abweisen(); return false; }
+  Z.wo = neu;
   return true;
 }
 function aenderung(){ Z.sel = null; abbrechen(); zeige(); statusLeer(); if (voll()) wartend = setTimeout(start, 450); }
@@ -554,7 +575,11 @@ function klickStein(id){
   if (Z.sel === null) Z.sel = id;
   else if (Z.sel === id) Z.sel = null;
   else if (Z.wo[Z.sel] < 0 && Z.wo[id] < 0) Z.sel = id;
-  else { const a = Z.sel; [Z.wo[a], Z.wo[id]] = [Z.wo[id], Z.wo[a]]; return aenderung(); }
+  else {
+    const a = Z.sel, neu = Z.wo.slice(); [neu[a], neu[id]] = [neu[id], neu[a]];
+    if (!erlaubtWo(neu)){ abweisen(); Z.sel = null; zeige(); return; }
+    Z.wo = neu; return aenderung();
+  }
   zeige();
 }
 function klickPlatz(s){
