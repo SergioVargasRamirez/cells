@@ -25,6 +25,7 @@ Online: https://cells.biodatum.io · Schwesterprojekt für die Chemie:
 | `chromatin.html` | DNA-Verpackung und Zugänglichkeit: Verpackungsleiter, Nucleosom in 3D (1KX5), Chromatin umbauen mit Zeitraffer; Expertenmodus mit Histonmodifikationen und Transkriptionsfaktor | von Hand, Daten aus `scripts/chromatin/export_nucleosom.py` |
 | `rna-typen.html` | mRNA, tRNA, rRNA: Kleeblatt und 3D der Hefe-tRNA-Phe (1EHZ), Anticodon und Wackelpaarung (mit Aufgabe), Ribosom-Schema | von Hand, Daten aus `scripts/rna/export_trna.py` |
 | `proteinstruktur.html` | Von der Sequenz zur Faltung: Ubiquitin (1UBQ) in 3D, Primär-, Sekundär- und Tertiärstruktur, Cartoon, Faltung, hydrophober Kern | von Hand, Daten aus `scripts/protein/export_ubq.py` |
+| `gen-transkription.html` | Gen und Transkription: fünf Abschnitte eines Gens (Promotor, 5'-UTR, codierender Bereich, 3'-UTR, Terminator) in die richtige Reihenfolge bringen; danach schreibt die RNA-Polymerase ab (Initiation, Elongation, Termination), was hinter dem Promotor bis zum Terminator liegt | von Hand, Regel in `template/site/gen.js`, Test `scripts/transkription` |
 | `transkription.html` | Transkription: RNA an einer DNA-Vorlage aufbauen (NTPs, Hybrid-Helix in 3D) | wie `basenpaarung.html` |
 | `quellen.html` | Quellen und Danksagung, Mitmachen (`#mitmachen`) | von Hand |
 | `impressum.html` | Impressum, Haftungsausschluss, Lizenz, Einbetten | von Hand |

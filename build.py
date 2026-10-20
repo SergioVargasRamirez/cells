@@ -91,7 +91,7 @@ def sync_font_and_nav():
 
 SNIPPETS = [("PALETTE", "palette.js", "Farbtabelle"), ("NUC", "nuc-data.js", "Nukleotid-Daten"),
             ("HELIX", "helix.js", "Helix-Bau"), ("MOL3D", "mol3d.js", "3D-Ansicht"),
-            ("DNA2D", "dna2d.js", "Strukturformeln"), ("HELIX3D", "helix3d.js", "3D-Helix"), ("CODE", "code.js", "Genetischer Code"), ("PEPTID", "peptid.js", "Peptid-Geometrie"), ("CARTOON", "cartoon.js", "Cartoon"), ("UBQ", "ubq-data.js", "Ubiquitin-Daten"), ("TRNA", "trna-data.js", "tRNA-Daten"), ("NUC3D", "nucleosom-data.js", "Nucleosom-Daten"), ("PAARUNG", "paarung.js", "Basenpaarung")]
+            ("DNA2D", "dna2d.js", "Strukturformeln"), ("HELIX3D", "helix3d.js", "3D-Helix"), ("CODE", "code.js", "Genetischer Code"), ("PEPTID", "peptid.js", "Peptid-Geometrie"), ("CARTOON", "cartoon.js", "Cartoon"), ("UBQ", "ubq-data.js", "Ubiquitin-Daten"), ("TRNA", "trna-data.js", "tRNA-Daten"), ("NUC3D", "nucleosom-data.js", "Nucleosom-Daten"), ("PAARUNG", "paarung.js", "Basenpaarung"), ("GEN", "gen.js", "Gen-Bausteine")]
 
 
 def sync_snippet(tag, source, label):

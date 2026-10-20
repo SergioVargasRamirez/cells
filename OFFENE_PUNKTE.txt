@@ -120,6 +120,14 @@ M7 schmelztemperatur.html
 - [ ] Schmelztemperatur gegenlesen, Parameter prüfen (NN-Werte), Touch testen
 - [ ] Idee: Länge der DNA oder Salzgehalt variieren, Vergleich AT-reiche/GC-reiche Abschnitte
 
+M3b gen-transkription.html (19.10.2026, Wunsch: Transkription vereinfacht zeigen, Gen als Puzzle)
+- [x] Fünf Bausteine (Promotor, 5'-UTR, codierender Bereich, 3'-UTR, Terminator) auf fünf Plätze ziehen oder antippen; Vorrat nie in der Lösungsreihenfolge
+- [x] Sind alle Plätze belegt, läuft die Transkription von selbst: Faktoren an der TATA-Box, Polymerase, Blase, RNA wächst und löst sich ab, Terminator; Tempo-Regler, "Noch einmal"
+- [x] Regel (template/site/gen.js): abgeschrieben wird ab dem Ende des Promotors bis zum Ende des Terminators (ohne Terminator bis zum Ende der DNA); falsche Anordnungen zeigen nur, was abgeschrieben wurde, ohne Hinweis auf die Lösung; nur eine der 120 Anordnungen gilt als Gen (scripts/transkription/test_gen.js)
+- [x] Erklärung der Bausteine erscheint erst nach dem Erfolg
+- [ ] Gegenlesen (Texte, Terminator nach bakteriellem Vorbild, Eukaryoten-Terminierung nur im Modelltext), Touch testen
+- [ ] Ideen: Enhancer als sechster Baustein (wirkt von jedem Platz), Baustein umdrehbar (Richtung des Promotors), Introns, Expertenmodus mit Faktoren (TFIID, TFIIH ...), Verbindung zu rna-prozessierung.html (dasselbe Gen)
+
 M8 Später
 - [ ] polymerisation.html
 - [x] rna-typen.html: tRNA Kleeblatt + 3D (1EHZ), Wackelpaarung mit Aufgabe, Ribosom-Schema (offen: gegenlesen, Touch, rRNA nur als Text, Ribosomzeichnung verfeinern)
