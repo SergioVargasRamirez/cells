@@ -147,7 +147,7 @@ M3b gen-transkription.html (19.10.2026, Wunsch: Transkription vereinfacht zeigen
 M8 Später
 - [ ] polymerisation.html
 - [x] rna-typen.html: tRNA Kleeblatt + 3D (1EHZ), Wackelpaarung mit Aufgabe, Ribosom-Schema (offen: gegenlesen, Touch, rRNA nur als Text, Ribosomzeichnung verfeinern)
-- [ ] mutationen.html (Mutationsspiel)
+- [ ] mutationen.html (Mutationsspiel): geht in mutation-selektion.html auf (M11)
 - [ ] Reparatur (Desaminierung, Uracil/Thymin): eigene Seite, zurückgestellt
 
 M9 Wünsche vom 20.10.2026 (Sergio): vier neue Themen, jeweils eigene Seite
@@ -181,15 +181,13 @@ Räuber und Beute), "Biochemie" (Enzymkinetik; die Karte "Enzyme bei der Arbeit"
 M10 Lücken: Vorschläge von Claude (20.10.2026, noch nicht bestätigt, bitte streichen oder übernehmen)
 Themen, die im Biologieunterricht der Oberstufe üblich sind und hier noch fehlen oder nur als Karte vorkommen
 - [ ] Genregulation bei Bakterien: lac-Operon (Repressor, Lactose, Glucose, CAP), trp-Operon; schließt an Transkription an, und die Diauxie (zwei Zucker nacheinander) passt zu bakterienwachstum.html
-- [ ] Mutationen und Selektion (mutationen.html steht schon unter M8): stille, Missense-, Nonsense- und Rastermutation, Sichelzellanämie (HBB), danach Antibiotikaresistenz als Selektion
-- [ ] PCR (Primer, Zyklen, exponentielles Wachstum, Primer-Design mit der Schmelztemperatur-Seite) und Gelelektrophorese (Fragmentlängen, Restriktionsenzyme): klassische Werkzeuge, bauen direkt auf schmelztemperatur.html und chargaff.html auf
 - [ ] CRISPR-Cas9 (Leit-RNA, PAM, Schnitt, Reparatur durch NHEJ oder HDR); passt zur Reparatur-Seite unter M8
-- [ ] Zellbiologie fehlt ganz, obwohl das Projekt "cells" heißt: Aufbau der Zelle und Organellen, Membran und Transport (Diffusion, Osmose, Na+/K+-ATPase), Aktionspotential und Synapse, Zellzyklus, Mitose und Meiose (Crossing-over); Meiose ist die Brücke zu Erbgängen und Stammbäumen
+- [ ] Zellbiologie fehlt ganz, obwohl das Projekt "cells" heißt: Aufbau der Zelle und Organellen, Membran und Transport (Diffusion, Osmose, Na+/K+-ATPase), Aktionspotential und Synapse, Zellzyklus (Mitose und Meiose stehen unter M11)
 - [ ] Energiestoffwechsel: ATP, Glykolyse, Atmungskette, Photosynthese (Lichtreaktion, Calvin-Zyklus); verbindet sich mit der Enzymkinetik
-- [ ] Evolution und Populationsgenetik: Hardy-Weinberg, Gendrift (Zufall bei kleinen Populationen, Verbindung zu raeuber-beute.html), Selektion, Stammbaum aus Sequenzen (Karte "Sequenzen vergleichen" ist schon da)
+- [ ] Populationsgenetik und Stammbäume: Hardy-Weinberg (Ausgangspunkt für gendrift.html, siehe M11), Stammbaum aus Sequenzen (Karte "Sequenzen vergleichen" ist schon da)
 - [ ] Epidemiologie: SIR-Modell (Impfung, Herdenimmunität), nutzt dieselben ODE-Bausteine wie Räuber und Beute; Verbindung zu virus-kapsid.html
 - [ ] Immunologie: Antikörper und Antigen, klonale Selektion, Impfstoffe
-- [ ] Genomik: Gene finden (Leserahmen, Start- und Stopp-Codon), Sequenzen vergleichen und Alignment, Reads einem Genom zuordnen (Sequenzierung als Spiel)
+- [ ] Genomik: Gene finden (Leserahmen, Start- und Stopp-Codon), Sequenzen vergleichen und Alignment, Reads einem Genom zuordnen (Sequenzierung als Spiel; die Sanger-Methode steht unter M11)
 - [ ] Proteine: Quartärstruktur und Allosterie (Hämoglobin), Faltung und Chaperone
 Querschnitt und Qualität
 - [ ] Startseite aufräumen: Die Karten "Von der DNA zum Protein" und "Proteine falten" unter In Vorbereitung sind durch gen-transkription.html und proteinstruktur.html erledigt (ersetzen oder entfernen); neue Karten für M9 eintragen
@@ -200,6 +198,44 @@ Querschnitt und Qualität
 - [ ] Barrierefreiheit: Tastatur und Screenreader systematisch prüfen, Farbenblindheit der Palette (palette.js, steht noch offen), Schriftgrößen der Zeichnungen auf kleinen Bildschirmen (gen-transkription.html: Buchstaben bei vier Exons sehr klein)
 - [ ] Muster für Seiten mit Anfragen an fremde Server wiederverwenden (Zustimmung, Datenschutz-Abschnitt, Fehlerfall), falls weitere Dienste dazukommen
 - [ ] Englische Fassung (das Schwesterprojekt atoms ist deutsch; Entscheidung offen)
+
+M11 Bestätigt am 20.10.2026 (Sergio): acht weitere Themen (aus den Vorschlägen unter M10 übernommen)
+Gruppen im Menü (Vorschlag): "Vererbung und Zellteilung" (Mendel, Mitose, Meiose, Rekombination), "Evolution und Populationen" (Gendrift, Mutation und Selektion; dazu
+bakterienwachstum.html und raeuber-beute.html aus M9), "Labormethoden" (PCR und Gele, Sanger-Sequenzierung; dazu chargaff.html und schmelztemperatur.html).
+Gemeinsame Bausteine in template/site/ (Vorschlag):
+  - zufall.js: Zufallszahlen mit Startwert (?seed=...), eine Quelle für alle Seiten mit Zufall (Klasse bekommt dieselbe Aufgabe; siehe M10)
+  - chromosomen.js: Chromosomen zeichnen (Chromatiden, Zentromer, Gene und Allele als Marken, Spindel), für Mitose, Meiose, Rekombination und Mendel
+  - gel.js: Gelbahnen mit Banden (Wanderung ungefähr logarithmisch zur Länge, Leiter), für PCR und Gele und für Sanger
+  - populationen.js: Wright-Fisher- und individuenbasierte Modelle, für Gendrift, Selektion und später Räuber und Beute
+Vorschlag für die Reihenfolge: 1 Mendel (Karten "Erbgänge" und "Stammbäume" sind schon eingetragen), 2 Meiose, 3 Rekombination (braucht chromosomen.js und Meiose), 4 Mitose,
+5 Gendrift, 6 Mutation und Selektion, 7 PCR und Gele, 8 Sanger. Überall: Entdecken statt Vorsagen, Ergebnisse aus zufälligen, wiederholbaren Versuchen.
+- [ ] mendel.html: die Mendelschen Regeln (Uniformität, Spaltung, Unabhängigkeit)
+  - [ ] Gameten bilden und im Kreuzungsquadrat zusammensetzen (zum Ausfüllen); Versuch: Pflanzen kreuzen und Nachkommen zählen, die Zahlen schwanken zufällig und nähern sich mit vielen Kreuzungen 3:1 und 9:3:3:1 (Verhältnisse sollen aus den Zahlen abgeleitet werden, nicht vorgegeben), Chi-Quadrat-Test im Expertenmodus
+  - [ ] Monohybrid und dihybrid, Rückkreuzung und Testkreuzung, unvollständige Dominanz und Kodominanz (Blutgruppen), gekoppelte Gene als Ausnahme von der dritten Regel (Verbindung zu rekombination.html)
+  - [ ] Verbindung zu den Stammbäumen (Erbgang aus dem Stammbaum bestimmen) und zu meiose.html (Gametenbildung als Grund für die Regeln)
+- [ ] mitose.html: Zellzyklus und Mitose
+  - [ ] Zellzyklus mit G1, S, G2 und M; Chromosomen und Chromatiden, Spindel; Phasen Pro-, Meta-, Ana- und Telophase; Aufgaben: Phasen ordnen und schematische Zellen bestimmen, DNA-Gehalt je Zelle als Kurve (2C, 4C, 2C)
+  - [ ] Verbindung: S-Phase und Replikation (basenpaarung.html), Kontrollpunkte und Krebs in Kürze
+- [ ] meiose.html: Meiose
+  - [ ] Reduktion von 2n auf n, Meiose I und II, Paarung der homologen Chromosomen, Tetraden und Chiasmata; unabhängige Verteilung (2^n Kombinationen, beim Menschen etwa 8 Millionen allein daraus; Wert prüfen); Vergleich mit der Mitose
+  - [ ] Gameten zählen führt zur dritten Mendelschen Regel; Erweiterung: Fehlverteilung (Non-Disjunktion, Trisomie 21)
+- [ ] rekombination.html: Crossing-over und Genkarten
+  - [ ] Crossing-over in der Meiose I, parentale gegen rekombinante Gameten, Kopplung; Testkreuzung mit Auszählung der Nachkommen (simulierte Zahlen, nicht echte Daten), Rekombinationshäufigkeit gibt den Abstand in Centimorgan, daraus eine Genkarte mit drei Genen (Morgan)
+  - [ ] Expertenmodus: Doppel-Crossing-over und Interferenz; Verbindung zu mendel.html (gekoppelte Gene) und meiose.html (derselbe Chromosomenbaustein)
+- [ ] gendrift.html: genetische Drift
+  - [ ] Wright-Fisher-Modell: N Individuen, zwei Allele, jede Generation wird zufällig gezogen; viele Läufe nebeneinander (Spaghetti-Diagramm), Allele gehen verloren oder werden fixiert; Einfluss der Populationsgröße, Flaschenhals und Gründereffekt; die Regel (je kleiner N, desto schneller; mittlere Zeit bis zur Fixierung etwa 4N Generationen) soll gefunden werden
+  - [ ] Vergleich mit Selektion (Schieberegler s), Heterozygotie nimmt ab; Verbindung zu raeuber-beute.html (kleine Bestände sterben aus) und zu Hardy-Weinberg (M10)
+- [ ] mutation-selektion.html: Mutation mit Selektion (führt mutationen.html aus M8 mit)
+  - [ ] Zufällige Mutationen in einer wachsenden Population (Bakterien oder Farbvarianten), die Umwelt (Antibiotikum, Räuber) selektiert; Mutationsrate, Fitness und Selektionskoeffizient, dominante gegen rezessive Allele; Heterozygotenvorteil (Sichelzellallel und Malaria) als zweites Szenario
+  - [ ] Luria-Delbrück-Fluktuationstest als Entdeckungsversuch: viele parallele Kulturen, resistente Kolonien zählen; die Streuung ist größer als bei einer Poisson-Verteilung, also entstehen Mutationen vor der Selektion und nicht erst durch sie
+  - [ ] Punktmutationen und ihre Folgen für das Protein (stumm, Missense, Nonsense, Rastermutation) mit dem Codon-Generator und der Translation aus gen-transkription.html; Verbindung zu bakterienwachstum.html (Resistenz)
+- [ ] pcr-gel.html (oder zwei Seiten: pcr.html und gelelektrophorese.html): PCR und Gele
+  - [ ] PCR: Denaturieren (etwa 95 Grad), Anlagern der Primer (Temperatur wählen, Berechnung wie in schmelztemperatur.html: zu heiß gibt kein Produkt, zu kalt gibt unspezifische Produkte), Verlängern (etwa 72 Grad, Taq-Polymerase); Zyklenzahl und exponentielles Wachstum (2^n, Plateau am Ende); Primer-Design (Länge, GC-Gehalt, Schmelztemperatur, Dimere)
+  - [ ] Gel: Fragmente laufen nach ihrer Länge zur Anode, Leiter zum Ablesen; Restriktionsverdau (Schnittstellen auf einer Sequenz, Fragmentlängen, Mutation verändert das Muster, RFLP); Aufgabe: Fragmentlängen ablesen und die Sequenz oder das Genotyp-Muster bestimmen; Ausblick genetischer Fingerabdruck
+  - [ ] Gemeinsamer Baustein gel.js; Verbindung: exponentielles Wachstum wie bei bakterienwachstum.html
+- [ ] sanger.html: Sanger-Sequenzierung
+  - [ ] Kettenabbruch durch Didesoxynucleotide (ddNTP: kein 3'-OH, daher keine weitere Verknüpfung; Verbindung zu dna-rna.html und basenpaarung.html), vier Ansätze oder vier Fluoreszenzfarben; die Fragmente werden nach Länge getrennt (Gel oder Kapillare)
+  - [ ] Sequenz aus dem Bandenmuster lesen (Gel mit vier Bahnen und Elektropherogramm mit Peaks); Aufgabe: eine unbekannte Sequenz ablesen, Qualität nimmt am Ende ab (Phred-Wert), überlagerte Peaks; Verbindung zu PCR (Matrize und Primer), Ausblick Sequenzierung der nächsten Generation und Genomik (Reads, siehe M10)
 
 Für jede neue Seite
 - [ ] Menü (template/site/nav.html), Karte in index.html, quellen.html, README-Tabelle, python3 build.py
