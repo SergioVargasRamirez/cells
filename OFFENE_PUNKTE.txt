@@ -150,6 +150,57 @@ M8 Später
 - [ ] mutationen.html (Mutationsspiel)
 - [ ] Reparatur (Desaminierung, Uracil/Thymin): eigene Seite, zurückgestellt
 
+M9 Wünsche vom 20.10.2026 (Sergio): vier neue Themen, jeweils eigene Seite
+Entscheidung (Vorschlag): Vier getrennte Seiten, weil jede ein eigenes Modell und eine eigene Aufgabe hat. Gemeinsam nutzen sie neue Bausteine in
+template/site/ (wie code.js und paarung.js): ode.js (kleiner Integrator, Runge-Kutta 4, feste Schrittweite) und diagramm.js (Kurven mit linearer oder
+logarithmischer Achse, Phasenraum, Messpunkte mit Rauschen). Neue Themengruppen im Menü und auf der Startseite: "Ökologie und Populationen" (Bakterienwachstum,
+Räuber und Beute), "Biochemie" (Enzymkinetik; die Karte "Enzyme bei der Arbeit" gibt es schon), "Viren" (Kapside). Reihenfolge nach Aufwand und Nutzen: 1 Enzymkinetik,
+2 Bakterienwachstum, 3 Räuber und Beute, 4 Kapside (braucht Daten und eine 3D-Ansicht). Wie auf den anderen Seiten: Aufgaben als Entdecken, die Regeln nicht verraten.
+
+- [ ] bakterienwachstum.html: Wachstum mit und ohne Antibiotikum, unbegrenzte gegen begrenzte Ressourcen
+  - [ ] Unbegrenzt: exponentiell, Verdopplungszeit td, N = N0 * 2^(t/td); begrenzt: logistisch oder mit Nährstoffverbrauch (Monod); die Wachstumskurve zeigt Anlaufphase, exponentielle Phase, stationäre Phase, Absterbephase; Umschalter lineare gegen halblogarithmische Achse
+  - [ ] Antibiotikum: bakteriostatisch (stoppt das Wachstum) gegen bakterizid (tötet), Dosis-Wirkung und minimale Hemmkonzentration (MHK), Zeitpunkt der Zugabe; eine seltene resistente Teilpopulation wird ausgelesen (Selektion; Verbindung zu mutationen.html), optional Kosten der Resistenz und Plasmid
+  - [ ] Messen wie im Labor: Verdünnungsreihe, Platten, Kolonien zählen (KBE/ml), optische Dichte OD600; die Verdopplungszeit soll aus den Messwerten abgeleitet werden (Messwerte mit Rauschen, Versuch wiederholbar, nichts vorsagen, wie bei chargaff.html)
+  - [ ] Verknüpfungen: Antibiotika und ihre Ziele (Zellwand, Ribosom, DNA-Gyrase, Folsäure-Synthese), Ribosom aus rna-typen.html; Zusammenhang mit der Enzymhemmung (Beta-Lactame, Trimethoprim)
+- [ ] raeuber-beute.html: Lotka-Volterra als Spiel (Beute vermehrt sich, der Nutzer setzt Räuber aus und versucht, ein Gleichgewicht zu halten)
+  - [ ] Spiel: Beute wächst von selbst, Räuber setzt man per Klick oder Regler aus, Ziel: beide Bestände bleiben über eine Zahl von Generationen in einem Band; Anzeige Zeitverlauf und Phasenraum (Räuber gegen Beute)
+  - [ ] Zwei Modi: Individuen auf einem Feld (Zufall, kleine Bestände sterben aus) und Gleichungen (dx/dt = a*x - b*x*y, dy/dt = c*x*y - d*y, Gleichgewicht bei x = d/c und y = a/b); der Vergleich zeigt, warum die Gleichungen immer Zyklen liefern, echte kleine Populationen aber aussterben (Verbindung zu Gendrift)
+  - [ ] Erweiterungen: begrenzte Kapazität der Beute (gedämpfte Schwingung), Sättigung des Räubers (Holling Typ II), Rückzugsraum, mehr als zwei Arten (Nahrungsnetz)
+  - [ ] Entdecken: nicht sagen, wie viele Räuber nötig sind; Ziel und Punkte (Zeit im Band) zeigen, ob man es verstanden hat
+- [ ] Enzymkinetik (Karte "Enzyme bei der Arbeit" ist auf der Startseite als In Vorbereitung eingetragen): enzymkinetik.html
+  - [ ] Michaelis-Menten: Substrat zugeben, Anfangsgeschwindigkeit messen (Messwerte mit Rauschen), v gegen [S], Sättigung; Km und Vmax aus dem Diagramm ablesen; Lineweaver-Burk als Umschalter mit Hinweis auf seine Schwächen (Fehler bei kleinen Konzentrationen)
+  - [ ] Hemmung: kompetitiv, nicht-kompetitiv, unkompetitiv (dazu Produkt- und Substrathemmung); Hemmstoff zugeben und aus der Änderung von Km und Vmax die Art bestimmen; 3D-Bild mit aktivem Zentrum, Substrat und Hemmstoff (Struktur aus der PDB, zum Beispiel Dihydrofolat-Reduktase mit einem Hemmstoff; Kennung prüfen), Schlüssel-Schloss gegen induzierte Passung
+  - [ ] Temperatur und pH (Optimum, Denaturierung, Verbindung zu schmelztemperatur.html), Allosterie und Kooperativität (Hill-Gleichung) im Expertenmodus
+- [ ] virus-kapsid.html: Verpacken von DNA und RNA in Kapside
+  - [ ] Kapsid als Ikosaeder in 3D (mol3d.js), Triangulationszahl T nach Caspar und Klug, 60 * T Untereinheiten; Genomlänge gegen Innenvolumen: Was passt hinein? Packungsdichte
+  - [ ] DNA-Phagen gegen RNA-Viren: Phagen pressen die DNA mit einem Motor (ATP) in den Kopf, dabei entsteht ein hoher Innendruck (Größenordnung zig Atmosphären, zum Beispiel Phagen lambda und phi29; Zahlen und Quellen vor dem Einbau prüfen); RNA-Viren verpacken das Genom oft gemeinsam mit dem Aufbau des Kapsids (zum Beispiel MS2, Verpackungssignal)
+  - [ ] Aufgabe: Genomlänge und Kapsidgröße (T) wählen, sehen, ob es passt und wie groß der Druck wird; Zeitraffer des Einpackens (Spule aus konzentrischen Schalen)
+  - [ ] Daten: Kapsidstrukturen aus der PDB (zum Beispiel MS2, T=3; Hepatitis-B-Kapsid; Kennungen prüfen), Skript unter scripts/virus, Quellen in quellen.html, nur kleine Dateien in template/site
+  - [ ] Verknüpfungen: Virus-Genome und Transkription (gen-transkription.html), Epidemie-Modell (siehe M10)
+
+M10 Lücken: Vorschläge von Claude (20.10.2026, noch nicht bestätigt, bitte streichen oder übernehmen)
+Themen, die im Biologieunterricht der Oberstufe üblich sind und hier noch fehlen oder nur als Karte vorkommen
+- [ ] Genregulation bei Bakterien: lac-Operon (Repressor, Lactose, Glucose, CAP), trp-Operon; schließt an Transkription an, und die Diauxie (zwei Zucker nacheinander) passt zu bakterienwachstum.html
+- [ ] Mutationen und Selektion (mutationen.html steht schon unter M8): stille, Missense-, Nonsense- und Rastermutation, Sichelzellanämie (HBB), danach Antibiotikaresistenz als Selektion
+- [ ] PCR (Primer, Zyklen, exponentielles Wachstum, Primer-Design mit der Schmelztemperatur-Seite) und Gelelektrophorese (Fragmentlängen, Restriktionsenzyme): klassische Werkzeuge, bauen direkt auf schmelztemperatur.html und chargaff.html auf
+- [ ] CRISPR-Cas9 (Leit-RNA, PAM, Schnitt, Reparatur durch NHEJ oder HDR); passt zur Reparatur-Seite unter M8
+- [ ] Zellbiologie fehlt ganz, obwohl das Projekt "cells" heißt: Aufbau der Zelle und Organellen, Membran und Transport (Diffusion, Osmose, Na+/K+-ATPase), Aktionspotential und Synapse, Zellzyklus, Mitose und Meiose (Crossing-over); Meiose ist die Brücke zu Erbgängen und Stammbäumen
+- [ ] Energiestoffwechsel: ATP, Glykolyse, Atmungskette, Photosynthese (Lichtreaktion, Calvin-Zyklus); verbindet sich mit der Enzymkinetik
+- [ ] Evolution und Populationsgenetik: Hardy-Weinberg, Gendrift (Zufall bei kleinen Populationen, Verbindung zu raeuber-beute.html), Selektion, Stammbaum aus Sequenzen (Karte "Sequenzen vergleichen" ist schon da)
+- [ ] Epidemiologie: SIR-Modell (Impfung, Herdenimmunität), nutzt dieselben ODE-Bausteine wie Räuber und Beute; Verbindung zu virus-kapsid.html
+- [ ] Immunologie: Antikörper und Antigen, klonale Selektion, Impfstoffe
+- [ ] Genomik: Gene finden (Leserahmen, Start- und Stopp-Codon), Sequenzen vergleichen und Alignment, Reads einem Genom zuordnen (Sequenzierung als Spiel)
+- [ ] Proteine: Quartärstruktur und Allosterie (Hämoglobin), Faltung und Chaperone
+Querschnitt und Qualität
+- [ ] Startseite aufräumen: Die Karten "Von der DNA zum Protein" und "Proteine falten" unter In Vorbereitung sind durch gen-transkription.html und proteinstruktur.html erledigt (ersetzen oder entfernen); neue Karten für M9 eintragen
+- [ ] Zufall mit Startwert (?seed=...): Gene, Proben und Anfangswerte lassen sich per Adresse festlegen, damit eine Klasse dieselbe Aufgabe bekommt und Lehrkräfte Lösungen vergleichen können; gilt für gen-transkription.html, chargaff.html, schmelztemperatur.html, code-experiment.html
+- [ ] Lehrkräfte: Hinweise zu Lernzielen und Vorkenntnissen je Seite, Arbeitsblätter und Aufgaben zum Ausdrucken, Ergebnisse als Datei speichern (Messprotokoll als CSV)
+- [ ] Tests in den Workflow aufnehmen: build.yml führt nur build.py aus; die Knotentests (scripts/*/test_*.js) und mindestens ein Browser-Test pro Seite (Skripte wie die CDP-Läufe) sollten bei jedem Push laufen; scripts/code/test_code.js meldet derzeit 2 Fehler (Teilcode hat seit der Änderung für AGA und AGG 28 statt 26 Codons, Test nicht angepasst)
+- [ ] Gegenlesen und Touch-Test: fast jede Seite hat offene Punkte "gegenlesen" und "Touch testen"; vor weiteren Seiten einmal durchgehen (Fachlektorat, echtes Tablet)
+- [ ] Barrierefreiheit: Tastatur und Screenreader systematisch prüfen, Farbenblindheit der Palette (palette.js, steht noch offen), Schriftgrößen der Zeichnungen auf kleinen Bildschirmen (gen-transkription.html: Buchstaben bei vier Exons sehr klein)
+- [ ] Muster für Seiten mit Anfragen an fremde Server wiederverwenden (Zustimmung, Datenschutz-Abschnitt, Fehlerfall), falls weitere Dienste dazukommen
+- [ ] Englische Fassung (das Schwesterprojekt atoms ist deutsch; Entscheidung offen)
+
 Für jede neue Seite
 - [ ] Menü (template/site/nav.html), Karte in index.html, quellen.html, README-Tabelle, python3 build.py
 
