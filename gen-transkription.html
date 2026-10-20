@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gen und Transkription</title>
-<meta name="description" content="Setze ein Gen aus seinen Abschnitten zusammen und sieh der RNA-Polymerase zu: Was sie abschreibt, hängt davon ab, wie du die Bausteine angeordnet hast.">
+<meta name="description" content="Setze ein Gen aus seinen Abschnitten zusammen und sieh der RNA-Polymerase II zu: Was sie abschreibt, hängt davon ab, wie du die Bausteine angeordnet hast.">
 <style>
 :root{
   --bg:#edf1ef; --surface:#ffffff; --surface2:#e1e9e5; --ink:#10201a; --muted:#53675e; --line:#c8d5cf;
@@ -230,7 +230,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 <div class="page">
   <header>
     <h1>Ein Gen zusammensetzen</h1>
-    <p class="lede">Damit eine Zelle ein Gen ablesen kann, braucht die DNA mehr als die Information für das Protein: Sie braucht weitere Abschnitte, und jeder muss an der richtigen Stelle liegen. Setze die Bausteine zu einem Gen zusammen. Wie viele Exons und Introns es gibt, ist jedes Mal anders. Sobald alle Plätze belegt sind, macht sich die RNA-Polymerase auf den Weg. Was sie abschreibt, hängt davon ab, wie du die Bausteine angeordnet hast.</p>
+    <p class="lede">Damit eine Zelle ein Gen ablesen kann, braucht die DNA mehr als die Information für das Protein: Sie braucht weitere Abschnitte, und jeder muss an der richtigen Stelle liegen. Setze die Bausteine zu einem Gen zusammen. Wie viele Exons und Introns es gibt, ist jedes Mal anders. Sobald alle Plätze belegt sind, macht sich die RNA-Polymerase II auf den Weg. Was sie abschreibt, hängt davon ab, wie du die Bausteine angeordnet hast.</p>
   </header>
 
   <main>
@@ -256,7 +256,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       <div class="status" id="status" aria-live="polite">Lege alle Bausteine auf die Plätze der DNA.</div>
       <div class="legende" aria-label="Legende">
         <span><i style="background:var(--c-tf)"></i>Transkriptionsfaktoren</span>
-        <span><i style="background:var(--accent)"></i>RNA-Polymerase</span>
+        <span><i style="background:var(--accent)"></i>RNA-Polymerase II</span>
         <span><i style="background:var(--c-exon)"></i>Exon</span>
         <span><i style="background:var(--c-intron)"></i>Intron</span>
         <span><i style="background:var(--c-sp)"></i>Capping-Enzym, Spleißosom, Poly(A)-Polymerase</span>
@@ -291,7 +291,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       <div class="karte" id="erklaerung" hidden>
         <h3>Wozu die Bausteine dienen</h3>
         <ul>
-          <li><b>Promotor:</b> Hier erkennen Transkriptionsfaktoren die TATA-Box und binden, danach lagert sich die RNA-Polymerase an. Er liegt vor dem Gen und legt fest, wo und in welche Richtung abgeschrieben wird. Er selbst wird nicht abgeschrieben.</li>
+          <li><b>Promotor:</b> Hier erkennen Transkriptionsfaktoren die TATA-Box und binden, danach lagert sich die RNA-Polymerase II an. Er liegt vor dem Gen und legt fest, wo und in welche Richtung abgeschrieben wird. Er selbst wird nicht abgeschrieben.</li>
           <li><b>Exon:</b> Abschnitt, der später in der reifen mRNA bleibt. Er enthält den codierenden Bereich und an den Enden die nicht übersetzten Bereiche (UTR). Das erste Exon beginnt direkt hinter dem Promotor, das letzte endet vor dem Terminator.</li>
           <li><b>Intron:</b> Liegt zwischen zwei Exons. Es wird mit abgeschrieben, aber nicht in Protein übersetzt, und erst nach der Transkription herausgeschnitten (Spleißen, siehe „Vom Transkript zur mRNA“).</li>
           <li><b>Terminator:</b> Das Signal zum Aufhören. Die Polymerase schreibt es ab, löst sich danach von der DNA und lässt die RNA los.</li>
@@ -308,6 +308,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       <li>Der Promotor besteht in der Zelle aus mehreren Elementen, die TATA-Box liegt etwa 25 bis 30 Basenpaare vor dem Startpunkt, und nicht jeder Promotor hat eine. Hier steht sie kurz vor dem Startpunkt, und die Transkriptionsfaktoren sind zu einer Form zusammengefasst. Tatsächlich sind es viele Proteine (unter anderem TBP und die Faktoren TFIIA bis TFIIH), die sich nacheinander anlagern. Die Polymerase ist größer als gezeichnet und umschließt etwa 35 Basenpaare.</li>
       <li>Enhancer, die Gene aus großer Entfernung verstärken, und der Zustand des Chromatins (siehe „DNA-Verpackung“) fehlen. Ohne sie wird in der Zelle nur selten abgeschrieben.</li>
       <li>Die Polymerase liest den unteren Strang (Matrize) von 3' nach 5' und baut die RNA in 5'→3'-Richtung auf. Die RNA ist deshalb im Aufbau gleich dem oberen Strang, mit U statt T. In der Zelle bleibt die RNA nur etwa neun Basen lang am Matrizenstrang; hier ist es genauso, sie löst sich schon während der Synthese ab.</li>
+      <li>Gezeigt ist die RNA-Polymerase II, die proteincodierende Gene abschreibt (mit TATA-Box und Transkriptionsfaktoren am Promotor). Die RNA-Polymerasen I und III schreiben rRNA beziehungsweise tRNA und andere kleine RNAs und erkennen andere Promotoren; Bakterien haben nur eine einzige RNA-Polymerase.</li>
       <li>Die Richtung ist festgelegt: Die Polymerase läuft immer von links nach rechts. In der Zelle liegen Gene auf beiden Strängen, die Polymerase richtet sich nach der Ausrichtung des Promotors.</li>
       \1\n      <li>Zwei Exons oder zwei Introns lassen sich nicht direkt nebeneinander legen: Ein Baustein, der dort landen würde, bleibt ohne weiteren Hinweis, wo er war. In einem Gen werden Exons immer durch ein Intron getrennt, und zwei aufeinanderfolgende Introns wären ein einziges.</li>
       <li>Die Kappe ist ein 7-Methylguanosin, das über eine ungewöhnliche 5'-5'-Brücke aus drei Phosphaten am ersten Nucleotid hängt. Sie schützt die RNA vor dem Abbau vom 5'-Ende her und wird beim Export aus dem Kern und beim Start der Translation erkannt. In der Zelle fügt das Enzym sie an, sobald die RNA etwa 25 Nucleotide lang ist (also noch während der Transkription); hier geschieht es danach, und das Enzym ist als ein Block gezeichnet. Außerdem wird die Kappe in der Zelle noch an weiteren Stellen verändert (Methylierung).</li>
@@ -1071,7 +1072,7 @@ function aufbauen(){
   faktoren = el("g", {class: "faktoren", opacity: 0}, ebeneOben);
   el("rect", {class: "form", rx: 14}, faktoren); el("text", {"text-anchor": "middle"}, faktoren).textContent = "TF";
   poly = el("g", {class: "polymerase", opacity: 0}, ebeneOben);
-  el("rect", {class: "form", rx: 30}, poly); el("text", {"text-anchor": "middle"}, poly).textContent = "RNA-Polymerase";
+  el("rect", {class: "form", rx: 30}, poly); el("text", {"text-anchor": "middle"}, poly).textContent = "RNA-Polymerase II";
   spleissG = el("g", {class: "spleiss", opacity: 0}, ebeneOben);
   el("rect", {class: "form", rx: 12}, spleissG); el("text", {"text-anchor": "middle"}, spleissG).textContent = "Spleißosom";
   paZellen = [];
@@ -1206,9 +1207,9 @@ const TEXTE = {
   leer: "Lege alle Bausteine auf die Plätze der DNA.",
   voll: "Alle Plätze sind belegt. Die Zelle beginnt zu arbeiten …",
   tf: "Initiation: Transkriptionsfaktoren erkennen die TATA-Box im Promotor und binden an die DNA.",
-  pol: "Initiation: Die RNA-Polymerase lagert sich an, die Doppelhelix öffnet sich.",
+  pol: "Initiation: Die RNA-Polymerase II lagert sich an, die Doppelhelix öffnet sich.",
   start: "Initiation: Die Faktoren lösen sich, die Polymerase kann losgehen.",
-  elong: "Elongation: Die RNA-Polymerase liest den unteren Strang (Matrize) von 3' nach 5' und baut die RNA von 5' nach 3' auf. Hinter ihr schließt sich die DNA wieder.",
+  elong: "Elongation: Die RNA-Polymerase II liest den unteren Strang (Matrize) von 3' nach 5' und baut die RNA von 5' nach 3' auf. Hinter ihr schließt sich die DNA wieder.",
   rel: "Termination: Die Polymerase löst sich von der DNA und lässt die RNA los.",
   spl: "Spleißen: Das Spleißosom erkennt am Anfang eines Introns GU und am Ende AG, schneidet das Intron als Schlinge heraus und verbindet die beiden Exons.",
   spl3: "Spleißen: Das Stück am 3'-Ende hinter dem letzten Exon wird abgespalten.",
@@ -1364,7 +1365,7 @@ function zeichne(){
   const x0 = xcf(R.pos - HYB) - BW / 2, x1 = xcf(R.pos + 1.5) + BW / 2;
   const pr = poly.firstChild, pt = poly.lastChild;
   pr.setAttribute("x", x0); pr.setAttribute("width", x1 - x0); pr.setAttribute("y", TRACK_Y - 34); pr.setAttribute("height", HYB_Y + CH + 14 - (TRACK_Y - 34));
-  pt.setAttribute("x", (x0 + x1) / 2); pt.setAttribute("y", TRACK_Y - 16);
+  pt.setAttribute("x", (x0 + x1) / 2); pt.setAttribute("y", TRACK_Y - 16); pt.style.fontSize = clamp((x1 - x0 - 8) / (17 * 0.6), 8, 12) + "px";
   poly.setAttribute("opacity", R.pa);
   poly.setAttribute("transform", `translate(0 ${R.py})`);
   // RNA
