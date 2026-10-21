@@ -16,7 +16,7 @@ for (const [f, alph, at] of [["DNA", "ACGT", "T"], ["RNA", "ACGU", "U"]]){
     if (r.passt !== soll || (soll && r.liste.length !== anzahl)){ fehler++; console.log(`FEHLER ${f} ${a}·${b}: passt=${r.passt}, Brücken=${r.liste.length}, klirr=${r.klirr.toFixed(2)}`); }
   }
 }
-// Transkription: DNA-Matrize (Zucker DNA, Basen in der Geometrie der A-Form) mit RNA als neuem Strang
+// Transkription: DNA-Vorlage (Zucker DNA, Basen in der Geometrie der A-Form) mit RNA als neuem Strang
 {
   const soll = {A: "U", T: "A", G: "C", C: "G"};
   for (const a of "ACGT") for (const b of "ACGU"){
@@ -34,5 +34,5 @@ for (const [f, alph, at] of [["DNA", "ACGT", "T"], ["RNA", "ACGU", "U"]]){
     if (r.passt !== ok){ fehler++; console.log(`FEHLER gespiegelt ${a}·${b}: passt=${r.passt}`); }
   }
 }
-console.log(fehler ? fehler + " Fehler" : "OK: alle Kombinationen richtig (A-T/U 2, G-C 3 Brücken, Purine überlappen), auch DNA-Matrize mit RNA.");
+console.log(fehler ? fehler + " Fehler" : "OK: alle Kombinationen richtig (A-T/U 2, G-C 3 Brücken, Purine überlappen), auch DNA-Vorlage mit RNA.");
 process.exit(fehler ? 1 : 0);

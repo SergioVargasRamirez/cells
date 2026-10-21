@@ -243,7 +243,7 @@ Vorschlag für die Reihenfolge: 1 Mendel (Karten "Erbgänge" und "Stammbäume" s
   - [ ] Gemeinsamer Baustein gel.js; Verbindung: exponentielles Wachstum wie bei bakterienwachstum.html
 - [ ] sanger.html: Sanger-Sequenzierung
   - [ ] Kettenabbruch durch Didesoxynucleotide (ddNTP: kein 3'-OH, daher keine weitere Verknüpfung; Verbindung zu dna-rna.html und basenpaarung.html), vier Ansätze oder vier Fluoreszenzfarben; die Fragmente werden nach Länge getrennt (Gel oder Kapillare)
-  - [ ] Sequenz aus dem Bandenmuster lesen (Gel mit vier Bahnen und Elektropherogramm mit Peaks); Aufgabe: eine unbekannte Sequenz ablesen, Qualität nimmt am Ende ab (Phred-Wert), überlagerte Peaks; Verbindung zu PCR (Matrize und Primer), Ausblick Sequenzierung der nächsten Generation und Genomik (Reads, siehe M10)
+  - [ ] Sequenz aus dem Bandenmuster lesen (Gel mit vier Bahnen und Elektropherogramm mit Peaks); Aufgabe: eine unbekannte Sequenz ablesen, Qualität nimmt am Ende ab (Phred-Wert), überlagerte Peaks; Verbindung zu PCR (Vorlage und Primer), Ausblick Sequenzierung der nächsten Generation und Genomik (Reads, siehe M10)
 
 Für jede neue Seite
 - [ ] Menü (template/site/nav.html), Karte in index.html, quellen.html, README-Tabelle, python3 build.py

@@ -1,5 +1,5 @@
 // Test für template/site/replik.js: Aufruf  node scripts/replikation/test_replik.js
-// Prüft Richtung (5'→3'), Basenpaarung, Fragmente, Primer, Ersatz und Nicks für viele zufällige Matrizen.
+// Prüft Richtung (5'→3'), Basenpaarung, Fragmente, Primer, Ersatz und Nicks für viele zufällige Vorlagen.
 const fs = require("fs"), path = require("path"), vm = require("vm");
 const ctx = {}; vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "..", "template", "site", "replik.js"), "utf8") + "\nglobalThis.R = REPLIK;", ctx);
@@ -12,7 +12,7 @@ for (const [n, frag, primer] of [[40, 10, 3], [40, 8, 3], [40, 20, 3], [30, 10, 
   for (let i = 0; i < 300; i++){
     const p = R.erzeuge(Math.random, {n, frag, primer});
     const name = `n=${n}, frag=${frag}, primer=${primer}`;
-    // Matrizen: Gegenstränge
+    // Vorlagen: Gegenstränge
     pruefe(p.oben.length === n + 8 && p.unten.length === n + 8, name + ": Länge");
     for (let j = 0; j < p.oben.length; j++) pruefe(R.KOMP[p.oben[j]] === p.unten[j], name + ": Basenpaarung Spalte " + j);
     // Leitstrang: lückenlos von links nach rechts, die ersten primer Schritte RNA
@@ -32,11 +32,11 @@ for (const [n, frag, primer] of [[40, 10, 3], [40, 8, 3], [40, 20, 3], [30, 10, 
         pruefe((s.typ === "rna") === (j < primer), name + ": Primer am Anfang der Synthese des Fragments (rechtes Ende)");
       });
     });
-    // Buchstaben: Gegenstück zur Matrize (RNA mit U)
+    // Buchstaben: Gegenstück zur Vorlage (RNA mit U)
     for (const strang of ["leit", "folge"]){
       const teile = strang === "leit" ? [p.leit.schritte] : p.folge.map(f => f.schritte);
       teile.forEach(sch => sch.forEach(s => {
-        const b = R.neu(p, strang, s.c, s.typ), m = p.matrize(strang, s.c);
+        const b = R.neu(p, strang, s.c, s.typ), m = p.vorlage(strang, s.c);
         pruefe(b === (s.typ === "rna" ? R.RNA : R.KOMP)[m], name + ": Gegenstück");
         pruefe(s.typ === "rna" ? "ACGU".includes(b) : "ACGT".includes(b), name + ": Alphabet");
         pruefe(s.typ === "rna" || b !== "U", name + ": kein U in DNA");
@@ -65,14 +65,14 @@ for (const [n, frag, primer] of [[40, 10, 3], [40, 8, 3], [40, 20, 3], [30, 10, 
     const geseh = new Set(p.nicks.map(x => x.strang + x.c));
     pruefe(geseh.size === p.nicks.length, name + ": Nicks verschieden");
     p.nicks.forEach((x, j) => { if (j) pruefe(p.nicks[j - 1].c <= x.c, name + ": Nicks sortiert"); });
-    // Endzustand: neue Stränge sind Gegenstränge der Matrizen
+    // Endzustand: neue Stränge sind Gegenstränge der Vorlagen
     const e = R.endzustand(p);
     pruefe(e.leit.length === n && e.folge.length === n, name + ": Endzustand Länge");
-    pruefe(e.leit === p.oben.slice(4, 4 + n), name + ": Leitstrang gleicht der oberen Matrize (gleiche Sequenz wie das Original)");
-    pruefe(e.folge === p.unten.slice(4, 4 + n), name + ": Folgestrang gleicht der unteren Matrize");
+    pruefe(e.leit === p.oben.slice(4, 4 + n), name + ": Leitstrang gleicht der oberen Vorlage (gleiche Sequenz wie das Original)");
+    pruefe(e.folge === p.unten.slice(4, 4 + n), name + ": Folgestrang gleicht der unteren Vorlage");
     const revkomp = t => rev(t).replace(/./g, b => R.KOMP[b]);
-    pruefe(rev(e.folge) === revkomp(p.oben.slice(4, 4 + n)), name + ": Folgestrang, 5'→3' gelesen, ist revers komplementär zur oberen Matrize");
-    pruefe(e.leit === revkomp(rev(p.unten.slice(4, 4 + n))) , name + ": Leitstrang ist komplementär zur unteren Matrize");
+    pruefe(rev(e.folge) === revkomp(p.oben.slice(4, 4 + n)), name + ": Folgestrang, 5'→3' gelesen, ist revers komplementär zur oberen Vorlage");
+    pruefe(e.leit === revkomp(rev(p.unten.slice(4, 4 + n))) , name + ": Leitstrang ist komplementär zur unteren Vorlage");
   }
 }
 // Falsche Eingaben

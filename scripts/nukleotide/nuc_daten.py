@@ -122,7 +122,7 @@ def helixdaten():
         H.lage_anpassen(form, *lehrbuch[form])
         F = H.FORM[form]
         if form == "RNA":
-            # Thymin in der A-Form-Geometrie (für DNA-Matrize in einem DNA-RNA-Hybrid): Uracil plus Methylgruppe an C5
+            # Thymin in der A-Form-Geometrie (für DNA-Vorlage in einem DNA-RNA-Hybrid): Uracil plus Methylgruppe an C5
             atome = F["vorlage"]["U"]
             pos = {n: np.array(p) for n, p in atome.items()}
             ring = (pos["C4"] + pos["C6"]) / 2

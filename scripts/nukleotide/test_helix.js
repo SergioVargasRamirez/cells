@@ -55,7 +55,7 @@ for (const [form, alph] of [["DNA", "ACGT"], ["RNA", "ACGU"]]) {
   pruefe(nah(linkMin, 1.6, 0.05) && nah(linkMax, 1.6, 0.05), form + " O3'-P-Abstand");
   pruefe(hbMin > 2.4 && hbMax < 3.3, form + " H-Brücken-Abstände");
 }
-// DNA-RNA-Hybrid (Transkription): Matrize DNA mit T ohne 2'-OH, neuer Strang RNA, A-Form
+// DNA-RNA-Hybrid (Transkription): Vorlage DNA mit T ohne 2'-OH, neuer Strang RNA, A-Form
 {
   let hbMin = 9, hbMax = 0, linkMin = 9, linkMax = 0;
   for (let t = 0; t < 30; t++) {

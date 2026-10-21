@@ -330,7 +330,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       <li>Das Gen ist erfunden und wird bei jedem „Neuen Gen“ zufällig erzeugt: zwei bis vier Exons, dazwischen Introns mit sieben bis zehn Basen (GU am Anfang, AG am Ende, dazwischen zufällige Basen). Die Exons ergeben zusammen die mRNA eines der Miniproteine Chignolin oder Trpzip2 (beide künstlich entworfene Peptide, die sich zu einer β-Haarnadel falten), dazu Start- und Stopp-Codon und je ein bis zwei Basen nicht übersetzter Bereich; gleichwertige Codons sind zufällig gewählt. Es ist also kein natürliches Gen. Die Exons sind nummeriert, weil ihre Reihenfolge das Peptid festlegt; die Introns sind austauschbar, weil sie herausgeschnitten werden. Echte Exons sind im Mittel etwa 150 Basenpaare lang, Introns oft mehrere Tausend; hier sind die Unterschiede viel kleiner, damit alles auf den Bildschirm passt.</li>
       <li>Der Promotor besteht in der Zelle aus mehreren Elementen, die TATA-Box liegt etwa 25 bis 30 Basenpaare vor dem Startpunkt, und nicht jeder Promotor hat eine. Hier steht sie kurz vor dem Startpunkt, und die Transkriptionsfaktoren sind zu einer Form zusammengefasst. Tatsächlich sind es viele Proteine (unter anderem TBP und die Faktoren TFIIA bis TFIIH), die sich nacheinander anlagern. Die Polymerase ist größer als gezeichnet und umschließt etwa 35 Basenpaare.</li>
       <li>Enhancer, die Gene aus großer Entfernung verstärken, und der Zustand des Chromatins (siehe „DNA-Verpackung“) fehlen. Ohne sie wird in der Zelle nur selten abgeschrieben.</li>
-      <li>Die Polymerase liest den unteren Strang (Matrize) von 3' nach 5' und baut die RNA in 5'→3'-Richtung auf. Die RNA ist deshalb im Aufbau gleich dem oberen Strang, mit U statt T. In der Zelle bleibt die RNA nur etwa neun Basen lang am Matrizenstrang; hier ist es genauso, sie löst sich schon während der Synthese ab.</li>
+      <li>Die Polymerase liest den unteren Strang (Vorlage) von 3' nach 5' und baut die RNA in 5'→3'-Richtung auf. Die RNA ist deshalb im Aufbau gleich dem oberen Strang, mit U statt T. In der Zelle bleibt die RNA nur etwa neun Basen lang am Vorlagenstrang; hier ist es genauso, sie löst sich schon während der Synthese ab.</li>
       <li>Gezeigt ist die RNA-Polymerase II, die proteincodierende Gene abschreibt (mit TATA-Box und Transkriptionsfaktoren am Promotor). Die RNA-Polymerasen I und III schreiben rRNA beziehungsweise tRNA und andere kleine RNAs und erkennen andere Promotoren; Bakterien haben nur eine einzige RNA-Polymerase.</li>
       <li>Die Richtung ist festgelegt: Die Polymerase läuft immer von links nach rechts. In der Zelle liegen Gene auf beiden Strängen, die Polymerase richtet sich nach der Ausrichtung des Promotors.</li>
       \1\n      <li>Zwei Exons oder zwei Introns lassen sich nicht direkt nebeneinander legen: Ein Baustein, der dort landen würde, bleibt ohne weiteren Hinweis, wo er war. In einem Gen werden Exons immer durch ein Intron getrennt, und zwei aufeinanderfolgende Introns wären ein einziges.</li>
@@ -1052,9 +1052,9 @@ const GAP = 6, X0 = 44;
 let BW = 15;
 const TRAY_Y = 28, TRACK_Y = 150, PH = 72, TOP_Y = 26, BOT_Y = 50, CH = 16;
 const DTOP = -9, DBOT = 11;                          // so weit rücken die Stränge in der Blase auseinander
-const HYB_Y = TRACK_Y + BOT_Y + DBOT + CH + 9;       // RNA im Hybrid mit der Matrize
+const HYB_Y = TRACK_Y + BOT_Y + DBOT + CH + 9;       // RNA im Hybrid mit der Vorlage
 const RNA_Y = HYB_Y + 62;                            // fertige RNA
-const HYB = 7;                                       // so viele Basen hinter der Polymerase bleibt die RNA an der Matrize
+const HYB = 7;                                       // so viele Basen hinter der Polymerase bleibt die RNA an der Vorlage
 
 // Das aktuelle Gen (wird bei "Neues Gen" neu erzeugt) und alles, was davon abhängt
 let gen, BAU, N, NBT, MITTEL;       // NBT: Zahl aller Basen, MITTEL: mittlere Länge eines Bausteins
@@ -1303,7 +1303,7 @@ const TEXTE = {
   tf: "Initiation: Transkriptionsfaktoren erkennen die TATA-Box im Promotor und binden an die DNA.",
   pol: "Initiation: Die RNA-Polymerase II lagert sich an, die Doppelhelix öffnet sich.",
   start: "Initiation: Die Faktoren lösen sich, die Polymerase kann losgehen.",
-  elong: "Elongation: Die RNA-Polymerase II liest den unteren Strang (Matrize) von 3' nach 5' und baut die RNA von 5' nach 3' auf. Hinter ihr schließt sich die DNA wieder.",
+  elong: "Elongation: Die RNA-Polymerase II liest den unteren Strang (Vorlage) von 3' nach 5' und baut die RNA von 5' nach 3' auf. Hinter ihr schließt sich die DNA wieder.",
   rel: "Termination: Die Polymerase löst sich von der DNA und lässt die RNA los.",
   spl: "Spleißen: Das Spleißosom erkennt am Anfang eines Introns GU und am Ende AG, schneidet das Intron als Schlinge heraus und verbindet die beiden Exons.",
   spl3: "Spleißen: Das Stück am 3'-Ende hinter dem letzten Exon wird abgespalten.",
@@ -1473,8 +1473,8 @@ function zeichne(){
     z.g.setAttribute("transform", `translate(${xc(g) - BW / 2} ${y})`);
     z.g.setAttribute("opacity", clamp((d - 0.2) * 2, 0, 1));
     const hy = clamp(HYB + 1 - d, 0, 1) * (1 - R.rel) * clamp((d - 0.2) * 2, 0, 1);
-    const t = rnaTicks[g], yMatrize = TRACK_Y + BOT_Y + DBOT * offen[g] + CH;
-    t.setAttribute("x1", xc(g)); t.setAttribute("x2", xc(g)); t.setAttribute("y1", yMatrize + 2); t.setAttribute("y2", HYB_Y - 2);
+    const t = rnaTicks[g], yVorlage = TRACK_Y + BOT_Y + DBOT * offen[g] + CH;
+    t.setAttribute("x1", xc(g)); t.setAttribute("x2", xc(g)); t.setAttribute("y1", yVorlage + 2); t.setAttribute("y2", HYB_Y - 2);
     t.setAttribute("opacity", offen[g] > 0.5 ? hy : 0);
   }
 }

@@ -266,9 +266,9 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       <li>Die Sequenz ist erfunden und wird bei „Neue Sequenz“ zufällig gewürfelt. Gezeigt sind 40 Basenpaare der Mitte eines Replikons; die Länge der Okazaki-Fragmente (8, 10 oder 20 Basen) und des Primers (3 Basen) sind für die Anschauung gewählt. In der Zelle sind die Primer etwa 10 Nucleotide lang, die Fragmente haben in Bakterien 1000 bis 2000, in Zellen mit Kern 100 bis 200 Nucleotide.</li>
       <li>Die Namen und Abläufe folgen dem Bakterium <i>Escherichia coli</i> (DnaB-Helikase, DnaG-Primase, DNA-Polymerase III und I, Ligase). Bei Zellen mit Kern übernehmen andere Enzyme dieselben Aufgaben: die Helikase MCM2–7 (als CMG-Komplex), Polymerase α mit Primase (kurzer Primer aus RNA und etwas DNA), Polymerase ε am Leitstrang und δ am Folgestrang, RNase H und FEN1 zum Entfernen der Primer, die Ligase I.</li>
       <li>Links (Origin) und rechts (Treffpunkt) grenzen die Stücke der Nachbargabeln an, schwach gezeichnet und nicht gezeigt, wie sie entstehen. Replikation beginnt an einem Startpunkt und läuft in beide Richtungen; das ringförmige Bakterienchromosom hat einen Startpunkt, die Gabeln treffen sich gegenüber. Zellen mit Kern haben viele Startpunkte. An den Enden eines linearen Chromosoms fehlt die Nachbargabel, dort kann der letzte Primer nicht ersetzt werden (Telomere und Telomerase).</li>
-      <li>Es fehlen: die Einzelstrang-Bindeproteine, die die freien Matrizen stabil halten; die Topoisomerase (Gyrase), die die Verdrillung vor der Gabel löst; die Gleitklammer, die die Polymerase am Strang festhält; die Korrekturlesefunktion der Polymerase (3'→5'-Exonuclease) und die Reparatur falscher Paarungen. Ein Fehler kommt hier nie vor.</li>
-      <li>In der Zelle arbeiten Helikase und Polymerasen gekoppelt im Replisom. Die Matrize des Folgestrangs bildet dabei eine Schleife, so dass beide Polymerasen in derselben Richtung mit der Gabel wandern. Hier sind sie einzeln gezeichnet; eine Polymerase pro Fragment, sie wandert in Wirklichkeit weiter zum nächsten Primer.</li>
-      <li>Die Gabel läuft immer von links nach rechts, der obere Strang ist die Matrize des Folgestrangs. Geschwindigkeit und Dauer sind nicht maßstäblich: Die Gabel läuft in Bakterien mit etwa 1000 Nucleotiden pro Sekunde, in Zellen mit Kern mit etwa 50.</li>
+      <li>Es fehlen: die Einzelstrang-Bindeproteine, die die freien Vorlagen stabil halten; die Topoisomerase (Gyrase), die die Verdrillung vor der Gabel löst; die Gleitklammer, die die Polymerase am Strang festhält; die Korrekturlesefunktion der Polymerase (3'→5'-Exonuclease) und die Reparatur falscher Paarungen. Ein Fehler kommt hier nie vor.</li>
+      <li>In der Zelle arbeiten Helikase und Polymerasen gekoppelt im Replisom. Die Vorlage des Folgestrangs bildet dabei eine Schleife, so dass beide Polymerasen in derselben Richtung mit der Gabel wandern. Hier sind sie einzeln gezeichnet; eine Polymerase pro Fragment, sie wandert in Wirklichkeit weiter zum nächsten Primer.</li>
+      <li>Die Gabel läuft immer von links nach rechts, der obere Strang ist die Vorlage des Folgestrangs. Geschwindigkeit und Dauer sind nicht maßstäblich: Die Gabel läuft in Bakterien mit etwa 1000 Nucleotiden pro Sekunde, in Zellen mit Kern mit etwa 50.</li>
       <li>Die Polymerase I entfernt in Bakterien den Primer vom 5'-Ende her und baut gleichzeitig am 3'-Ende des Nachbarn an (Nick-Translation). Hier wird jedes Nucleotid einzeln ausgetauscht. Die Ligase braucht Energie: ATP, in Bakterien NAD⁺.</li>
       <li>Die Sequenz der Tochterstränge folgt allein aus der Basenpaarung (A–T, G–C, siehe „Basenpaarung“). Jede Tochter-Doppelhelix enthält einen alten und einen neuen Strang: Die Replikation ist semikonservativ (Meselson und Stahl, 1958).</li>
     </ul>
@@ -325,16 +325,16 @@ const PALETTE = (() => {
 // (Quelle: template/site/replik.js, wird von build.py in die Seiten kopiert; Test: scripts/replikation/test_replik.js).
 //
 // Die Zeichnung ist ein Ausschnitt mit Spalten c = -rand … n+rand-1. Die Gabel läuft von links nach rechts, die
-// obere Matrize ("oben") steht von links nach rechts 5'→3', die untere ("unten") 3'→5'. Daraus folgt:
+// obere Vorlage ("oben") steht von links nach rechts 5'→3', die untere ("unten") 3'→5'. Daraus folgt:
 //   Leitstrang   entsteht unten (an "unten"), von links nach rechts, also 5'→3' in Richtung der Gabel; ein Primer bei c = 0.
 //   Folgestrang  entsteht oben (an "oben"), in Fragmenten von rechts nach links (5'→3' von der Gabel weg); jedes Fragment
 //                beginnt rechts mit einem Primer und endet links mit seinem 3'-Ende.
 // Links (c < 0) und rechts (c ≥ n) liegen die Stücke der benachbarten Gabeln (an der Zeichnung: Rand, "Geister").
 //
-//   REPLIK.erzeuge(zufall, opt)  zufällige Matrize; opt: {n: 40, frag: 10, primer: 3, rand: 4}
-//   REPLIK.plan(oben, opt)       Plan zu einer gegebenen oberen Matrize (Länge n + 2·rand, nur ACGT):
-//        oben, unten             die beiden Matrizen (unten ist die Basenpaarung zu oben, Spalte für Spalte)
-//        matrize(strang, c)      Base der Matrize, an der der neue Strang "leit" bzw. "folge" entsteht
+//   REPLIK.erzeuge(zufall, opt)  zufällige Vorlage; opt: {n: 40, frag: 10, primer: 3, rand: 4}
+//   REPLIK.plan(oben, opt)       Plan zu einer gegebenen oberen Vorlage (Länge n + 2·rand, nur ACGT):
+//        oben, unten             die beiden Vorlagen (unten ist die Basenpaarung zu oben, Spalte für Spalte)
+//        vorlage(strang, c)      Base der Vorlage, an der der neue Strang "leit" bzw. "folge" entsteht
 //        leit                    {primer: [0, primer), schritte: [{c, typ}]} in der Reihenfolge der Synthese; typ "rna" | "dna"
 //        folge                   [{k, von, bis, primerVon, schritte}] Okazaki-Fragmente von links nach rechts (Spalten von … bis-1);
 //                                die Schritte laufen von rechts nach links
@@ -342,7 +342,7 @@ const PALETTE = (() => {
 //                                (Leitstrang: von links nach rechts, Folgestrang: von rechts nach links), nick: Spalte c der Lücke im
 //                                Rückgrat zwischen c und c+1, die danach bleibt
 //        nicks                   alle Nicks nach der Auffüllung, nach c sortiert: {strang, c}
-//   REPLIK.neu(plan, strang, c, typ)  die Base im neuen Strang: Gegenstück zur Matrize, bei typ "rna" mit U statt T
+//   REPLIK.neu(plan, strang, c, typ)  die Base im neuen Strang: Gegenstück zur Vorlage, bei typ "rna" mit U statt T
 //   REPLIK.endzustand(plan)      {leit, folge}: die fertigen neuen Stränge in den Spalten 0 … n-1, als Texte von links nach rechts
 //                                (leit also 5'→3', folge 3'→5')
 const REPLIK = (() => {
@@ -354,10 +354,10 @@ const REPLIK = (() => {
     const {n, frag, primer, rand} = o;
     if (n % frag !== 0) throw new Error("n muss ein Vielfaches der Fragmentlänge sein");
     if (primer < 1 || primer >= frag) throw new Error("Der Primer muss kürzer als ein Fragment sein");
-    if (!/^[ACGT]+$/.test(oben) || oben.length !== n + 2 * rand) throw new Error("Die Matrize passt nicht zu n und rand");
+    if (!/^[ACGT]+$/.test(oben) || oben.length !== n + 2 * rand) throw new Error("Die Vorlage passt nicht zu n und rand");
     const unten = oben.replace(/./g, b => KOMP[b]);
     const p = {n, frag, primer, rand, oben, unten};
-    p.matrize = (strang, c) => (strang === "leit" ? unten : oben)[c + rand];
+    p.vorlage = (strang, c) => (strang === "leit" ? unten : oben)[c + rand];
 
     // Leitstrang: Primer (RNA) bei 0 … primer-1, danach DNA bis n-1, immer von links nach rechts
     p.leit = {primer: [0, primer], schritte: []};
@@ -389,7 +389,7 @@ const REPLIK = (() => {
     return plan(oben, o);
   }
 
-  const neu = (p, strang, c, typ) => (typ === "rna" ? RNA : KOMP)[p.matrize(strang, c)];
+  const neu = (p, strang, c, typ) => (typ === "rna" ? RNA : KOMP)[p.vorlage(strang, c)];
 
   function endzustand(p){
     let leit = "", folge = "";
@@ -414,19 +414,19 @@ const glatt = t => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
 
 // Maße der Zeichnung (Einheiten des viewBox). Spalte c steht bei X0 + (c + RAND) · BW; Spalten -RAND … -1 und N … N+RAND-1 gehören den Nachbargabeln.
 const BW = 18, X0 = 84, CH = 16, RAND = 4, BREITE = 980;
-const T1_ZU = 170, T2_ZU = 194, OFFEN = 44, ABST = 24;          // obere Zeile der Matrizen (geschlossen), Verschiebung in der Gabel, Abstand neuer Strang – Matrize
+const T1_ZU = 170, T2_ZU = 194, OFFEN = 44, ABST = 24;          // obere Zeile der Vorlagen (geschlossen), Verschiebung in der Gabel, Abstand neuer Strang – Vorlage
 const BAHN_OBEN = 62, BAHN_UNTEN = 306;                         // Zeilen der Namensschilder der Enzyme
 const TP = 380, RATE_F = 3.2, RATE_P = 8;                        // Millisekunden je Primer-Base, Basen je Sekunde (Gabel, Polymerase) bei Tempo 1
 const KOMP = REPLIK.KOMP;
 
-let P, N, K, W, oben;       // Plan, Länge, Zahl der Fragmente, Zahl der Spalten, obere Matrize (Text)
+let P, N, K, W, oben;       // Plan, Länge, Zahl der Fragmente, Zahl der Spalten, obere Vorlage (Text)
 const xl = c => X0 + (c + RAND) * BW;                // linke Kante der Spalte c (auch für Kommazahlen)
 const xm = c => xl(c) + BW / 2;
 const svg = $("buehne");
 let gHinten, gMitte, gVorn;
 
 // Zustand der Zeichnung
-let Z, J, NK, T1, T2, TK12, TKL, TKB, JT1, JT2, wc, BL;   // Zellen (je Strang), Bindungen, Nick-Marken, Matrizenzellen, Streben, Blasen
+let Z, J, NK, T1, T2, TK12, TKL, TKB, JT1, JT2, wc, BL;   // Zellen (je Strang), Bindungen, Nick-Marken, Vorlagenzellen, Streben, Blasen
 const ZEILEN = ["folge", "leit"];                         // oben und unten
 let G = null, seq = null, rafId = 0, letzte = 0, phase = "leer";
 
@@ -500,9 +500,9 @@ function aufbauen(neueSequenz){
     el("text", {class: "ende", x: X0 - 6, y: y + 13, "text-anchor": "end"}, gHinten).textContent = l;
     el("text", {class: "ende", x: xl(N + RAND) + 6, y: y + 13}, gHinten).textContent = r;
   });
-  [138, 250].forEach(y => {   // die alten Stränge dienen als Vorlage (Matrize) für die neuen
+  [138, 250].forEach(y => {   // die alten Stränge dienen als Vorlage für die neuen
     el("text", {class: "zeilenname", x: 4, y: y - 8}, gHinten).textContent = "alter Strang";
-    el("text", {class: "zeilenname", x: 4, y: y + 4}, gHinten).textContent = "(Matrize)";
+    el("text", {class: "zeilenname", x: 4, y: y + 4}, gHinten).textContent = "(Vorlage)";
   });
   // Spalten
   const L = gMitte;
@@ -532,7 +532,7 @@ function aufbauen(neueSequenz){
 }
 
 /* ---------- Lage der Zellen ---------- */
-// Offenheit der Spalte c: 0 = beide Matrizen aneinander, 1 = ganz geöffnet (G.zu: Treffen der Gabeln am Ende)
+// Offenheit der Spalte c: 0 = beide Vorlagen aneinander, 1 = ganz geöffnet (G.zu: Treffen der Gabeln am Ende)
 function wAt(c){
   const wl = c < 0 ? 1 : clamp((G.f - c) / 3, 0, 1);
   const wr = c >= N - 1 ? clamp((c - (N - 1)) / 3, 0, 1) : 0;
@@ -592,17 +592,17 @@ function neueZelle(s, c, typ){
 /* ---------- Texte, Phasen ---------- */
 const TEXTE = {
   leer: "Links liegt der Startpunkt der Replikation (Origin). Drücke auf „Replikation starten“.",
-  hel: "Initiation: Die Helikase lagert sich am Startpunkt an und öffnet die Doppelhelix, indem sie die Wasserstoffbrücken zwischen den Basenpaaren trennt. Sie wandert nach rechts, die Replikationsgabel bewegt sich mit ihr. Die beiden alten Stränge dienen jetzt als Vorlage (Matrize): An jedem entsteht ein neuer Gegenstrang.",
-  priL: "Priming: Die DNA-Polymerase kann keine Kette beginnen, sie kann nur an ein vorhandenes 3'-Ende anbauen. Darum baut die Primase zuerst ein kurzes Stück RNA (Primer, sechseckig und orange umrandet) an die Matrize.",
+  hel: "Initiation: Die Helikase lagert sich am Startpunkt an und öffnet die Doppelhelix, indem sie die Wasserstoffbrücken zwischen den Basenpaaren trennt. Sie wandert nach rechts, die Replikationsgabel bewegt sich mit ihr. Die beiden alten Stränge dienen jetzt als Vorlage: An jedem entsteht ein neuer Gegenstrang.",
+  priL: "Priming: Die DNA-Polymerase kann keine Kette beginnen, sie kann nur an ein vorhandenes 3'-Ende anbauen. Darum baut die Primase zuerst ein kurzes Stück RNA (Primer, sechseckig und orange umrandet) an die Vorlage.",
   leit: "Leitstrang: Die DNA-Polymerase III hängt Nucleotide immer an das 3'-Ende der wachsenden Kette an (Synthese 5'→3'). Am Leitstrang zeigt dieses Ende zur Gabel: Die Polymerase folgt der Helikase und baut den Strang in einem Stück, mit nur einem Primer.",
-  priF: "Folgestrang: Hier würde die Polymerase gegen die Laufrichtung der Gabel bauen. Sie muss warten, bis die Helikase ein Stück Matrize freigelegt hat. Dann setzt die Primase an dessen Ende einen Primer, und die Polymerase baut von dort aus von der Gabel weg.",
-  folge: "Folgestrang: Die Polymerase baut ein Okazaki-Fragment (5'→3', von der Gabel weg) bis zum Fragment davor. Dann beginnt am nächsten freigelegten Stück Matrize ein neues Fragment mit neuem Primer.",
+  priF: "Folgestrang: Hier würde die Polymerase gegen die Laufrichtung der Gabel bauen. Sie muss warten, bis die Helikase ein Stück Vorlage freigelegt hat. Dann setzt die Primase an dessen Ende einen Primer, und die Polymerase baut von dort aus von der Gabel weg.",
+  folge: "Folgestrang: Die Polymerase baut ein Okazaki-Fragment (5'→3', von der Gabel weg) bis zum Fragment davor. Dann beginnt am nächsten freigelegten Stück Vorlage ein neues Fragment mit neuem Primer.",
   ende: "Termination: Die Helikase trifft auf die entgegenkommende Gabel und löst sich von der DNA. Die Polymerasen bauen die letzten Stücke fertig.",
   gabelFertig: "Alle Stränge sind aufgefüllt. Aber an jedem Primer steckt noch RNA (sechseckig, orange umrandet) im neuen Strang. Klicke auf „3 Primer ersetzen“.",
   ers: "Primer ersetzen: Die DNA-Polymerase I entfernt die RNA-Nucleotide vom 5'-Ende des Primers her und ersetzt sie nacheinander durch DNA. Dazu baut sie 5'→3' am 3'-Ende des benachbarten Strangstücks an.",
   ersFertig: "Alle Primer sind durch DNA ersetzt. An den roten Markierungen fehlt noch die Bindung zwischen zwei Nucleotiden (Nick). Die Polymerase kann diese Lücke nicht schließen. Klicke auf „4 Ligation“.",
   lig: "Ligation: Die DNA-Ligase verknüpft das 3'-Ende des einen Stücks mit dem 5'-Ende des nächsten zu einer Phosphodiesterbindung. Dafür braucht sie Energie (ATP, in Bakterien NAD⁺).",
-  fertig: "Fertig: Aus der einen Doppelhelix sind zwei geworden. Jede besteht aus einem alten Strang (Matrize) und einem neuen Strang, beide haben dieselbe Sequenz wie das Original."
+  fertig: "Fertig: Aus der einen Doppelhelix sind zwei geworden. Jede besteht aus einem alten Strang (Vorlage) und einem neuen Strang, beide haben dieselbe Sequenz wie das Original."
 };
 const status = t => { $("status").textContent = t; };
 function chips(n){ document.querySelectorAll("#phasen li").forEach(li => { const p = +li.dataset.p; li.classList.toggle("aktiv", p === n); li.classList.toggle("fertig", p < n); }); }
@@ -794,7 +794,7 @@ function ergebnis(){
   const t2 = document.createElement("p"); t2.className = "zeilentitel"; t2.textContent = `Folgestrang: ${K} Okazaki-Fragmente, das letzte entstandene zuerst`; box.appendChild(t2);
   const f = P.folge.slice().reverse().map(x => teil("Fragment " + (x.k + 1), e.folge.slice(x.von, x.bis).split("").reverse().join(""), "var(--c-exon)"));
   box.appendChild(zeile(f));
-  box.appendChild(absatz("Die Fragmente sind verknüpft, die Primer durch DNA ersetzt. Beide neuen Stränge passen Base für Base zu ihren Matrizen; zusammen mit je einem alten Strang ergeben sie zwei Doppelhelices, die der ursprünglichen gleichen.", "gut"));
+  box.appendChild(absatz("Die Fragmente sind verknüpft, die Primer durch DNA ersetzt. Beide neuen Stränge passen Base für Base zu ihren Vorlagen; zusammen mit je einem alten Strang ergeben sie zwei Doppelhelices, die der ursprünglichen gleichen.", "gut"));
   box.hidden = false;
   $("erklaerung").hidden = false;
 }
