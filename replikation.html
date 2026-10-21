@@ -500,8 +500,10 @@ function aufbauen(neueSequenz){
     el("text", {class: "ende", x: X0 - 6, y: y + 13, "text-anchor": "end"}, gHinten).textContent = l;
     el("text", {class: "ende", x: xl(N + RAND) + 6, y: y + 13}, gHinten).textContent = r;
   });
-  el("text", {class: "zeilenname", x: 4, y: 138}, gHinten).textContent = "Matrize";
-  el("text", {class: "zeilenname", x: 4, y: 250}, gHinten).textContent = "Matrize";
+  [138, 250].forEach(y => {   // die alten Stränge dienen als Vorlage (Matrize) für die neuen
+    el("text", {class: "zeilenname", x: 4, y: y - 8}, gHinten).textContent = "alter Strang";
+    el("text", {class: "zeilenname", x: 4, y: y + 4}, gHinten).textContent = "(Matrize)";
+  });
   // Spalten
   const L = gMitte;
   for (let i = 0; i < W; i++){
@@ -590,7 +592,7 @@ function neueZelle(s, c, typ){
 /* ---------- Texte, Phasen ---------- */
 const TEXTE = {
   leer: "Links liegt der Startpunkt der Replikation (Origin). Drücke auf „Replikation starten“.",
-  hel: "Initiation: Die Helikase lagert sich am Startpunkt an und öffnet die Doppelhelix, indem sie die Wasserstoffbrücken zwischen den Basenpaaren trennt. Sie wandert nach rechts, die Replikationsgabel bewegt sich mit ihr.",
+  hel: "Initiation: Die Helikase lagert sich am Startpunkt an und öffnet die Doppelhelix, indem sie die Wasserstoffbrücken zwischen den Basenpaaren trennt. Sie wandert nach rechts, die Replikationsgabel bewegt sich mit ihr. Die beiden alten Stränge dienen jetzt als Vorlage (Matrize): An jedem entsteht ein neuer Gegenstrang.",
   priL: "Priming: Die DNA-Polymerase kann keine Kette beginnen, sie kann nur an ein vorhandenes 3'-Ende anbauen. Darum baut die Primase zuerst ein kurzes Stück RNA (Primer, sechseckig und orange umrandet) an die Matrize.",
   leit: "Leitstrang: Die DNA-Polymerase III hängt Nucleotide immer an das 3'-Ende der wachsenden Kette an (Synthese 5'→3'). Am Leitstrang zeigt dieses Ende zur Gabel: Die Polymerase folgt der Helikase und baut den Strang in einem Stück, mit nur einem Primer.",
   priF: "Folgestrang: Hier würde die Polymerase gegen die Laufrichtung der Gabel bauen. Sie muss warten, bis die Helikase ein Stück Matrize freigelegt hat. Dann setzt die Primase an dessen Ende einen Primer, und die Polymerase baut von dort aus von der Gabel weg.",
