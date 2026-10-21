@@ -11,19 +11,19 @@
   --accent:#13795b; --accent-ink:#ffffff; --hl:#fff3d6;
   --serif:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
   --sans:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --c-exon:#3d6fd6; --c-term:#d1495b; --c-tf:#8e5bb5; --c-sp:#d9730d; --c-lig:#9a7400; --c-nick:#a82a96;
+  --c-exon:#3d6fd6; --c-term:#d1495b; --c-tf:#8e5bb5; --c-sp:#d9730d; --c-lig:#9a7400; --c-nick:#a82a96; --c-fa:#0e8fa8; --c-fb:#c2557a;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
     --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
-    --c-exon:#7da2ff; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347; --c-lig:#f2c94c; --c-nick:#f27ad8;
+    --c-exon:#7da2ff; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347; --c-lig:#f2c94c; --c-nick:#f27ad8; --c-fa:#4fd0e8; --c-fb:#ff8fb0;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
   --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
-  --c-exon:#7da2ff; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347; --c-lig:#f2c94c; --c-nick:#f27ad8;
+  --c-exon:#7da2ff; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347; --c-lig:#f2c94c; --c-nick:#f27ad8; --c-fa:#4fd0e8; --c-fb:#ff8fb0;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -63,6 +63,7 @@ select.btn{padding-right:8px}
 .rna{stroke:var(--c-sp);stroke-width:2.4;stroke-linejoin:round}
 .schiene{fill:var(--accent)}
 .schiene.rna{fill:var(--c-sp);stroke:none}
+.schiene.fa{fill:var(--c-fa)}.schiene.fb{fill:var(--c-fb)}
 .form{fill:color-mix(in srgb,var(--b) 22%,transparent);stroke:var(--b);stroke-width:3}
 .leader{stroke:var(--b);stroke-width:2}
 .chip rect{fill:var(--b)}
@@ -90,6 +91,7 @@ select.btn{padding-right:8px}
 .legende i{width:13px;height:13px;border-radius:4px;display:inline-block;flex:none}
 .legende i.rnakasten{width:15px;height:13px;background:var(--c-sp);clip-path:polygon(0 50%,25% 0,75% 0,100% 50%,75% 100%,25% 100%);border-radius:0}
 .legende i.nickkasten{width:6px;height:15px;border-radius:0;background:var(--c-nick)}
+.legende i.fragA{height:6px;background:var(--c-fa);border-radius:1px}.legende i.fragB{height:6px;background:var(--c-fb);border-radius:1px}
 .legende i.rnaschiene{height:6px;background:var(--c-sp);border-radius:1px}
 .legende i.schienekasten{height:4px;background:var(--accent);border-radius:1px}
 
@@ -243,8 +245,9 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <span><i style="background:var(--c-exon)"></i>DNA-Polymerase I</span>
         <span><i style="background:var(--c-lig)"></i>DNA-Ligase</span>
         <span><i class="rnakasten"></i>RNA-Primer</span>
-        <span><i class="schienekasten"></i>neuer Strang (DNA)</span>
-        <span><i class="rnaschiene"></i>neuer Strang (RNA-Primer)</span>
+        <span><i class="schienekasten"></i>Leitstrang</span>
+        <span><i class="fragA"></i><i class="fragB"></i>Okazaki-Fragmente (Folgestrang)</span>
+        <span><i class="rnaschiene"></i>Linie am RNA-Primer</span>
         <span><i class="nickkasten"></i>Lücke im Rückgrat (Nick)</span>
         <span><i style="background:linear-gradient(90deg,#2f5bea,#009e73,#dcae1c)"></i>Basen (wie auf den anderen Seiten)</span>
       </div>
@@ -576,11 +579,13 @@ function zeigeBindung(s, i){
   BN[s][i].style.display = an ? "" : "none";
   BN[s][i].setAttribute("opacity", Z[s][i].ghost && Z[s][i + 1].ghost ? 0.4 : 1);
 }
-function setzeZelle(s, c, typ, ghost){
+function setzeZelle(s, c, typ, ghost, quelle){   // quelle: Nummer des Fragments, das die Base gebaut hat (Folgestrang)
   const i = c + RAND, z = Z[s][i];
   z.typ = typ; z.ghost = !!ghost;
   if (typ){ setze(z, REPLIK.neu(P, s, c, typ)); z.r.style.display = typ === "rna" ? "none" : ""; z.hex.style.display = typ === "rna" ? "" : "none";
-    if (z.s){ const r = typ === "rna", unten = s === "leit"; z.s.classList.toggle("rna", r); z.s.setAttribute("height", r ? 4.5 : 2.2); z.s.setAttribute("y", unten ? CH + 1.5 : (r ? -6 : -3.5)); } z.g.style.display = ""; z.g.setAttribute("opacity", ghost ? 0.4 : 1); }
+    if (z.s){ const r = typ === "rna", unten = s === "leit"; z.s.classList.toggle("rna", r);
+      const k = quelle === undefined ? Math.floor(c / P.frag) : quelle;
+      z.s.classList.toggle("fa", s === "folge" && !!typ && !r && k % 2 === 0); z.s.classList.toggle("fb", s === "folge" && !!typ && !r && k % 2 !== 0); z.s.setAttribute("height", r ? 4.5 : 2.2); z.s.setAttribute("y", unten ? CH + 1.5 : (r ? -6 : -3.5)); } z.g.style.display = ""; z.g.setAttribute("opacity", ghost ? 0.4 : 1); }
   else z.g.style.display = "none";
   const tk = s === "folge" ? TKL[i] : TKB[i];
   tk.style.display = typ ? "" : "none"; tk.setAttribute("opacity", ghost ? 0.4 : 1);
@@ -742,7 +747,7 @@ $("ersetzen").addEventListener("click", () => {
     e.cols.forEach((c, j) => {
       const g = geo(c);
       steps.push({d: 200, enter(){ BL.pol1.geo = g; }, tick(p){ Z[s][c + RAND].g.setAttribute("opacity", 1 - p); }, leave(){ setzeZelle(s, c, "", false); verbinde(s, c - 1, false); verbinde(s, c, false); }});
-      steps.push({d: 200, enter(){ setzeZelle(s, c, "dna", false); Z[s][c + RAND].g.setAttribute("opacity", 0); verbinde(s, s === "leit" ? c - 1 : c, true); },
+      steps.push({d: 200, enter(){ setzeZelle(s, c, "dna", false, Math.floor(c / P.frag) + 1); Z[s][c + RAND].g.setAttribute("opacity", 0); verbinde(s, s === "leit" ? c - 1 : c, true); },
         tick(p){ Z[s][c + RAND].g.setAttribute("opacity", p); }, leave(){ Z[s][c + RAND].g.setAttribute("opacity", 1); }});
     });
     steps.push({d: 120, enter(){ nickZeigen({strang: s, c: e.nick}, true); }});
@@ -796,7 +801,7 @@ function ergebnis(){
   const t1 = document.createElement("p"); t1.className = "zeilentitel"; t1.textContent = "Leitstrang: ein einziges Stück"; box.appendChild(t1);
   box.appendChild(zeile([teil("Leitstrang", e.leit, "var(--accent)")]));
   const t2 = document.createElement("p"); t2.className = "zeilentitel"; t2.textContent = `Folgestrang: ${K} Okazaki-Fragmente, das letzte entstandene zuerst`; box.appendChild(t2);
-  const f = P.folge.slice().reverse().map(x => teil("Fragment " + (x.k + 1), e.folge.slice(x.von, x.bis).split("").reverse().join(""), "var(--c-exon)"));
+  const f = P.folge.slice().reverse().map(x => teil("Fragment " + (x.k + 1), e.folge.slice(x.von, x.bis).split("").reverse().join(""), x.k % 2 ? "var(--c-fb)" : "var(--c-fa)"));
   box.appendChild(zeile(f));
   box.appendChild(absatz("Die Fragmente sind verknüpft, die Primer durch DNA ersetzt. Beide neuen Stränge passen Base für Base zu ihren Vorlagen; zusammen mit je einem alten Strang ergeben sie zwei Doppelhelices, die der ursprünglichen gleichen.", "gut"));
   box.hidden = false;
