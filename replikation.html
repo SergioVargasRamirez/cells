@@ -421,6 +421,7 @@ const glatt = t => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
 const BW = 18, X0 = 84, CH = 16, RAND = 4, BREITE = 980;
 const T1_ZU = 170, T2_ZU = 194, OFFEN = 44, ABST = 24;          // obere Zeile der Vorlagen (geschlossen), Verschiebung in der Gabel, Abstand neuer Strang – Vorlage
 const BAHN_OBEN = 62, BAHN_UNTEN = 306;                         // Zeilen der Namensschilder der Enzyme
+const ABFALL = 500, PAUSE = 250;                                  // Primase löst sich (ms), Pause bis zur Polymerase
 const TP = 380, RATE_F = 3.2, RATE_P = 8;                        // Millisekunden je Primer-Base, Basen je Sekunde (Gabel, Polymerase) bei Tempo 1
 const KOMP = REPLIK.KOMP;
 
@@ -526,7 +527,7 @@ function aufbauen(neueSequenz){
     if (c >= 0 && c < N) continue;
     ZEILEN.forEach(s => { setzeZelle(s, c, "dna", true); if (c !== -1 && c !== N + RAND - 1) verbinde(s, c, true); });
   }
-  BL = {hel: blob("b-hel", "Helikase"), polL: blob("b-pol", "DNA-Polymerase III"), polF: blob("b-pol", "DNA-Polymerase III"), pri: blob("b-pri", "Primase"), pol1: blob("b-pol1", "DNA-Polymerase I"), lig: blob("b-lig", "DNA-Ligase")};
+  BL = {hel: blob("b-hel", "Helikase"), polL: blob("b-pol", "DNA-Polymerase III"), polF: blob("b-pol", "DNA-Polymerase III"), priL: blob("b-pri", "Primase"), priF: blob("b-pri", "Primase"), pol1: blob("b-pol1", "DNA-Polymerase I"), lig: blob("b-lig", "DNA-Ligase")};
   ordneAlle(true);
   zeichneAlleBlobs();
   phase = "leer";
@@ -671,16 +672,20 @@ function gabel(s){
 function leitArbeit(s){
   const L = G.leit;
   if (L.st === "wait"){
-    if (G.f >= P.primer + 2){ L.st = "primase"; L.t = 0; L.made = 0; BL.pri.geo = priLGeo(); zeigeBlob(BL.pri, true); status(TEXTE.priL); }
+    if (G.f >= P.primer + 2){ L.st = "primase"; L.t = 0; L.made = 0; BL.priL.geo = priLGeo(); zeigeBlob(BL.priL, true); status(TEXTE.priL); }
   } else if (L.st === "primase"){
     L.t += s * 1000;
     while (L.made < P.primer && L.t >= 150 + L.made * TP){ neueZelle("leit", L.made, "rna"); L.made++; }
-    if (L.t >= 150 + P.primer * TP + 250){ L.st = "pol"; L.pL = P.primer; zeigeBlob(BL.pri, false); BL.polL.geo = polLGeo(L.pL); zeigeBlob(BL.polL, true); status(TEXTE.leit); }
+    if (L.t >= 150 + P.primer * TP + 250){ L.st = "ab"; L.t = 0; zeigeBlob(BL.priL, false); }
+  } else if (L.st === "ab"){          // die Primase löst sich von der DNA, erst danach lagert sich die Polymerase an
+    L.t += s * 1000; BL.priL.geo.dy = 60 * glatt(L.t / ABFALL);
+    if (L.t >= ABFALL + PAUSE){ L.st = "pol"; L.an = 0; L.pL = P.primer; BL.polL.geo = polLGeo(L.pL); sofortBlob(BL.polL, false); zeigeBlob(BL.polL, true); status(TEXTE.leit); }
   } else if (L.st === "pol"){
+    L.an += s * 1000;
     const grenze = G.f >= N + 3 ? N : Math.max(P.primer, G.f - 3.5);
     L.pL = Math.max(L.pL, Math.min(grenze, L.pL + RATE_P * s));
     while (L.made < N && L.made < Math.floor(L.pL + 1e-9)){ neueZelle("leit", L.made, "dna"); L.made++; }
-    BL.polL.geo = polLGeo(L.pL);
+    BL.polL.geo = polLGeo(L.pL); BL.polL.geo.dy = 60 * (1 - glatt(L.an / 500));
     if (L.made >= N){ L.st = "fertig"; zeigeBlob(BL.polL, false); }
   }
 }
@@ -690,21 +695,25 @@ function folgeArbeit(s){
   const f = P.folge[F.k];
   if (F.st === "frei"){
     if (G.f >= f.bis + 2){
-      F.st = "primase"; F.t = 0; F.made = 0; BL.pri.geo = priFGeo(F.k); zeigeBlob(BL.pri, true);
+      F.st = "primase"; F.t = 0; F.made = 0; BL.priF.geo = priFGeo(F.k); zeigeBlob(BL.priF, true);
       if (!F.erster){ F.erster = true; status(TEXTE.priF); }
     }
   } else if (F.st === "primase"){
     F.t += s * 1000;
     while (F.made < P.primer && F.t >= 150 + F.made * TP){ neueZelle("folge", f.bis - 1 - F.made, "rna"); F.made++; }
-    if (F.t >= 150 + P.primer * TP + 250){
-      F.st = "pol"; F.pos = f.primerVon - 1; F.fort = 0; zeigeBlob(BL.pri, false);
+    if (F.t >= 150 + P.primer * TP + 250){ F.st = "ab"; F.t = 0; zeigeBlob(BL.priF, false); }
+  } else if (F.st === "ab"){          // die Primase löst sich, danach kommt die Polymerase
+    F.t += s * 1000; BL.priF.geo.dy = -60 * glatt(F.t / ABFALL);
+    if (F.t >= ABFALL + PAUSE){
+      F.st = "pol"; F.an = 0; F.pos = f.primerVon - 1; F.fort = 0;
       BL.polF.geo = polFGeo(F.pos); sofortBlob(BL.polF, false); zeigeBlob(BL.polF, true);
       if (!F.zweiter){ F.zweiter = true; status(TEXTE.folge); }
     }
   } else if (F.st === "pol"){
+    F.an += s * 1000;
     F.fort += RATE_P * s;
     while (F.pos >= f.von && F.fort >= 1){ neueZelle("folge", F.pos, "dna"); F.pos--; F.fort--; }
-    BL.polF.geo = polFGeo(Math.max(F.pos, f.von - 0.5) + clamp(F.fort, 0, 1) * -1);
+    BL.polF.geo = polFGeo(Math.max(F.pos, f.von - 0.5) + clamp(F.fort, 0, 1) * -1); BL.polF.geo.dy = -60 * (1 - glatt(F.an / 500));
     if (F.pos < f.von){ F.st = "weg"; F.t = 0; zeigeBlob(BL.polF, false); }
   } else if (F.st === "weg"){
     F.t += s * 1000;
