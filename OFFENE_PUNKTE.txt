@@ -133,6 +133,14 @@ M3b gen-transkription.html (19.10.2026, Wunsch: Transkription vereinfacht zeigen
 - [x] Strukturansicht: Cartoon (Standard, cartoon.js; Sekundärstruktur aus den Koordinaten nach Kabsch und Sander, vereinfacht) oder Kugeln und Stäbe; rechts Schalter "Seitenketten" (Kohlenstoffe nach Art des Restes gefärbt) und "Sicherheit (pLDDT)" (aus = Färbung nach Sekundärstruktur bzw. Element)
 - [ ] Cartoon: Zuordnung ist einfach (Helix aus 3er-/4er-Windungen, Faltblatt aus Brücken, keine Beta-Wölbungen, keine Pi-Helix); bei Peptiden mit wenigen Resten oft unscharf
 - [ ] DATENSCHUTZTEXT PRÜFEN (Abschnitt "Strukturvorhersage (nur auf Wunsch)" in datenschutz.html: Rechtsgrundlage, Betreiberangabe Meta, Drittlandübermittlung); entscheiden, ob die Funktion im Unterricht standardmäßig angeboten werden soll
+
+M3c replikation.html (21.10.2026, Wunsch: wie gen-transkription.html, aber für die DNA-Replikation; später für die PCR-Seite wiederverwenden)
+- [x] Gabel von links nach rechts: Helikase, Primase (RNA-Primer, orange umrandet), DNA-Polymerase III am Leitstrang (ein Primer, 5'→3' zur Gabel) und am Folgestrang (Okazaki-Fragmente von 8, 10 oder 20 Basen, 3 Basen Primer, 5'→3' von der Gabel weg; nicht maßstäblich); danach "3 Primer ersetzen" (Polymerase I, Nucleotid für Nucleotid) und "4 Ligation" (Ligase schließt die Nicks); Tempo-Regler, "Noch einmal", "Neue Sequenz"
+- [x] Ausschnitt mit Randstücken der Nachbargabeln (Origin links, Treffpunkt rechts, schwach gezeichnet): So lassen sich auch der Primer am Anfang des Leitstrangs und der letzte Primer des Folgestrangs ersetzen und ligieren
+- [x] Plan und Regeln in template/site/replik.js (Spalten, Leitstrang, Fragmente, Ersatz, Nicks), Test node scripts/replikation/test_replik.js; Zeichnung und Ablauf nur in der Seite
+- [ ] Für die PCR-Seite (pcr-gel.html): replik.js und die Zeichnung (Zeilen, Zellen, Enzymschilder) in ein gemeinsames Modul ziehen, wenn die Seite gebaut wird; PCR braucht Denaturieren (Stränge trennen ohne Helikase), Primer aus DNA (kein RNA-Primer, keine Ligase), Taq-Polymerase nur 5'→3' ohne Okazaki-Fragmente: das Plan-Objekt hat dafür nur den Leitstrang-Teil zu bieten
+- [ ] Ideen: Gleitklammer, Einzelstrang-Bindeproteine und Topoisomerase einblenden (Schalter "Expertenmodus"); Korrekturlesen und Fehlerrate; Meselson-Stahl-Versuch als eigene Seite (semikonservativ, ohne den Satz vorwegzunehmen); Telomere und das Endreplikationsproblem; mehrere Startpunkte; Zellkern-Namen (MCM, Pol α/ε/δ, FEN1) umschalten
+- [ ] Gegenlesen: Texte, Rolle der Namen (E. coli), Touch testen, Tempo für Unterricht
 - [ ] Boltz (boltz.bio) und andere Dienste brauchen einen API-Schlüssel und lassen sich ohne eigenen Server nicht sicher aus einer statischen Seite aufrufen; nur als Link angeboten. Möglich wäre ein eigener Proxy oder "eigenen Schlüssel eingeben" (nur im Speicher)
 - [ ] ESM-Atlas-Schnittstelle ist inoffiziell/öffentlich und kann sich ändern oder abgeschaltet werden: Fehlermeldung und Links sind vorgesehen; ggf. fertige Strukturen für die zwei Peptide mitliefern (dann keine Anfrage nötig)
 - [ ] Translation: tRNA und Initiationsfaktoren fehlen; Peptidfarben passen sich nicht an, wenn zwischen hell und dunkel gewechselt wird
@@ -215,7 +223,7 @@ Vorschlag für die Reihenfolge: 1 Mendel (Karten "Erbgänge" und "Stammbäume" s
   - [ ] Verbindung zu den Stammbäumen (Erbgang aus dem Stammbaum bestimmen) und zu meiose.html (Gametenbildung als Grund für die Regeln)
 - [ ] mitose.html: Zellzyklus und Mitose
   - [ ] Zellzyklus mit G1, S, G2 und M; Chromosomen und Chromatiden, Spindel; Phasen Pro-, Meta-, Ana- und Telophase; Aufgaben: Phasen ordnen und schematische Zellen bestimmen, DNA-Gehalt je Zelle als Kurve (2C, 4C, 2C)
-  - [ ] Verbindung: S-Phase und Replikation (basenpaarung.html), Kontrollpunkte und Krebs in Kürze
+  - [ ] Verbindung: S-Phase und Replikation (replikation.html, basenpaarung.html), Kontrollpunkte und Krebs in Kürze
 - [ ] meiose.html: Meiose
   - [ ] Reduktion von 2n auf n, Meiose I und II, Paarung der homologen Chromosomen, Tetraden und Chiasmata; unabhängige Verteilung (2^n Kombinationen, beim Menschen etwa 8 Millionen allein daraus; Wert prüfen); Vergleich mit der Mitose
   - [ ] Gameten zählen führt zur dritten Mendelschen Regel; Erweiterung: Fehlverteilung (Non-Disjunktion, Trisomie 21)
