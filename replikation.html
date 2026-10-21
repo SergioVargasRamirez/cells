@@ -11,19 +11,19 @@
   --accent:#13795b; --accent-ink:#ffffff; --hl:#fff3d6;
   --serif:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
   --sans:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --c-exon:#3d6fd6; --c-term:#d1495b; --c-tf:#8e5bb5; --c-sp:#d9730d; --c-lig:#9a7400; --c-nick:#a82a96; --c-fa:#0e8fa8; --c-fb:#c2557a;
+  --c-exon:#3d6fd6; --c-term:#d1495b; --c-tf:#8e5bb5; --c-sp:#d9730d; --c-lig:#9a7400; --c-nick:#5b1a9e; --c-fa:#0e8fa8; --c-fb:#c2557a;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
     --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
-    --c-exon:#7da2ff; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347; --c-lig:#f2c94c; --c-nick:#f27ad8; --c-fa:#4fd0e8; --c-fb:#ff8fb0;
+    --c-exon:#7da2ff; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347; --c-lig:#f2c94c; --c-nick:#a64dff; --c-fa:#4fd0e8; --c-fb:#ff8fb0;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
   --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
-  --c-exon:#7da2ff; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347; --c-lig:#f2c94c; --c-nick:#f27ad8; --c-fa:#4fd0e8; --c-fb:#ff8fb0;
+  --c-exon:#7da2ff; --c-term:#ff7d8d; --c-tf:#c79af0; --c-sp:#ffb347; --c-lig:#f2c94c; --c-nick:#a64dff; --c-fa:#4fd0e8; --c-fb:#ff8fb0;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -91,8 +91,8 @@ select.btn{padding-right:8px}
 .legende i{width:13px;height:13px;border-radius:4px;display:inline-block;flex:none}
 .legende i.rnakasten{width:15px;height:13px;background:var(--c-sp);clip-path:polygon(0 50%,25% 0,75% 0,100% 50%,75% 100%,25% 100%);border-radius:0}
 .legende i.nickkasten{width:6px;height:15px;border-radius:0;background:var(--c-nick)}
-.legende i.fragA{height:6px;background:var(--c-fa);border-radius:1px}.legende i.fragB{height:6px;background:var(--c-fb);border-radius:1px}
-.legende i.rnaschiene{height:6px;background:var(--c-sp);border-radius:1px}
+.legende i.fragA{height:5px;background:var(--c-fa);border-radius:1px}.legende i.fragB{height:5px;background:var(--c-fb);border-radius:1px}
+.legende i.rnaschiene{height:5px;background:var(--c-sp);border-radius:1px}
 .legende i.schienekasten{height:4px;background:var(--accent);border-radius:1px}
 
 /* Ergebnis */
@@ -245,7 +245,6 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <span><i style="background:var(--c-exon)"></i>DNA-Polymerase I</span>
         <span><i style="background:var(--c-lig)"></i>DNA-Ligase</span>
         <span><i class="rnakasten"></i>RNA-Primer</span>
-        <span><i class="schienekasten"></i>Leitstrang</span>
         <span><i class="fragA"></i><i class="fragB"></i>Okazaki-Fragmente (Folgestrang)</span>
         <span><i class="rnaschiene"></i>Linie am RNA-Primer</span>
         <span><i class="nickkasten"></i>Lücke im Rückgrat (Nick)</span>
@@ -583,10 +582,14 @@ function setzeZelle(s, c, typ, ghost, quelle){   // quelle: Nummer des Fragments
   const i = c + RAND, z = Z[s][i];
   z.typ = typ; z.ghost = !!ghost;
   if (typ){ setze(z, REPLIK.neu(P, s, c, typ)); z.r.style.display = typ === "rna" ? "none" : ""; z.hex.style.display = typ === "rna" ? "" : "none";
-    if (z.s){ const r = typ === "rna", unten = s === "leit"; z.s.classList.toggle("rna", r);
-      const k = quelle === undefined ? Math.floor(c / P.frag) : quelle;
-      z.s.classList.toggle("fa", s === "folge" && !!typ && !r && k % 2 === 0); z.s.classList.toggle("fb", s === "folge" && !!typ && !r && k % 2 !== 0); z.s.setAttribute("height", r ? 4.5 : 2.2); z.s.setAttribute("y", unten ? CH + 1.5 : (r ? -6 : -3.5)); } z.g.style.display = ""; z.g.setAttribute("opacity", ghost ? 0.4 : 1); }
-  else z.g.style.display = "none";
+    if (z.s){   // Linie am neuen Strang: nur am RNA-Primer (orange) und an den Okazaki-Fragmenten (abwechselnd zwei Farben)
+      const r = typ === "rna", k = quelle === undefined ? Math.floor(c / P.frag) : quelle, frag = s === "folge" && !r;
+      z.s.style.display = r || frag ? "" : "none";
+      z.s.classList.toggle("rna", r); z.s.classList.toggle("fa", frag && k % 2 === 0); z.s.classList.toggle("fb", frag && k % 2 !== 0);
+      z.s.setAttribute("height", 5); z.s.setAttribute("y", s === "leit" ? CH + 2.5 : -7.5);
+    }
+    z.g.style.display = ""; z.g.setAttribute("opacity", ghost ? 0.4 : 1);
+  } else z.g.style.display = "none";
   const tk = s === "folge" ? TKL[i] : TKB[i];
   tk.style.display = typ ? "" : "none"; tk.setAttribute("opacity", ghost ? 0.4 : 1);
   zeigeBindung(s, i - 1); zeigeBindung(s, i);
