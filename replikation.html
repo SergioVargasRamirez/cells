@@ -55,7 +55,6 @@ select.btn{padding-right:8px}
 .zeilenname{font-size:11px;font-weight:700;fill:var(--muted)}
 .ende{font-size:14px;font-weight:800;fill:var(--muted)}
 .rand{font-size:12px;font-weight:700;fill:var(--muted)}
-.randklein{font-size:11px;font-weight:600;fill:var(--muted);font-style:italic}
 .randlinie{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:4 5;opacity:.55}
 .tick{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round}
 .bindung{fill:var(--muted)}
@@ -498,8 +497,6 @@ function aufbauen(neueSequenz){
   el("line", {class: "randlinie", x1: xl(N), x2: xl(N), y1: 78, y2: 300}, gHinten);
   el("text", {class: "rand", x: xl(0), y: 28, "text-anchor": "middle"}, gHinten).textContent = "Origin";
   el("text", {class: "rand", x: xl(N), y: 28, "text-anchor": "middle"}, gHinten).textContent = "Treffpunkt";
-  el("text", {class: "randklein", x: xl(-RAND), y: 44}, gHinten).textContent = "andere Gabel (nicht gezeigt)";
-  el("text", {class: "randklein", x: xl(N + RAND), y: 44, "text-anchor": "end"}, gHinten).textContent = "entgegenkommende Gabel (nicht gezeigt)";
   // Namen und Enden der Zeilen
   [[102, "Folgestrang", "3'", "5'"], [126, "", "5'", "3'"], [238, "", "3'", "5'"], [262, "Leitstrang", "5'", "3'"]].forEach(([y, name, l, r]) => {
     if (name) el("text", {class: "zeilenname", x: 4, y: y + 12}, gHinten).textContent = name;
