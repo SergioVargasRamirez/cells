@@ -59,8 +59,8 @@ select.btn{padding-right:8px}
 .randlinie{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:4 5;opacity:.55}
 .tick{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round}
 .bindung{fill:var(--muted)}
-.nick{stroke:var(--c-term);stroke-width:3;stroke-linecap:round}
-.rna{stroke:var(--c-sp);stroke-width:2.6}
+.nick{stroke:var(--c-term);stroke-width:6;stroke-linecap:butt}
+.rna{stroke:var(--c-sp);stroke-width:2.4;stroke-linejoin:round}
 .schiene{fill:var(--accent)}
 .form{fill:color-mix(in srgb,var(--b) 22%,transparent);stroke:var(--b);stroke-width:3}
 .leader{stroke:var(--b);stroke-width:2}
@@ -87,8 +87,8 @@ select.btn{padding-right:8px}
 .legende{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.92rem;color:var(--muted);margin:8px 0 0}
 .legende span{display:inline-flex;align-items:center;gap:6px}
 .legende i{width:13px;height:13px;border-radius:4px;display:inline-block;flex:none}
-.legende i.rnakasten{background:transparent;border:2.6px solid var(--c-sp)}
-.legende i.nickkasten{width:4px;height:15px;border-radius:2px;background:var(--c-term)}
+.legende i.rnakasten{width:15px;height:13px;background:var(--c-sp);clip-path:polygon(0 50%,25% 0,75% 0,100% 50%,75% 100%,25% 100%);border-radius:0}
+.legende i.nickkasten{width:6px;height:15px;border-radius:0;background:var(--c-term)}
 .legende i.schienekasten{height:4px;background:var(--accent);border-radius:1px}
 
 /* Ergebnis */
@@ -438,12 +438,14 @@ function zelle(parent, buchstabe, neuerStrang, unten){
   t.style.fontSize = "12px";
   let s = null;
   if (neuerStrang) s = el("rect", {class: "schiene", x: 1.5, y: unten ? CH + 1.5 : -3.5, width: BW - 3, height: 2.2, rx: 1}, g);
-  const z = {g, r, t, s, b: "", typ: ""};
+  const hex = el("polygon", {class: "rna", points: "1.5,8 5.5,0 12.5,0 16.5,8 12.5,16 5.5,16"}, g);   // RNA-Nucleotide sind sechseckig
+  hex.style.display = "none"; g.insertBefore(hex, t);
+  const z = {g, r, hex, t, s, b: "", typ: ""};
   setze(z, buchstabe);
   return z;
 }
 function setze(z, b){ z.b = b; z.t.textContent = b; faerbe(z); }
-function faerbe(z){ if (!z.b) return; const f = PALETTE.get(z.b); z.r.setAttribute("fill", f); z.t.setAttribute("fill", lumi(f) > 0.6 ? "#111" : "#fff"); }
+function faerbe(z){ if (!z.b) return; const f = PALETTE.get(z.b); z.r.setAttribute("fill", f); z.hex.setAttribute("fill", f); z.t.setAttribute("fill", lumi(f) > 0.6 ? "#111" : "#fff"); }
 
 function blob(klasse, text){
   const form = el("rect", {class: "form " + klasse, rx: 9}, gHinten);
@@ -572,7 +574,7 @@ function zeigeBindung(s, i){
 function setzeZelle(s, c, typ, ghost){
   const i = c + RAND, z = Z[s][i];
   z.typ = typ; z.ghost = !!ghost;
-  if (typ){ setze(z, REPLIK.neu(P, s, c, typ)); z.r.classList.toggle("rna", typ === "rna"); z.g.style.display = ""; z.g.setAttribute("opacity", ghost ? 0.4 : 1); }
+  if (typ){ setze(z, REPLIK.neu(P, s, c, typ)); z.r.style.display = typ === "rna" ? "none" : ""; z.hex.style.display = typ === "rna" ? "" : "none"; z.g.style.display = ""; z.g.setAttribute("opacity", ghost ? 0.4 : 1); }
   else z.g.style.display = "none";
   const tk = s === "folge" ? TKL[i] : TKB[i];
   tk.style.display = typ ? "" : "none"; tk.setAttribute("opacity", ghost ? 0.4 : 1);
@@ -589,12 +591,12 @@ function neueZelle(s, c, typ){
 const TEXTE = {
   leer: "Links liegt der Startpunkt der Replikation (Origin). Drücke auf „Replikation starten“.",
   hel: "Initiation: Die Helikase lagert sich am Startpunkt an und öffnet die Doppelhelix, indem sie die Wasserstoffbrücken zwischen den Basenpaaren trennt. Sie wandert nach rechts, die Replikationsgabel bewegt sich mit ihr.",
-  priL: "Priming: Die DNA-Polymerase kann keine Kette beginnen, sie kann nur an ein vorhandenes 3'-Ende anbauen. Darum baut die Primase zuerst ein kurzes Stück RNA (Primer, orange umrandet) an die Matrize.",
+  priL: "Priming: Die DNA-Polymerase kann keine Kette beginnen, sie kann nur an ein vorhandenes 3'-Ende anbauen. Darum baut die Primase zuerst ein kurzes Stück RNA (Primer, sechseckig und orange umrandet) an die Matrize.",
   leit: "Leitstrang: Die DNA-Polymerase III hängt Nucleotide immer an das 3'-Ende der wachsenden Kette an (Synthese 5'→3'). Am Leitstrang zeigt dieses Ende zur Gabel: Die Polymerase folgt der Helikase und baut den Strang in einem Stück, mit nur einem Primer.",
   priF: "Folgestrang: Hier würde die Polymerase gegen die Laufrichtung der Gabel bauen. Sie muss warten, bis die Helikase ein Stück Matrize freigelegt hat. Dann setzt die Primase an dessen Ende einen Primer, und die Polymerase baut von dort aus von der Gabel weg.",
   folge: "Folgestrang: Die Polymerase baut ein Okazaki-Fragment (5'→3', von der Gabel weg) bis zum Fragment davor. Dann beginnt am nächsten freigelegten Stück Matrize ein neues Fragment mit neuem Primer.",
   ende: "Termination: Die Helikase trifft auf die entgegenkommende Gabel und löst sich von der DNA. Die Polymerasen bauen die letzten Stücke fertig.",
-  gabelFertig: "Alle Stränge sind aufgefüllt. Aber an jedem Primer steckt noch RNA (orange umrandet) im neuen Strang. Klicke auf „3 Primer ersetzen“.",
+  gabelFertig: "Alle Stränge sind aufgefüllt. Aber an jedem Primer steckt noch RNA (sechseckig, orange umrandet) im neuen Strang. Klicke auf „3 Primer ersetzen“.",
   ers: "Primer ersetzen: Die DNA-Polymerase I entfernt die RNA-Nucleotide vom 5'-Ende des Primers her und ersetzt sie nacheinander durch DNA. Dazu baut sie 5'→3' am 3'-Ende des benachbarten Strangstücks an.",
   ersFertig: "Alle Primer sind durch DNA ersetzt. An den roten Markierungen fehlt noch die Bindung zwischen zwei Nucleotiden (Nick). Die Polymerase kann diese Lücke nicht schließen. Klicke auf „4 Ligation“.",
   lig: "Ligation: Die DNA-Ligase verknüpft das 3'-Ende des einen Stücks mit dem 5'-Ende des nächsten zu einer Phosphodiesterbindung. Dafür braucht sie Energie (ATP, in Bakterien NAD⁺).",
