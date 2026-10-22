@@ -176,6 +176,9 @@ button:focus-visible,input:focus-visible,summary:focus-visible,canvas:focus-visi
 .stufe{display:flex;gap:10px;align-items:flex-start}
 .fakten{margin:6px 0 0;padding-left:1.15em}.fakten li{margin-bottom:6px}
 .seg button[disabled]{opacity:.45;cursor:not-allowed}
+.pillen{display:flex;flex-wrap:wrap;gap:8px}
+.pillen button{font:inherit;font-size:.95rem;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);padding:7px 16px;min-height:40px;cursor:pointer}
+.pillen button[aria-checked="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
 .restinfo{min-height:3.2em;font-size:.95rem}
 .karte h3 .nr{display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:700 .8em var(--sans);margin-right:8px}
 .diagleg{display:flex;flex-wrap:wrap;gap:8px 24px;margin:8px 0 12px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);font-size:1.02rem}
@@ -327,7 +330,8 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
     <section class="schritt" id="s-leiter">
       <h2>Von der Doppelhelix zum Chromosom</h2>
       <div class="steuerzeile">
-        <label class="regler" style="flex:1;min-width:260px">Verpackungsstufe <input type="range" id="stufe" min="1" max="5" step="1" value="1" aria-label="Verpackungsstufe von der Doppelhelix bis zum Chromosom"><output id="stufe-o">1</output></label>
+        <span class="etikett" id="l-stufe">Verpackungsstufe</span>
+        <div class="pillen" role="radiogroup" aria-labelledby="l-stufe" id="stufen"></div>
       </div>
       <div class="lab" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
         <div class="karte"><svg id="leiter" class="leiter" viewBox="0 0 420 300" role="img" aria-label="Schematische Zeichnung der aktuellen Verpackungsstufe"></svg></div>
@@ -921,6 +925,7 @@ const kl = (x, a, b) => Math.min(b, Math.max(a, x));
 const fmt = (x, n = 0) => x.toLocaleString("de-DE", {minimumFractionDigits: n, maximumFractionDigits: n});
 
 /* ---------- 1. Verpackungsleiter ---------- */
+let stufeNr = 1;
 const STUFEN = [
   {name: "DNA-Doppelhelix", groesse: "2 nm Durchmesser", text: "Die DNA ist ein dünner, langer Faden: Pro Basenpaar sind es nur 0,34 nm. Die 3,2 Milliarden Basenpaare eines menschlichen Genoms ergeben einen Faden von etwa zwei Metern Länge (pro Zelle sind es zwei Genomsätze, also etwa zwei mal zwei Meter), der in einen Zellkern von etwa 6 µm Durchmesser passen muss.", faktor: "Ausgangslage"},
   {name: "Nucleosom", groesse: "11 nm", text: "147 Basenpaare der DNA winden sich in 1,65 Windungen um ein Oktamer aus acht Histonproteinen. Zwischen den Nucleosomen liegt Linker-DNA. So entsteht eine „Perlenkette“. Die DNA wird dadurch etwa sechsmal kürzer.", faktor: "etwa 6-fach"},
@@ -929,6 +934,8 @@ const STUFEN = [
   {name: "Metaphase-Chromosom", groesse: "1400 nm Breite", text: "Vor der Zellteilung wird das Chromatin maximal verdichtet. Jedes Chromosom besteht aus zwei identischen Schwesterchromatiden. In diesem Zustand wird kaum noch abgelesen.", faktor: "etwa 10 000-fach"}
 ];
 function leiter(n){
+  stufeNr = n;
+  $("stufen").querySelectorAll("button").forEach((b, i) => b.setAttribute("aria-checked", String(i + 1 === n)));
   const svg = $("leiter"); svg.textContent = "";
   const C = "currentColor", dunkel = PALETTE.istDunkel();
   const sf = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim();
@@ -1084,7 +1091,6 @@ function leiter(n){
   const s = STUFEN[n - 1];
   svg.setAttribute("aria-label", "Schematische Zeichnung: " + s.name);
   $("stufentext").innerHTML = "<h3>" + n + " · " + s.name + "</h3><p style=\"margin:0 0 8px\"><b>" + s.groesse + "</b> · Verkürzung der DNA: <b>" + s.faktor + "</b></p><p style=\"margin:0\">" + s.text + "</p>";
-  $("stufe-o").textContent = n + " / 5";
 }
 
 /* ---------- 2. Nucleosom 3D ---------- */
@@ -1129,7 +1135,7 @@ function szene3(){
 function zeichne3(neu){ if (!viewer) return; viewer.setScene(szene3(), {keepView: !neu}); }
 function nucText(){
   $("nuctext").innerHTML = S3.tetra ? "<h3>Vier Nucleosomen</h3><p style=\"margin:0 0 8px\">Die Röntgenstruktur 1ZBB zeigt vier Nucleosomen, die ein DNA-Strang von 693 Basenpaaren verbindet. Je zwei Nucleosomen liegen übereinander, die Linker-DNA läuft kreuzweise zwischen den beiden Stapeln.</p><p style=\"margin:0 0 8px\">Die Auflösung beträgt 9 Å, das Linker-Histon H1 fehlt. Das Bild ist ein Ausschnitt aus einer Faser, die in der Zelle viel länger ist.</p>" : "<h3>Aufbau</h3><p style=\"margin:0 0 8px\">Das Histon-Oktamer besteht aus je zwei Kopien von <b>H3</b>, <b>H4</b>, <b>H2A</b> und <b>H2B</b>. Ihre gefalteten Bereiche liegen im Inneren, die Schwänze ragen zwischen den DNA-Windungen heraus.</p><p style=\"margin:0 0 8px\">Die DNA ist stark negativ geladen (Phosphatgruppen), die Histone sind reich an positiven Aminosäuren (Lysin, Arginin). Diese Anziehung hält die DNA am Oktamer.</p><p style=\"margin:0\">Schiebe den Regler „DNA abwickeln“: Je weiter sich die Enden lösen, desto mehr DNA liegt frei.</p>";
-  $("abw").disabled = S3.tetra;
+  $("abw").closest("label").hidden = S3.tetra;
   $("gl3").setAttribute("aria-label", S3.tetra ? "3D-Modell von vier Nucleosomen. Ziehen oder Pfeiltasten drehen." : "3D-Modell des Nucleosoms. Ziehen oder Pfeiltasten drehen.");
   $("legende").innerHTML = ["H3", "H4", "H2A", "H2B"].map(h => `<span><i style="background:${PALETTE.get(FARBEN[h])}"></i>${h}</span>`).join("") + (S3.tail ? `<span><i style="background:${PALETTE.get("rg_cca")}"></i>Histonschwänze</span>` : "") + `<span><i style="background:${PALETTE.get("zucker")}"></i>DNA</span>`;
 }
@@ -1293,7 +1299,8 @@ function zeichneExp(){
 }
 
 /* ---------- Bedienung ---------- */
-$("stufe").addEventListener("input", e => leiter(+e.target.value));
+STUFEN.forEach((st, i) => { const b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "radio"); b.dataset.stufe = i + 1; b.textContent = st.name; $("stufen").appendChild(b); });
+$("stufen").addEventListener("click", e => { const b = e.target.closest("button"); if (b) leiter(+b.dataset.stufe); });
 ["t-dna", "t-his", "t-tail"].forEach(id => $(id).addEventListener("change", e => { S3[{ "t-dna": "dna", "t-his": "his", "t-tail": "tail" }[id]] = e.target.checked; nucText(); zeichne3(false); }));
 $("sg-mod").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; $("sg-mod").querySelectorAll("button").forEach(x => x.setAttribute("aria-checked", String(x === b))); S3.tetra = b.dataset.wert === "tetra"; nucText(); zeichne3(true); });
 $("abw").addEventListener("input", e => { S3.abw = +e.target.value; $("abw-o").textContent = S3.abw + " bp"; zeichne3(false); });
@@ -1310,7 +1317,7 @@ $("h1").addEventListener("change", e => { X.h1 = e.target.checked; zeichneExp();
 $("expneu").addEventListener("click", () => { xReset(); zeichneExp(); });
 function modus(){ $("s-experte").hidden = !$("experte").checked; try { localStorage.setItem("cells-experte-chromatin", $("experte").checked ? "1" : "0"); } catch (e) {} }
 $("experte").addEventListener("change", modus);
-if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { leiter(+$("stufe").value); nucText(); zeichne3(false); GENE.forEach(g => zeichneGen(g.id, false)); zeichneDiagr(); zeichneExp(); });
+if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { leiter(stufeNr); nucText(); zeichne3(false); GENE.forEach(g => zeichneGen(g.id, false)); zeichneDiagr(); zeichneExp(); });
 
 leiter(1); nucText(); zellen(); genkarten(); zeichneDiagr(); xReset(); zeichneExp(); modus();
 if (MOL3D.supported()){
