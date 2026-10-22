@@ -1232,7 +1232,7 @@ function zeitraffer(){
   if (M.laeuft){ M.laeuft = false; zeitKnopf(); return; }   // Pause: jetzt kann man Gene umschalten
   if (M.t >= 24 - 1e-9) zuruecksetzen();   // nach dem Ende: neuer Versuch ab dem Ausgangsmuster
   $("bilanz").hidden = true; M.laeuft = true;
-  const reduziert = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches, dauer = reduziert ? 1 : 8000, t0 = performance.now() - M.t / 24 * dauer;
+  const reduziert = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches, dauer = reduziert ? 1 : 40000, t0 = performance.now() - M.t / 24 * dauer;
   const f = now => { const k = kl((now - t0) / dauer, 0, 1); M.t = k * 24; $("t").value = M.t; $("t-o").textContent = fmt(M.t, 1) + " h"; zeichneDiagr(); if (k < 1) M.anim = requestAnimationFrame(f); else { M.laeuft = false; zeitKnopf(); bilanz(); } };
   zeitKnopf(); M.anim = requestAnimationFrame(f);
 }
