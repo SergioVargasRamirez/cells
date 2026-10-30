@@ -138,7 +138,8 @@ ol.fragen li{margin-bottom:6px}
 .z5 .chl{fill:var(--chl1);stroke:var(--chl-s);stroke-width:1.2}
 .z5 .kern{fill:var(--nukl1);stroke:var(--nukl2);stroke-width:2}
 .z5 .platte{stroke:var(--wand-s);stroke-width:5;stroke-linecap:round}
-.z5 .ring{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;opacity:.9}
+.z5 g[class~="verfolgt"]{filter:drop-shadow(0 0 5px var(--accent))}
+.z5 .wand,.z5 .zelle{cursor:pointer}
 .z5 .teilt .wand{stroke:var(--aktin)}
 .z5 .zelle{fill:var(--zyto1);stroke:var(--mem);stroke-width:3;stroke-linejoin:round}
 .z5 .teilt .zelle{stroke:var(--aktin)}
@@ -262,9 +263,9 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <button class="btn" type="button" id="z5-neu">Neu beginnen</button>
         <label class="regler">Tempo <input type="range" id="z5-tempo" min="0.5" max="3" step="0.5" value="1" aria-label="Tempo"></label>
         <label class="regler">Teilung ab Größe <input type="range" id="z5-groesse" min="46" max="72" step="2" value="60" aria-label="Größe, ab der sich eine Zelle teilt"></label>
-        <label class="schalter"><input type="checkbox" id="z5-ring" checked> Wachstumsring zeigen</label>
+        <label class="schalter"><input type="checkbox" id="z5-ring" checked> Zellwecker zeigen</label>
       </div>
-      <div class="buehne"><svg id="feld" viewBox="0 0 640 368" role="img" aria-label="Zellen unter dem Mikroskop: Sie wachsen, ihr Kern teilt sich, dann entstehen zwei Tochterzellen"></svg></div>
+      <div class="buehne"><svg id="feld" viewBox="0 -80 640 448" role="img" aria-label="Zellen unter dem Mikroskop: Sie wachsen, ihr Kern teilt sich, dann entstehen zwei Tochterzellen"></svg></div>
       <div class="zaehler" aria-live="polite">
         <span>Zellen<b id="z5-n">1</b></span>
         <span>Teilungen<b id="z5-t">0</b></span>
@@ -294,7 +295,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <label class="regler">Tempo <input type="range" id="m-tempo" min="0.5" max="3" step="0.5" value="1" aria-label="Tempo"></label>
         <label class="schalter"><input type="checkbox" id="m-beschr" checked> Beschriftungen</label>
       </div>
-      <div class="buehne" id="zelle"><svg id="m-svg" viewBox="-500 -240 1000 480" role="img" aria-label="Cartoon einer Zelle während der Mitose"></svg></div>
+      <div class="buehne" id="zelle"><svg id="m-svg" viewBox="-500 -340 1000 580" role="img" aria-label="Cartoon einer Zelle während der Mitose"></svg></div>
       <div class="zeit"><span>Anfang</span><input type="range" id="m-zeit" min="0" max="1000" value="0" aria-label="Zeitpunkt in der Zellteilung"><span>Ende</span></div>
       <ol class="phasen" id="m-phasen" aria-label="Phasen"></ol>
       <div class="status" id="m-status" aria-live="polite"></div>
@@ -335,8 +336,8 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
   <details>
     <summary>Modell und Grenzen</summary>
     <ul>
-      <li><b>Klasse 5:</b> Die <b>Pflanzenzellen</b> sind Rechtecke mit Zellwand, Kern, zwei Vakuolen-Teilen und vier Chloroplasten; die <b>Tierzellen</b> sind einfache Kreise mit einem Kern. Sie wachsen gleichmäßig (die Fläche nimmt zu), teilen sich ab einer einstellbaren Größe und halbieren dabei ihre Fläche. Bei Pflanzenzellen entsteht die neue Wand senkrecht zur langen Seite; Tierzellen schnüren sich in der Mitte durch. Wachstumszeit und Dauer sind für die Anschauung gewählt; die Zellen schieben sich gegenseitig beiseite (Pflanzenzellen werden außerdem zur Mitte gezogen, damit ein Gewebe entsteht, Tierzellen liegen wie in einer Zellkultur auf einer Platte). Echte Zellen teilen sich nicht von selbst bei einer festen Größe: Ob und wann sie sich teilen, hängt von Signalen, Nährstoffen und Kontrollpunkten ab (siehe Klasse 12). Teilende Zellen sind in Wirklichkeit nicht grün, und nicht alle Pflanzenzellen haben Chloroplasten (Wurzelzellen haben keine). Die Teilung hört bei 32 Zellen auf, damit das Bild übersichtlich bleibt.</li>
-      <li><b>Klasse 9 und 12:</b> Die Zelle hat (als Pflanzen- und als Tierzelle) vier Chromosomen (2n = 4: ein langes und ein kurzes Paar, jeweils ein mütterliches blau, ein väterliches orange); die Zwiebel hat 16, der Mensch 46. Der Ablauf der Mitose ist bei beiden gleich; unterschiedlich sind Spindelpole (Zentrosomen mit Zentriolen und Astralfasern bei Tieren, breite Polkappen bei Pflanzen), das Präprophase-Band (nur Pflanzen) und die Cytokinese (Einschnürung durch einen Actin-Myosin-Ring bei Tieren, Zellplatte mit Phragmoplast bei Pflanzen). Die Zeit ist nicht maßstäblich: In einer Zelle dauert die Interphase etwa 23 von 24 Stunden, die Mitose rund eine Stunde, davon die Metaphase wenige Minuten. Phasenfolge, Zahl der Chromatiden und DNA-Gehalt (2C → 4C → 2C) folgen dem Lehrbuch (zum Beispiel Alberts et al., <i>Molecular Biology of the Cell</i>, Kapitel „Cell Division“, und Campbell, <i>Biologie</i>).</li>
+      <li><b>Klasse 5:</b> Die <b>Pflanzenzellen</b> sind Rechtecke mit Zellwand, Kern, zwei Vakuolen-Teilen und vier Chloroplasten; die <b>Tierzellen</b> sind einfache Kreise mit einem Kern. Sie wachsen gleichmäßig (die Fläche nimmt zu), teilen sich ab einer einstellbaren Größe und halbieren dabei ihre Fläche. Bei Pflanzenzellen entsteht die neue Wand senkrecht zur langen Seite; Tierzellen schnüren sich in der Mitte durch. Wachstumszeit und Dauer sind für die Anschauung gewählt; die Zellen schieben sich gegenseitig beiseite (Pflanzenzellen werden außerdem zur Mitte gezogen, damit ein Gewebe entsteht, Tierzellen liegen wie in einer Zellkultur auf einer Platte). Echte Zellen teilen sich nicht von selbst bei einer festen Größe: Ob und wann sie sich teilen, hängt von Signalen, Nährstoffen und Kontrollpunkten ab (siehe Klasse 12). Der Zellwecker oben links gehört zur leuchtenden Zelle (anklickbar); die Längen von Wachsen (18 s) und Teilung (8 s) im Ring sind die der Simulation, nicht die einer echten Zelle. Teilende Zellen sind in Wirklichkeit nicht grün, und nicht alle Pflanzenzellen haben Chloroplasten (Wurzelzellen haben keine). Die Teilung hört bei 32 Zellen auf, damit das Bild übersichtlich bleibt.</li>
+      <li><b>Klasse 9 und 12:</b> Die Zelle hat (als Pflanzen- und als Tierzelle) vier Chromosomen (2n = 4: ein langes und ein kurzes Paar, jeweils ein mütterliches blau, ein väterliches orange); die Zwiebel hat 16, der Mensch 46. Der Ablauf der Mitose ist bei beiden gleich; unterschiedlich sind Spindelpole (Zentrosomen mit Zentriolen und Astralfasern bei Tieren, breite Polkappen bei Pflanzen), das Präprophase-Band (nur Pflanzen) und die Cytokinese (Einschnürung durch einen Actin-Myosin-Ring bei Tieren, Zellplatte mit Phragmoplast bei Pflanzen). Der Ring oben links im Cartoon (Zellzyklus-Wecker) ist nach der Zeit des Ablaufs eingeteilt, die Teile sind also ähnlich lang; die Längen einer echten Zelle zeigt der Ring in Klasse 12 weiter unten. Die Zeit ist nicht maßstäblich: In einer Zelle dauert die Interphase etwa 23 von 24 Stunden, die Mitose rund eine Stunde, davon die Metaphase wenige Minuten. Phasenfolge, Zahl der Chromatiden und DNA-Gehalt (2C → 4C → 2C) folgen dem Lehrbuch (zum Beispiel Alberts et al., <i>Molecular Biology of the Cell</i>, Kapitel „Cell Division“, und Campbell, <i>Biologie</i>).</li>
       <li>Der Cartoon ist eine Schnittzeichnung durch die Zelle; Organellen (Chloroplasten, Mitochondrien, raues ER, Golgi-Apparat, Bläschen) sind schematisch und nicht maßstäblich am Rand verteilt. Die Chromosomen sind bewusst zu groß und zu wenige. Die Bänderung der verdichteten Chromosomen ist ein Schmuckelement und zeigt keine echten Banden. Chromatin sieht in der Interphase nicht wie ein einzelner verknäuelter Faden aus, sondern ist in Schleifen und Domänen gefaltet (siehe <a href="chromatin.html">DNA-Verpackung</a>). Die Vakuole ist als zwei Teile links und rechts vom Kern gezeichnet; in Wirklichkeit ist es meist eine große zentrale Vakuole, die den Kern an den Rand drückt und von Zytoplasmasträngen durchzogen ist. Die Pflanzenzelle ist als Rechteck gezeichnet; die Zellen sind in der Wurzelspitze etwa würfelförmig. Die Tierzelle ist als Kugel gezeichnet; Zellen in Geweben sind abgeflacht oder eckig. Der Actin-Myosin-Ring ist im Schnitt als zwei Punkte gezeichnet; nach der Teilung bleibt die Mittelbrücke mit dem Restkörper kurz bestehen.</li>
       <li>Vereinfacht ist: die Prometaphase (die Spindelfasern wachsen nicht zufällig suchend, sondern gehen direkt zu den Kinetochoren; in der Zelle fangen sie ein Kinetochor nach dem anderen ein, auch Fehlanheftungen kommen vor und werden korrigiert), die Kernhülle (sie zerfällt in der Zelle in Bläschen und Teile des ER und wird aus ihnen neu aufgebaut; im Cartoon sind es 24 Bläschen), die Zahl der Mikrotubuli, die Zentriolen (zwei Stäbchen im rechten Winkel, in Wirklichkeit Hohlzylinder aus neun Mikrotubuli-Tripletts), das Präprophase-Band (in Wirklichkeit ein Ring um die ganze Zelle, im Schnitt nur oben und unten gezeigt; bei Pflanzen mit stark vakuolisierten Zellen und bei manchen Gewebetypen fehlt es) und die Zellplatte (Vesikel, Phragmoplast und Wand sind im Schnitt stark vereinfacht; die Platte wächst in Wirklichkeit als Scheibe nach außen).</li>
       <li>Nicht gezeigt sind Pilze, Einzeller und Bakterien (Bakterien teilen sich ohne Mitose durch Zweiteilung). Auch Meiose, Zellzyklus-Regulation (Cycline und CDK), Apoptose und Krebs sind nur angedeutet oder fehlen.</li>
@@ -539,7 +540,7 @@ const params = new URLSearchParams(location.search);
 
 /* =============================== Klasse 5 =============================== */
 // Gemeinsame Einstellungen der beiden Ansichten (Pflanzenzelle, Tierzelle)
-const ctl = {spielt: !ohneBewegung, tempo: 1, ring: true, art: "pflanze", wert: {pflanze: 60, tier: 34}};
+const ctl = {spielt: !ohneBewegung, tempo: 1, ring: true, art: "pflanze", wert: {pflanze: 60, tier: 34}, verfolgt: null, klick: null};
 const art = () => ctl.art;
 el("rect", {x: 1, y: 1, width: 638, height: 366, rx: 10, class: "z5-leer"}, $("feld"));
 // Pflanzengewebe aus rechteckigen Zellen (wie in der Wurzelspitze der Zwiebel): Jede Zelle wächst, der Kern teilt sich,
@@ -560,13 +561,15 @@ const EinfachPflanze = (() => {
     c.cp = CHL.map(([a, b]) => [a + (Math.random() - 0.5) * 0.08, b + (Math.random() - 0.5) * 0.1]);
     c.platte = el("line", {class: "platte"}, k);
     c.kern = el("path", {class: "kern"}, k);
-    c.ring = el("path", {class: "ring", pathLength: 100}, k);
+    c.fort = () => clamp((c.A / aMax() - 0.5) / 0.5, 0, 1);
+    g.addEventListener("click", () => ctl.klick(c));
     zellen.push(c); return c;
   }
   function reset(){
     gruppe.textContent = ""; zellen = []; teilungen = 0;
     const a = Math.sqrt(0.82 * aMax());
     neu(W / 2, H / 2, a, a, 1);
+    ctl.verfolgt = zellen[0];
     zeichne(); zaehler();
   }
   function teile(c){
@@ -574,6 +577,7 @@ const EinfachPflanze = (() => {
     c.g.remove(); zellen.splice(zellen.indexOf(c), 1);
     if (hor){ neu(c.x - c.w / 4, c.y, c.w / 2, c.h, r()); neu(c.x + c.w / 4, c.y, c.w / 2, c.h, r()); }
     else { neu(c.x, c.y - c.h / 4, c.w, c.h / 2, r()); neu(c.x, c.y + c.h / 4, c.w, c.h / 2, r()); }
+    if (ctl.verfolgt === c) ctl.verfolgt = zellen[zellen.length - 2];
     teilungen++;
   }
   function schritt(dt){
@@ -614,7 +618,7 @@ const EinfachPflanze = (() => {
     for (const c of zellen){
       if (c.zustand !== "teilen") c.achse = c.w >= c.h ? "h" : "v";      // Kernwanderung später entlang der langen Seite
       const hor = c.achse === "h", L = hor ? c.w : c.h, S = hor ? c.h : c.w, teilt = c.zustand === "teilen";
-      c.g.setAttribute("class", teilt ? "teilt" : "");
+      c.g.setAttribute("class", (teilt ? "teilt" : "") + (c === ctl.verfolgt && ctl.ring ? " verfolgt" : ""));
       c.k.setAttribute("transform", `translate(${c.x.toFixed(1)} ${c.y.toFixed(1)})${hor ? "" : " rotate(90)"}`);
       c.wand.setAttribute("x", (-L / 2).toFixed(1)); c.wand.setAttribute("y", (-S / 2).toFixed(1));
       c.wand.setAttribute("width", L.toFixed(1)); c.wand.setAttribute("height", S.toFixed(1));
@@ -637,9 +641,6 @@ const EinfachPflanze = (() => {
       const len = t ? t.platte * (S - 2) : 0;
       c.platte.setAttribute("visibility", len > 0.5 ? "visible" : "hidden");
       c.platte.setAttribute("y1", (-len / 2).toFixed(1)); c.platte.setAttribute("y2", (len / 2).toFixed(1));
-      const q = (L / 2 - 6), r = (S / 2 - 6);
-      c.ring.setAttribute("d", `M${-q} ${-r}H${q}V${r}H${-q}Z`);
-      c.ring.setAttribute("stroke-dasharray", ctl.ring && !teilt && p > 0.0 ? `${(clamp((c.A / aMax() - 0.5) / 0.5, 0, 1) * 100).toFixed(1)} 200` : "0 200");
     }
   }
   function zaehler(){
@@ -659,14 +660,17 @@ const EinfachTier = (() => {
 
   const rMaxV = () => ctl.wert.tier;
   function neu(x, y, R, rate){
-    const g = el("g", {}, gruppe), ring = el("path", {class: "ring"}, g), koerper = el("g", {}, g);
-    const c = {x, y, R, A: Math.PI * R * R, rate, zustand: "wachsen", u: 0, ang: Math.random() * Math.PI, g, ring, koerper,
+    const g = el("g", {}, gruppe), koerper = el("g", {}, g);
+    const c = {x, y, R, A: Math.PI * R * R, rate, zustand: "wachsen", u: 0, ang: Math.random() * Math.PI, g, koerper,
                zelle: el("path", {class: "zelle"}, koerper), kern: el("path", {class: "kern"}, koerper)};
+    c.fort = () => clamp((c.R - rMaxV() / Math.SQRT2) / (rMaxV() - rMaxV() / Math.SQRT2), 0, 1);
+    g.addEventListener("click", () => ctl.klick(c));
     zellen.push(c); return c;
   }
   function reset(){
     gruppe.textContent = ""; zellen = []; teilungen = 0;
     neu(W / 2, H / 2, rMaxV() * 0.9, 1);
+    ctl.verfolgt = zellen[0];
     zeichne(); zaehler();
   }
   const kreis = R => `M${-R} 0A${R} ${R} 0 1 0 ${R} 0A${R} ${R} 0 1 0 ${-R} 0Z`;
@@ -675,6 +679,7 @@ const EinfachTier = (() => {
     const r = c.R / Math.SQRT2, dx = Math.cos(c.ang) * r, dy = Math.sin(c.ang) * r;
     c.g.remove(); zellen.splice(zellen.indexOf(c), 1);
     for (const s of [-1, 1]) neu(c.x + s * dx, c.y + s * dy, r, 0.88 + Math.random() * 0.24);
+    if (ctl.verfolgt === c) ctl.verfolgt = zellen[zellen.length - 2];
     teilungen++;
   }
   function schritt(dt){
@@ -707,20 +712,12 @@ const EinfachTier = (() => {
     for (const c of zellen){ const r = rKollision(c) + 4; c.x = clamp(c.x, r, W - r); c.y = clamp(c.y, r, H - r); }
   }
   function zeichne(){
-    const r0 = rMaxV() / Math.SQRT2;
     for (const c of zellen){
       c.g.setAttribute("class", c.zustand === "teilen" ? "teilt" : "");
-      c.ring.setAttribute("transform", `translate(${c.x.toFixed(1)} ${c.y.toFixed(1)})`);
       c.koerper.setAttribute("transform", `translate(${c.x.toFixed(1)} ${c.y.toFixed(1)}) rotate(${(c.ang * 180 / Math.PI).toFixed(1)})`);
       if (c.zustand === "wachsen"){
         c.zelle.setAttribute("d", kreis(c.R)); c.kern.setAttribute("d", kreis(c.R * MITOSE.einfachTier.rKern));
-        const p = clamp((c.R - r0) / (rMaxV() - r0), 0, 1), rr = c.R + 5;
-        if (ctl.ring && p > 0.02){
-          const a = p * 2 * Math.PI - Math.PI / 2;
-          c.ring.setAttribute("d", p >= 0.999 ? kreis(rr) : `M0 ${-rr}A${rr} ${rr} 0 ${p > 0.5 ? 1 : 0} 1 ${(rr * Math.cos(a)).toFixed(1)} ${(rr * Math.sin(a)).toFixed(1)}`);
-        } else c.ring.setAttribute("d", "");
       } else {
-        c.ring.setAttribute("d", "");
         const t = MITOSE.einfachTier.teilung(c.u, c.R);
         c.zelle.setAttribute("d", polyPfad(MITOSE.verbund(t.zelle.c, t.zelle.rho)));
         c.kern.setAttribute("d", polyPfad(MITOSE.verbund(t.kern.c, t.kern.rho, 24)));
@@ -738,6 +735,25 @@ const EinfachTier = (() => {
 
 const Einfach = (() => {
   const art = () => (ctl.art === "tier" ? T : P);
+  // Zellwecker oben links: Wo im Zellzyklus steht die markierte Zelle? Wachsen (grün) und Teilung (rot) im Verhältnis der Dauern.
+  const gW = el("g", {}, $("feld")), W_ANTEIL = 18 / (18 + 8);
+  const wxy = (f, r) => [40 + r * Math.cos(2 * Math.PI * f - Math.PI / 2), -40 + r * Math.sin(2 * Math.PI * f - Math.PI / 2)];
+  const bogen = (f0, f1, r) => { const a = wxy(f0, r), b = wxy(f1, r); return `M${a[0].toFixed(1)} ${a[1].toFixed(1)}A${r} ${r} 0 ${f1 - f0 > 0.5 ? 1 : 0} 1 ${b[0].toFixed(1)} ${b[1].toFixed(1)}`; };
+  function wecker(){
+    gW.textContent = "";
+    const c = ctl.verfolgt;
+    if (!ctl.ring || !c || !c.g.isConnected) return;
+    const teilt = c.zustand === "teilen", wartet = !teilt && c.fort() >= 0.999;
+    const f = teilt ? W_ANTEIL + (1 - W_ANTEIL) * clamp(c.u, 0, 1) : W_ANTEIL * c.fort();
+    const R = 24, pt = wxy(f, R);
+    el("path", {d: bogen(0, W_ANTEIL - 0.006, R), fill: "none", stroke: "var(--accent)", "stroke-width": teilt ? 8 : 12, opacity: teilt ? 0.4 : 1, "stroke-linecap": "butt"}, gW);
+    el("path", {d: bogen(W_ANTEIL + 0.006, 0.999, R), fill: "none", stroke: "var(--aktin)", "stroke-width": teilt ? 12 : 8, opacity: teilt ? 1 : 0.4}, gW);
+    el("circle", {cx: pt[0].toFixed(1), cy: pt[1].toFixed(1), r: 6.5, fill: "var(--surface)", stroke: "var(--ink)", "stroke-width": 2.5}, gW);
+    const t1 = el("text", {x: 80, y: -48, "font-size": 15, "font-weight": 700, fill: "var(--ink)"}, gW); t1.textContent = "Zellwecker";
+    const t2 = el("text", {x: 80, y: -26, "font-size": 15, fill: "var(--muted)"}, gW);
+    t2.textContent = teilt ? "Die Zelle teilt sich." : wartet ? "Groß genug, aber kein Platz zum Teilen." : "Die Zelle wächst: " + Math.round(c.fort() * 100) + " % bis zur Teilung.";
+  }
+  ctl.klick = c => { ctl.verfolgt = c; art().zeichne(); wecker(); };
   function setzeArt(a){
     ctl.art = a; P.gruppe.style.display = a === "pflanze" ? "" : "none"; T.gruppe.style.display = a === "tier" ? "" : "none";
     const sl = $("z5-groesse"), r = a === "tier" ? [26, 38, 1] : [46, 72, 2];
@@ -748,11 +764,11 @@ const Einfach = (() => {
   $("z5-neu").addEventListener("click", () => art().reset());
   $("z5-tempo").addEventListener("input", e => { ctl.tempo = +e.target.value; });
   $("z5-groesse").addEventListener("input", e => { ctl.wert[ctl.art] = +e.target.value; });
-  $("z5-ring").addEventListener("change", e => { ctl.ring = e.target.checked; art().zeichne(); });
+  $("z5-ring").addEventListener("change", e => { ctl.ring = e.target.checked; art().zeichne(); wecker(); });
   if (!ctl.spielt) $("z5-spiel").textContent = "Weiter";
   const P = EinfachPflanze, T = EinfachTier;
   setzeArt("pflanze");
-  return {schritt: dt => art().schritt(dt), setzeArt, vorlauf(sek){ const s0 = ctl.spielt; ctl.spielt = true; for (let i = 0; i < sek * 20; i++) art().schritt(0.05); ctl.spielt = s0; }};
+  return {schritt: dt => { art().schritt(dt); wecker(); }, setzeArt: a => { setzeArt(a); wecker(); }, vorlauf(sek){ const s0 = ctl.spielt; ctl.spielt = true; for (let i = 0; i < sek * 20; i++) art().schritt(0.05); ctl.spielt = s0; wecker(); }};
 })();
 
 /* =============================== Klasse 9 und 12 =============================== */
@@ -1163,7 +1179,30 @@ function beschriftungenTier(z, sx, kinPos, zent, stufe){
   return s;
 }
 
-function zeichneZelle(svg, t, opt){ return (opt.art === "tier" ? zeichneTier : zeichnePflanze)(svg, t, opt); }
+// Zellzyklus-Wecker oben links: Ring aus den Phasen (Klasse 9: fünf, Klasse 12: neun), die aktuelle ist hervorgehoben.
+const PH_FARBE = {inter: "#7cc36e", g1: "#7cc36e", s: "#e0a526", g2: "#5aa0d6", pro: "#e0635b", prometa: "#d6578f", meta: "#b05fc6", ana: "#7c6fd6", telo: "#4f86d6", cyto: "#3fa7b8"};
+function zeitgeber(z, stufe){
+  const en = stufe === 12 ? MITOSE.PHASEN : MITOSE.GRUPPEN.map(g => { const ps = MITOSE.PHASEN.filter(p => p.gruppe === g.id); return {id: g.id, name: g.name, von: ps[0].von, bis: ps[ps.length - 1].bis}; });
+  const cx = -440, cy = -285, R = 38, P = (f, r) => [cx + r * Math.cos(2 * Math.PI * f - Math.PI / 2), cy + r * Math.sin(2 * Math.PI * f - Math.PI / 2)];
+  const aktuell = en.find(e => z.t < e.bis) || en[en.length - 1];
+  let h = `<rect x="-492" y="-334" width="${stufe === 12 ? 360 : 330}" height="98" rx="14" fill="var(--surface)" opacity=".9"/>`;
+  for (const e of en){
+    const f0 = e.von + 0.004, f1 = e.bis - 0.004, a = P(f0, R), b = P(f1, R), an = e === aktuell;
+    h += `<path d="M${f1c(a[0])} ${f1c(a[1])}A${R} ${R} 0 ${f1 - f0 > 0.5 ? 1 : 0} 1 ${f1c(b[0])} ${f1c(b[1])}" fill="none" stroke="${PH_FARBE[e.id]}" stroke-width="${an ? 22 : 12}" opacity="${an ? 1 : 0.5}"/>`;
+  }
+  const pt = P(z.t, R);
+  h += `<circle cx="${f1c(pt[0])}" cy="${f1c(pt[1])}" r="8" fill="var(--surface)" stroke="var(--ink)" stroke-width="3"/>`;
+  const ph = MITOSE.phaseBei(z.t), name = stufe === 12 ? ph.name : aktuell.name;
+  const zeile = stufe === 12 ? (ph.gruppe === "inter" ? "Zellzyklus · Interphase" : "Zellzyklus · Mitose (M-Phase)") : "Zellzyklus";
+  h += `<text x="${cx + 56}" y="${cy - 10}" font-size="14" fill="var(--muted)">${zeile}</text><text x="${cx + 56}" y="${cy + 20}" font-size="28" font-weight="700" fill="var(--ink)">${name}</text>`;
+  return h;
+}
+const f1c = x => (Math.round(x * 10) / 10).toString();
+function zeichneZelle(svg, t, opt){
+  const z = (opt.art === "tier" ? zeichneTier : zeichnePflanze)(svg, t, opt);
+  if (opt.zeitgeber) svg.insertAdjacentHTML("beforeend", zeitgeber(z, opt.stufe));
+  return z;
+}
 
 /* ---------- Seite: Zeit, Phasen, Text ---------- */
 const TEXTE = {
@@ -1223,7 +1262,7 @@ const Zelle = (() => {
     return tx;
   }
   function zeichne(){
-    const z = zeichneZelle(svg, t, {beschriftung: beschr, stufe, art: art()});
+    const z = zeichneZelle(svg, t, {beschriftung: beschr, stufe, art: art(), zeitgeber: true});
     zeitRegler.value = Math.round(t * 1000);
     const en = einheiten(), aktuell = en.find(e => t < e.bis) || en[en.length - 1];
     phasenListe.querySelectorAll("li").forEach(li => {
@@ -1357,7 +1396,7 @@ const ART_TEXT = {
         <span><i style="background:var(--nukl1);border:2px solid var(--nukl2)"></i>Zellkern</span>
         <span><i style="background:var(--vak1);border:2px solid var(--vak-s);border-radius:3px"></i>Vakuole</span>
         <span><i style="background:var(--chl1);border:2px solid var(--chl-s)"></i>Chloroplast</span>
-        <span><i style="border:3px solid var(--accent);border-radius:3px"></i>Wachstumsring: Er füllt sich, bis die Zelle groß genug ist.</span>
+        <span><i style="border:4px solid var(--accent);border-right-color:var(--aktin);border-bottom-color:var(--aktin)"></i>Zellwecker (oben links): Wo steht die leuchtende Zelle? Klicke eine andere Zelle an, um sie zu verfolgen.</span>
         <span><i style="background:var(--zyto1);border:3px solid var(--aktin);border-radius:3px"></i>Rote Wand: Die Zelle teilt sich gerade.</span>`,
     z9: "Vor jeder Zellteilung wird die Erbinformation verdoppelt. Die Mitose verteilt sie dann so, dass beide Tochterzellen genau dieselben Chromosomen erhalten. Gezeigt ist eine Pflanzenzelle (zum Beispiel aus der Wurzelspitze) mit vier Chromosomen in zwei Paaren; eine Zwiebelzelle hat 16, eine menschliche Körperzelle 46."
   },
@@ -1365,7 +1404,7 @@ const ART_TEXT = {
     z5: "Hier siehst du Tierzellen im Mikroskop (zum Beispiel Zellen einer Zellkultur). Sieh genau hin: Was passiert mit dem Zellkern, bevor sich die Zelle teilt? Wie entstehen aus einer Zelle zwei? Wann teilt sich eine Zelle?",
     leg: `<span><i style="background:var(--zyto1);border:2px solid var(--mem)"></i>Zelle</span>
         <span><i style="background:var(--nukl1);border:2px solid var(--nukl2)"></i>Zellkern</span>
-        <span><i style="border:3px solid var(--accent)"></i>Wachstumsring: Er füllt sich, bis die Zelle groß genug ist.</span>
+        <span><i style="border:4px solid var(--accent);border-right-color:var(--aktin);border-bottom-color:var(--aktin)"></i>Zellwecker (oben links): Wo steht die leuchtende Zelle? Klicke eine andere Zelle an, um sie zu verfolgen.</span>
         <span><i style="background:var(--zyto1);border:3px solid var(--aktin)"></i>Rote Umrandung: Die Zelle teilt sich gerade.</span>`,
     z9: "Vor jeder Zellteilung wird die Erbinformation verdoppelt. Die Mitose verteilt sie dann so, dass beide Tochterzellen genau dieselben Chromosomen erhalten. Gezeigt ist eine Tierzelle mit vier Chromosomen in zwei Paaren; eine menschliche Körperzelle hat 46."
   }
