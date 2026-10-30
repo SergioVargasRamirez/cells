@@ -57,7 +57,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visi
 .stufen button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .stufen button[aria-pressed="true"] small{color:inherit;opacity:.85}
 .stufen button:hover{border-color:var(--accent)}
-.arten{margin-top:6px}
+.rahmen{position:relative}
+.rahmen .arten{position:absolute;top:10px;right:12px;margin:0;z-index:2;gap:6px}
+.rahmen .arten button{padding:4px 14px;min-height:0;background:var(--surface)}
+.rahmen .arten button[aria-pressed="true"]{background:var(--accent)}
+@media (max-width:760px){.rahmen .arten{position:static;margin:0 0 8px}}
 
 /* Bedienelemente */
 .steuer{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin:14px 0}
@@ -247,10 +251,6 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       <li><button type="button" data-k="9" aria-pressed="false">Klasse 9<small>Die Phasen der Mitose</small></button></li>
       <li><button type="button" data-k="12" aria-pressed="false">Klasse 12<small>Mit Zellzyklus, Spindel und DNA</small></button></li>
     </ul>
-    <ul class="stufen arten" id="arten" aria-label="Zellart">
-      <li><button type="button" data-a="pflanze" aria-pressed="false">Pflanzenzelle<small>Zellwand, Vakuole, Zellplatte</small></button></li>
-      <li><button type="button" data-a="tier" aria-pressed="false">Tierzelle<small>Zentrosomen, Einschnürung</small></button></li>
-    </ul>
   </header>
 
   <main>
@@ -265,7 +265,10 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <label class="regler">Teilung ab Größe <input type="range" id="z5-groesse" min="46" max="72" step="2" value="60" aria-label="Größe, ab der sich eine Zelle teilt"></label>
         <label class="schalter"><input type="checkbox" id="z5-ring" checked> Zellwecker zeigen</label>
       </div>
-      <div class="buehne"><svg id="feld" viewBox="0 -80 640 448" role="img" aria-label="Zellen unter dem Mikroskop: Sie wachsen, ihr Kern teilt sich, dann entstehen zwei Tochterzellen"></svg></div>
+      <div class="rahmen"><ul class="stufen arten" aria-label="Zellart">
+      <li><button type="button" data-a="pflanze" aria-pressed="false">Pflanzenzelle<small>Zellwand, Vakuole, Zellplatte</small></button></li>
+      <li><button type="button" data-a="tier" aria-pressed="false">Tierzelle<small>Zentrosomen, Einschnürung</small></button></li>
+    </ul><div class="buehne"><svg id="feld" viewBox="0 -80 640 448" role="img" aria-label="Zellen unter dem Mikroskop: Sie wachsen, ihr Kern teilt sich, dann entstehen zwei Tochterzellen"></svg></div></div>
       <div class="zaehler" aria-live="polite">
         <span>Zellen<b id="z5-n">1</b></span>
         <span>Teilungen<b id="z5-t">0</b></span>
@@ -295,7 +298,10 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <label class="regler">Tempo <input type="range" id="m-tempo" min="0.5" max="3" step="0.5" value="1" aria-label="Tempo"></label>
         <label class="schalter"><input type="checkbox" id="m-beschr" checked> Beschriftungen</label>
       </div>
-      <div class="buehne" id="zelle"><svg id="m-svg" viewBox="-500 -340 1000 580" role="img" aria-label="Cartoon einer Zelle während der Mitose"></svg></div>
+      <div class="rahmen"><ul class="stufen arten" aria-label="Zellart">
+      <li><button type="button" data-a="pflanze" aria-pressed="false">Pflanzenzelle<small>Zellwand, Vakuole, Zellplatte</small></button></li>
+      <li><button type="button" data-a="tier" aria-pressed="false">Tierzelle<small>Zentrosomen, Einschnürung</small></button></li>
+    </ul><div class="buehne" id="zelle"><svg id="m-svg" viewBox="-500 -340 1000 580" role="img" aria-label="Cartoon einer Zelle während der Mitose"></svg></div></div>
       <div class="zeit"><span>Anfang</span><input type="range" id="m-zeit" min="0" max="1000" value="0" aria-label="Zeitpunkt in der Zellteilung"><span>Ende</span></div>
       <ol class="phasen" id="m-phasen" aria-label="Phasen"></ol>
       <div class="status" id="m-status" aria-live="polite"></div>
@@ -1410,7 +1416,7 @@ const ART_TEXT = {
   }
 };
 function setzeArt(a){
-  document.querySelectorAll("#arten button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.a === a)));
+  document.querySelectorAll(".arten button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.a === a)));
   const T = ART_TEXT[a];
   $("z5-intro").textContent = T.z5; $("z5-leg").innerHTML = T.leg; $("s9-intro").textContent = T.z9;
   Einfach.setzeArt(a);
@@ -1426,7 +1432,7 @@ function setzeKlasse(k){
   try { localStorage.setItem("cells-klasse-mitose", String(k)); } catch (e) {}
 }
 document.querySelectorAll("#stufen button").forEach(b => b.addEventListener("click", () => setzeKlasse(+b.dataset.k)));
-document.querySelectorAll("#arten button").forEach(b => b.addEventListener("click", () => setzeArt(b.dataset.a)));
+document.querySelectorAll(".arten button").forEach(b => b.addEventListener("click", () => setzeArt(b.dataset.a)));
 let start = +params.get("klasse");
 if (![5, 9, 12].includes(start)){ try { start = +localStorage.getItem("cells-klasse-mitose"); } catch (e) {} }
 let startArt = params.get("zellart");
