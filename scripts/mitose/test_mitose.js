@@ -48,6 +48,22 @@ pruefe(M.zustand(0.3).platte.phragmoplast === 0 && M.zustand(0.85).platte.phragm
 pruefe(M.zustand(0.1).vakuole > 0.95 && M.zustand(0.55).vakuole < 0.35, "Vakuole wird zur Teilung klein");
 pruefe(Math.abs(M.zustand(1).kern.tochter.x - M.W_ZELLE / 4) < 1e-9, "Tochterkerne in der Mitte der Tochterzellen");
 
+// Tierzelle: Zentrosomen, Einschnürung, zwei Kreise am Ende; Chromatiden bleiben in der Zelle
+const tz = M.zustand(1, "tier"), tz0 = M.zustand(0, "tier");
+pruefe(tz.geteilt && Math.abs(tz.zelle.c - M.R_TOCHTER) < 1e-9 && Math.abs(2 * tz.zelle.rho ** 2 - M.R_ZELLE ** 2) < 1e-6, "Tierzelle: zwei Tochterzellen mit halber Fläche");
+pruefe(tz0.zelle.c === 0 && tz0.zentrosomen[1].sichtbar === 0 && M.zustand(0.2, "tier").zentrosomen[1].sichtbar === 1, "Tierzelle: Zentrosom wird in der S-Phase verdoppelt");
+pruefe(!("platte" in tz) && "furche" in tz, "Tierzelle: Furche statt Zellplatte");
+for (let i = 0; i <= 500; i++){
+  const z = M.zustand(i / 500, "tier"), zc = z.zelle;
+  z.chromosomen.forEach(c => c.chromatiden.forEach(ch => {
+    if (ch.laenge < 0.05) return;
+    const d = Math.min(Math.hypot(ch.x - zc.c, ch.y), Math.hypot(ch.x + zc.c, ch.y));
+    pruefe(d < zc.rho - 8, `Tierzelle: Chromatide ${c.id} außerhalb bei t=${(i / 500).toFixed(3)}`);
+  }));
+}
+const kt = M.einfachTier.teilung(1, 34);
+pruefe(Math.abs(kt.zelle.c - 34 / Math.SQRT2) < 1e-9 && Math.abs(kt.kern.c - kt.zelle.c) < 1e-9, "Klasse 5 Tierzelle: Kerne in den Tochterzellen");
+
 // Umriss: bei c = 0 ein Kreis, bei c = rho zwei getrennte Formen
 const kreis = M.verbund(0, 100)[0];
 pruefe(M.verbund(0, 100).length === 1 && kreis.every(([x, y]) => Math.abs(Math.hypot(x, y) - 100) < 0.5), "verbund: Kreis");

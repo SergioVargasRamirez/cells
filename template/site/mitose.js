@@ -5,7 +5,7 @@
 //   MITOSE.phaseBei(t)         Phase zum Zeitpunkt t
 //   MITOSE.dnaGehalt(t)        DNA-Menge je Zelle in C (2 → 4, nach der Teilung 2)
 //   MITOSE.zahlen(t)           {chromosomen, chromatiden}: Chromosomen (gezählt an den Centromeren) und Chromatiden einer Zelle
-//   MITOSE.zustand(t)          alles, was die Zeichnung braucht: Zellwand, Vakuole, Kern, Chromatiden, Spindel, Zellplatte
+//   MITOSE.zustand(t, art)     art = "pflanze" (Standard) oder "tier"; alles, was die Zeichnung braucht: Zellwand, Vakuole, Kern, Chromatiden, Spindel, Zellplatte
 //   MITOSE.verbund(c, rho)     Umriss aus zwei verschmelzenden Kreisen (Kern) als Liste von Polygonen
 //   MITOSE.einfach             Klasse 5: Wachstum und Teilung einer Pflanzenzelle
 // Koordinaten: Mitte der Zelle bei (0, 0), Spindelachse = x-Achse, Einheiten der Zeichnung.
@@ -38,6 +38,8 @@ const MITOSE = (() => {
 
   // Pflanzenzelle: rechteckig in der Zeichnung (Zellwand), die Zellplatte wächst in der Mitte von innen nach außen
   const W_ZELLE = 560, H_ZELLE = 400, R_KERN = 112, R_KERN_T = 78, X_ANA = 145, X_TOCHTER = W_ZELLE / 4;
+  // Tierzelle: rund (Radius R_ZELLE), schnürt sich zu zwei Tochterzellen vom Radius R_TOCHTER ein (halbe Fläche)
+  const R_ZELLE = 215, R_TOCHTER = R_ZELLE / Math.SQRT2;
 
   function dnaGehalt(t){ return 2 + 2 * glatt(f(t, "s")) - (t >= T_TEIL ? 2 : 0); }
 
@@ -76,28 +78,43 @@ const MITOSE = (() => {
     return polys.map(p => p.map(([x, y]) => [x, -y]).concat(p.slice().reverse().map(([x, y]) => [x, y])));
   }
 
-  function zustand(t){
+  function zustand(t, art){
     t = clamp(t, 0, 1);
+    const tier = art === "tier";
     const P = phaseBei(t);
     const z = {t, phase: P.id, gruppe: P.gruppe, dna: dnaGehalt(t), geteilt: t >= T_TEIL, zahlen: zahlen(t)};
 
-    // Zelle: Die Zellwand bleibt, die Form ändert sich nicht. Zentrosomen gibt es nicht; die Spindelpole sind breite Kappen.
-    z.zelle = {w: W_ZELLE, h: H_ZELLE};
-    const polR = lerp(R_KERN + 14, 165, glatt(f(t, "prometa"))) + 25 * glatt(f(t, "ana"));
-    // Präprophase-Band: Ring aus Mikrotubuli am Rand, markiert die spätere Teilungsebene (verschwindet in der Prophase)
-    z.ppb = glatt(fenster(t, 0.10, 0.18)) * (1 - glatt(fenster(t, 0.28, 0.36)));
-    // Vakuole: groß in der Interphase, wird zur Teilung klein (Zytoplasma sammelt sich in der Mitte), wächst nach der Teilung
-    z.vakuole = t < 0.5 ? 1 - 0.7 * glatt(fenster(t, 0.16, 0.46)) : 0.3 + 0.25 * glatt(fenster(t, 0.86, 1));
-    // Zellplatte (Vesikel aus dem Golgi-Apparat) und Phragmoplast (Mikrotubuli), die Platte wächst nach außen bis zur Seitenwand
-    z.platte = {wachstum: glatt(fenster(t, 0.78, T_TEIL)), phragmoplast: glatt(fenster(t, 0.74, 0.80)) * (1 - glatt(fenster(t, 0.93, 0.99))), wand: glatt(fenster(t, 0.90, 1))};
+    const tel = glatt(fenster(t, 0.74, 0.90));
+    z.art = tier ? "tier" : "pflanze";
+    if (!tier){
+      // Pflanzenzelle: Die Zellwand bleibt, die Form ändert sich nicht. Zentrosomen gibt es nicht; die Spindelpole sind breite Kappen.
+      z.zelle = {w: W_ZELLE, h: H_ZELLE};
+      z.polR = lerp(R_KERN + 14, 165, glatt(f(t, "prometa"))) + 25 * glatt(f(t, "ana"));
+      // Präprophase-Band: Ring aus Mikrotubuli am Rand, markiert die spätere Teilungsebene (verschwindet in der Prophase)
+      z.ppb = glatt(fenster(t, 0.10, 0.18)) * (1 - glatt(fenster(t, 0.28, 0.36)));
+      // Vakuole: groß in der Interphase, wird zur Teilung klein (Zytoplasma sammelt sich in der Mitte), wächst nach der Teilung
+      z.vakuole = t < 0.5 ? 1 - 0.7 * glatt(fenster(t, 0.16, 0.46)) : 0.3 + 0.25 * glatt(fenster(t, 0.86, 1));
+      // Zellplatte (Vesikel aus dem Golgi-Apparat) und Phragmoplast (Mikrotubuli), die Platte wächst nach außen bis zur Seitenwand
+      z.platte = {wachstum: glatt(fenster(t, 0.78, T_TEIL)), phragmoplast: glatt(fenster(t, 0.74, 0.80)) * (1 - glatt(fenster(t, 0.93, 0.99))), wand: glatt(fenster(t, 0.90, 1))};
+    } else {
+      // Tierzelle: streckt sich in der Anaphase, schnürt sich in der Telophase ein (s = 0 Kreis, s = 1 zwei Tochterzellen)
+      const streck = 0.28 * glatt(f(t, "ana")) + 0.30 * glatt(fenster(t, 0.66, 0.88));
+      const furche = glatt(fenster(t, 0.72, T_TEIL));
+      const s = Math.max(streck, furche);
+      z.zelle = {s, c: lerp(0, R_TOCHTER, s), rho: lerp(R_ZELLE, R_TOCHTER, s), luecke: 18 * fenster(t, T_TEIL, 1)};
+      z.furche = {tiefe: furche, aktin: t >= 0.70 ? glatt(fenster(t, 0.70, 0.80)) : 0};
+      z.polR = lerp(R_KERN + 14, 165, glatt(f(t, "prometa"))) + 40 * glatt(f(t, "ana")) + 50 * glatt(f(t, "telo"));
+      // Zentrosomen (je zwei Zentriolen): eins in G1, verdoppelt in der S-Phase, wandern in der Prophase um den Kern zu den Polen
+      const wandern = glatt(f(t, "pro")), th = Math.PI / 2 * wandern;
+      z.zentrosomen = [-1, 1].map(sd => ({s: sd, x: sd * (z.polR * Math.sin(th) + 9 * (1 - wandern)), y: -z.polR * Math.cos(th), sichtbar: sd === -1 ? 1 : glatt(f(t, "s"))}));
+    }
 
     // Kern: Hülle löst sich am Ende der Prophase auf (Hüllenstücke und ER), nach der Anaphase bilden sich zwei neue
-    const tel = glatt(fenster(t, 0.74, 0.90));
     z.kern = {
       r: R_KERN, huelle: 1 - glatt(fenster(t, 0.30, 0.44)), nukleolus: 1 - glatt(fenster(t, 0.24, 0.34)),
-      tochter: {r: R_KERN_T, x: lerp(X_ANA, X_TOCHTER, tel), huelle: glatt(fenster(t, 0.76, 0.90)), nukleolus: glatt(fenster(t, 0.84, 0.96))}
+      tochter: {r: R_KERN_T, x: lerp(X_ANA, tier ? z.zelle.c : X_TOCHTER, tel), huelle: glatt(fenster(t, 0.76, 0.90)), nukleolus: glatt(fenster(t, 0.84, 0.96))}
     };
-    z.pol = {x: polR, sichtbar: glatt(fenster(t, 0.24, 0.34)) * (1 - glatt(fenster(t, 0.76, 0.88)))};
+    z.pol = {x: z.polR, sichtbar: glatt(fenster(t, 0.24, 0.34)) * (1 - glatt(fenster(t, 0.76, 0.88)))};
 
     // Chromatiden. Jedes Chromosom hat zwei Chromatiden (seite −1 und +1); die zweite entsteht in der S-Phase.
     // kond: 0 = lockeres Chromatin, 1 = Transportform; zug: Anteil des Weges zu den Polen (Anaphase A)
@@ -143,5 +160,15 @@ const MITOSE = (() => {
     }
   };
 
-  return {PHASEN, GRUPPEN, phaseBei, dnaGehalt, zahlen, zustand, verbund, einfach, CHROM, W_ZELLE, H_ZELLE, R_KERN, T_ANA, T_TEIL, glatt, fenster};
+  // Klasse 5, Tierzelle: runde Zelle; der Kern teilt sich, die Kerne wandern zu den Polen, die Zelle schnürt sich durch
+  const einfachTier = {
+    rKern: 0.36,
+    teilung(u, R){
+      const r = R / Math.SQRT2, rn = R * this.rKern, rnT = rn / Math.SQRT2;
+      const teilen = glatt(fenster(u, 0.0, 0.28)), wandern = glatt(fenster(u, 0.28, 0.70)), ein = glatt(fenster(u, 0.40, 1.0));
+      return {zelle: {c: r * ein, rho: lerp(R, r, ein)}, kern: {c: lerp(rnT * teilen, r, wandern), rho: lerp(rn, rnT, teilen)}, tochterR: r};
+    }
+  };
+
+  return {PHASEN, GRUPPEN, phaseBei, dnaGehalt, zahlen, zustand, verbund, einfach, einfachTier, CHROM, W_ZELLE, H_ZELLE, R_ZELLE, R_TOCHTER, R_KERN, T_ANA, T_TEIL, glatt, fenster};
 })();
