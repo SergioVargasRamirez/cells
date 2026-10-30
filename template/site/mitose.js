@@ -5,9 +5,9 @@
 //   MITOSE.phaseBei(t)         Phase zum Zeitpunkt t
 //   MITOSE.dnaGehalt(t)        DNA-Menge je Zelle in C (2 → 4, nach der Teilung 2)
 //   MITOSE.zahlen(t)           {chromosomen, chromatiden}: Chromosomen (gezählt an den Centromeren) und Chromatiden einer Zelle
-//   MITOSE.zustand(t)          alles, was die Zeichnung braucht: Zelle, Kern, Zentrosomen, Chromatiden, Spindel, Furche
-//   MITOSE.verbund(R, c, rho)  Umriss aus zwei verschmelzenden Kreisen (Zelle, Kern) als Liste von Polygonen
-//   MITOSE.einfach             Klasse 5: Wachstum und Teilung einer Zelle
+//   MITOSE.zustand(t)          alles, was die Zeichnung braucht: Zellwand, Vakuole, Kern, Chromatiden, Spindel, Zellplatte
+//   MITOSE.verbund(c, rho)     Umriss aus zwei verschmelzenden Kreisen (Kern) als Liste von Polygonen
+//   MITOSE.einfach             Klasse 5: Wachstum und Teilung einer Pflanzenzelle
 // Koordinaten: Mitte der Zelle bei (0, 0), Spindelachse = x-Achse, Einheiten der Zeichnung.
 const MITOSE = (() => {
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
@@ -36,7 +36,8 @@ const MITOSE = (() => {
   const f = (t, id) => fenster(t, phase(id).von, phase(id).bis);
   const T_ANA = phase("ana").von, T_TEIL = 0.95;   // ab T_ANA sind die Schwesterchromatiden getrennt, ab T_TEIL gibt es zwei Zellen
 
-  const R_ZELLE = 215, R_KERN = 112, R_TOCHTER = R_ZELLE / Math.SQRT2, R_KERN_T = 78, X_ANA = 145;
+  // Pflanzenzelle: rechteckig in der Zeichnung (Zellwand), die Zellplatte wächst in der Mitte von innen nach außen
+  const W_ZELLE = 560, H_ZELLE = 400, R_KERN = 112, R_KERN_T = 78, X_ANA = 145, X_TOCHTER = W_ZELLE / 4;
 
   function dnaGehalt(t){ return 2 + 2 * glatt(f(t, "s")) - (t >= T_TEIL ? 2 : 0); }
 
@@ -80,40 +81,39 @@ const MITOSE = (() => {
     const P = phaseBei(t);
     const z = {t, phase: P.id, gruppe: P.gruppe, dna: dnaGehalt(t), geteilt: t >= T_TEIL, zahlen: zahlen(t)};
 
-    // Zelle: streckt sich in der Anaphase, schnürt sich in der Telophase ein (s = 0 Kreis, s = 1 zwei Tochterzellen)
-    const streck = 0.28 * glatt(f(t, "ana")) + 0.30 * glatt(fenster(t, 0.66, 0.88));
-    const furche = glatt(fenster(t, 0.72, T_TEIL));
-    const s = Math.max(streck, furche);
-    z.zelle = {s, c: lerp(0, R_TOCHTER, s), rho: lerp(R_ZELLE, R_TOCHTER, s), luecke: 18 * fenster(t, T_TEIL, 1)};
-    z.furche = {tiefe: furche, aktin: t >= 0.70 ? glatt(fenster(t, 0.70, 0.80)) : 0};
-
-    // Zentrosomen: eins in G1, verdoppelt in der S-Phase, wandern in der Prophase um den Kern zu den Polen
-    const dupl = glatt(f(t, "s")), wandern = glatt(f(t, "pro"));
-    const polR = lerp(R_KERN + 14, 165, glatt(f(t, "prometa"))) + 40 * glatt(f(t, "ana")) + 50 * glatt(f(t, "telo"));
-    const th = Math.PI / 2 * wandern;
-    z.zentrosomen = [-1, 1].map(s => ({s, x: s * (polR * Math.sin(th) + 9 * (1 - wandern)), y: -polR * Math.cos(th), sichtbar: s === -1 ? 1 : dupl}));
+    // Zelle: Die Zellwand bleibt, die Form ändert sich nicht. Zentrosomen gibt es nicht; die Spindelpole sind breite Kappen.
+    z.zelle = {w: W_ZELLE, h: H_ZELLE};
+    const polR = lerp(R_KERN + 14, 165, glatt(f(t, "prometa"))) + 25 * glatt(f(t, "ana"));
+    // Präprophase-Band: Ring aus Mikrotubuli am Rand, markiert die spätere Teilungsebene (verschwindet in der Prophase)
+    z.ppb = glatt(fenster(t, 0.10, 0.18)) * (1 - glatt(fenster(t, 0.28, 0.36)));
+    // Vakuole: groß in der Interphase, wird zur Teilung klein (Zytoplasma sammelt sich in der Mitte), wächst nach der Teilung
+    z.vakuole = t < 0.5 ? 1 - 0.7 * glatt(fenster(t, 0.16, 0.46)) : 0.3 + 0.25 * glatt(fenster(t, 0.86, 1));
+    // Zellplatte (Vesikel aus dem Golgi-Apparat) und Phragmoplast (Mikrotubuli), die Platte wächst nach außen bis zur Seitenwand
+    z.platte = {wachstum: glatt(fenster(t, 0.78, T_TEIL)), phragmoplast: glatt(fenster(t, 0.74, 0.80)) * (1 - glatt(fenster(t, 0.93, 0.99))), wand: glatt(fenster(t, 0.90, 1))};
 
     // Kern: Hülle löst sich am Ende der Prophase auf (Hüllenstücke und ER), nach der Anaphase bilden sich zwei neue
     const tel = glatt(fenster(t, 0.74, 0.90));
     z.kern = {
       r: R_KERN, huelle: 1 - glatt(fenster(t, 0.30, 0.44)), nukleolus: 1 - glatt(fenster(t, 0.24, 0.34)),
-      tochter: {r: R_KERN_T, x: lerp(X_ANA, z.zelle.c, tel), huelle: glatt(fenster(t, 0.76, 0.90)), nukleolus: glatt(fenster(t, 0.84, 0.96))}
+      tochter: {r: R_KERN_T, x: lerp(X_ANA, X_TOCHTER, tel), huelle: glatt(fenster(t, 0.76, 0.90)), nukleolus: glatt(fenster(t, 0.84, 0.96))}
     };
+    z.pol = {x: polR, sichtbar: glatt(fenster(t, 0.24, 0.34)) * (1 - glatt(fenster(t, 0.76, 0.88)))};
 
     // Chromatiden. Jedes Chromosom hat zwei Chromatiden (seite −1 und +1); die zweite entsteht in der S-Phase.
     // kond: 0 = lockeres Chromatin, 1 = Transportform; zug: Anteil des Weges zu den Polen (Anaphase A)
+    const dupl = glatt(f(t, "s"));                 // die zweite Chromatide wird in der S-Phase gebaut
     const kond = t < 0.5 ? glatt(fenster(t, 0.22, 0.40)) : 1 - glatt(fenster(t, 0.74, 0.92));
-    const platte = glatt(fenster(t, 0.36, 0.52)), zug = glatt(fenster(t, 0.58, 0.67));
-    z.kond = kond; z.dupl = dupl; z.platte = platte; z.zug = zug;
+    const mitte = glatt(fenster(t, 0.36, 0.52)), zug = glatt(fenster(t, 0.58, 0.67));
+    z.kond = kond; z.dupl = dupl; z.zug = zug;
     z.chromosomen = CHROM.map(c => {
       const chromatiden = [];
       for (const s of [-1, 1]){
         let x, y, winkel, laenge;
         if (t < T_ANA){
           const heim = [c.heim[0] * R_KERN, c.heim[1] * R_KERN];
-          const mitte = [lerp(heim[0], c.x0, platte), lerp(heim[1], c.y, platte)];
-          x = mitte[0] + s * lerp(1.5, 4.5, kond); y = mitte[1];
-          winkel = lerp(118, 104, platte);              // > 90°: Spitze zur Mitte, die Schwestern bilden ein "X"
+          const mitteC = [lerp(heim[0], c.x0, mitte), lerp(heim[1], c.y, mitte)];
+          x = mitteC[0] + s * lerp(1.5, 4.5, kond); y = mitteC[1];
+          winkel = lerp(118, 104, mitte);              // > 90°: Spitze zur Mitte, die Schwestern bilden ein "X"
           laenge = s === -1 ? 1 : dupl;                 // die zweite Chromatide entsteht in der S-Phase
         } else {
           const x0 = c.x0 + s * 4.5;
@@ -128,24 +128,20 @@ const MITOSE = (() => {
     });
 
     // Spindel (Anteile 0 … 1)
-    z.spindel = {
-      sichtbar: glatt(fenster(t, 0.24, 0.34)) * (1 - glatt(fenster(t, 0.76, 0.88))),
-      fang: glatt(fenster(t, 0.38, 0.52)),
-      ueberlapp: 1 - glatt(fenster(t, 0.62, 0.84))
-    };
+    z.spindel = {sichtbar: z.pol.sichtbar, fang: glatt(fenster(t, 0.38, 0.52)), ueberlapp: 1 - glatt(fenster(t, 0.62, 0.84))};
     return z;
   }
 
-  // Klasse 5: Eine Zelle wächst (Fläche gleichmäßig), teilt zuerst den Kern, bringt die Kerne an die Pole und schnürt sich durch.
+  // Klasse 5: Eine Pflanzenzelle (Rechteck mit Zellwand) wächst, teilt zuerst den Kern, bringt die Kerne an die Enden der langen Seite;
+  // dann wächst in der Mitte eine neue Zellwand. L = lange Seite (Richtung der Kernwanderung), S = kurze Seite.
   const einfach = {
-    rKern: 0.36,
-    // Fortschritt u (0 … 1) der Teilung einer Zelle mit Radius R: Form von Zelle und Kernen (Radius rho, Mittelpunkte ±c)
-    teilung(u, R){
-      const r = R / Math.SQRT2, rn = R * this.rKern, rnT = rn / Math.SQRT2;
-      const teilen = glatt(fenster(u, 0.0, 0.28)), wandern = glatt(fenster(u, 0.28, 0.70)), ein = glatt(fenster(u, 0.40, 1.0));
-      return {zelle: {c: r * ein, rho: lerp(R, r, ein)}, kern: {c: lerp(rnT * teilen, r, wandern), rho: lerp(rn, rnT, teilen)}, tochterR: r};
+    kernR: S => 0.2 * S,
+    teilung(u, L, S){
+      const rn = this.kernR(S), rnT = rn / Math.SQRT2;
+      const teilen = glatt(fenster(u, 0.0, 0.28)), wandern = glatt(fenster(u, 0.28, 0.70));
+      return {kern: {c: lerp(rnT * teilen, L / 4, wandern), rho: lerp(rn, rnT, teilen)}, platte: glatt(fenster(u, 0.62, 1.0)), vakuole: 1 - glatt(fenster(u, 0.0, 0.4))};
     }
   };
 
-  return {PHASEN, GRUPPEN, phaseBei, dnaGehalt, zahlen, zustand, verbund, einfach, CHROM, R_ZELLE, R_KERN, R_TOCHTER, T_ANA, T_TEIL, glatt, fenster};
+  return {PHASEN, GRUPPEN, phaseBei, dnaGehalt, zahlen, zustand, verbund, einfach, CHROM, W_ZELLE, H_ZELLE, R_KERN, T_ANA, T_TEIL, glatt, fenster};
 })();

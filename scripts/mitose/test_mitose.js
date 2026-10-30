@@ -32,26 +32,31 @@ const e = M.zustand(1);
 pruefe(e.geteilt && e.kern.tochter.huelle > 0.99, "Ende: zwei Zellen, Kernhülle geschlossen");
 pruefe(M.zustand(0.3).kern.huelle > 0 && M.zustand(0.5).kern.huelle < 0.01, "Kernhülle löst sich bis zur Metaphase auf");
 
-// Alle Chromatiden bleiben für alle t in der Zelle (Zellform: zwei Kreise mit Radius rho im Abstand c)
+// Alle Chromatiden bleiben für alle t in der Zelle (Rechteck der Zellwand)
 for (let i = 0; i <= 500; i++){
-  const z = M.zustand(i / 500), zc = z.zelle;
+  const z = M.zustand(i / 500), W2 = M.W_ZELLE / 2, H2 = M.H_ZELLE / 2;
   z.chromosomen.forEach(c => c.chromatiden.forEach(ch => {
     if (ch.laenge < 0.05) return;
-    const d = Math.min(Math.hypot(ch.x - zc.c, ch.y), Math.hypot(ch.x + zc.c, ch.y));
-    pruefe(d < zc.rho - 8 || (z.geteilt && Math.hypot(Math.abs(ch.x) - zc.c, ch.y) < zc.rho), `Chromatide ${c.id} außerhalb der Zelle bei t=${(i / 500).toFixed(3)}`);
+    pruefe(Math.abs(ch.x) < W2 - 50 && Math.abs(ch.y) < H2 - 30, `Chromatide ${c.id} außerhalb der Zelle bei t=${(i / 500).toFixed(3)}`);
   }));
+  // Pflanzenzelle: Spindelpole und Zellplatte bleiben in der Zelle, keine Zentrosomen im Zustand
+  pruefe(z.pol.x < W2 - 60 && !("zentrosomen" in z), "Spindelpol in der Zelle, bei t=" + (i / 500));
 }
+// Zellplatte wächst von 0 auf 1, erst danach zwei Zellen; Phragmoplast nur dazwischen
+pruefe(M.zustand(0.7).platte.wachstum === 0 && M.zustand(0.95).platte.wachstum === 1 && M.zustand(0.9).platte.wachstum < 1, "Zellplatte wächst");
+pruefe(M.zustand(0.3).platte.phragmoplast === 0 && M.zustand(0.85).platte.phragmoplast > 0.5, "Phragmoplast in der Telophase");
+pruefe(M.zustand(0.1).vakuole > 0.95 && M.zustand(0.55).vakuole < 0.35, "Vakuole wird zur Teilung klein");
+pruefe(Math.abs(M.zustand(1).kern.tochter.x - M.W_ZELLE / 4) < 1e-9, "Tochterkerne in der Mitte der Tochterzellen");
 
 // Umriss: bei c = 0 ein Kreis, bei c = rho zwei getrennte Formen
 const kreis = M.verbund(0, 100)[0];
 pruefe(M.verbund(0, 100).length === 1 && kreis.every(([x, y]) => Math.abs(Math.hypot(x, y) - 100) < 0.5), "verbund: Kreis");
 pruefe(M.verbund(100, 100).length === 2, "verbund: zwei Formen");
 
-// Klasse 5: Tochterkerne am Ende in den Mittelpunkten der Tochterzellen, Fläche bleibt erhalten
-const R = 34, t = M.einfach.teilung(1, R);
-pruefe(Math.abs(t.zelle.c - R / Math.SQRT2) < 1e-9 && Math.abs(t.zelle.rho - R / Math.SQRT2) < 1e-9, "Klasse 5: Tochterzellen");
-pruefe(Math.abs(t.kern.c - t.zelle.c) < 1e-9, "Klasse 5: Kerne in der Mitte der Tochterzellen");
-pruefe(Math.abs(2 * t.zelle.rho ** 2 - R * R) < 1e-9, "Klasse 5: Fläche erhalten");
-const k0 = M.einfach.teilung(0, R); pruefe(k0.zelle.c === 0 && k0.kern.c === 0, "Klasse 5: Anfang ein Kern");
+// Klasse 5: am Ende zwei Kerne in der Mitte der Hälften, Fläche der Kerne bleibt erhalten, Zellwand wächst ganz durch
+const L = 80, S = 40, en = M.einfach.teilung(1, L, S), k0 = M.einfach.teilung(0, L, S);
+pruefe(Math.abs(en.kern.c - L / 4) < 1e-9 && en.platte === 1, "Klasse 5: Kerne in den Hälften, Wand vollständig");
+pruefe(Math.abs(2 * en.kern.rho ** 2 - M.einfach.kernR(S) ** 2) < 1e-9, "Klasse 5: Kernfläche erhalten");
+pruefe(k0.kern.c === 0 && k0.platte === 0 && k0.vakuole === 1, "Klasse 5: Anfang ein Kern, keine Wand");
 console.log(fehler ? fehler + " Fehler" : "Alle Tests bestanden.");
 process.exit(fehler ? 1 : 0);
