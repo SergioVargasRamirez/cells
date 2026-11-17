@@ -1,10 +1,16 @@
+<div class="topbar">
+  <button class="tb-menu" id="tb-menu" type="button" aria-controls="sidenav" aria-expanded="false" aria-label="Menü ein-/ausblenden" title="Menü ein-/ausblenden">☰ <span>Menü</span></button>
+  <a class="tb-back" href="./"><span aria-hidden="true">←</span> Alle Seiten</a>
+  <span class="tb-sp"></span>
+  <button class="theme-btn" id="theme-btn" type="button"></button>
+</div>
 <nav class="sidenav" id="sidenav" aria-label="Seiten">
   <div class="sidenav-head">
     <a class="sidenav-brand" href="./">Biologie-Werkzeuge<span>für den Unterricht</span></a>
-    <button class="sidenav-toggle" type="button" aria-expanded="false" aria-controls="sidenav-list">Menü</button>
+    <button class="sidenav-hide" type="button" aria-label="Menü ausblenden" title="Menü ausblenden">«</button>
   </div>
   <div class="sidenav-list" id="sidenav-list">
-    <p class="sidenav-group">Nukleinsäuren</p>
+        <p class="sidenav-group">Nukleinsäuren</p>
     <a href="dna-rna.html">DNA und RNA</a>
     <a href="basenpaarung.html">Basenpaarung</a>
     <a href="replikation.html">Replikation</a>
@@ -31,6 +37,12 @@
     <a href="quellen.html#mitmachen">Mitmachen</a>
     <a href="impressum.html">Impressum</a>
     <a href="datenschutz.html">Datenschutz</a>
+    <p class="sidenav-group">Darstellung</p>
+    <div class="sidenav-theme" role="group" aria-label="Darstellung">
+      <button type="button" data-theme-set="system" aria-pressed="true">System</button>
+      <button type="button" data-theme-set="light" aria-pressed="false">Tag</button>
+      <button type="button" data-theme-set="dark" aria-pressed="false">Nacht</button>
+    </div>
     <p class="sidenav-legal">© 2026 Dr. Sergio Vargas · <a href="impressum.html#lizenz">CC BY-NC-SA 4.0</a></p>
   </div>
 </nav>
@@ -47,7 +59,50 @@
     };
     if (document.body) note(); else document.addEventListener("DOMContentLoaded", note);
   }
-  const nav = document.getElementById("sidenav"), btn = nav.querySelector(".sidenav-toggle");
-  btn.addEventListener("click", () => btn.setAttribute("aria-expanded", String(nav.classList.toggle("open"))));
+  const nav = document.getElementById("sidenav");
+  // Darstellung: System (Standard), Tag oder Nacht; die Seiten lesen data-theme am <html>
+  const themeBtns = [...nav.querySelectorAll("[data-theme-set]")];
+  const applyTheme = m => {
+    if (m === "light" || m === "dark") document.documentElement.setAttribute("data-theme", m);
+    else document.documentElement.removeAttribute("data-theme");
+    themeBtns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.themeSet === m)));
+    const tb = document.getElementById("theme-btn"), L = {system:["◐","System"], light:["☀","Tag"], dark:["☾","Nacht"]}[m];
+    tb.textContent = L[0]; tb.title = tb.ariaLabel = "Darstellung: " + L[1] + " (klicken zum Wechseln)";
+  };
+  const setMode = m => {
+    mode = m; applyTheme(m);
+    try { localStorage.setItem("theme", m); } catch (e) {}
+    window.dispatchEvent(new Event("resize"));  // Zeichnungen neu aufbauen
+  };
+  let mode = "light";  // Standard: Tag
+  try { mode = localStorage.getItem("theme") || "light"; } catch (e) {}
+  applyTheme(mode);
+  themeBtns.forEach(b => b.addEventListener("click", () => setMode(b.dataset.themeSet)));
+  document.getElementById("theme-btn").addEventListener("click", () => setMode({system:"light", light:"dark", dark:"system"}[mode]));
+  // Stichwörter am Seitenende: Treffer der letzten Suche (Startseite) farbig hervorheben
+  const norm = t => t.toLowerCase().replace(/ß/g, "ss").replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9+]+/g, " ").trim();
+  const markKw = () => {
+    let q = ""; try { q = localStorage.getItem("suche") || ""; } catch (e) {}
+    const toks = norm(q).split(" ").filter(Boolean);
+    if (!toks.length) return;
+    document.querySelectorAll(".kwds a").forEach(a => {
+      const w = " " + norm(a.textContent) + " ";
+      if (toks.some(t => w.includes(t.length > 3 ? t : " " + t))) { a.classList.add("hit"); a.title += " (Treffer deiner letzten Suche: " + q + ")"; }
+    });
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", markKw); else markKw();
+  // Menü ein-/ausblenden. Desktop: Seitenleiste, Wahl wird gemerkt (Standard: ausgeblendet). Schmal: Ausklappmenü.
+  const root = document.documentElement, mb = document.getElementById("tb-menu"), wide = matchMedia("(min-width:1000px)");
+  try { if (localStorage.getItem("nav") === "1") root.classList.add("nav-open"); } catch (e) {}
+  const sync = () => mb.setAttribute("aria-expanded", String(wide.matches ? root.classList.contains("nav-open") : nav.classList.contains("open")));
+  const setOpen = on => {
+    if (wide.matches){ root.classList.toggle("nav-open", on); try { localStorage.setItem("nav", on ? "1" : "0"); } catch (e) {} }
+    else nav.classList.toggle("open", on);
+    sync();
+  };
+  mb.addEventListener("click", () => setOpen(!(wide.matches ? root.classList.contains("nav-open") : nav.classList.contains("open"))));
+  nav.querySelector(".sidenav-hide").addEventListener("click", () => setOpen(false));
+  wide.addEventListener("change", sync);
+  sync();
 })();
 </script>

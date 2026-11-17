@@ -229,46 +229,85 @@ details li{margin-bottom:6px}
 </style>
 <style id="sitenav-css">
 /* Seitenmenü: wird von build.py in alle Seiten kopiert (Quelle: template/site/nav.css) */
-:root{--navw:252px}
+:root{--navw:252px;--j8c:#0e7490;--j9c:#b45309;--j10c:#7e3fb5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--j8c:#4cc4d6;--j9c:#f2b24c;--j10c:#b99cff}}
+:root[data-theme="dark"]{--j8c:#4cc4d6;--j9c:#f2b24c;--j10c:#b99cff}
 .sidenav{font-family:var(--font,var(--sans));color:var(--fg,var(--ink));background:var(--surface);z-index:60}
 .sidenav-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .sidenav-brand{display:block;text-decoration:none;color:inherit;font-weight:700;font-size:1.12rem;line-height:1.2;letter-spacing:-.005em;padding:4px 10px}
 .sidenav-brand span{display:block;font-weight:400;font-size:.88rem;color:var(--muted);margin-top:2px}
 .sidenav-brand[aria-current="page"]{color:var(--accent)}
 .sidenav-group{margin:20px 0 6px;padding:0 10px;font-size:.72rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
-.sidenav-list a{display:block;padding:7px 10px;margin:1px 0;border-radius:8px;color:inherit;text-decoration:none;font-size:.95rem;line-height:1.3;transition:background .15s}
+.sidenav-list a{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;margin:1px 0;border-radius:8px;color:inherit;text-decoration:none;font-size:.95rem;line-height:1.3;transition:background .15s}
 .sidenav-list a:hover{background:color-mix(in srgb,var(--accent) 13%,transparent)}
 .sidenav-list a[aria-current="page"]{background:var(--accent);color:var(--accent-fg,var(--accent-ink));font-weight:600}
 .sidenav a:focus-visible,.sidenav button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.sidenav-toggle{font:inherit;font-weight:700;font-size:.92rem;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 14px;cursor:pointer}
+.sidenav-hide{display:none}
 @media (min-width:1000px){
-  body{padding-left:var(--navw)}
-  .sidenav{position:fixed;top:0;bottom:0;left:0;width:var(--navw);overflow-y:auto;border-right:1px solid var(--line);padding:22px 14px 28px}
-  .sidenav-toggle{display:none}
+  /* Am Rand eingeklappt (Standard); » öffnet, « schließt. Zustand merkt sich localStorage "nav". */
+  body{padding-left:0;transition:padding-left .2s}
+  html.nav-open body{padding-left:var(--navw)}
+  .sidenav{position:fixed;top:0;bottom:0;left:0;width:var(--navw);overflow-y:auto;overflow-x:visible;border-right:1px solid var(--line);padding:22px 14px 28px;transform:translateX(-100%);visibility:hidden;transition:transform .2s,visibility 0s .2s}
+  html.nav-open .sidenav{transform:none;visibility:visible;transition:transform .2s,visibility 0s}
+    .sidenav-hide{display:block;font:inherit;font-weight:700;font-size:1.1rem;line-height:1;color:var(--muted);background:none;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+  .sidenav-hide:hover{color:var(--accent);border-color:var(--accent)}
 }
 @media (max-width:999.98px){
-  .sidenav{border-bottom:1px solid var(--line);padding:10px 16px}
-  .sidenav-list{display:none;padding:2px 0 10px}
-  .sidenav.open .sidenav-list{display:block}
+  .sidenav{display:none;border-bottom:1px solid var(--line);padding:6px 16px 12px}
+  .sidenav.open{display:block}
+  .sidenav-head{display:none}
 }
-@media (prefers-reduced-motion:reduce){.sidenav-list a{transition:none}}
+@media (prefers-reduced-motion:reduce){.sidenav-list a,body,.sidenav{transition:none!important}}
 @media print{.sidenav{display:none}body{padding-left:0}}
+.sidenav-theme{display:flex;margin:0 10px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.sidenav-theme button{flex:1;font:inherit;font-size:.88rem;font-weight:600;color:inherit;background:none;border:0;border-right:1px solid var(--line);padding:7px 4px;cursor:pointer}
+.sidenav-theme button:last-child{border-right:0}
+.sidenav-theme button:hover{background:color-mix(in srgb,var(--accent) 13%,transparent)}
+.sidenav-theme button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg,var(--accent-ink))}
+.theme-btn{width:36px;height:36px;padding:0;font:inherit;font-size:1.15rem;line-height:1;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:50%;cursor:pointer}
+.theme-btn:hover{color:var(--accent);border-color:var(--accent)}
+.theme-btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media print{.topbar{display:none}}
+.topbar{display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--line);font-family:var(--font,var(--sans));color:var(--fg,var(--ink))}
+.topbar .tb-sp{flex:1}
+.tb-menu,.tb-back{font:inherit;font-weight:600;font-size:.95rem;line-height:1;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.tb-menu:hover,.tb-back:hover,.theme-btn:hover{color:var(--accent);border-color:var(--accent)}
+.tb-back[aria-current="page"]{display:none}
+.topbar button:focus-visible,.topbar a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (max-width:420px){.tb-menu span{display:none}}
 .sidenav-legal{margin:14px 10px 0;font-size:.78rem;line-height:1.35;color:var(--muted)}
 .sidenav-legal a{display:inline;padding:0;margin:0;color:inherit;text-decoration:underline;font-size:inherit}
 .sidenav-legal a:hover{background:none}
 html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 .eingebettet-hinweis{font:600 18px/1.5 system-ui,sans-serif;padding:32px 20px;text-align:center}
+.jd{display:inline-flex;gap:4px;flex:none}
+.jd i{width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 1.5px var(--surface)}
+.jd i.j8{background:var(--j8c)}.jd i.j9{background:var(--j9c)}.jd i.j10{background:var(--j10c)}
+.sidenav-list a[aria-current="page"] .jd i{box-shadow:0 0 0 1.5px var(--accent-fg,var(--accent-ink))}
+.kwds-end{margin:26px 0 8px;font-family:var(--font,var(--sans))}
+.kwds-h{margin:0 0 8px;font-size:.78rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.kwds{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0}
+.kwds a{display:block;font:500 .78rem/1 var(--font,var(--sans));padding:4px 9px;border-radius:99px;background:var(--surface2,rgba(128,128,128,.15));color:var(--muted);border:1px solid var(--line);text-decoration:none}
+.kwds a:hover{color:var(--accent);border-color:var(--accent)}
+.kwds a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.kwds a.hit{background:var(--accent);border-color:var(--accent);color:var(--accent-fg,var(--accent-ink));font-weight:700}
 </style>
 </head>
 <body>
 <!--SITENAV-->
+<div class="topbar">
+  <button class="tb-menu" id="tb-menu" type="button" aria-controls="sidenav" aria-expanded="false" aria-label="Menü ein-/ausblenden" title="Menü ein-/ausblenden">☰ <span>Menü</span></button>
+  <a class="tb-back" href="./"><span aria-hidden="true">←</span> Alle Seiten</a>
+  <span class="tb-sp"></span>
+  <button class="theme-btn" id="theme-btn" type="button"></button>
+</div>
 <nav class="sidenav" id="sidenav" aria-label="Seiten">
   <div class="sidenav-head">
     <a class="sidenav-brand" href="./">Biologie-Werkzeuge<span>für den Unterricht</span></a>
-    <button class="sidenav-toggle" type="button" aria-expanded="false" aria-controls="sidenav-list">Menü</button>
+    <button class="sidenav-hide" type="button" aria-label="Menü ausblenden" title="Menü ausblenden">«</button>
   </div>
   <div class="sidenav-list" id="sidenav-list">
-    <p class="sidenav-group">Nukleinsäuren</p>
+        <p class="sidenav-group">Nukleinsäuren</p>
     <a href="dna-rna.html">DNA und RNA</a>
     <a href="basenpaarung.html">Basenpaarung</a>
     <a href="replikation.html">Replikation</a>
@@ -295,6 +334,12 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
     <a href="quellen.html#mitmachen">Mitmachen</a>
     <a href="impressum.html">Impressum</a>
     <a href="datenschutz.html">Datenschutz</a>
+    <p class="sidenav-group">Darstellung</p>
+    <div class="sidenav-theme" role="group" aria-label="Darstellung">
+      <button type="button" data-theme-set="system" aria-pressed="true">System</button>
+      <button type="button" data-theme-set="light" aria-pressed="false">Tag</button>
+      <button type="button" data-theme-set="dark" aria-pressed="false">Nacht</button>
+    </div>
     <p class="sidenav-legal">© 2026 Dr. Sergio Vargas · <a href="impressum.html#lizenz">CC BY-NC-SA 4.0</a></p>
   </div>
 </nav>
@@ -311,8 +356,51 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
     };
     if (document.body) note(); else document.addEventListener("DOMContentLoaded", note);
   }
-  const nav = document.getElementById("sidenav"), btn = nav.querySelector(".sidenav-toggle");
-  btn.addEventListener("click", () => btn.setAttribute("aria-expanded", String(nav.classList.toggle("open"))));
+  const nav = document.getElementById("sidenav");
+  // Darstellung: System (Standard), Tag oder Nacht; die Seiten lesen data-theme am <html>
+  const themeBtns = [...nav.querySelectorAll("[data-theme-set]")];
+  const applyTheme = m => {
+    if (m === "light" || m === "dark") document.documentElement.setAttribute("data-theme", m);
+    else document.documentElement.removeAttribute("data-theme");
+    themeBtns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.themeSet === m)));
+    const tb = document.getElementById("theme-btn"), L = {system:["◐","System"], light:["☀","Tag"], dark:["☾","Nacht"]}[m];
+    tb.textContent = L[0]; tb.title = tb.ariaLabel = "Darstellung: " + L[1] + " (klicken zum Wechseln)";
+  };
+  const setMode = m => {
+    mode = m; applyTheme(m);
+    try { localStorage.setItem("theme", m); } catch (e) {}
+    window.dispatchEvent(new Event("resize"));  // Zeichnungen neu aufbauen
+  };
+  let mode = "light";  // Standard: Tag
+  try { mode = localStorage.getItem("theme") || "light"; } catch (e) {}
+  applyTheme(mode);
+  themeBtns.forEach(b => b.addEventListener("click", () => setMode(b.dataset.themeSet)));
+  document.getElementById("theme-btn").addEventListener("click", () => setMode({system:"light", light:"dark", dark:"system"}[mode]));
+  // Stichwörter am Seitenende: Treffer der letzten Suche (Startseite) farbig hervorheben
+  const norm = t => t.toLowerCase().replace(/ß/g, "ss").replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9+]+/g, " ").trim();
+  const markKw = () => {
+    let q = ""; try { q = localStorage.getItem("suche") || ""; } catch (e) {}
+    const toks = norm(q).split(" ").filter(Boolean);
+    if (!toks.length) return;
+    document.querySelectorAll(".kwds a").forEach(a => {
+      const w = " " + norm(a.textContent) + " ";
+      if (toks.some(t => w.includes(t.length > 3 ? t : " " + t))) { a.classList.add("hit"); a.title += " (Treffer deiner letzten Suche: " + q + ")"; }
+    });
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", markKw); else markKw();
+  // Menü ein-/ausblenden. Desktop: Seitenleiste, Wahl wird gemerkt (Standard: ausgeblendet). Schmal: Ausklappmenü.
+  const root = document.documentElement, mb = document.getElementById("tb-menu"), wide = matchMedia("(min-width:1000px)");
+  try { if (localStorage.getItem("nav") === "1") root.classList.add("nav-open"); } catch (e) {}
+  const sync = () => mb.setAttribute("aria-expanded", String(wide.matches ? root.classList.contains("nav-open") : nav.classList.contains("open")));
+  const setOpen = on => {
+    if (wide.matches){ root.classList.toggle("nav-open", on); try { localStorage.setItem("nav", on ? "1" : "0"); } catch (e) {} }
+    else nav.classList.toggle("open", on);
+    sync();
+  };
+  mb.addEventListener("click", () => setOpen(!(wide.matches ? root.classList.contains("nav-open") : nav.classList.contains("open"))));
+  nav.querySelector(".sidenav-hide").addEventListener("click", () => setOpen(false));
+  wide.addEventListener("change", sync);
+  sync();
 })();
 </script>
 <!--/SITENAV-->
