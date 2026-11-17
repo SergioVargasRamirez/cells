@@ -1,0 +1,152 @@
+{
+  "dna-rna.html": [
+    "DNA",
+    "RNA",
+    "dNTP",
+    "NTP",
+    "Desoxyribose",
+    "Basenpaare",
+    "Doppelhelix"
+  ],
+  "basenpaarung.html": [
+    "Basenpaarung",
+    "Wasserstoffbrücken",
+    "Gegenstrang",
+    "DNA"
+  ],
+  "replikation.html": [
+    "Replikation",
+    "semikonservativ",
+    "Helikase",
+    "Primer",
+    "Primase",
+    "Leitstrang",
+    "Folgestrang",
+    "Okazaki-Fragmente",
+    "DNA-Polymerase",
+    "Ligase",
+    "Replikationsgabel"
+  ],
+  "pcr.html": [
+    "PCR",
+    "Primer",
+    "Taq-Polymerase",
+    "Denaturierung",
+    "Hybridisierung",
+    "Polymerisation",
+    "Zyklus",
+    "Schmelztemperatur",
+    "Thermocycler"
+  ],
+  "gen-transkription.html": [
+    "Gen",
+    "Promotor",
+    "Exon",
+    "Intron",
+    "Terminator",
+    "RNA-Polymerase II",
+    "Transkription"
+  ],
+  "transkription.html": [
+    "Transkription",
+    "RNA-Polymerase",
+    "mRNA",
+    "Basenpaarung",
+    "DNA",
+    "RNA"
+  ],
+  "rna-prozessierung.html": [
+    "pre-mRNA",
+    "Kappe",
+    "Spleißen",
+    "Intron",
+    "mRNA",
+    "Spleißosom"
+  ],
+  "doppelhelix.html": [
+    "Doppelhelix",
+    "3D-Modell",
+    "Basenpaare",
+    "DNA",
+    "RNA",
+    "Einzelstrang"
+  ],
+  "chromatin.html": [
+    "Chromatin",
+    "Nucleosom",
+    "Histone",
+    "Chromosom",
+    "Genaktivität",
+    "DNA-Verpackung"
+  ],
+  "chargaff.html": [
+    "Hydrolyse",
+    "Nucleotide",
+    "DNA",
+    "Experiment"
+  ],
+  "schmelztemperatur.html": [
+    "Schmelztemperatur",
+    "Schmelzkurve",
+    "DNA",
+    "Temperatur"
+  ],
+  "mitose.html": [
+    "Mitose",
+    "Zellzyklus",
+    "Interphase",
+    "Prophase",
+    "Metaphase",
+    "Anaphase",
+    "Chromosomen",
+    "Zellplatte",
+    "Zellteilung",
+    "DNA-Gehalt"
+  ],
+  "code-experiment.html": [
+    "genetischer Code",
+    "Codon",
+    "zellfreies System",
+    "künstliche mRNA",
+    "Nirenberg",
+    "Aminosäuren",
+    "Triplett",
+    "Experiment"
+  ],
+  "codon-generator.html": [
+    "genetischer Code",
+    "Codon",
+    "Aminosäuren"
+  ],
+  "rna-typen.html": [
+    "mRNA",
+    "tRNA",
+    "rRNA",
+    "Anticodon",
+    "Kleeblatt",
+    "Wackelpaarung",
+    "Ribosom"
+  ],
+  "peptidbindung.html": [
+    "Peptidbindung",
+    "Aminosäuren",
+    "Peptid",
+    "Kondensation",
+    "Amid"
+  ],
+  "sekundaerstruktur.html": [
+    "Sekundärstruktur",
+    "α-Helix",
+    "β-Faltblatt",
+    "Wasserstoffbrücken",
+    "Proteine",
+    "Seitenketten"
+  ],
+  "proteinstruktur.html": [
+    "Primärstruktur",
+    "Sekundärstruktur",
+    "Tertiärstruktur",
+    "Ubiquitin",
+    "Proteine"
+  ]
+}

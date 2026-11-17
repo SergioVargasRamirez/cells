@@ -15,9 +15,11 @@ Before writing anything it checks that every link in the menu points to an
 existing page and that every page is reachable from the menu. Any problem is
 reported with the exact file, and no page is changed.
 """
+import json
 import os
 import re
 import sys
+from urllib.parse import quote
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.join(ROOT, "template", "site")
@@ -82,6 +84,58 @@ def sync_font_and_nav():
 
 
 # ---------------------------------------------------------------------------
+# Stichwörter unter dem Einleitungstext
+# ---------------------------------------------------------------------------
+# Quelle: template/site/keywords.json (Seite -> Liste von Stichwörtern, von Hand
+# pflegbar). Jede Seite bekommt nach </main> (am Seitenende) einen Block
+# <!--KEYWORDS-->…<!--/KEYWORDS--> mit grauen Pillen. 
+
+KW_BLOCK_RE = re.compile(r'[ \t]*<!--KEYWORDS-->.*?<!--/KEYWORDS-->\n?', re.S)
+KW_END_RE = re.compile(r'(</main>\n?)')
+
+
+def sync_keywords():
+    import html as _html
+    with open(os.path.join(SITE, "keywords.json"), encoding="utf-8") as f:
+        kw = json.load(f)
+    changed = []
+    for page, words in kw.items():
+        path = os.path.join(ROOT, page)
+        if not os.path.exists(path):
+            print(f"FEHLER: keywords.json: {page} existiert nicht", file=sys.stderr)
+            sys.exit(1)
+        html = read_file(path)
+        base = KW_BLOCK_RE.sub("", html)
+        pills = "".join(f'<li><a href="./#q={quote(w, safe="")}" title="Alle Seiten mit {_html.escape(w, quote=True)} suchen">{_html.escape(w)}</a></li>' for w in words)
+        block = f'<!--KEYWORDS--><div class="kwds-end"><p class="kwds-h">Stichwörter</p><ul class="kwds">{pills}</ul></div><!--/KEYWORDS-->\n'
+        new, n = KW_END_RE.subn(lambda m: m.group(1) + block, base, count=1)
+        if not n:
+            print(f"FEHLER: {page}: kein </main> für die Stichwörter", file=sys.stderr)
+            sys.exit(1)
+        if new != html:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(new)
+            changed.append(page)
+    # Startseite: Stichwörter als data-k an die Karten (für die Suche)
+    ipath = os.path.join(ROOT, "index.html")
+    ihtml = read_file(ipath)
+    def card_kw(m):
+        href = m.group(2)
+        words = kw.get(href)
+        if words is None:
+            print(f"FEHLER: index.html: {href} fehlt in keywords.json", file=sys.stderr)
+            sys.exit(1)
+        head = re.sub(r' data-k="[^"]*"', "", m.group(1))
+        return f'{head} data-k="{_html.escape("; ".join(words), quote=True)}" href="{href}"'
+    inew = re.sub(r'(<a class="card"[^>]*?) href="([^"]*)"', card_kw, ihtml)
+    if inew != ihtml:
+        with open(ipath, "w", encoding="utf-8") as f:
+            f.write(inew)
+        changed.append("index.html")
+    print(f"Stichwörter: {len(kw)} Seiten geprüft, aktualisiert: {', '.join(changed) if changed else 'keine'}.")
+
+
+# ---------------------------------------------------------------------------
 # Gemeinsame Skripte und Daten
 # ---------------------------------------------------------------------------
 # Seiten, die zwischen /*__MARKE__*/ und /*__/MARKE__*/ stehen haben, bekommen
@@ -137,6 +191,7 @@ def main():
     for tag, source, label in SNIPPETS:
         sync_snippet(tag, source, label)
     sync_font_and_nav()
+    sync_keywords()
     print("OK.")
 
 

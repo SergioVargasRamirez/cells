@@ -56,6 +56,66 @@ a.card:hover{border-color:var(--accent);transform:translateY(-2px)}
 footer{margin-top:34px;font-size:14px;color:var(--muted)}
 a{color:var(--accent)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.suche{position:relative;margin:0 auto 14px;max-width:580px}
+.suche input{width:100%;font:500 17px/1.2 var(--sans);color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:99px;padding:11px 40px 11px 18px}
+.suche input[type=search]::-webkit-search-cancel-button{display:none}
+.suche input::placeholder{color:var(--muted);font-weight:400}
+.suche input:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-color:var(--accent)}
+.hint{text-align:center;margin:-6px 0 12px;font-size:15px;color:var(--muted)}
+.hint[hidden]{display:none}
+.hint button{font:inherit;font-weight:600;color:var(--accent);background:none;border:0;padding:0 2px;cursor:pointer;text-decoration:underline}
+.ac{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;margin:0;padding:6px;list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);text-align:left}
+.ac[hidden]{display:none}
+.ac li{display:flex;align-items:baseline;gap:10px;padding:8px 12px;border-radius:10px;cursor:pointer;font-size:16px}
+.ac li .k{margin-left:auto;font-size:13px;color:var(--muted);white-space:nowrap}
+.ac li[aria-selected="true"],.ac li:hover{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.ac mark{background:none;color:var(--accent);font-weight:700}
+.treffer{font-size:14px;font-style:italic;color:var(--muted);margin:0 0 6px}
+.cards.liste .treffer{margin:0;flex:1;white-space:normal}
+.cards.liste .card h3{flex:none}
+.suche .x{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:0;border-radius:50%;background:none;color:var(--muted);font-size:20px;line-height:1;cursor:pointer}
+.suche .x:hover{color:var(--accent)}
+.suche .x[hidden]{display:none}
+.filter{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:0 0 8px}
+.filter .lbl{font:700 12px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);min-width:76px}
+.fp{font:600 13.5px/1 var(--sans);padding:6px 11px;border-radius:99px;border:1.5px solid var(--surface2);background:var(--surface2);color:var(--ink);cursor:pointer;transition:background .15s,border-color .15s}
+.fp:hover{border-color:var(--accent)}
+.fp:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.fp[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.fp.j8,.fp.j9,.fp.j10{background:var(--jc);border-color:var(--jc);color:var(--jfg)}
+.fp.j8[aria-pressed="true"],.fp.j9[aria-pressed="true"],.fp.j10[aria-pressed="true"]{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--jc)}
+
+.status{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:14px 0 0;font-size:15px;color:var(--muted);min-height:1.5em}
+.status button{font:inherit;color:var(--accent);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
+.status .sp{flex:1}
+.status .alle-zu{margin-right:6px}
+.ansicht{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.ansicht button{font:600 14px/1 var(--sans);color:var(--ink);text-decoration:none;background:var(--surface);border:0;border-right:1px solid var(--line);padding:7px 12px}
+.ansicht button:last-child{border-right:0}
+.ansicht button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+button.jp{cursor:pointer;font-family:inherit}
+.jp[title]:hover{filter:brightness(1.15);border-width:1.5px}
+.cards.liste{grid-template-columns:1fr;gap:8px}
+.cards.liste .card{flex-direction:row;align-items:center;gap:14px;padding:10px 16px}
+.cards.liste .card svg,.cards.liste .card p,.cards.liste .go{display:none}
+.cards.liste .card h3{font-size:19px;margin:0;flex:1}
+.cards.liste .pills{align-self:center;white-space:nowrap}
+.cards[hidden]{display:none}
+.topic.grp{margin:22px 0 0;font:600 clamp(21px,2.6vw,27px)/1.2 var(--serif);letter-spacing:0;text-transform:none;color:var(--ink)}
+.topic button{all:unset;box-sizing:border-box;display:flex;align-items:center;width:100%;cursor:pointer;padding:8px 4px;border-radius:8px}
+.topic button:hover{color:var(--accent)}
+.tdesc{margin:-2px 0 6px 30px;color:var(--muted);font-size:16px}
+.tdesc[hidden]{display:none}
+.topic button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.topic .chev{display:inline-block;width:1.1em;font-size:.8em;margin-right:6px;transition:transform .15s}
+.topic button[aria-expanded="false"] .chev{transform:rotate(-90deg)}
+.topic .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--jc);margin-right:8px}
+.topic .n{font:400 15px/1 var(--sans);color:var(--muted);margin-left:12px}
+*{box-sizing:border-box}
+.card.soon{opacity:.62}
+.card.soon .go{color:var(--muted)}
+.filter[hidden]{display:none}
+
 </style>
 <style id="font-css">
 /* Schrift eingebettet (Source Sans 3, Adobe; SIL Open Font License), keine Anfragen an Google */
@@ -243,74 +303,80 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 <h1>Biologie-Werkzeuge für den Unterricht</h1>
 <p class="lede">Interaktive Seiten für den Biologie-Unterricht: von Genen und Erbgängen über Sequenzen und Genome bis zu Enzymen und Proteinen.</p>
 <p>Die ersten Seiten entstehen gerade. Ideen und Wünsche aus dem eigenen Unterricht sind willkommen: <a href="quellen.html#mitmachen">Mitmachen</a>.</p>
+<div class="suche"><input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="ac" autocomplete="off" spellcheck="false" placeholder="Suchen: Thema oder Stichwort, z. B. Primer, Helikase, Mitose" aria-label="Seiten suchen"><ul class="ac" id="ac" role="listbox" aria-label="Vorschläge" hidden></ul><button class="x" id="qx" type="button" aria-label="Suche löschen" hidden>×</button></div>
+<p class="hint" id="hint" aria-live="polite" hidden></p>
+<div class="filter" id="fj" role="group" aria-label="Jahrgangsstufe" hidden><span class="lbl">Jahrgang</span><button class="fp alle" type="button" data-v="" aria-pressed="true">Alle</button></div>
+<div class="filter" id="ft" role="group" aria-label="Thema"><span class="lbl">Thema</span><button class="fp alle" type="button" data-v="" aria-pressed="true">Alle</button></div>
+<div class="status"><span id="status" aria-live="polite"></span><span class="sp"></span><button type="button" id="alle-zu" class="alle-zu">Alle ein-/ausklappen</button><span class="ansicht" id="ansicht" role="group" aria-label="Ansicht"><button type="button" data-v="liste" aria-pressed="false">Liste</button><button type="button" data-v="karten" aria-pressed="true">Karten</button></span></div>
+<div id="liste">
 <h2 class="topic">Nukleinsäuren</h2>
 <div class="cards">
-<a class="card" href="dna-rna.html">
+<a class="card" data-k="DNA; RNA; dNTP; NTP; Desoxyribose; Basenpaare; Doppelhelix" href="dna-rna.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M20 20c30 0 30 52 60 52s30-52 60-52 30 52 60 52"/><path d="M20 72c30 0 30-52 60-52s30 52 60 52 30-52 60-52" opacity=".55"/><path d="M50 36v20M110 36v20M170 36v20" opacity=".4"/></svg>
 <h3>DNA und RNA</h3>
 <p>dNTP und NTP vergleichen, Basenpaare legen, die eigene Doppelhelix in 3D ansehen.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="sekundaerstruktur.html">
+<a class="card" data-k="Sekundärstruktur; α-Helix; β-Faltblatt; Wasserstoffbrücken; Proteine; Seitenketten" href="sekundaerstruktur.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 62c10-30 20-30 30 0s20 30 30 0 20-30 30 0"/><path d="M150 70l14-44 14 44 14-44 14 44"/></svg>
 <h3>Helix und Faltblatt</h3>
 <p>α-Helix und β-Faltblatt in 3D vergleichen, mit Wasserstoffbrücken und Seitenketten.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="proteinstruktur.html">
+<a class="card" data-k="Primärstruktur; Sekundärstruktur; Tertiärstruktur; Ubiquitin; Proteine" href="proteinstruktur.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 66c14-26 26 10 40-14s24-30 36-6 22 26 34 2 20-30 34-4 24 22 36 2"/><circle cx="16" cy="66" r="4" fill="currentColor"/><circle cx="204" cy="40" r="4" fill="currentColor"/></svg>
 <h3>Von der Sequenz zur Faltung</h3>
 <p>Ubiquitin in 3D: aus der Aminosäurekette werden Helix und Faltblatt und die fertige Form mit hydrophobem Kern.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="doppelhelix.html">
+<a class="card" data-k="Doppelhelix; 3D-Modell; Basenpaare; DNA; RNA; Einzelstrang" href="doppelhelix.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M20 22c30 0 40 48 70 48s40-48 70-48 40 48 60 48"/><path d="M20 70c30 0 40-48 70-48s40 48 70 48 40-48 60-48" opacity=".55"/><path d="M52 30v32M90 24v44M128 30v32M166 24v44M204 30v32" opacity=".35"/></svg>
 <h3>Doppelhelix in 3D</h3>
 <p>Eine Sequenz eingeben oder zusammenstellen und das Molekül in 3D drehen: DNA als Doppelhelix, RNA als Einzelstrang.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="chargaff.html">
+<a class="card" data-k="Hydrolyse; Nucleotide; DNA; Experiment" href="chargaff.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M50 14v50a14 14 0 0 0 28 0V14M106 14v50a14 14 0 0 0 28 0V14M162 14v50a14 14 0 0 0 28 0V14"/><path d="M50 44h28M106 52h28M162 36h28"/></svg>
 <h3>Das Chargaff-Experiment</h3>
 <p>DNA hydrolysieren, Nucleotide zählen und die Regel in den Zahlen finden.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="schmelztemperatur.html">
+<a class="card" data-k="Schmelztemperatur; Schmelzkurve; DNA; Temperatur" href="schmelztemperatur.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 76h50c20 0 20-60 40-60h110" transform="translate(-10 0) scale(.95 1)"/><path d="M120 76V16" stroke-dasharray="4 5"/></svg>
 <h3>Die Schmelztemperatur</h3>
 <p>DNA erhitzen, Schmelzkurven aufnehmen und herausfinden, wovon die Schmelztemperatur abhängt.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="rna-prozessierung.html">
+<a class="card" data-k="pre-mRNA; Kappe; Spleißen; Intron; mRNA; Spleißosom" href="rna-prozessierung.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 60h40M100 60h30M170 60h50"/><path d="M60 60c10-30 30-30 40 0" stroke-dasharray="3 5"/><path d="M130 60c10-30 30-30 40 0" stroke-dasharray="3 5"/><circle cx="14" cy="60" r="6" fill="currentColor"/></svg>
 <h3>Vom Transkript zur mRNA</h3>
 <p>Kappe, Spleißen, Spaltung und Poly(A)-Schwanz: Mach aus der pre-mRNA eine reife mRNA.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="chromatin.html">
+<a class="card" data-k="Chromatin; Nucleosom; Histone; Chromosom; Genaktivität; DNA-Verpackung" href="chromatin.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 70h40"/><circle cx="78" cy="48" r="20"/><path d="M50 70c10 0 16-10 28-10s18 10 28 10"/><circle cx="150" cy="48" r="20"/><path d="M106 70h18M176 70h54"/></svg>
 <h3>DNA-Verpackung und Zugänglichkeit</h3>
 <p>Vom Nucleosom zum Chromosom, Chromatin umbauen und im Zeitraffer sehen, welche Gene aktiv werden. Mit Expertenmodus.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="replikation.html">
+<a class="card" data-k="Replikation; semikonservativ; Helikase; Primer; Primase; Leitstrang; Folgestrang; Okazaki-Fragmente; DNA-Polymerase; Ligase; Replikationsgabel" href="replikation.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 46h70"/><path d="M90 46c18 0 22-24 44-24h86"/><path d="M90 46c18 0 22 24 44 24h86"/><path d="M134 14h70" opacity=".5"/><path d="M134 78h70" opacity=".5"/><circle cx="94" cy="46" r="7"/></svg>
 <h3>Die Replikation der DNA</h3>
 <p>Helikase, Primer, Leitstrang und Okazaki-Fragmente: Der Replikationsgabel zusehen, bis Polymerase I und Ligase die Fragmente verbunden haben.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="pcr.html">
+<a class="card" data-k="PCR; Primer; Taq-Polymerase; Denaturierung; Hybridisierung; Polymerisation; Zyklus; Schmelztemperatur; Thermocycler" href="pcr.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 70h26l14-48 14 48h26l14-48 14 48h26l14-48 14 48h28"/><path d="M14 80h212" opacity=".4"/></svg>
 <h3>Die PCR</h3>
 <p>Denaturieren, Primer anlagern, Taq-Polymerase: Drei Zyklen genau ansehen, dann das Zählwerk bis 40 Zyklen weiterrechnen lassen. Mit Expertenmodus für die Hybridisierungstemperatur.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="mitose.html">
+<a class="card" data-k="Mitose; Zellzyklus; Interphase; Prophase; Metaphase; Anaphase; Chromosomen; Zellplatte; Zellteilung; DNA-Gehalt" href="mitose.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M120 12c-30 0-52 16-52 34s22 34 52 34 52-16 52-34-22-34-52-34z" opacity=".5"/><path d="M120 12v68" stroke-dasharray="4 5"/><path d="M96 34l12 12-12 12M144 34l-12 12 12 12"/><circle cx="92" cy="46" r="3" fill="currentColor"/><circle cx="148" cy="46" r="3" fill="currentColor"/></svg>
 <h3>Zellteilung und Mitose</h3>
 <p>Pflanzen- und Tierzellen: Klasse 5 sieht zu, wie Zellen wachsen und sich teilen. Klasse 9 und 12: Cartoon aller Phasen mit Chromosomen, Spindel und Zellplatte oder Furche, Zellzyklus und DNA-Gehalt.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="gen-transkription.html">
+<a class="card" data-k="Gen; Promotor; Exon; Intron; Terminator; RNA-Polymerase II; Transkription" href="gen-transkription.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="14" y="26" width="38" height="26" rx="4"/><rect x="56" y="26" width="38" height="26" rx="4" opacity=".6"/><rect x="98" y="26" width="52" height="26" rx="4"/><rect x="154" y="26" width="38" height="26" rx="4" opacity=".6"/><rect x="196" y="26" width="30" height="26" rx="4"/><path d="M60 70h120" stroke-dasharray="3 5"/><circle cx="60" cy="70" r="6" fill="currentColor"/></svg>
 <h3>Ein Gen zusammensetzen</h3>
 <p>Die Abschnitte eines Gens in die richtige Reihenfolge bringen und zusehen, wie die RNA-Polymerase II es abschreibt.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="transkription.html">
+<a class="card" data-k="Transkription; RNA-Polymerase; mRNA; Basenpaarung; DNA; RNA" href="transkription.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M20 30h200" opacity=".6"/><path d="M20 62h110" /><path d="M130 62c20 0 20-24 40-24h50" /><circle cx="170" cy="38" r="6" fill="currentColor"/><path d="M20 30v0" /></svg>
 <h3>Transkription</h3>
 <p>Von der DNA zur RNA: Die passende RNA an einer DNA-Vorlage aufbauen und verknüpfen.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="basenpaarung.html">
+<a class="card" data-k="Basenpaarung; Wasserstoffbrücken; Gegenstrang; DNA" href="basenpaarung.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M30 14v64M210 14v64"/><path d="M30 24h180M30 46h180M30 68h180" stroke-dasharray="7 7" opacity=".7"/><rect x="82" y="16" width="30" height="16" rx="3"/><rect x="128" y="16" width="30" height="16" rx="3"/><rect x="82" y="38" width="30" height="16" rx="3"/><rect x="128" y="38" width="30" height="16" rx="3"/></svg>
 <h3>Basenpaarung</h3>
 <p>Wie entsteht ein neuer DNA-Strang? Nukleotide anfügen, Wasserstoffbrücken entdecken, den Gegenstrang schreiben.</p>
@@ -318,12 +384,12 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 </div>
 <h2 class="topic">Genetischer Code</h2>
 <div class="cards">
-<a class="card" href="code-experiment.html">
+<a class="card" data-k="genetischer Code; Codon; zellfreies System; künstliche mRNA; Nirenberg; Aminosäuren; Triplett; Experiment" href="code-experiment.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M92 8v54a28 28 0 0 0 56 0V8"/><path d="M93 40h54" opacity=".5"/><circle cx="108" cy="58" r="4"/><circle cx="124" cy="66" r="3"/><circle cx="134" cy="54" r="3.5"/><path d="M170 22h46M170 40h46M170 58h46" opacity=".55"/></svg>
 <h3>Der Code im Reagenzglas</h3>
 <p>Künstliche mRNAs in ein zellfreies System geben, die entstehenden Aminosäuren ablesen und die Codon-Tabelle füllen.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="codon-generator.html">
+<a class="card" data-k="genetischer Code; Codon; Aminosäuren" href="codon-generator.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><rect x="50" y="16" width="36" height="60" rx="9"/><rect x="102" y="16" width="36" height="60" rx="9"/><rect x="154" y="16" width="36" height="60" rx="9"/><path d="M50 38h36M50 54h36M102 38h36M102 54h36M154 38h36M154 54h36" opacity=".55"/></svg>
 <h3>Codon-Generator</h3>
 <p>Drei Basen wählen, die Aminosäure sehen und den ganzen genetischen Code Stück für Stück zusammenbauen.</p>
@@ -331,12 +397,12 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 </div>
 <h2 class="topic">Proteine</h2>
 <div class="cards">
-<a class="card" href="rna-typen.html">
+<a class="card" data-k="mRNA; tRNA; rRNA; Anticodon; Kleeblatt; Wackelpaarung; Ribosom" href="rna-typen.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M120 12v30M100 42h40M60 56c12-14 28-14 40-14M140 42c12 0 28 0 40 14M120 42v34"/><circle cx="120" cy="80" r="4" fill="currentColor"/><circle cx="56" cy="58" r="4" fill="currentColor"/><circle cx="184" cy="58" r="4" fill="currentColor"/></svg>
 <h3>mRNA, tRNA und rRNA</h3>
 <p>Die tRNA als Kleeblatt und in 3D, Anticodon und Wackelpaarung, das Ribosom Schritt für Schritt.</p>
 <span class="go">Öffnen</span></a>
-<a class="card" href="peptidbindung.html">
+<a class="card" data-k="Peptidbindung; Aminosäuren; Peptid; Kondensation; Amid" href="peptidbindung.html">
 <svg viewBox="0 0 240 92" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 62l24-14 24 14 24-14 24 14 24-14 24 14"/><path d="M92 62l24-14 0-30" opacity=".0"/><path d="M80 30l40-8 36 22-40 12z" opacity=".5"/><circle cx="110" cy="50" r="4" fill="currentColor"/></svg>
 <h3>Die Peptidbindung</h3>
 <p>Wie aus Aminosäuren ein Peptid wird und warum die Bindung eben und starr ist: Reaktion, 3D-Ebene, Drehversuch und eine Kette aus Ebenen.</p>
@@ -381,7 +447,251 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 <p>Eine Aminosäurekette faltet sich: Wasserliebende und wassermeidende Bausteine, Struktur aus einer Strukturdatenbank in 3D.</p>
 <span class="go">In Vorbereitung</span></div>
 </div>
+</div>
 <footer>Alle Seiten laufen ohne externe Anfragen (Ausnahme: die Strukturvorhersage auf „Gen und Transkription“, nur nach ausdrücklicher Zustimmung); Schriften und Daten sind eingebettet. <a href="quellen.html">Quellen und Danksagung</a> · <a href="quellen.html#mitmachen">Mitmachen</a> · <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a><br>© 2026 Dr. Sergio Vargas, biodatum.io · <a href="impressum.html#lizenz" rel="license">CC BY-NC-SA 4.0</a>, kommerzielle Nutzung nur mit gesonderter Lizenz · ohne Gewähr (<a href="impressum.html#haftungsausschluss">Haftungsausschluss</a>)</footer>
 </div>
+<script>
+(() => {
+  const liste = document.getElementById("liste");
+  const fj = document.getElementById("fj"), ft = document.getElementById("ft"), st = document.getElementById("status"), av = document.getElementById("ansicht"), qi = document.getElementById("q"), qx = document.getElementById("qx"), hintEl = document.getElementById("hint");
+  // Suche: Kleinschreibung, ä/ö/ü auch als ae/oe/ue, ß als ss, tiefgestellte Ziffern normal
+  const SUB = {"₀":"0","₁":"1","₂":"2","₃":"3","₄":"4","₅":"5","₆":"6","₇":"7","₈":"8","₉":"9","⁺":"+","⁻":"-"};
+  const base = s => s.toLowerCase().replace(/ß/g, "ss").replace(/[₀-₉⁺⁻]/g, c => SUB[c]);
+  const wort = s => " " + s.replace(/[^a-z0-9+]+/g, " ").trim() + " ";
+  const f1 = s => wort(base(s).normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+  const f2 = s => wort(base(s).replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+  const cards = [...liste.querySelectorAll(".card")].map(c => {
+    let t = "";
+    { let p = c.parentElement.previousElementSibling; while (p && !(p.tagName === "H2" && p.classList.contains("topic"))) p = p.previousElementSibling; t = p ? p.textContent : ""; }
+    c.dataset.t = t;
+    const own = c.querySelector("h3").textContent + " " + c.querySelector("p").textContent + " " + c.dataset.t;
+    const kw = (c.dataset.k || "").split(";").map(x => x.trim()).filter(Boolean);
+    const txt = own + " " + kw.join(" ");
+    return {el:c, j:(c.dataset.j || "").split(" ").filter(Boolean), t:c.dataset.t, kw, h1:f1(txt), h2:f2(txt), o1:f1(own), o2:f2(own)};
+  });
+  // Wortschatz für "Meintest du": Wörter aus Titeln, Beschreibungen und Stichwörtern
+  const vocab = new Map();
+  cards.forEach(c => (c.el.querySelector("h3").textContent + " " + c.el.querySelector("p").textContent + " " + c.kw.join(" ")).split(/[^A-Za-zÄÖÜäöüß0-9]+/).forEach(w => {
+    const k = f1(w).trim(); if (k.length >= 4 && !vocab.has(k)) vocab.set(k, w);
+  }));
+  const dist = (a, b) => {  // Editierabstand mit Vertauschung benachbarter Buchstaben
+    const d = Array.from({length:a.length + 1}, (_, i) => [i, ...Array(b.length).fill(0)]);
+    for (let j = 1; j <= b.length; j++) d[0][j] = j;
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++){
+      d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+      if (i > 1 && j > 1 && a[i-1] === b[j-2] && a[i-2] === b[j-1]) d[i][j] = Math.min(d[i][j], d[i-2][j-2] + 1);
+    }
+    return d[a.length][b.length];
+  };
+  function vorschlaege(q){
+    const toks = q.trim().split(/\s+/).filter(Boolean);
+    const out = [];
+    toks.forEach((t, i) => {
+      const k = f1(t).trim();
+      if (k.length < 4 || cards.some(c => hat(c.h1, k))) return;
+      const max = k.length >= 8 ? 2 : 1;
+      [...vocab].map(([w, orig]) => [dist(k, w), orig, w])
+        .filter(([d]) => d <= max).sort((x, y) => x[0] - y[0]).slice(0, 3)
+        .forEach(([, orig]) => out.push(toks.map((x, n) => n === i ? orig : x).join(" ")));
+    });
+    return [...new Set(out)].filter(v => cards.some(c => passt(c, v))).slice(0, 3);
+  }
+  // Wörter ab 4 Zeichen: irgendwo im Text (Zusammensetzungen: "Säure" in "Salzsäure"); kürzere nur am Wortanfang (pH, Ion, Eis)
+  const hat = (h, w) => h.includes(w.length > 3 ? w : " " + w);
+  const passt = (c, q) => { const a = f1(q).trim().split(" ").filter(Boolean), b = f2(q).trim().split(" ").filter(Boolean); return a.every(w => hat(c.h1, w)) || b.every(w => hat(c.h2, w)); };
+  const topics = [...new Set(cards.map(c => c.t))];  // Reihenfolge wie auf der Seite
+  const desc = {}; liste.querySelectorAll("h2.topic").forEach(h => desc[h.textContent] = h.dataset.d || "");
+  const offen = new Map();  // Handwahl je Bereich (nur in dieser Sitzung); ohne Wahl: aufgeklappt
+  [...topics].sort((a, b) => a.localeCompare(b, "de")).forEach(t => { const b = document.createElement("button"); b.className = "fp"; b.type = "button"; b.dataset.v = t; b.setAttribute("aria-pressed", "false"); b.textContent = t; ft.appendChild(b); });
+  const YEARS = [...new Set(cards.flatMap(c => c.j))].sort((a, b) => a - b);
+  fj.hidden = !YEARS.length;
+  YEARS.forEach(y => { const b = document.createElement("button"); b.className = "fp"; b.type = "button"; b.dataset.v = y; b.setAttribute("aria-pressed", "false"); b.textContent = y; fj.appendChild(b); });
+  const state = {j:[], t:"", q:"", v:"karten"};
+  try { if (localStorage.getItem("ansicht") === "liste") state.v = "liste"; } catch (e) {}
+  function load(){
+    const q = new URLSearchParams(location.hash.slice(1));
+    state.j = (q.get("j") || "").split(",").filter(y => YEARS.includes(y));
+    state.t = topics.includes(q.get("t")) ? q.get("t") : "";
+    state.q = q.get("q") || "";
+    qi.value = state.q;
+  }
+  function save(){
+    const q = new URLSearchParams();
+    if (state.j.length) q.set("j", state.j.join(","));
+    if (state.t) q.set("t", state.t);
+    if (state.q.trim()) q.set("q", state.q.trim());
+    history.replaceState(null, "", location.pathname + location.search + (q.toString() ? "#" + q : ""));
+  }
+  // Vorschlagsliste beim Tippen: Stichwörter, Seitentitel und Themen
+  const acEl = document.getElementById("ac");
+  const eintraege = [];
+  const gesehen = new Set();
+  const add = (label, art, href) => { const k = art + f1(label); if (gesehen.has(k)) return; gesehen.add(k); eintraege.push({label, art, href, n1:f1(label), n2:f2(label)}); };
+  topics.forEach(t => add(t, "Thema"));
+  cards.forEach(c => { if (c.el.getAttribute("href")) add(c.el.querySelector("h3").textContent, "Seite", c.el.getAttribute("href")); c.kw.forEach(k => add(k, "Stichwort")); });
+  let acListe = [], acPos = -1;
+  function acSchliessen(){ acEl.hidden = true; acEl.replaceChildren(); acListe = []; acPos = -1; qi.setAttribute("aria-expanded", "false"); qi.removeAttribute("aria-activedescendant"); }
+  function acRang(e, t1, t2){
+    for (const [n, t] of [[e.n1, t1], [e.n2, t2]]){
+      if (n.trim().startsWith(t)) return 0;
+      if (n.includes(" " + t)) return 1;
+      if (t.length > 3 && n.includes(t)) return 2;
+    }
+    return -1;
+  }
+  function acZeigen(){
+    const roh = qi.value, teile = roh.split(/\s+/);
+    const letztes = teile[teile.length - 1] || "";
+    const t1 = f1(letztes).trim(), t2 = f2(letztes).trim();
+    if (t1.length < 2){ acSchliessen(); return; }
+    const voll = f1(roh).trim();
+    acListe = eintraege.map(e => [acRang(e, t1, t2), e]).filter(([r, e]) => r >= 0 && f1(e.label).trim() !== voll)
+      .sort((a, b) => a[0] - b[0] || (a[1].art === "Seite") - (b[1].art === "Seite") || a[1].label.length - b[1].label.length).slice(0, 6).map(([, e]) => e);
+    acEl.replaceChildren(); acPos = -1;
+    if (!acListe.length){ acSchliessen(); return; }
+    acListe.forEach((e, i) => {
+      const li = document.createElement("li"); li.id = "ac" + i; li.setAttribute("role", "option");
+      const i0 = f1(e.label).indexOf(t1);
+      if (i0 >= 0 && f1(e.label).length === e.label.length){
+        li.append(e.label.slice(0, i0));
+        const m = document.createElement("mark"); m.textContent = e.label.slice(i0, i0 + t1.length); li.append(m, e.label.slice(i0 + t1.length));
+      } else li.append(e.label);
+      const k = document.createElement("span"); k.className = "k";
+      const n = e.art === "Seite" ? 0 : cards.filter(c => e.art === "Thema" ? c.t === e.label : passt(c, e.label)).length;
+      k.textContent = e.art === "Seite" ? "Seite öffnen →" : e.art + " · " + n + (n === 1 ? " Seite" : " Seiten");
+      li.append(k);
+      li.addEventListener("mousedown", ev => { ev.preventDefault(); acWaehlen(e); });
+      acEl.appendChild(li);
+    });
+    acEl.hidden = false; qi.setAttribute("aria-expanded", "true");
+  }
+  function acWaehlen(e){
+    acSchliessen();
+    if (e.art === "Seite"){ location.href = e.href; return; }
+    if (e.art === "Thema"){ state.t = e.label; qi.value = state.q = ""; }
+    else { const teile = qi.value.split(/\s+/); teile[teile.length - 1] = e.label; qi.value = state.q = teile.join(" "); }
+    offen.clear(); save(); render();
+  }
+  function acMarkieren(i){
+    acPos = (i + acListe.length) % acListe.length;
+    [...acEl.children].forEach((li, n) => li.setAttribute("aria-selected", String(n === acPos)));
+    qi.setAttribute("aria-activedescendant", "ac" + acPos);
+  }
+  function group(title, items, jc){
+    const f = document.createDocumentFragment();
+    const h = document.createElement("h2"); h.className = "topic grp";
+    const bt = document.createElement("button"); bt.type = "button";
+    const ch = document.createElement("span"); ch.className = "chev"; ch.textContent = "▾"; ch.setAttribute("aria-hidden", "true");
+    bt.appendChild(ch);
+    if (jc){ const d = document.createElement("span"); d.className = "dot j" + jc; bt.appendChild(d); }
+    bt.appendChild(document.createTextNode(title));
+    const n = document.createElement("span"); n.className = "n"; n.textContent = items.length === 1 ? "1 Seite" : items.length + " Seiten";
+    bt.appendChild(n); h.appendChild(bt);
+    const g = document.createElement("div"); g.className = "cards" + (state.v === "liste" ? " liste" : "");
+    items.forEach(c => g.appendChild(c.el));
+    const dt = desc[title] ? document.createElement("p") : null;
+    if (dt){ dt.className = "tdesc"; dt.textContent = desc[title]; }
+    const apply = () => { const zuk = !(offen.has(title) ? offen.get(title) : true); g.hidden = zuk; bt.setAttribute("aria-expanded", String(!zuk)); };
+    bt.onclick = () => { offen.set(title, bt.getAttribute("aria-expanded") !== "true"); apply(); };
+    apply();
+    f.append(h); if (dt) f.append(dt); f.append(g); return f;
+  }
+  function render(){
+    fj.querySelectorAll(".fp").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v ? state.j.includes(b.dataset.v) : state.j.length === 0)));
+    ft.querySelectorAll(".fp").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === state.t)));
+    av.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === state.v)));
+    const hit = cards.filter(c => (!state.j.length || state.j.some(y => c.j.includes(y))) && (!state.t || c.t === state.t) && (!state.q.trim() || passt(c, state.q)));
+    cards.forEach(c => c.el.querySelector(".treffer")?.remove());
+    const qs = state.q.trim();
+    if (qs) try { localStorage.setItem("suche", qs); } catch (e) {}  // für die Hervorhebung der Stichwörter auf den Seiten
+    if (qs) hit.forEach(c => {
+      const toks = f1(qs).trim().split(" ").filter(Boolean), toks2 = f2(qs).trim().split(" ").filter(Boolean);
+      if (toks.every(w => hat(c.o1, w)) || toks2.every(w => hat(c.o2, w))) return;  // steht schon im sichtbaren Text
+      const m = c.kw.filter(k => { const a = f1(k), b = f2(k); return toks.some(w => hat(a, w)) || toks2.some(w => hat(b, w)); });
+      if (!m.length) return;
+      const sp = document.createElement("p"); sp.className = "treffer"; sp.textContent = "Stichwort: " + m.join(", ");
+      c.el.insertBefore(sp, c.el.querySelector(".pills, .go"));
+    });
+    liste.replaceChildren();
+    // Nur Thema gewählt: nach Jahrgang gliedern. Sonst: nach Thema gliedern.
+    if (state.t && !state.j.length){
+      for (const y of YEARS){
+        const g = hit.filter(c => c.j.includes(y));
+        if (g.length) liste.appendChild(group("Jahrgangsstufe " + y, g, y));
+      }
+    } else {
+      for (const t of topics){
+        const g = hit.filter(c => c.t === t);
+        if (g.length) liste.appendChild(group(t, g, state.j.length === 1 ? state.j[0] : ""));
+      }
+    }
+    const filt = state.j.length || state.t || state.q.trim();
+    qx.hidden = !state.q;
+    hintEl.replaceChildren(); hintEl.hidden = true;
+    if (qs && hit.length === 0){
+      const v = vorschlaege(qs);
+      if (v.length){
+        hintEl.hidden = false; hintEl.append("Keine genauen Treffer. Meintest du: ");
+        v.forEach((x, i) => {
+          if (i) hintEl.append(", ");
+          const b = document.createElement("button"); b.type = "button"; b.textContent = x;
+          b.onclick = () => { qi.value = state.q = x; offen.clear(); save(); render(); };
+          hintEl.appendChild(b);
+        });
+        hintEl.append("?");
+      }
+    }
+    st.replaceChildren(document.createTextNode(hit.length === 0 ? "Keine Seite für diese Auswahl." : filt ? hit.length + (hit.length === 1 ? " Seite" : " Seiten") : cards.length + " Seiten"));
+    if (filt){ st.appendChild(document.createTextNode(" · ")); const r = document.createElement("button"); r.type = "button"; r.textContent = "Filter zurücksetzen"; r.onclick = () => { state.j = []; state.t = ""; state.q = ""; qi.value = ""; offen.clear(); save(); render(); }; st.appendChild(r); }
+  }
+  function toggleYear(y){
+    state.j = state.j.includes(y) ? state.j.filter(x => x !== y) : YEARS.filter(x => x === y || state.j.includes(x));
+  }
+  fj.addEventListener("click", e => {
+    const b = e.target.closest(".fp"); if (!b) return;
+    if (b.dataset.v) toggleYear(b.dataset.v); else state.j = [];
+    offen.clear(); save(); render();
+  });
+  ft.addEventListener("click", e => {
+    const b = e.target.closest(".fp"); if (!b) return;
+    state.t = (b.dataset.v === state.t) ? "" : b.dataset.v;
+    offen.clear(); save(); render();
+  });
+  av.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    state.v = b.dataset.v;
+    try { localStorage.setItem("ansicht", state.v); } catch (e) {}
+    render();
+  });
+  // Jahrgangs-Pills auf den Karten filtern, statt die Seite zu öffnen
+  cards.forEach(c => c.el.querySelectorAll(".jp.j8,.jp.j9,.jp.j10").forEach(p => {
+    const y = p.textContent;
+    p.title = "Nur Jahrgang " + y + " zeigen";
+    p.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); state.j = [y]; offen.clear(); save(); render(); scrollTo({top:0, behavior:"smooth"}); });
+  }));
+  qi.addEventListener("input", () => { state.q = qi.value; offen.clear(); save(); render(); acZeigen(); });
+  qi.addEventListener("keydown", e => {
+    const offenL = !acEl.hidden && acListe.length;
+    if (e.key === "ArrowDown" && offenL){ e.preventDefault(); acMarkieren(acPos + 1); }
+    else if (e.key === "ArrowUp" && offenL){ e.preventDefault(); acMarkieren(acPos - 1); }
+    else if (e.key === "Enter" && offenL && acPos >= 0){ e.preventDefault(); acWaehlen(acListe[acPos]); }
+    else if (e.key === "Escape"){
+      if (offenL) acSchliessen();
+      else if (qi.value){ qi.value = state.q = ""; offen.clear(); save(); render(); }
+    }
+  });
+  qi.addEventListener("blur", acSchliessen);
+  qi.addEventListener("focus", () => { if (qi.value) acZeigen(); });
+  qx.addEventListener("click", () => { acSchliessen(); qi.value = state.q = ""; offen.clear(); save(); render(); qi.focus(); });
+  const azu = document.getElementById("alle-zu");
+  azu.addEventListener("click", () => {
+    const heads = [...liste.querySelectorAll("h2.topic button")];
+    const alleZu = heads.every(b => b.getAttribute("aria-expanded") === "false");
+    heads.forEach(b => { if ((b.getAttribute("aria-expanded") === "false") === alleZu) b.click(); });
+  });
+  addEventListener("hashchange", () => { load(); offen.clear(); render(); });
+  load(); render();
+})();
+</script>
 </body>
 </html>

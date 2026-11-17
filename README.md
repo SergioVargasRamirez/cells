@@ -42,7 +42,8 @@ selbstständige Datei bleibt:
 
 | Quelle | Ziel in jeder Seite |
 |---|---|
-| `template/site/nav.html` | Seitenmenü (links, auf dem Handy oben mit „Menü“-Knopf), direkt nach `<body>` zwischen `<!--SITENAV-->` und `<!--/SITENAV-->`; die eigene Seite bekommt `aria-current="page"` |
+| `template/site/nav.html` | Kopfleiste (Menü-Knopf, „Alle Seiten“, Hell/Dunkel-Knopf) und Seitenmenü (am Rand eingeklappt, Zustand wird gemerkt; Darstellung System/Tag/Nacht), direkt nach `<body>` zwischen `<!--SITENAV-->` und `<!--/SITENAV-->`; die eigene Seite bekommt `aria-current="page"` (Aufbau wie in atoms) |
+| `template/site/keywords.json` | Stichwörter je Seite (von Hand pflegen): grauer Block „Stichwörter“ nach `</main>` auf jeder Seite, Suchbegriffe `data-k` an den Karten der Startseite; ein Klick auf ein Stichwort sucht auf der Startseite |
 | `template/site/nav.css` | `<style id="sitenav-css">` vor `</head>` |
 | `template/site/palette.js`, `nuc-data.js`, `helix.js`, `mol3d.js`, `dna2d.js` | Farbtabelle, Nukleotid-Daten, Helix-Bau, 3D-Ansicht, Strukturformeln: zwischen `/*__MARKE__*/` in `dna-rna.html` und `basenpaarung.html` |
 | `template/site/font.css` | `<style id="font-css">` vor `</head>`: Source Sans 3 als woff2, normal und kursiv |
@@ -68,7 +69,12 @@ setzt dazwischen den aktuellen Inhalt der Quelldatei ein. Änderungen also in
    ergänzen (neue Gruppe mit `<p class="sidenav-group">…</p>` über
    „Über die Seiten“).
 3. In `index.html` die Karte der Seite verlinken (`<a class="card" href="…">`
-   statt `<div class="card soon">`) bzw. eine neue Karte ergänzen.
+   statt `<div class="card soon">`) bzw. eine neue Karte ergänzen. Das Thema
+   der Karte ist die Überschrift davor; Suche und Themenfilter laufen ohne
+   weitere Einträge.
+3a. Stichwörter der Seite in `template/site/keywords.json` eintragen (nur
+   Begriffe, die auf der Seite vorkommen); `build.py` bricht ab, wenn eine
+   Karte keinen Eintrag hat.
 4. Quellen der Daten und Modelle in `quellen.html` eintragen: Datenbank,
    Kennung des Eintrags, Abrufdatum, Lizenz der Quelle.
 5. Zeile in der Tabelle oben ergänzen.

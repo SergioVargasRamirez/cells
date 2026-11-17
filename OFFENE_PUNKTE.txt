@@ -264,3 +264,12 @@ Für jede neue Seite
 NOTIZ (18.10.2026, Wunsch): chromatin.html, Zeitraffer mit mRNA-/Protein-Kurven ist so nicht gewünscht und muss überarbeitet werden (Darstellung und Inhalt mit dem Nutzer neu klären, bevor es umgebaut wird).
 NOTIZ (19.10.2026): chromatin.html, Verpackungsleiter (erster Regler): Zeichnungen neu (schattierte Doppelhelix mit Basenpaaren, Nucleosom aus den echten 1KX5-Koordinaten, Solenoid-Faser, Schleifen am Gerüst, Metaphase-Chromosom). Offen: Zeitraffer (siehe oben) und Seitenüberlauf auf Handybreite (scrollWidth 419 bei 390 px, schon vorher vorhanden).
 NOTIZ (19.10.2026, später): chromatin.html, Genaktivität: drei Zelltypen ersetzt durch dieselbe Leberzelle in zwei Situationen (nach dem Essen / nach langem Fasten; Gene: Haushaltsgen, Albumin, Glucokinase, PEPCK). Chromatinzustand ist ein Verlauf mit Schaltzeitpunkten, mRNA und Protein klingen mit genspezifischer Halbwertszeit ab, Pause/Fortsetzen. Offen: Halbwertszeiten sind Modellwerte (gestaucht) und sollten geprüft werden; Transkriptionsfaktoren/Hormonsignale (Insulin, Glucagon) sind nur im Text erwähnt, nicht modelliert.
+
+
+M11 Oberfläche wie atoms (17.11.2026, Wunsch: Look and Feel und Aufbau von atoms übernehmen)
+- [x] Kopfleiste mit Menü-Knopf, „Alle Seiten“ und Hell/Dunkel-Knopf; Seitenmenü am Rand eingeklappt (Zustand merken), Darstellung System/Tag/Nacht (Standard: Tag, wie atoms)
+- [x] Stichwörter je Seite (template/site/keywords.json, Entwurf aus dem Text der Seiten: gegenlesen), Treffer der letzten Suche farbig
+- [x] Startseite mit Suche (Vorschläge, „Meintest du“), Themenfilter, Liste/Karten, Themen einklappbar
+- [ ] Jahrgangspunkte im Menü und Jahrgangsfilter auf der Startseite: Mechanik und Farben stehen in nav.css, es fehlt die Zuordnung Seite -> Jahrgang (Datei folgt, sobald die Zuordnung feststeht; der Filter bleibt bis dahin ausgeblendet)
+- [ ] methoden.html („wie gerechnet wurde“) wie in atoms
+- [ ] Hinweis: nav.css aus atoms hatte eine überzählige „}“ nach dem @media (max-width:999.98px)-Block; in cells entfernt, in atoms noch vorhanden
