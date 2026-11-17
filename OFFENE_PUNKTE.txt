@@ -152,6 +152,16 @@ M3c replikation.html (21.10.2026, Wunsch: wie gen-transkription.html, aber für 
 - [ ] Gegenlesen (Texte, Terminator nach bakteriellem Vorbild, Eukaryoten-Terminierung nur im Modelltext), Touch testen
 - [ ] Ideen: Enhancer als weiterer Baustein (wirkt von jedem Platz), Baustein umdrehbar (Richtung des Promotors), Expertenmodus mit Faktoren (TFIID, TFIIH ...), Verbindung zu rna-prozessierung.html (dasselbe Gen, Introns dort herausschneiden)
 
+M3d pcr.html (17.11.2026, Wunsch: PCR-Simulation wie replikation.html, für Q12 Basiskurs: Primer, Taq, Zyklen, 2^n)
+- [x] Drei Zyklen gezeichnet: 1 Denaturierung (Stränge trennen sich in Blöcke), 2 Hybridisierung (Primer 1 orange, Primer 2 türkis), 3 Polymerisation (Taq als Pfeil, 5'→3'); Ausgangs-DNA 28 Basenpaare mit Randstücken, Zielsequenz (20) farbig hinterlegt, Strangtypen (Original, lang, Zielsequenz) bleiben sichtbar, damit die Schüler selbst entdecken, wann die Stränge beidseitig genau die Zielsequenz sind (Doppelstränge ab Zyklus 3)
+- [x] Zählwerk: Tabelle der gezeichneten Zyklen, Regler bis 40 Zyklen mit 2^n, 2^n − 2n (ab n = 2) und Anteil, Diagramm (logarithmisch); Plateau nur im Text unter "Modell und Grenzen"
+- [x] Auswahl der Polymerase: normale Polymerase wird bei 95 °C zerstört (rotes Kreuz), Taq überlebt; Expertenmodus: Primerlänge, G+C-Anteil und Hybridisierungstemperatur, Tm nach Faustformel, zu heiß = Primer lösen sich, zu kalt = nur Hinweis (falsche Produkte nicht gezeichnet)
+- [x] Modell und Test: template/site/pcr.js, node scripts/pcr/test_pcr.js (Primer, Richtung 5'→3', Strangtypen, 2^n und 2^n − 2n, Sonderfälle)
+- [ ] Gegenlesen: Texte, Rolle der 5 Basen langen Primer, Touch testen, Tempo für den Unterricht
+- [ ] Gemeinsames Modul mit replikation.html (Zeichnung, Zellen) steht weiter aus; pcr.html ist eigenständig
+- [ ] Gel (gel.js) fehlt noch: Banden nach Länge, Leiter, Bahnen für die Strangtypen und die Zyklenzahl
+- [ ] Ideen: Primer-Design (Länge, GC, Dimere) als eigener Teil, Restriktionsverdau, Mehrfachprimer, Fehler der Polymerase
+
 M8 Später
 - [ ] polymerisation.html
 - [x] rna-typen.html: tRNA Kleeblatt + 3D (1EHZ), Wackelpaarung mit Aufgabe, Ribosom-Schema (offen: gegenlesen, Touch, rRNA nur als Text, Ribosomzeichnung verfeinern)
@@ -237,7 +247,7 @@ Vorschlag für die Reihenfolge: 1 Mendel (Karten "Erbgänge" und "Stammbäume" s
   - [ ] Zufällige Mutationen in einer wachsenden Population (Bakterien oder Farbvarianten), die Umwelt (Antibiotikum, Räuber) selektiert; Mutationsrate, Fitness und Selektionskoeffizient, dominante gegen rezessive Allele; Heterozygotenvorteil (Sichelzellallel und Malaria) als zweites Szenario
   - [ ] Luria-Delbrück-Fluktuationstest als Entdeckungsversuch: viele parallele Kulturen, resistente Kolonien zählen; die Streuung ist größer als bei einer Poisson-Verteilung, also entstehen Mutationen vor der Selektion und nicht erst durch sie
   - [ ] Punktmutationen und ihre Folgen für das Protein (stumm, Missense, Nonsense, Rastermutation) mit dem Codon-Generator und der Translation aus gen-transkription.html; Verbindung zu bakterienwachstum.html (Resistenz)
-- [ ] pcr-gel.html (oder zwei Seiten: pcr.html und gelelektrophorese.html): PCR und Gele
+- [~] pcr-gel.html (oder zwei Seiten: pcr.html und gelelektrophorese.html): PCR und Gele (pcr.html am 17.11.2026 umgesetzt, Gel offen)
   - [ ] PCR: Denaturieren (etwa 95 Grad), Anlagern der Primer (Temperatur wählen, Berechnung wie in schmelztemperatur.html: zu heiß gibt kein Produkt, zu kalt gibt unspezifische Produkte), Verlängern (etwa 72 Grad, Taq-Polymerase); Zyklenzahl und exponentielles Wachstum (2^n, Plateau am Ende); Primer-Design (Länge, GC-Gehalt, Schmelztemperatur, Dimere)
   - [ ] Gel: Fragmente laufen nach ihrer Länge zur Anode, Leiter zum Ablesen; Restriktionsverdau (Schnittstellen auf einer Sequenz, Fragmentlängen, Mutation verändert das Muster, RFLP); Aufgabe: Fragmentlängen ablesen und die Sequenz oder das Genotyp-Muster bestimmen; Ausblick genetischer Fingerabdruck
   - [ ] Gemeinsamer Baustein gel.js; Verbindung: exponentielles Wachstum wie bei bakterienwachstum.html
