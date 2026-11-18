@@ -121,7 +121,13 @@ th:first-child,td:first-child{text-align:left}
 .zelle:hover{border-color:var(--accent)}
 .zelle[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface2))}
 .zelle span{font-size:.88rem;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
-.zelle svg{display:block;width:252px;height:40px}
+.zelle svg{display:block;width:252px;height:55px}
+.zelle.aktiv{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface2));cursor:default}
+.zelle .bereich{font-size:10px;font-weight:700;fill:var(--muted);text-anchor:middle}
+.zelle .klammer{fill:none;stroke:var(--muted);stroke-width:1.2;opacity:.7}
+.zelle .klick{cursor:pointer;outline:none}
+.zelle .klick:hover .treffer{fill:color-mix(in srgb,var(--accent) 18%,transparent)}
+.zelle .klick:focus-visible .treffer{fill:color-mix(in srgb,var(--accent) 18%,transparent);stroke:var(--accent);stroke-width:2}
 .zelle rect.m{fill:var(--c-me);stroke:var(--c-me)}
 .zelle rect.u{fill:var(--surface);stroke:var(--line)}
 .zelle .motiv{stroke:var(--c-tf);stroke-width:2}
@@ -390,7 +396,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 
     <section id="s-teilung" aria-labelledby="h-teilung">
       <h2 id="h-teilung">2 Die Zelle teilt sich</h2>
-      <p class="klein" style="margin-top:0">Vor jeder Teilung wird die DNA kopiert (<a href="replikation.html">Replikation</a>). Jede Tochterzelle bekommt einen alten und einen neuen Strang. Klicke auf eine Tochterzelle, um sie weiterzuverfolgen. Jede Zelle ist als Streifen gezeichnet: oben der obere Strang, unten der untere Strang, je Quadrat eine CpG-Stelle.</p>
+      <p class="klein" style="margin-top:0">Vor jeder Teilung wird die DNA kopiert (<a href="replikation.html">Replikation</a>). Jede Tochterzelle bekommt einen alten und einen neuen Strang. Klicke auf eine Tochterzelle, um sie weiterzuverfolgen. Jede Zelle ist als Streifen gezeichnet: oben der obere Strang, unten der untere Strang, je Quadrat eine CpG-Stelle. In der Mutterzelle kannst du die Quadrate vor der ersten Teilung anklicken (das Muster oben ändert sich mit).</p>
       <div class="steuer" role="group" aria-label="Zellteilung steuern">
         <label class="regler">DNMT1
           <select class="btn" id="dnmt" aria-label="Ob die Erhaltungsmethyltransferase DNMT1 arbeitet">
@@ -731,15 +737,26 @@ const METHYL = (() => {
   // Reihen: {zellen: [zustand] oder [A, B], wahl: 0|1}; var wegen der Verwendung in zeige(), das früher aufgerufen wird
   var reihen = [], muttergeteilt = false;
   const MAX = 10;
-  const streifen = (s, titel) => {
-    const w = 15, ab = 2, luecke = 10, xs = i => 4 + i * (w + ab) + (i >= 10 ? luecke : 0);
-    const k = el("svg", {viewBox: "0 0 264 40", role: "img", "aria-label": titel});
-    for (let i = 0; i < M.N; i++){
-      el("rect", {class: s.oben[i] ? "m" : "u", x: xs(i), y: 3, width: w, height: 13, rx: 3, "stroke-width": 1}, k);
-      el("rect", {class: s.unten[i] ? "m" : "u", x: xs(i), y: 19, width: w, height: 13, rx: 3, "stroke-width": 1}, k);
+  const streifen = (s, titel, klick) => {
+    const w = 15, ab = 2, luecke = 10, xs = i => 4 + i * (w + ab) + (i >= 10 ? luecke : 0), y0 = 18;
+    const k = el("svg", klick ? {viewBox: "0 0 264 58", role: "group", "aria-label": titel} : {viewBox: "0 0 264 58", role: "img", "aria-label": titel});
+    // Bereiche: Promotor (Stelle 1 bis 10) und Gen (Stelle 11 bis 14)
+    for (const [a, b, name] of [[0, 9, "Promotor"], [10, 13, "Gen"]]){
+      el("path", {class: "klammer", d: `M${xs(a)} ${y0 - 5}v-4h${xs(b) + w - xs(a)}v4`}, k);
+      const t = el("text", {class: "bereich", x: (xs(a) + xs(b) + w) / 2, y: y0 - 12}, k); t.textContent = name;
     }
-    el("line", {class: "motiv", x1: xs(4), y1: 37, x2: xs(5) + w, y2: 37}, k);
-    el("line", {class: "trenner", x1: xs(10) - luecke / 2 - 1, y1: 2, x2: xs(10) - luecke / 2 - 1, y2: 34}, k);
+    for (let i = 0; i < M.N; i++){
+      const g = el("g", klick ? {class: "klick", tabindex: 0, role: "button", "aria-pressed": String(M.gewicht(s, i) === 1), "aria-label": beschr(i)} : {}, k);
+      if (klick){
+        el("rect", {class: "treffer", x: xs(i) - 1, y: y0 - 2, width: w + 2, height: 34, fill: "transparent"}, g);
+        g.addEventListener("click", () => schalte(i));
+        g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); schalte(i); } });
+      }
+      el("rect", {class: s.oben[i] ? "m" : "u", x: xs(i), y: y0, width: w, height: 13, rx: 3, "stroke-width": 1}, g);
+      el("rect", {class: s.unten[i] ? "m" : "u", x: xs(i), y: y0 + 16, width: w, height: 13, rx: 3, "stroke-width": 1}, g);
+    }
+    el("line", {class: "motiv", x1: xs(4), y1: y0 + 34, x2: xs(5) + w, y2: y0 + 34}, k);
+    el("line", {class: "trenner", x1: xs(10) - luecke / 2 - 1, y1: y0 - 1, x2: xs(10) - luecke / 2 - 1, y2: y0 + 31}, k);
     return k;
   };
   const beschreibe = s => {
@@ -754,13 +771,16 @@ const METHYL = (() => {
       const kopf = document.createElement("span"); kopf.className = "kopf"; kopf.textContent = k === 0 ? "Mutterzelle" : `Teilung ${k}`;
       li.appendChild(kopf);
       r.zellen.forEach((s, j) => {
-        const b = document.createElement("button"); b.type = "button"; b.className = "zelle";
+        const bearbeitbar = k === 0 && reihen.length === 1 && !muttergeteilt;
+        const b = document.createElement(k === 0 ? "div" : "button"); if (k > 0) b.type = "button"; b.className = "zelle";
         const name = k === 0 ? "Mutterzelle" : `Tochterzelle ${j ? "B" : "A"} der Teilung ${k}`;
         const abl = M.expression(s);
-        b.setAttribute("aria-pressed", String(r.wahl === j));
-        b.setAttribute("aria-label", `${name}: ${beschreibe(s)}; Ablesung ${prozent(abl)}${r.wahl === j ? "; wird weiterverfolgt" : ""}`);
+        if (k > 0){
+          b.setAttribute("aria-pressed", String(r.wahl === j));
+          b.setAttribute("aria-label", `${name}: ${beschreibe(s)}; Ablesung ${prozent(abl)}${r.wahl === j ? "; wird weiterverfolgt" : ""}`);
+        } else if (r.wahl === j) b.classList.add("aktiv");
         if (k > 0) { const n = document.createElement("span"); n.textContent = (j ? "B" : "A") + (r.wahl === j ? " · weiterverfolgt" : " · anklicken"); b.appendChild(n); }
-        b.appendChild(streifen(s, name));
+        b.appendChild(streifen(s, name + (bearbeitbar ? ": CpG-Stellen anklicken zum Methylieren" : ""), bearbeitbar));
         const a = document.createElement("span"); a.textContent = "Ablesung " + prozent(abl); b.appendChild(a);
         b.addEventListener("click", () => {
           if (k === 0 || r.wahl === j) return;
