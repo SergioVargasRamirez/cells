@@ -11,19 +11,19 @@
   --accent:#13795b; --accent-ink:#ffffff; --hl:#fff3d6;
   --serif:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
   --sans:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --c-me:#7e3fb5; --c-tf:#d9730d; --c-mbd:#0e8fa8; --c-pol:#9a7400; --c-nuc:#8d9aa0;
+  --c-me:#c2560a; --c-me-ink:#ffffff; --c-tf:#8e5bb5; --c-mbd:#0e8fa8; --c-nuc:#8d9aa0;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0e1420; --surface:#161e2d; --surface2:#1f2939; --ink:#e8ecf3; --muted:#9ba7bc; --line:#2b3648;
     --accent:#5fd3a8; --accent-ink:#0e1420; --hl:#2c2a1c; color-scheme:dark;
-    --c-me:#c79af0; --c-tf:#ffb347; --c-mbd:#4fd0e8; --c-pol:#f2c94c; --c-nuc:#9fb0b8;
+    --c-me:#ffb347; --c-me-ink:#1a1100; --c-tf:#c79af0; --c-mbd:#4fd0e8; --c-nuc:#9fb0b8;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0e1420; --surface:#161e2d; --surface2:#1f2939; --ink:#e8ecf3; --muted:#9ba7bc; --line:#2b3648;
   --accent:#5fd3a8; --accent-ink:#0e1420; --hl:#2c2a1c; color-scheme:dark;
-  --c-me:#c79af0; --c-tf:#ffb347; --c-mbd:#4fd0e8; --c-pol:#f2c94c; --c-nuc:#9fb0b8;
+  --c-me:#ffb347; --c-me-ink:#1a1100; --c-tf:#c79af0; --c-mbd:#4fd0e8; --c-nuc:#9fb0b8;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -55,32 +55,42 @@ select.btn{padding-right:8px}
 .buehne{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-top:12px}
 .buehne svg{display:block;width:100%;min-width:860px;height:auto;color:var(--ink);user-select:none;-webkit-user-select:none}
 .buehne text{font-family:var(--sans)}
-.buchstabe{font:800 15px ui-monospace,Consolas,monospace;text-anchor:middle}
-.ende{font-size:13px;font-weight:800;fill:var(--muted)}
+.buehne .etik{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;fill:var(--muted)}
+.buehne .ende{font-size:15px;font-weight:800;fill:var(--muted)}
+.buehne .buchstabe{font:800 11.5px ui-monospace,Consolas,monospace}
 .regionname{font-size:14px;font-weight:700;fill:var(--muted);text-anchor:middle}
 .region{stroke:var(--muted);stroke-width:2;fill:none;opacity:.6}
-.strang{stroke:var(--muted);stroke-width:3;stroke-linecap:round}
-.fueller{stroke:var(--muted);stroke-width:2;opacity:.28}
-.paar{stroke:var(--muted);stroke-width:2;opacity:.6}
+.tick{stroke:var(--muted);stroke-width:2;stroke-linecap:round}
 .bindestelle{fill:var(--hl);stroke:var(--c-tf);stroke-width:1.5;stroke-dasharray:5 4}
 .bindename{font-size:13px;font-weight:700;fill:var(--c-tf);text-anchor:middle}
-.stelle{cursor:pointer;outline:none}
-.stelle .treffer{fill:transparent}
-.stelle:hover .treffer{fill:color-mix(in srgb,var(--accent) 10%,transparent)}
-.stelle:focus-visible .treffer{fill:color-mix(in srgb,var(--accent) 14%,transparent);stroke:var(--accent);stroke-width:2.5}
-.stelle .me circle{fill:var(--c-me);stroke:var(--surface);stroke-width:1.5}
-.stelle .me text{fill:#fff;font-size:10px;font-weight:800;text-anchor:middle}
-.stelle .me line{stroke:var(--c-me);stroke-width:2}
-.stelle .mbd{fill:var(--c-mbd);stroke:var(--surface);stroke-width:1.5}
-.tf{fill:var(--c-tf);stroke:var(--surface);stroke-width:2}
-.tftext{fill:#fff;font-size:13px;font-weight:800;text-anchor:middle}
-.pol{fill:var(--c-pol);stroke:var(--surface);stroke-width:2}
-.poltext{fill:#fff;font-size:12px;font-weight:800;text-anchor:middle}
-.nuc{fill:var(--surface2);stroke:var(--c-nuc);stroke-width:3}
-.nucname{font-size:13px;font-weight:700;fill:var(--muted)}
-.mrna{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round}
 .tss{fill:none;stroke:var(--muted);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 .tssname{font-size:13px;font-weight:700;fill:var(--muted);text-anchor:middle}
+.stelle{cursor:pointer;outline:none}
+.stelle .treffer{fill:transparent}
+.stelle .rahmen{fill:transparent;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:4 3;opacity:.6}
+.stelle:hover .rahmen,.stelle:focus-visible .rahmen{stroke:var(--accent);stroke-width:2.5;stroke-dasharray:none;opacity:1;fill:color-mix(in srgb,var(--accent) 10%,transparent)}
+.me rect{fill:var(--c-me)}
+.me text{fill:var(--c-me-ink);font-size:10.5px;font-weight:800;text-anchor:middle}
+.me line{stroke:var(--c-me);stroke-width:2;stroke-linecap:round}
+.mbd .form{fill:color-mix(in srgb,var(--c-mbd) 24%,transparent);stroke:var(--c-mbd);stroke-width:2.5}
+.faktoren,.polymerase,.mbd{pointer-events:none}
+.mbd text{font-size:11px;font-weight:800;fill:currentColor;text-anchor:middle}
+.faktoren .form{fill:color-mix(in srgb,var(--c-tf) 24%,transparent);stroke:var(--c-tf);stroke-width:2.5}
+.faktoren text,.polymerase text{font-size:12px;font-weight:800;fill:currentColor;text-anchor:middle}
+.polymerase .form{fill:color-mix(in srgb,var(--accent) 22%,transparent);stroke:var(--accent);stroke-width:3}
+.nuc{fill:var(--surface2);stroke:var(--c-nuc);stroke-width:3}
+.nucname{font-size:13px;font-weight:700;fill:var(--muted)}
+.rna-name{font-size:12px;font-weight:700;fill:var(--muted)}
+
+/* Phasen und Status (wie bei der PCR) */
+.phasen{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;padding:0}
+.phasen li{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);font-weight:600;padding:5px 14px 5px 6px}
+.phasen .nr{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--surface2);color:var(--muted);font:700 .85em var(--sans)}
+.phasen li.aktiv{border-color:var(--accent);color:var(--ink);background:color-mix(in srgb,var(--accent) 14%,transparent);animation:puls 1.3s ease-out infinite}
+@keyframes puls{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 60%,transparent)}70%,100%{box-shadow:0 0 0 9px color-mix(in srgb,var(--accent) 0%,transparent)}}
+@media (prefers-reduced-motion: reduce){.phasen li.aktiv{animation:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 35%,transparent)}}
+.phasen li.aktiv .nr,.phasen li.fertig .nr{background:var(--accent);color:var(--accent-ink)}
+.phasen li.fertig{color:var(--ink)}
 
 /* Messwerte */
 .mess{display:grid;gap:8px 28px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin:14px 0}
@@ -338,10 +348,18 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
         <button class="btn" type="button" id="leer">Alle entfernen</button>
         <button class="btn" type="button" id="voll">Alle methylieren</button>
         <button class="btn" type="button" id="zufall" title="Ein zufälliges Muster würfeln">Zufallsmuster</button>
+        <label class="regler">Tempo <input type="range" id="tempo" min="0.5" max="3" step="0.5" value="1" aria-label="Tempo der Animation"></label>
         <label class="schalter"><input type="checkbox" id="expert"> Expertenmodus</label>
       </div>
 
-      <div class="buehne"><svg id="buehne" viewBox="0 -34 980 364" role="group" aria-label="Erfundener DNA-Abschnitt mit 14 CpG-Stellen: zehn im Promotor, vier im Genkörper. Jede Stelle lässt sich methylieren."></svg></div>
+      <div class="buehne"><svg id="buehne" viewBox="0 0 980 424" role="group" aria-label="Erfundener DNA-Abschnitt als Reihe farbiger Kästchen mit 14 CpG-Stellen: zehn im Promotor, vier im Genkörper. Jede Stelle lässt sich methylieren."></svg></div>
+
+      <ol class="phasen" id="phasen" aria-label="Schritte der Ablesung">
+        <li><span class="nr">1</span>Initiation</li>
+        <li><span class="nr">2</span>Elongation</li>
+        <li><span class="nr">3</span>Termination</li>
+      </ol>
+      <div class="status" id="statusAnim" aria-live="off"></div>
 
       <div class="mess" aria-live="polite">
         <div><small><span>Transkriptionsfaktor an der Bindestelle</span><b id="mTF">100 %</b></small><div class="balken"><i class="tf" id="bTF"></i></div></div>
@@ -350,13 +368,13 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
       </div>
 
       <div class="legende" aria-label="Legende">
-        <span><i class="rund" style="background:var(--c-me)"></i>Methylgruppe am Cytosin</span>
+        <span><i style="background:var(--c-me)"></i>Methylgruppe am Cytosin</span>
         <span><i style="background:var(--hl);border:1px dashed var(--c-tf)"></i>Bindestelle des Transkriptionsfaktors</span>
-        <span><i class="rund" style="background:var(--c-tf)"></i>Transkriptionsfaktor</span>
-        <span><i style="background:var(--c-mbd);transform:rotate(45deg) scale(.8)"></i>MBD-Protein</span>
-        <span><i class="rund" style="background:var(--c-pol)"></i>RNA-Polymerase</span>
+        <span><i style="background:color-mix(in srgb,var(--c-tf) 30%,transparent);border:2px solid var(--c-tf)"></i>Transkriptionsfaktor</span>
+        <span><i style="background:color-mix(in srgb,var(--c-mbd) 30%,transparent);border:2px solid var(--c-mbd)"></i>MBD-Protein</span>
+        <span><i style="background:color-mix(in srgb,var(--accent) 30%,transparent);border:2px solid var(--accent)"></i>RNA-Polymerase II</span>
         <span><i class="rund" style="background:var(--surface2);border:3px solid var(--c-nuc)"></i>Nucleosom</span>
-        <span><i style="background:linear-gradient(90deg,#e07bb0,#009e73)"></i>Basen C und G (Farben wie auf den anderen Seiten)</span>
+        <span><i style="background:linear-gradient(90deg,#2f5bea,#009e73,#dcae1c,#e07bb0)"></i>Basen (wie auf den anderen Seiten)</span>
       </div>
 
       <div class="experte" id="expertBox" hidden>
@@ -572,95 +590,204 @@ const METHYL = (() => {
   const ruhig = matchMedia("(prefers-reduced-motion: reduce)");
 
   /* ---------- Abschnitt 1: Bühne ---------- */
+  // Die DNA ist als Reihe farbiger Kästchen gezeichnet (Farben wie auf den anderen Seiten), oben der Codogen-Strang 5'→3', unten der Gegenstrang.
   const svg = $("buehne");
-  const X = i => i < 10 ? 80 + 52 * i : 660 + 86 * (i - 10);   // Mitte der CpG-Stelle
-  const YO = 140, YU = 204;                                       // Rückgrat oben / unten
-  const TSS = 604, MOTIV_X = (X(4) + X(5)) / 2;
-  let zustand = M.neu();
+  const BW = 12.5, CH = 16, X0 = 44;
+  const TOP = 176, BOT = 200, DB = 12;        // y der Kästchen oben und unten; DB: um so viel weicht der untere Strang in der Blase aus
+  const Y_HYB = 276, Y_RNA = 336, HYB = 7;     // Zeile der RNA an der Vorlage, Zeile der freien RNA; so viele Basen bleiben hinter der Polymerase gepaart
+  const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+  const glatt = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };
+  const xm = c => X0 + c * BW + BW / 2;         // Mitte der Spalte c
+  const lumi = h => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; };
+
+  // Sequenz: feste Füllbasen ohne CG, damit CpG-Stellen nur dort liegen, wo sie gezeichnet und anklickbar sind
+  const SEQ = [], SITE = [];
+  let TSS_C = 0;
+  (() => {
+    let seed = 11; const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+    const fuell = n => { let s = ""; for (let i = 0; i < n; i++){ let b; do { b = "ACGT"[Math.floor(rnd() * 4)]; } while (s.slice(-1) === "C" && b === "G"); s += b; } return s; };
+    const push = s => { for (const b of s) SEQ.push(b); };
+    push(fuell(2));
+    for (let i = 0; i < 10; i++){ SITE.push(SEQ.length); push("CG"); push(fuell(2)); }
+    push(fuell(5));
+    TSS_C = SEQ.length;
+    for (let i = 10; i < 14; i++){ push(fuell(3)); SITE.push(SEQ.length); push("CG"); }
+    push(fuell(3));
+  })();
+  const L = SEQ.length, KOMP = {A: "T", T: "A", G: "C", C: "G"};
+  const MOTIV0 = SITE[4], MOTIV1 = SITE[5] + 1;            // Spalten der TF-Bindestelle (von … bis einschließlich)
   const erledigt = {a1: false, a2: false};
+  let zustand = M.neu();
+
+  const ebeneHinten = el("g", {}, svg), ebeneKaestchen = el("g", {}, svg), ebeneStellen = el("g", {}, svg), ebeneAnim = el("g", {}, svg), ebeneOben = el("g", {}, svg);
+  const alleKaestchen = [];
+  const kaestchen = (parent, c, buchstabe) => {
+    const g = el("g", {}, parent);
+    const r = el("rect", {x: 1, y: 0, width: BW - 2, height: CH, rx: 3}, g);
+    const t = el("text", {class: "buchstabe", x: BW / 2, y: 12.2, "text-anchor": "middle"}, g);
+    const z = {g, r, t, b: buchstabe}; t.textContent = buchstabe; alleKaestchen.push(z);
+    return z;
+  };
+  const faerbe = z => { const f = PALETTE.get(z.b); z.r.setAttribute("fill", f); z.t.setAttribute("fill", lumi(f) > 0.6 ? "#111" : "#fff"); };
+
+  const oben = [], unten = [], ticks = [], rnaZ = [], rnaT = [];
+  const stellen = [];
+  let tfG, polG, nuc = [], nucText, statusPhase = "";
 
   const bauePlan = () => {
+    const bx = c => X0 + c * BW;
     // Bereiche
-    el("path", {class: "region", d: "M48 0v-9h532v9"}, svg);
-    const t1 = el("text", {class: "regionname", x: 314, y: -16}, svg); t1.textContent = "Promotor (CpG-Insel)";
-    el("path", {class: "region", d: "M640 0v-9h312v9"}, svg);
-    const t2 = el("text", {class: "regionname", x: 796, y: -16}, svg); t2.textContent = "Genkörper";
-    // Strang-Enden
-    const e1 = el("text", {class: "ende", x: 22, y: 150}, svg); e1.textContent = "5'";
-    const e2 = el("text", {class: "ende", x: 22, y: 214}, svg); e2.textContent = "3'";
-    const e3 = el("text", {class: "ende", x: 958, y: 150}, svg); e3.textContent = "3'";
-    const e4 = el("text", {class: "ende", x: 958, y: 214}, svg); e4.textContent = "5'";
-    el("line", {class: "strang", x1: 40, y1: YO, x2: 948, y2: YO}, svg);
-    el("line", {class: "strang", x1: 40, y1: YU, x2: 948, y2: YU}, svg);
-    // Füllsequenz zwischen den CpG-Stellen (nur angedeutet)
-    const g = el("g", {"aria-hidden": "true"}, svg);
-    for (let x = 48; x < 944; x += 11){
-      let nah = false;
-      for (let i = 0; i < M.N; i++) if (Math.abs(x - X(i)) < 24) nah = true;
-      if (!nah) el("line", {class: "fueller", x1: x, y1: YO + 5, x2: x, y2: YU - 5}, g);
-    }
-    // Bindestelle des Transkriptionsfaktors
-    el("rect", {class: "bindestelle", x: X(4) - 30, y: 104, width: X(5) - X(4) + 60, height: 130, rx: 10}, svg);
-    const bn = el("text", {class: "bindename", x: MOTIV_X, y: 254}, svg); bn.textContent = "Bindestelle";
-    // Transkriptionsstart
-    el("path", {class: "tss", d: `M${TSS} ${YO - 4}v-26h22m-8 -7l8 7l-8 7`}, svg);
-    const tn = el("text", {class: "tssname", x: TSS, y: 252}, svg); tn.textContent = "Start der Ablesung";
-    el("line", {class: "tss", x1: TSS, y1: 232, x2: TSS, y2: 240, "stroke-dasharray": "0"}, svg);
-  };
+    el("path", {class: "region", d: `M${bx(0)} 36v-8h${bx(SITE[9] + 4) - bx(0)}v8`}, ebeneHinten);
+    el("text", {class: "regionname", x: (bx(0) + bx(SITE[9] + 4)) / 2, y: 20}, ebeneHinten).textContent = "Promotor (CpG-Insel)";
+    el("path", {class: "region", d: `M${bx(TSS_C)} 36v-8h${bx(L) - bx(TSS_C)}v8`}, ebeneHinten);
+    el("text", {class: "regionname", x: (bx(TSS_C) + bx(L)) / 2, y: 20}, ebeneHinten).textContent = "Genkörper";
+    // Enden der Stränge
+    const ende = (x, y, t, a) => { el("text", {class: "ende", x, y, "text-anchor": a}, ebeneHinten).textContent = t; };
+    ende(X0 - 8, TOP + 13, "5'", "end"); ende(X0 - 8, BOT + 13, "3'", "end");
+    ende(bx(L) + 8, TOP + 13, "3'", "start"); ende(bx(L) + 8, BOT + 13, "5'", "start");
+    // Bindestelle
+    el("rect", {class: "bindestelle", x: bx(MOTIV0) - 6, y: TOP - 32, width: (MOTIV1 - MOTIV0 + 1) * BW + 12, height: 124 + 12, rx: 10}, ebeneHinten);
+    el("text", {class: "bindename", x: (bx(MOTIV0) + bx(MOTIV1 + 1)) / 2, y: TOP + 118}, ebeneHinten).textContent = "Bindestelle";
+    // Start der Ablesung
+    const tx = bx(TSS_C) + BW / 2;
+    el("path", {class: "tss", d: `M${tx} ${TOP - 3}v-26h22m-8 -7l8 7l-8 7`}, ebeneHinten);
+    el("text", {class: "tssname", x: tx, y: TOP - 62}, ebeneHinten).textContent = "Start der Ablesung";
+    el("text", {class: "etik", x: X0, y: Y_RNA - 10}, ebeneHinten).textContent = "RNA";
 
-  const stellen = [];
-  const baueStellen = () => {
-    for (let i = 0; i < M.N; i++){
-      const cx = X(i);
-      const g = el("g", {class: "stelle", tabindex: 0, role: "button", "data-i": i}, svg);
-      el("rect", {class: "treffer", x: cx - 28, y: 100, width: 56, height: 140, rx: 8}, g);
-      // Basen: oben 5'-C G-3', unten 3'-G C-5'
-      const lb = [["C", cx - 9, 165, "oben"], ["G", cx + 9, 165, "oben"], ["G", cx - 9, 186, "unten"], ["C", cx + 9, 186, "unten"]];
-      const buchst = lb.map(([b, x, y]) => { const t = el("text", {class: "buchstabe", x, y, "data-b": b}, g); t.textContent = b; return t; });
-      el("line", {class: "paar", x1: cx - 9, y1: 169, x2: cx - 9, y2: 173}, g);
-      el("line", {class: "paar", x1: cx + 9, y1: 169, x2: cx + 9, y2: 173}, g);
-      // Methylgruppen: oben am C links, unten am C rechts
+    // DNA-Kästchen
+    for (let c = 0; c < L; c++){
+      const t = kaestchen(ebeneKaestchen, c, SEQ[c]), u = kaestchen(ebeneKaestchen, c, KOMP[SEQ[c]]);
+      t.g.setAttribute("transform", `translate(${bx(c)} ${TOP})`);
+      u.g.setAttribute("transform", `translate(${bx(c)} ${BOT})`);
+      oben.push(t); unten.push(u);
+      ticks.push(el("line", {class: "tick", x1: xm(c), x2: xm(c), y1: TOP + CH + 2, y2: BOT - 2}, ebeneKaestchen));
+    }
+    // CpG-Stellen: anklickbar
+    SITE.forEach((c0, i) => {
+      const g = el("g", {class: "stelle", tabindex: 0, role: "button", "data-i": i}, ebeneStellen);
+      el("rect", {class: "treffer", x: bx(c0) - 3, y: TOP - 34, width: 2 * BW + 6, height: 128, rx: 8}, g);
+      el("rect", {class: "rahmen", x: bx(c0) - 1, y: TOP - 3, width: 2 * BW + 2, height: BOT + CH - TOP + 6, rx: 6}, g);
+      const cT = xm(c0), cU = xm(c0 + 1);
       const meO = el("g", {class: "me", opacity: 0}, g);
-      el("line", {x1: cx - 9, y1: 148, x2: cx - 9, y2: 129}, meO);
-      el("circle", {cx: cx - 9, cy: 118, r: 12}, meO);
-      el("text", {x: cx - 9, y: 121.5}, meO).textContent = "CH₃";
+      el("line", {x1: cT, y1: TOP - 8, x2: cT, y2: TOP - 3}, meO);
+      el("rect", {x: cT - 14, y: TOP - 26, width: 28, height: 18, rx: 9}, meO);
+      el("text", {x: cT, y: TOP - 13.5}, meO).textContent = "CH₃";
       const meU = el("g", {class: "me", opacity: 0}, g);
-      el("line", {x1: cx + 9, y1: 192, x2: cx + 9, y2: 212}, meU);
-      el("circle", {cx: cx + 9, cy: 224, r: 12}, meU);
-      el("text", {x: cx + 9, y: 227.5}, meU).textContent = "CH₃";
-      // MBD-Protein über der oberen Methylgruppe (nur Promotor)
+      el("line", {x1: cU, y1: BOT + CH + 3, x2: cU, y2: BOT + CH + 8}, meU);
+      el("rect", {x: cU - 14, y: BOT + CH + 8, width: 28, height: 18, rx: 9}, meU);
+      el("text", {x: cU, y: BOT + CH + 21}, meU).textContent = "CH₃";
       let mbd = null;
-      if (i < 10) mbd = el("rect", {class: "mbd", x: cx - 16, y: 80, width: 14, height: 14, transform: `rotate(45 ${cx - 9} 87)`, opacity: 0}, g);
-      const nummer = el("text", {class: "ende", x: cx, y: 270, "text-anchor": "middle", opacity: .0}, g);
+      if (i < 10){
+        mbd = el("g", {class: "mbd", opacity: 0}, g);
+        el("rect", {class: "form", x: cT - 19, y: TOP - 54, width: 38, height: 22, rx: 11}, mbd);
+        el("text", {x: cT, y: TOP - 39}, mbd).textContent = "MBD";
+      }
       g.addEventListener("click", () => schalte(i));
       g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); schalte(i); } });
-      stellen.push({g, meO, meU, mbd, buchst});
+      stellen.push({g, meO, meU, mbd, cU});
+    });
+
+    // RNA-Kästchen (erst beim Abschreiben sichtbar)
+    for (let c = TSS_C; c < L; c++){
+      const z = kaestchen(ebeneAnim, c, SEQ[c] === "T" ? "U" : SEQ[c]);
+      z.g.style.display = "none"; rnaZ[c] = z;
+      rnaT[c] = el("line", {class: "tick", x1: xm(c), x2: xm(c), y1: 0, y2: 0, opacity: 0}, ebeneAnim);
+    }
+    // Transkriptionsfaktor und Polymerase
+    const fx0 = bx(MOTIV0) - 2, fx1 = bx(MOTIV1 + 1) + 2;
+    tfG = el("g", {class: "faktoren"}, ebeneOben);
+    el("rect", {class: "form", x: fx0, y: TOP - 86, width: fx1 - fx0, height: 28, rx: 14}, tfG);
+    el("text", {x: (fx0 + fx1) / 2, y: TOP - 67}, tfG).textContent = "Transkriptionsfaktor";
+    polG = el("g", {class: "polymerase", opacity: 0}, ebeneOben);
+    el("rect", {class: "form", rx: 30}, polG); el("text", {}, polG).textContent = "RNA-Polymerase II";
+    // Nucleosomen
+    el("line", {class: "tick", x1: X0, y1: 394, x2: bx(SITE[9] + 4), y2: 394, opacity: .35}, ebeneHinten);
+    for (let k = 0; k < 6; k++) nuc.push(el("circle", {class: "nuc", cx: 100 + 100 * k, cy: 394, r: 18}, ebeneHinten));
+    nucText = el("text", {class: "nucname", x: bx(L), y: 399, "text-anchor": "end"}, ebeneHinten);
+  };
+
+  const beschr = i => `CpG-Stelle ${i + 1} im ${i < 10 ? "Promotor" + (i === 4 || i === 5 ? " (Bindestelle)" : "") : "Genkörper"}, ${M.gewicht(zustand, i) === 1 ? "methyliert" : "nicht methyliert"}`;
+  const farbeBuchstaben = () => alleKaestchen.forEach(faerbe);
+
+  /* ---------- Ablauf der Ablesung ---------- */
+  // Phasen: leer (die Polymerase wartet auf den Start), pol (Initiation), elong (Elongation), rel (Termination), aus (reduzierte Bewegung)
+  const R = {phase: "leer", t: 0, pos: TSS_C, pa: 0, py: 0, open: 0, rel: 0, fade: 0, acc: 0, rate: 1};
+  const T = {pol: 1100, rel: 1000, fade: 700}, RATE = 6;   // Dauer in Millisekunden bei Tempo 1, Basen je Sekunde
+  const TEXTE = {
+    leer: "Die RNA-Polymerase II wartet auf den nächsten Start.",
+    pol: "Initiation: Die RNA-Polymerase II lagert sich am Start der Ablesung an, die Doppelhelix öffnet sich.",
+    elong: "Elongation: Die Polymerase liest den unteren Strang (Vorlage) von 3' nach 5' und baut die RNA von 5' nach 3' auf. Hinter ihr schließt sich die DNA wieder.",
+    rel: "Termination: Am Ende des Gens löst sich die Polymerase von der DNA und lässt die RNA los.",
+    aus: "Die Bewegung ist ausgeschaltet (Einstellung des Systems). Die Polymerase steht am Start; je stärker die Ablesung, desto deutlicher ist sie gezeichnet."
+  };
+  const setzePhase = p => {
+    R.phase = p; R.t = 0;
+    $("statusAnim").textContent = TEXTE[p];
+    const nr = {pol: 1, elong: 2, rel: 3}[p] || 0, lis = $("phasen").children;
+    for (let i = 0; i < 3; i++){ lis[i].classList.toggle("aktiv", i + 1 === nr); lis[i].classList.toggle("fertig", nr > 0 && i + 1 < nr); }
+  };
+  const bump = c => clamp(1 - Math.abs(c - (R.pos - 3)) / 6.5, 0, 1) * R.open * (1 - R.rel);
+  const zeichneAnim = () => {
+    const bx = c => X0 + c * BW;
+    // untere Kästchen weichen in der Blase aus
+    for (let c = 0; c < L; c++){
+      const o = bump(c), y = BOT + DB * o;
+      unten[c].g.setAttribute("transform", `translate(${bx(c)} ${y})`);
+      ticks[c].setAttribute("y2", y - 2);
+    }
+    stellen.forEach((s, i) => s.meU.setAttribute("transform", `translate(0 ${DB * bump(SITE[i] + 1)})`));
+    // Polymerase
+    const x0 = bx(R.pos - HYB), x1 = bx(R.pos + 1.5) + BW;
+    const pr = polG.firstChild, pt = polG.lastChild;
+    pr.setAttribute("x", x0); pr.setAttribute("width", x1 - x0); pr.setAttribute("y", TOP - 52); pr.setAttribute("height", Y_HYB + CH + 10 - (TOP - 52));
+    pt.setAttribute("x", (x0 + x1) / 2); pt.setAttribute("y", TOP - 36);
+    pt.style.fontSize = clamp((x1 - x0 - 8) / (17 * 0.6), 8, 12) + "px";
+    polG.setAttribute("opacity", R.pa);
+    polG.setAttribute("transform", `translate(0 ${R.py})`);
+    // RNA
+    for (let c = TSS_C; c < L; c++){
+      const z = rnaZ[c], d = R.pos - c;
+      if (d <= 0.2 || R.phase === "leer" || R.phase === "aus"){ z.g.style.display = "none"; rnaT[c].setAttribute("opacity", 0); continue; }
+      z.g.style.display = "";
+      const yT = d <= HYB ? Y_HYB : Math.min(Y_RNA, Y_HYB + (d - HYB) * 14), y = yT + (Y_RNA - yT) * R.rel;
+      z.g.setAttribute("transform", `translate(${bx(c)} ${y})`);
+      const ein = clamp((d - 0.2) * 2, 0, 1) * (1 - R.fade);
+      z.g.setAttribute("opacity", ein);
+      const hy = clamp(HYB + 1 - d, 0, 1) * (1 - R.rel) * ein, t = rnaT[c];
+      t.setAttribute("y1", BOT + DB * bump(c) + CH + 2); t.setAttribute("y2", Y_HYB - 2);
+      t.setAttribute("opacity", bump(c) > 0.5 ? hy : 0);
     }
   };
-
-  // Transkriptionsfaktor, Polymerase, Nucleosomen, mRNA
-  let tfG, polG, nuc = [], nucText, mrnaG;
-  const baueBeweglich = () => {
-    tfG = el("g", {}, svg);
-    el("ellipse", {class: "tf", cx: MOTIV_X, cy: 66, rx: 40, ry: 22}, tfG);
-    el("text", {class: "tftext", x: MOTIV_X, y: 71}, tfG).textContent = "TF";
-    polG = el("g", {}, svg);
-    el("ellipse", {class: "pol", cx: TSS + 50, cy: 84, rx: 48, ry: 20}, polG);
-    el("text", {class: "poltext", x: TSS + 50, y: 88}, polG).textContent = "RNA-Pol";
-    el("path", {class: "tss", d: `M${TSS + 100} 84h16m-6 -6l6 6l-6 6`}, polG);   // Pfeil: Laufrichtung 5'→3'
-    mrnaG = el("g", {"aria-hidden": "true"}, svg);
-    el("line", {class: "strang", x1: 40, y1: 300, x2: 640, y2: 300, opacity: .35}, svg);
-    for (let k = 0; k < 6; k++) nuc.push(el("circle", {class: "nuc", cx: 100 + 100 * k, cy: 300, r: 18}, svg));
-    nucText = el("text", {class: "nucname", x: 960, y: 305, "text-anchor": "end"}, svg);
-  };
-
-  const beschr = i => {
-    const w = M.gewicht(zustand, i);
-    return `CpG-Stelle ${i + 1} im ${i < 10 ? "Promotor" + (i === 4 || i === 5 ? " (Bindestelle)" : "") : "Genkörper"}, ${w === 1 ? "methyliert" : "nicht methyliert"}`;
-  };
-
-  const farbeBuchstaben = () => {
-    stellen.forEach(s => s.buchst.forEach(t => t.setAttribute("fill", PALETTE.get(t.dataset.b))));
+  let zuletzt = 0;
+  const schritt = now => {
+    const dt = Math.min(0.1, (now - zuletzt) / 1000 || 0); zuletzt = now;
+    const tempo = +$("tempo").value, ms = dt * 1000 * tempo;
+    if (R.phase !== "aus"){
+      switch (R.phase){
+        case "leer":
+          R.acc += dt * tempo * R.rate * 0.7;        // je zugänglicher der Promotor, desto schneller der nächste Start
+          if (R.acc >= 1){ R.acc = 0; R.pos = TSS_C; R.pa = 0; R.py = -60; R.open = 0; R.rel = 0; R.fade = 0; setzePhase("pol"); }
+          break;
+        case "pol":
+          R.t += ms; R.pa = glatt(R.t / T.pol); R.py = -60 * (1 - R.pa); R.open = glatt((R.t / T.pol - 0.55) / 0.45);
+          if (R.t >= T.pol){ R.pa = 1; R.py = 0; R.open = 1; setzePhase("elong"); }
+          break;
+        case "elong":
+          R.pos += dt * RATE * tempo;
+          if (R.pos >= L + 1){ R.pos = L + 1; setzePhase("rel"); }
+          break;
+        case "rel":
+          R.t += ms; R.rel = glatt(R.t / T.rel); R.pa = 1 - R.rel; R.py = -60 * R.rel;
+          if (R.t >= T.rel){ R.rel = 1; R.t = 0; R.phase = "fade"; }
+          break;
+        case "fade":
+          R.t += ms; R.fade = glatt(R.t / T.fade);
+          if (R.t >= T.fade){ R.pos = TSS_C; R.pa = 0; R.open = 0; R.rel = 0; R.fade = 0; setzePhase("leer"); }
+          break;
+      }
+      zeichneAnim();
+    }
+    requestAnimationFrame(schritt);
   };
 
   const zeige = () => {
@@ -669,16 +796,15 @@ const METHYL = (() => {
       const m = M.gewicht(zustand, i) === 1;
       s.meO.setAttribute("opacity", m ? 1 : 0);
       s.meU.setAttribute("opacity", m ? 1 : 0);
-      if (s.mbd) s.mbd.setAttribute("opacity", m ? 0.15 + 0.85 * z.mbd : 0);
+      if (s.mbd) s.mbd.setAttribute("opacity", m ? 0.2 + 0.8 * z.mbd : 0);
       s.g.setAttribute("aria-pressed", String(m));
       s.g.setAttribute("aria-label", beschr(i));
     });
     // Transkriptionsfaktor: je schwächer die Bindung, desto weiter weg und blasser
-    tfG.setAttribute("transform", `translate(0 ${-36 * (1 - z.tf)})`);
+    tfG.setAttribute("transform", `translate(0 ${-34 * (1 - z.tf)})`);
     tfG.setAttribute("opacity", 0.25 + 0.75 * z.tf);
-    polG.setAttribute("opacity", 0.2 + 0.8 * z.expr);
     // Nucleosomen rücken zusammen, je mehr MBD-Proteine gebunden sind
-    const sp = 96 - 58 * z.mbd, c0 = 314;
+    const sp = 96 - 58 * z.mbd, c0 = X0 + (SITE[9] + 4) * BW / 2;
     nuc.forEach((n, k) => n.setAttribute("cx", c0 + (k - 2.5) * sp));
     nucText.textContent = "Chromatin am Promotor: " + (z.mbd < 0.25 ? "locker" : z.mbd < 0.6 ? "teilweise verdichtet" : "dicht gepackt");
     $("mTF").textContent = prozent(z.tf); $("bTF").style.width = breite(z.tf);
@@ -689,9 +815,10 @@ const METHYL = (() => {
     $("eBind").textContent = bind; $("eTF").textContent = prozent(z.tf);
     $("eN").textContent = z.nEff.toLocaleString("de-DE"); $("eMBD").textContent = prozent(z.mbd);
     $("eRep").textContent = prozent(z.rep); $("eAbl").textContent = prozent(z.expr);
-    rate = z.expr;
+    R.rate = z.expr;
+    if (ruhig.matches){ R.phase = "aus"; R.pos = TSS_C + 1; R.pa = 0.2 + 0.8 * z.expr; R.py = 0; R.open = 0; R.rel = 0; zeichneAnim(); $("statusAnim").textContent = TEXTE.aus; }
+    // Mutterzelle in Abschnitt 2 folgt dem Muster, solange noch nicht geteilt wurde
     if (typeof reihen !== "undefined" && reihen.length === 1 && !muttergeteilt) { reihen[0].zellen[0] = M.kopie(zustand); zeigeStamm(); status(); }
-    if (ruhig.matches) statischeRNA(z.expr);
     // Aufgaben
     if (z.expr < 0.05 && M.ganzeStellen(zustand) <= 2) erledigt.a1 = true;
     if (M.ganzeStellen(zustand) >= 8 && z.expr > 0.5) erledigt.a2 = true;
@@ -704,40 +831,7 @@ const METHYL = (() => {
   $("voll").addEventListener("click", () => { zustand = M.alle(1); zeige(); });
   $("zufall").addEventListener("click", () => { zustand = M.zufallsmuster(Math.random, 0.5); zeige(); });
   $("expert").addEventListener("change", e => { $("expertBox").hidden = !e.target.checked; $("effBox").hidden = !e.target.checked; });
-
-  /* ---------- wandernde mRNA ---------- */
-  let rate = 1, teilchen = [], rest = 0, zuletzt = 0, polT = 0;
-  const POLWEG = 250, POLDAUER = 7;   // Weg der Polymerase längs des Gens (Pixel) und Dauer eines Durchgangs (Sekunden)
-  const mrnaPfad = "M0 0c6-8 10 8 16 0s10-8 16 0s10 8 16 0";
-  const neueRNA = () => {
-    const p = el("path", {class: "mrna", d: mrnaPfad}, mrnaG);
-    teilchen.push({p, t: 0, x0: TSS + 50 + polT * POLWEG, y: 58 + (Math.random() - .5) * 6});
-  };
-  const statischeRNA = e => {
-    mrnaG.textContent = ""; teilchen = [];
-    const n = Math.round(e * 5);
-    for (let k = 0; k < n; k++){ const p = el("path", {class: "mrna", d: mrnaPfad, transform: `translate(${700 + 52 * k} ${90 - 8 * (k % 2)})`}, mrnaG); }
-  };
-  const schritt = t => {
-    const dt = Math.min(0.1, (t - zuletzt) / 1000 || 0); zuletzt = t;
-    if (!ruhig.matches){
-      polT = (polT + dt / POLDAUER) % 1;
-      polG.setAttribute("transform", `translate(${polT * POLWEG} 0)`);
-      rest += dt * rate * 1.6;
-      while (rest >= 1 && teilchen.length < 14){ rest -= 1; neueRNA(); }
-      if (rest > 1) rest = 0;
-      teilchen = teilchen.filter(q => {
-        q.t += dt / 3.2;
-        if (q.t >= 1){ q.p.remove(); return false; }
-        const x = q.x0 + 30 + q.t * 120, y = q.y - q.t * 36;
-        q.p.setAttribute("transform", `translate(${x} ${y})`);
-        q.p.setAttribute("opacity", q.t > .75 ? (1 - q.t) * 4 : 1);
-        return true;
-      });
-    }
-    requestAnimationFrame(schritt);
-  };
-  ruhig.addEventListener("change", () => { mrnaG.textContent = ""; teilchen = []; polT = 0; polG.removeAttribute("transform"); zeige(); });
+  ruhig.addEventListener("change", () => { R.phase = "leer"; R.pa = 0; R.acc = 0; zeichneAnim(); setzePhase("leer"); zeige(); });
 
   /* ---------- Abschnitt 2: Zellteilungen ---------- */
   // Reihen: {zellen: [zustand] oder [A, B], wahl: 0|1}; var wegen der Verwendung in zeige(), das früher aufgerufen wird
@@ -816,7 +910,7 @@ const METHYL = (() => {
   $("eff").addEventListener("input", () => { $("effO").textContent = $("eff").value + " %"; });
 
   /* ---------- Start ---------- */
-  bauePlan(); baueStellen(); baueBeweglich(); farbeBuchstaben(); zeige(); starte();
+  bauePlan(); farbeBuchstaben(); setzePhase("leer"); zeige(); starte();
   new MutationObserver(farbeBuchstaben).observe(document.documentElement, {attributes: true, attributeFilter: ["data-theme"]});
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", farbeBuchstaben);
   requestAnimationFrame(schritt);
