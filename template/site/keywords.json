@@ -148,5 +148,19 @@
     "Tertiärstruktur",
     "Ubiquitin",
     "Proteine"
+  ],
+  "methylierung.html": [
+    "DNA-Methylierung",
+    "CpG",
+    "CpG-Insel",
+    "Methylgruppe",
+    "5-Methylcytosin",
+    "Promotor",
+    "Epigenetik",
+    "DNMT1",
+    "MBD-Proteine",
+    "Genregulation",
+    "Transkriptionsfaktor",
+    "Chromatin"
   ]
 }

@@ -162,6 +162,14 @@ M3d pcr.html (17.11.2026, Wunsch: PCR-Simulation wie replikation.html, für Q12 
 - [ ] Gel (gel.js) fehlt noch: Banden nach Länge, Leiter, Bahnen für die Strangtypen und die Zyklenzahl
 - [ ] Ideen: Primer-Design (Länge, GC, Dimere) als eigener Teil, Restriktionsverdau, Mehrfachprimer, Fehler der Polymerase
 
+M3e methylierung.html (18.11.2026, Wunsch: Aktivität zur DNA-Methylierung; Kernidee Promotor-Methylierung, Oberstufe Klasse 11/12)
+- [x] Abschnitt 1: 14 CpG-Stellen (10 Promotor, 4 Genkörper, Stellen 4 und 5 in der Bindestelle eines Transkriptionsfaktors), anklickbar und per Tastatur; TF, MBD-Proteine, Nucleosomen, Polymerase und wandernde mRNA reagieren; Balken für Bindung, MBD-Besetzung und Ablesung; Expertenmodus zeigt die Zahlen; zwei Aufgaben mit Häkchen
+- [x] Abschnitt 2: Zellteilung (Tochter A erbt den oberen, B den unteren Elternstrang, neuer Strang unmethyliert, DNMT1 aktiv oder gehemmt, Wirksamkeit im Expertenmodus); Stammbaum mit anklickbaren Töchtern bis zu zehn Teilungen
+- [x] Modell und Test: template/site/methyl.js, node scripts/methylierung/test_methyl.js (Wirkung der Stellen, Lösbarkeit der Aufgaben, Weitergabe bei der Teilung)
+- [ ] Gegenlesen: Zahlen des Spielzeugmodells (20 % je methylierter Bindestelle, Hill n = 3 mit Mitte bei 5 Stellen, höchste Hemmung 95 %), Texte, Touch testen
+- [ ] Nicht gezeigt: de-novo-Methylierung (DNMT3A/B), Demethylierung (TET, passiv/aktiv), Imprinting, X-Inaktivierung, Bisulfit-Sequenzierung als Auswertungsaufgabe
+- [ ] Jahrgangszuordnung (siehe M11 Oberfläche wie atoms) fehlt noch
+
 M8 Später
 - [ ] polymerisation.html
 - [x] rna-typen.html: tRNA Kleeblatt + 3D (1EHZ), Wackelpaarung mit Aufgabe, Ribosom-Schema (offen: gegenlesen, Touch, rRNA nur als Text, Ribosomzeichnung verfeinern)
