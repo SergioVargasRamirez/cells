@@ -10,7 +10,7 @@ const PALETTE = (() => {
     oh3:"#17b8c9",  // 3'-OH (Hervorhebung)
     oh2:"#7b1fa2",  // 2'-OH bzw. 2'-H (Unterschied RNA/DNA)
     schnitt:"#d32f2f", // Bindung, die bei der Polymerisation gespalten wird
-    hbruecke:"#53675e",
+    hbruecke:"#56637a",
     aa_unpolar:"#b9822a", aa_polar:"#1f8f86", aa_sauer:"#d1495b", aa_basisch:"#3d6fd6", aa_sonder:"#8a63b8",
     peptid:"#e8590c", ebene2:"#1f8f86",
     ss_helix:"#d1495b", ss_g:"#e68a97", ss_strang:"#e0a030", ss_schleife:"#8d9aa0", innen:"#1b6f8a", aussen:"#e9c46a",   // Eigenschaft der Aminosäure-Seitenkette

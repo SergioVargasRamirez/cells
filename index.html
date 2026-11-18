@@ -17,20 +17,20 @@
 <meta name="twitter:card" content="summary_large_image">
 <style>
 :root{
-  --bg:#edf1ef; --surface:#ffffff; --surface2:#e1e9e5; --ink:#10201a; --muted:#53675e; --line:#c8d5cf;
-  --accent:#13795b; --accent-ink:#ffffff;
+  --bg:#eceff3; --surface:#ffffff; --surface2:#e3e8ee; --ink:#101a2b; --muted:#56637a; --line:#cbd3de;
+  --accent:#13795b; --accent-ink:#ffffff; --l1:#2f5bea; --l2:#b87500; --l3:#c9528f;
   --serif:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
   --sans:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
-    --accent:#5fd3a8; --accent-ink:#0d1613;
+    --bg:#0e1420; --surface:#161e2d; --surface2:#1f2939; --ink:#e8ecf3; --muted:#9ba7bc; --line:#2b3648;
+    --accent:#5fd3a8; --accent-ink:#0e1420; --l1:#7d9bff; --l2:#f5b83a; --l3:#f0a0c8;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
-  --accent:#5fd3a8; --accent-ink:#0d1613;
+  --bg:#0e1420; --surface:#161e2d; --surface2:#1f2939; --ink:#e8ecf3; --muted:#9ba7bc; --line:#2b3648;
+  --accent:#5fd3a8; --accent-ink:#0e1420; --l1:#7d9bff; --l2:#f5b83a; --l3:#f0a0c8;
 }
 
 *{box-sizing:border-box}
@@ -39,6 +39,9 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.15;margin:0}
 p{margin:0 0 .7em}
 .wrap{max-width:1040px;margin:0 auto;padding:22px 20px 40px}
 h1{font-size:clamp(28px,4.5vw,44px);letter-spacing:-.01em}
+.logo{text-align:center;font:800 clamp(64px,12vw,116px)/1 var(--sans);letter-spacing:.01em;margin:calc(clamp(24px,7vh,64px) + 25px) 0 clamp(18px,3vh,30px)}
+.logo span:nth-child(1),.logo span:nth-child(5){color:var(--accent)}
+.logo span:nth-child(2){color:var(--l1)}.logo span:nth-child(3){color:var(--l2)}.logo span:nth-child(4){color:var(--l3)}
 .lede{font:400 clamp(17px,2vw,21px)/1.35 var(--serif);max-width:60ch;margin:12px 0 26px;padding-left:14px;border-left:4px solid var(--accent)}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
 .card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px 18px;color:inherit;text-decoration:none;transition:border-color .15s,transform .15s}
@@ -300,7 +303,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 </script>
 <!--/SITENAV-->
 <div class="wrap">
-<h1>Biologie-Werkzeuge für den Unterricht</h1>
+<h1 class="logo" aria-label="Cells: Biologie-Werkzeuge für den Unterricht"><span aria-hidden="true">C</span><span aria-hidden="true">e</span><span aria-hidden="true">l</span><span aria-hidden="true">l</span><span aria-hidden="true">s</span></h1>
 <p class="lede">Interaktive Seiten für den Biologie-Unterricht: von Genen und Erbgängen über Sequenzen und Genome bis zu Enzymen und Proteinen.</p>
 <p>Die ersten Seiten entstehen gerade. Ideen und Wünsche aus dem eigenen Unterricht sind willkommen: <a href="quellen.html#mitmachen">Mitmachen</a>.</p>
 <div class="suche"><input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="ac" autocomplete="off" spellcheck="false" placeholder="Suchen: Thema oder Stichwort, z. B. Primer, Helikase, Mitose" aria-label="Seiten suchen"><ul class="ac" id="ac" role="listbox" aria-label="Vorschläge" hidden></ul><button class="x" id="qx" type="button" aria-label="Suche löschen" hidden>×</button></div>

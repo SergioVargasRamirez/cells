@@ -7,20 +7,20 @@
 <meta name="description" content="Von der Doppelhelix zum Chromosom: Das Nucleosom in 3D, Chromatin umbauen und im Zeitraffer sehen, welche Gene abgelesen werden. Im Expertenmodus mit Histonmodifikationen und Transkriptionsfaktor.">
 <style>
 :root{
-  --bg:#edf1ef; --surface:#ffffff; --surface2:#e1e9e5; --ink:#10201a; --muted:#53675e; --line:#c8d5cf;
+  --bg:#eceff3; --surface:#ffffff; --surface2:#e3e8ee; --ink:#101a2b; --muted:#56637a; --line:#cbd3de;
   --accent:#13795b; --accent-ink:#ffffff; --hl:#fff3d6;
   --serif:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
   --sans:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
-    --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
+    --bg:#0e1420; --surface:#161e2d; --surface2:#1f2939; --ink:#e8ecf3; --muted:#9ba7bc; --line:#2b3648;
+    --accent:#5fd3a8; --accent-ink:#0e1420; --hl:#2c2a1c; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
-  --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
+  --bg:#0e1420; --surface:#161e2d; --surface2:#1f2939; --ink:#e8ecf3; --muted:#9ba7bc; --line:#2b3648;
+  --accent:#5fd3a8; --accent-ink:#0e1420; --hl:#2c2a1c; color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -519,7 +519,7 @@ const PALETTE = (() => {
     oh3:"#17b8c9",  // 3'-OH (Hervorhebung)
     oh2:"#7b1fa2",  // 2'-OH bzw. 2'-H (Unterschied RNA/DNA)
     schnitt:"#d32f2f", // Bindung, die bei der Polymerisation gespalten wird
-    hbruecke:"#53675e",
+    hbruecke:"#56637a",
     aa_unpolar:"#b9822a", aa_polar:"#1f8f86", aa_sauer:"#d1495b", aa_basisch:"#3d6fd6", aa_sonder:"#8a63b8",
     peptid:"#e8590c", ebene2:"#1f8f86",
     ss_helix:"#d1495b", ss_g:"#e68a97", ss_strang:"#e0a030", ss_schleife:"#8d9aa0", innen:"#1b6f8a", aussen:"#e9c46a",   // Eigenschaft der Aminosäure-Seitenkette
@@ -1025,7 +1025,7 @@ function leiter(n){
   const svg = $("leiter"); svg.textContent = "";
   const C = "currentColor", dunkel = PALETTE.istDunkel();
   const sf = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim();
-  const FL = /^#[0-9a-f]{6}$/i.test(sf) ? sf : (dunkel ? "#15211d" : "#ffffff");   // Farbe der Karte: ferne Teile verblassen dorthin
+  const FL = /^#[0-9a-f]{6}$/i.test(sf) ? sf : (dunkel ? "#161e2d" : "#ffffff");   // Farbe der Karte: ferne Teile verblassen dorthin
   const h2r = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
   const mix = (a, b, t) => { const x = h2r(a), y = h2r(b); return "#" + x.map((v, i) => Math.round(v + (y[i] - v) * t).toString(16).padStart(2, "0")).join(""); };
   const defs = el("defs", {}, svg), cache = {};

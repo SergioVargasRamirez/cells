@@ -7,7 +7,7 @@
 <meta name="description" content="Pflanzen- und Tierzellen wachsen und teilen sich: für Klasse 5 als Beobachtung (Kern teilt sich, Zellwand wächst in der Mitte oder Zelle schnürt sich durch, Tochterzellen wachsen), für Klasse 9 und 12 als Cartoon aller Phasen der Mitose mit Chromosomen, Spindel, Zellplatte oder Teilungsfurche, Zellzyklus und DNA-Gehalt.">
 <style>
 :root{
-  --bg:#edf1ef; --surface:#ffffff; --surface2:#e1e9e5; --ink:#10201a; --muted:#53675e; --line:#c8d5cf;
+  --bg:#eceff3; --surface:#ffffff; --surface2:#e3e8ee; --ink:#101a2b; --muted:#56637a; --line:#cbd3de;
   --accent:#13795b; --accent-ink:#ffffff; --hl:#fff3d6;
   --serif:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
   --sans:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -20,8 +20,8 @@
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
-    --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
+    --bg:#0e1420; --surface:#161e2d; --surface2:#1f2939; --ink:#e8ecf3; --muted:#9ba7bc; --line:#2b3648;
+    --accent:#5fd3a8; --accent-ink:#0e1420; --hl:#2c2a1c; color-scheme:dark;
     --zyto1:#26392f; --zyto2:#1b2a23; --mem:#6fc79f; --kern1:#3a3150; --kern2:#2a2340; --kernlinie:#b79be0;
     --nukl1:#8f72b8; --nukl2:#523a7c; --mito1:#7a4a38; --mito2:#a8603f; --mito-s:#e8a07a; --er:#7f9fc8; --golgi:#d1a23a; --lyso:#b86c78;
     --chr-m:#7da2ff; --chr-m-s:#0f1f4a; --chr-v:#ffb347; --chr-v-s:#4d2a02; --kin:#ff6b72; --faser:#b6c8a6; --cent:#e3c05a; --cent-s:#5a450a;
@@ -30,8 +30,8 @@
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0d1613; --surface:#15211d; --surface2:#1e2d28; --ink:#e6efeb; --muted:#99ada5; --line:#2a3b35;
-  --accent:#5fd3a8; --accent-ink:#0d1613; --hl:#2c2a1c; color-scheme:dark;
+  --bg:#0e1420; --surface:#161e2d; --surface2:#1f2939; --ink:#e8ecf3; --muted:#9ba7bc; --line:#2b3648;
+  --accent:#5fd3a8; --accent-ink:#0e1420; --hl:#2c2a1c; color-scheme:dark;
   --zyto1:#26392f; --zyto2:#1b2a23; --mem:#6fc79f; --kern1:#3a3150; --kern2:#2a2340; --kernlinie:#b79be0;
   --nukl1:#8f72b8; --nukl2:#523a7c; --mito1:#7a4a38; --mito2:#a8603f; --mito-s:#e8a07a; --er:#7f9fc8; --golgi:#d1a23a; --lyso:#b86c78;
   --chr-m:#7da2ff; --chr-m-s:#0f1f4a; --chr-v:#ffb347; --chr-v-s:#4d2a02; --kin:#ff6b72; --faser:#b6c8a6; --cent:#e3c05a; --cent-s:#5a450a;
@@ -1405,7 +1405,7 @@ const Zelle = (() => {
     for (const [id, anteil, name, farbe] of ANTEIL){
       s += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${farbe}" stroke-width="26" stroke-dasharray="${f1(U * anteil - 1.5)} ${f1(U)}" stroke-dashoffset="${f1(-U * start)}" transform="rotate(-90 ${cx} ${cy})"/>`;
       const a = (start + anteil / 2) * 2 * Math.PI - Math.PI / 2, rr = R + (id === "m" ? 24 : 0);
-      if (id !== "m") s += `<text x="${f1(cx + R * Math.cos(a))}" y="${f1(cy + R * Math.sin(a) + 6)}" text-anchor="middle" font-size="17" font-weight="800" fill="#10201a">${name}</text>`;
+      if (id !== "m") s += `<text x="${f1(cx + R * Math.cos(a))}" y="${f1(cy + R * Math.sin(a) + 6)}" text-anchor="middle" font-size="17" font-weight="800" fill="#101a2b">${name}</text>`;
       else s += `<text x="${f1(cx + (R + 24) * Math.cos(a) + 4)}" y="${f1(cy + (R + 24) * Math.sin(a) + 2)}" text-anchor="middle" font-size="17" font-weight="800" fill="var(--aktin)">M</text>`;
       start += anteil;
     }
