@@ -305,7 +305,6 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
 <!--/SITENAV-->
 <div class="wrap">
 <h1 class="logo" aria-label="Cells: Biologie-Werkzeuge für den Unterricht"><span aria-hidden="true">C</span><span aria-hidden="true">e</span><span aria-hidden="true">l</span><span aria-hidden="true">l</span><span aria-hidden="true">s</span></h1>
-<p>Die ersten Seiten entstehen gerade. Ideen und Wünsche aus dem eigenen Unterricht sind willkommen: <a href="quellen.html#mitmachen">Mitmachen</a>.</p>
 <div class="suche"><input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="ac" autocomplete="off" spellcheck="false" placeholder="Suchen: Thema oder Stichwort, z. B. Primer, Helikase, Mitose" aria-label="Seiten suchen"><ul class="ac" id="ac" role="listbox" aria-label="Vorschläge" hidden></ul><button class="x" id="qx" type="button" aria-label="Suche löschen" hidden>×</button></div>
 <p class="hint" id="hint" aria-live="polite" hidden></p>
 <div class="filter" id="fj" role="group" aria-label="Jahrgangsstufe" hidden><span class="lbl">Jahrgang</span><button class="fp alle" type="button" data-v="" aria-pressed="true">Alle</button></div>
@@ -622,7 +621,7 @@ html.eingebettet body > *:not(.eingebettet-hinweis){display:none!important}
     });
     liste.replaceChildren();
     // Nur Thema gewählt: nach Jahrgang gliedern. Sonst: nach Thema gliedern.
-    if (state.t && !state.j.length){
+    if (state.t && !state.j.length && YEARS.length){
       for (const y of YEARS){
         const g = hit.filter(c => c.j.includes(y));
         if (g.length) liste.appendChild(group("Jahrgangsstufe " + y, g, y));
