@@ -643,8 +643,9 @@ const METHYL = (() => {
     el("ellipse", {class: "tf", cx: MOTIV_X, cy: 66, rx: 40, ry: 22}, tfG);
     el("text", {class: "tftext", x: MOTIV_X, y: 71}, tfG).textContent = "TF";
     polG = el("g", {}, svg);
-    el("ellipse", {class: "pol", cx: TSS + 66, cy: 104, rx: 38, ry: 22}, polG);
-    el("text", {class: "poltext", x: TSS + 66, y: 108}, polG).textContent = "Pol";
+    el("ellipse", {class: "pol", cx: TSS + 50, cy: 84, rx: 48, ry: 20}, polG);
+    el("text", {class: "poltext", x: TSS + 50, y: 88}, polG).textContent = "RNA-Pol";
+    el("path", {class: "tss", d: `M${TSS + 100} 84h16m-6 -6l6 6l-6 6`}, polG);   // Pfeil: Laufrichtung 5'→3'
     mrnaG = el("g", {"aria-hidden": "true"}, svg);
     el("line", {class: "strang", x1: 40, y1: 300, x2: 640, y2: 300, opacity: .35}, svg);
     for (let k = 0; k < 6; k++) nuc.push(el("circle", {class: "nuc", cx: 100 + 100 * k, cy: 300, r: 18}, svg));
@@ -703,11 +704,12 @@ const METHYL = (() => {
   $("expert").addEventListener("change", e => { $("expertBox").hidden = !e.target.checked; $("effBox").hidden = !e.target.checked; });
 
   /* ---------- wandernde mRNA ---------- */
-  let rate = 1, teilchen = [], rest = 0, zuletzt = 0;
+  let rate = 1, teilchen = [], rest = 0, zuletzt = 0, polT = 0;
+  const POLWEG = 250, POLDAUER = 7;   // Weg der Polymerase längs des Gens (Pixel) und Dauer eines Durchgangs (Sekunden)
   const mrnaPfad = "M0 0c6-8 10 8 16 0s10-8 16 0s10 8 16 0";
   const neueRNA = () => {
     const p = el("path", {class: "mrna", d: mrnaPfad}, mrnaG);
-    teilchen.push({p, t: 0, y: 104 + (Math.random() - .5) * 8});
+    teilchen.push({p, t: 0, x0: TSS + 50 + polT * POLWEG, y: 58 + (Math.random() - .5) * 6});
   };
   const statischeRNA = e => {
     mrnaG.textContent = ""; teilchen = [];
@@ -717,13 +719,15 @@ const METHYL = (() => {
   const schritt = t => {
     const dt = Math.min(0.1, (t - zuletzt) / 1000 || 0); zuletzt = t;
     if (!ruhig.matches){
+      polT = (polT + dt / POLDAUER) % 1;
+      polG.setAttribute("transform", `translate(${polT * POLWEG} 0)`);
       rest += dt * rate * 1.6;
       while (rest >= 1 && teilchen.length < 14){ rest -= 1; neueRNA(); }
       if (rest > 1) rest = 0;
       teilchen = teilchen.filter(q => {
         q.t += dt / 3.2;
         if (q.t >= 1){ q.p.remove(); return false; }
-        const x = TSS + 112 + q.t * 250, y = q.y - q.t * 52;
+        const x = q.x0 + 30 + q.t * 120, y = q.y - q.t * 36;
         q.p.setAttribute("transform", `translate(${x} ${y})`);
         q.p.setAttribute("opacity", q.t > .75 ? (1 - q.t) * 4 : 1);
         return true;
@@ -731,7 +735,7 @@ const METHYL = (() => {
     }
     requestAnimationFrame(schritt);
   };
-  ruhig.addEventListener("change", () => { mrnaG.textContent = ""; teilchen = []; zeige(); });
+  ruhig.addEventListener("change", () => { mrnaG.textContent = ""; teilchen = []; polT = 0; polG.removeAttribute("transform"); zeige(); });
 
   /* ---------- Abschnitt 2: Zellteilungen ---------- */
   // Reihen: {zellen: [zustand] oder [A, B], wahl: 0|1}; var wegen der Verwendung in zeige(), das früher aufgerufen wird
