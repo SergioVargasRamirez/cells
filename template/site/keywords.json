@@ -162,5 +162,22 @@
     "Genregulation",
     "Transkriptionsfaktor",
     "Chromatin"
+  ],
+  "blutbildung.html": [
+    "Blutbildung",
+    "Transkriptionsfaktor",
+    "Genregulation",
+    "Differenzierung",
+    "Vorläuferzelle",
+    "Stammzelle",
+    "Erythrozyt",
+    "Megakaryozyt",
+    "Monozyt",
+    "Granulozyt",
+    "Knock-out",
+    "Überexpression",
+    "Boolesches Netzwerk",
+    "GATA-1",
+    "PU.1"
   ]
 }
