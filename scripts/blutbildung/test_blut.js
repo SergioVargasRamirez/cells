@@ -77,5 +77,19 @@ pruefe(ok, "Erythrozyt + PU.1 an gibt einen Mischzustand");
   for (let s = 0; s < 500; s++){ const z = B.neu("experte"); if (B.lauf("experte", z, {}, gen(s)).length >= 500) lang++; }
   pruefe(lang === 0, "Läufe enden vor 500 Schritten");
 }
+// 9. Entscheidungsbaum
+{
+  const nd = (b, id) => b.find(x => x.id === id);
+  const b = B.baum("experte", {}, 1500, gen(11));
+  pruefe(["wurzel", "g:ery+mk", "g:gran+mono", "b:ery", "b:mk", "b:gran", "b:mono"].every(id => nd(b, id)), "Baum (Experte): Wurzel, zwei Gruppen, vier Zelltypen");
+  const summe = ["b:ery", "b:mk", "b:gran", "b:mono"].reduce((a, id) => a + nd(b, id).p, 0);
+  pruefe(Math.abs(summe - 1) < 0.001, "Baum: Anteile der Zelltypen ergeben 100 %");
+  pruefe(nd(b, "g:ery+mk").t < nd(b, "b:ery").t && nd(b, "g:gran+mono").t < nd(b, "b:gran").t, "Baum: Gruppen werden vor den Zelltypen festgelegt");
+  pruefe(nd(b, "g:ery+mk").ausloeser.PU1 && nd(b, "g:gran+mono").ausloeser.GATA2 && nd(b, "b:ery").ausloeser.EKLF && nd(b, "b:mono").ausloeser.EgrNab, "Baum: Auslöser PU.1 aus, GATA-2 aus, EKLF an, EgrNab an");
+  const k = B.baum("experte", {GATA2: "aus"}, 1500, gen(12));
+  pruefe(!nd(k, "b:ery") && !nd(k, "b:mk") && nd(k, "b:gran") && nd(k, "b:mono"), "Baum: GATA-2 aus entfernt Erythrozyt und Megakaryozyt");
+  const e = B.baum("einfach", {}, 1500, gen(13));
+  pruefe(nd(e, "b:gm") && nd(e, "g:ery+mk") && nd(e, "b:ery") && nd(e, "b:mk"), "Baum (einfach): Gruppe Ery/Mk und Zelltyp GM");
+}
 console.log(fehler ? fehler + " Fehler" : "OK");
 process.exit(fehler ? 1 : 0);

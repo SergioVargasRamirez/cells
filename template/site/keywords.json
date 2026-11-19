@@ -179,5 +179,21 @@
     "Boolesches Netzwerk",
     "GATA-1",
     "PU.1"
+  ],
+  "blutbaum.html": [
+    "Blutbildung",
+    "Stammbaum",
+    "Zeitverlauf",
+    "Transkriptionsfaktor",
+    "Genregulation",
+    "Differenzierung",
+    "Vorläuferzelle",
+    "Knock-out",
+    "Überexpression",
+    "Boolesches Netzwerk",
+    "Erythrozyt",
+    "Megakaryozyt",
+    "Monozyt",
+    "Granulozyt"
   ]
 }
